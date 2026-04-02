@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C언어 변수와 입출력 튜토리얼</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif; background: #f5f5f0; color: #1a1a18; min-height: 100vh; }
+.page { max-width: 780px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+h1 { font-size: 22px; font-weight: 600; margin-bottom: 0.25rem; }
+.subtitle { font-size: 14px; color: #888780; margin-bottom: 1.5rem; }
+.nav { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.nav-btn { padding: 6px 14px; border-radius: 999px; border: 1px solid #d3d1c7; background: #fff; color: #5f5e5a; font-size: 13px; cursor: pointer; transition: all 0.15s; }
+.nav-btn.active { background: #2c2c2a; color: #fff; border-color: #2c2c2a; font-weight: 500; }
+.nav-btn:hover:not(.active) { background: #f1efe8; }
+.section { display: none; }
+.section.active { display: block; }
+.card { background: #fff; border: 1px solid #e4e2d8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 999px; margin-bottom: 8px; }
+.tag-blue   { background: #E6F1FB; color: #0C447C; }
+.tag-green  { background: #EAF3DE; color: #27500A; }
+.tag-amber  { background: #FAEEDA; color: #633806; }
+.tag-coral  { background: #FAECE7; color: #712B13; }
+.tag-purple { background: #EEEDFE; color: #3C3489; }
+.tag-teal   { background: #E1F5EE; color: #085041; }
+.tag-red    { background: #FCEBEB; color: #791F1F; }
+h3 { font-size: 15px; font-weight: 600; color: #1a1a18; margin-bottom: 6px; }
+p  { font-size: 14px; color: #5f5e5a; line-height: 1.65; margin-bottom: 6px; }
+pre { background: #f1efe8; border-radius: 8px; padding: 1rem; font-size: 13px; font-family: 'Consolas','D2Coding',monospace; color: #2c2c2a; overflow-x: auto; line-height: 1.7; margin-bottom: 8px; }
+code { font-family: 'Consolas','D2Coding',monospace; font-size: 13px; background: #f1efe8; padding: 1px 5px; border-radius: 4px; }
+.kw  { color: #185FA5; font-weight: 600; }
+.fn  { color: #3B6D11; }
+.str { color: #BA7517; }
+.cmt { color: #888780; font-style: italic; }
+.op  { color: #993C1D; font-weight: 600; }
+.note { background: #f1efe8; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #5f5e5a; margin-top: 8px; }
+
+/* box metaphor */
+.box-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; margin: 12px 0; }
+.var-box { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.var-box .box-label { font-size: 12px; color: #888780; font-family: 'Consolas', monospace; }
+.var-box .box-body {
+  width: 80px; height: 60px; border: 2px solid #378ADD; border-radius: 8px;
+  background: #E6F1FB; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 700; color: #0C447C; font-family: 'Consolas', monospace;
+  transition: all 0.3s;
+}
+.var-box .box-type { font-size: 11px; color: #0C447C; background: #E6F1FB; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+
+/* type table */
+.type-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.type-table th { background: #f1efe8; padding: 8px 12px; border: 1px solid #e4e2d8; font-weight: 600; text-align: left; }
+.type-table td { padding: 8px 12px; border: 1px solid #e4e2d8; vertical-align: middle; }
+.type-table tr:nth-child(even) td { background: #faf9f6; }
+.type-badge { display: inline-block; font-family: 'Consolas', monospace; font-size: 13px; font-weight: 700; padding: 2px 10px; border-radius: 6px; }
+
+/* fmt specifier */
+.fmt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 10px; margin-top: 8px; }
+.fmt-card { background: #f1efe8; border-radius: 10px; padding: 12px 14px; text-align: center; }
+.fmt-spec { font-family: 'Consolas', monospace; font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.fmt-desc { font-size: 12px; color: #5f5e5a; }
+
+/* sim */
+.sim-row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+.sim-row label { font-size: 13px; color: #5f5e5a; min-width: 70px; }
+input[type=number], input[type=text], select {
+  padding: 6px 10px; border-radius: 8px; border: 1px solid #d3d1c7;
+  font-size: 14px; background: #fff; color: #1a1a18;
+}
+input[type=number] { width: 90px; }
+input[type=text]   { width: 80px; }
+.run-btn { padding: 7px 20px; border-radius: 8px; border: 1px solid #d3d1c7; background: #f1efe8; color: #1a1a18; font-size: 13px; cursor: pointer; }
+.run-btn:hover { background: #fff; }
+.sim-output { background: #f1efe8; border-radius: 8px; padding: 1rem; font-family: 'Consolas','D2Coding',monospace; font-size: 14px; color: #2c2c2a; min-height: 44px; border: 1px solid #e4e2d8; white-space: pre; }
+
+/* quiz */
+.quiz-q { font-size: 14px; font-weight: 600; color: #1a1a18; margin-bottom: 12px; white-space: pre-wrap; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { padding: 10px 14px; border: 1px solid #e4e2d8; border-radius: 8px; font-size: 14px; cursor: pointer; color: #1a1a18; background: #fff; text-align: left; transition: all 0.15s; }
+.quiz-opt:hover:not(:disabled) { background: #f1efe8; }
+.quiz-opt.correct { background: #EAF3DE; border-color: #639922; color: #27500A; font-weight: 500; }
+.quiz-opt.wrong   { background: #FCEBEB; border-color: #E24B4A; color: #791F1F; }
+.quiz-feedback { margin-top: 10px; font-size: 14px; font-weight: 500; padding: 8px 12px; border-radius: 8px; display: none; }
+.quiz-feedback.ok { color: #3B6D11; background: #EAF3DE; }
+.quiz-feedback.no { color: #A32D2D; background: #FCEBEB; }
+.quiz-nav { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+.quiz-nav button { padding: 7px 16px; border-radius: 8px; border: 1px solid #d3d1c7; background: #fff; color: #1a1a18; font-size: 13px; cursor: pointer; }
+.quiz-nav button:hover:not(:disabled) { background: #f1efe8; }
+.quiz-nav button:disabled { opacity: 0.4; cursor: default; }
+.quiz-progress { font-size: 12px; color: #888780; margin-left: auto; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>C언어 변수와 입출력 튜토리얼</h1>
+  <p class="subtitle">데이터를 담는 상자 — 변수 선언부터 scanf/printf까지</p>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="showSection('intro',this)">변수란?</button>
+    <button class="nav-btn" onclick="showSection('types',this)">자료형</button>
+    <button class="nav-btn" onclick="showSection('io',this)">입출력 문법</button>
+    <button class="nav-btn" onclick="showSection('examples',this)">예제 모음</button>
+    <button class="nav-btn" onclick="showSection('sandbox',this)">변수 상자</button>
+    <button class="nav-btn" onclick="showSection('sim',this)">시뮬레이터</button>
+    <button class="nav-btn" onclick="showSection('quiz',this)">퀴즈</button>
+  </div>
+
+  <!-- 변수란? -->
+  <div id="sec-intro" class="section active">
+    <div class="card">
+      <span class="tag tag-blue">변수(Variable)란?</span>
+      <h3>데이터를 저장하는 이름 붙은 메모리 공간</h3>
+      <p>컴퓨터 메모리에 값을 넣어두고 이름으로 꺼내쓴다. 수학의 x, y와 같은 개념이다.</p>
+      <div class="box-row" style="margin-top:12px;">
+        <div class="var-box">
+          <div class="box-label">int a = 10;</div>
+          <div class="box-body">10</div>
+          <div class="box-type">a (int)</div>
+        </div>
+        <div style="font-size:28px; color:#888780; padding-bottom:20px;">→</div>
+        <div style="font-size:14px; color:#5f5e5a; padding-bottom:20px; max-width:200px;">a라는 이름의 상자에<br>정수 10을 넣었다는 뜻</div>
+      </div>
+    </div>
+    <div class="card">
+      <span class="tag tag-green">변수 선언 기본 문법</span>
+      <pre><span class="cmt">// 선언만</span>
+<span class="fn">int</span> age;
+
+<span class="cmt">// 선언 + 초기화</span>
+<span class="fn">int</span> age = 20;
+
+<span class="cmt">// 여러 변수 선언</span>
+<span class="fn">int</span> a, b, c;
+<span class="fn">int</span> x = 1, y = 2;</pre>
+    </div>
+    <div class="card">
+      <span class="tag tag-amber">변수 이름 규칙</span>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span style="min-width:40px; font-size:18px; text-align:center;">✓</span>
+          <span style="font-size:14px; color:#5f5e5a;">영문자, 숫자, 밑줄(_) 사용 가능</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span style="min-width:40px; font-size:18px; text-align:center;">✓</span>
+          <span style="font-size:14px; color:#5f5e5a;">반드시 영문자 또는 _로 시작</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span style="min-width:40px; font-size:18px; text-align:center; color:#A32D2D;">✗</span>
+          <span style="font-size:14px; color:#5f5e5a;">숫자로 시작 불가 — <code>1num</code> 오류</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span style="min-width:40px; font-size:18px; text-align:center; color:#A32D2D;">✗</span>
+          <span style="font-size:14px; color:#5f5e5a;">예약어 사용 불가 — <code>int</code>, <code>for</code> 등</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 자료형 -->
+  <div id="sec-types" class="section">
+    <div class="card">
+      <span class="tag tag-blue">자료형(Data Type) 종류</span>
+      <table class="type-table" style="margin-top:8px;">
+        <thead>
+          <tr><th>자료형</th><th>저장 내용</th><th>크기</th><th>예시</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="type-badge" style="background:#E6F1FB;color:#0C447C;">int</span></td>
+            <td>정수</td><td>4 byte</td><td><code>1, -5, 100</code></td>
+          </tr>
+          <tr>
+            <td><span class="type-badge" style="background:#EAF3DE;color:#27500A;">float</span></td>
+            <td>실수 (소수점)</td><td>4 byte</td><td><code>3.14f, 0.5f</code></td>
+          </tr>
+          <tr>
+            <td><span class="type-badge" style="background:#FAEEDA;color:#633806;">double</span></td>
+            <td>더 정밀한 실수</td><td>8 byte</td><td><code>3.141592</code></td>
+          </tr>
+          <tr>
+            <td><span class="type-badge" style="background:#EEEDFE;color:#3C3489;">char</span></td>
+            <td>문자 1개</td><td>1 byte</td><td><code>'A', '0', '\n'</code></td>
+          </tr>
+          <tr>
+            <td><span class="type-badge" style="background:#FAECE7;color:#712B13;">long long</span></td>
+            <td>큰 정수</td><td>8 byte</td><td><code>1000000000LL</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note" style="margin-top:10px;">C언어에는 string 타입이 없다. 문자열은 char 배열로 표현한다.</div>
+    </div>
+    <div class="card">
+      <span class="tag tag-green">자료형 선언 예시</span>
+      <pre><span class="fn">int</span>       a = 10;       <span class="cmt">// 정수</span>
+<span class="fn">float</span>     b = 3.14<span class="str">f</span>;   <span class="cmt">// 실수 (낮은 정밀도)</span>
+<span class="fn">double</span>    c = 3.14159; <span class="cmt">// 실수 (높은 정밀도)</span>
+<span class="fn">char</span>      d = <span class="str">'A'</span>;     <span class="cmt">// 문자 1개</span>
+<span class="fn">long long</span> e = 123456789LL; <span class="cmt">// 큰 정수</span></pre>
+    </div>
+  </div>
+
+  <!-- 입출력 문법 -->
+  <div id="sec-io" class="section">
+    <div class="card">
+      <span class="tag tag-blue">출력: printf()</span>
+      <h3>화면에 값을 출력할 때 사용</h3>
+      <pre><span class="fn">printf</span>(<span class="str">"Hello"</span>);           <span class="cmt">// 문자열 출력</span>
+<span class="fn">printf</span>(<span class="str">"%d"</span>, a);          <span class="cmt">// 정수 출력</span>
+<span class="fn">printf</span>(<span class="str">"%d %d"</span>, a, b);   <span class="cmt">// 여러 값 출력</span>
+<span class="fn">printf</span>(<span class="str">"a=%d\n"</span>, a);      <span class="cmt">// 줄바꿈 포함</span></pre>
+    </div>
+    <div class="card">
+      <span class="tag tag-amber">서식 지정자 (Format Specifier)</span>
+      <div class="fmt-grid">
+        <div class="fmt-card">
+          <div class="fmt-spec" style="color:#0C447C;">%d</div>
+          <div class="fmt-desc">정수 (int)</div>
+        </div>
+        <div class="fmt-card">
+          <div class="fmt-spec" style="color:#27500A;">%f</div>
+          <div class="fmt-desc">실수 (float/double)</div>
+        </div>
+        <div class="fmt-card">
+          <div class="fmt-spec" style="color:#633806;">%c</div>
+          <div class="fmt-desc">문자 (char)</div>
+        </div>
+        <div class="fmt-card">
+          <div class="fmt-spec" style="color:#3C3489;">%s</div>
+          <div class="fmt-desc">문자열 (char[])</div>
+        </div>
+        <div class="fmt-card">
+          <div class="fmt-spec" style="color:#712B13;">%lld</div>
+          <div class="fmt-desc">큰 정수 (long long)</div>
+        </div>
+        <div class="fmt-card">
+          <div class="fmt-spec" style="color:#085041;">%.2f</div>
+          <div class="fmt-desc">소수점 2자리</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <span class="tag tag-green">입력: scanf()</span>
+      <h3>키보드 값을 변수에 저장</h3>
+      <pre><span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;a);         <span class="cmt">// 정수 1개 입력</span>
+<span class="fn">scanf</span>(<span class="str">"%d %d"</span>, &amp;a, &amp;b); <span class="cmt">// 정수 2개 입력</span>
+<span class="fn">scanf</span>(<span class="str">" %c"</span>, &amp;ch);        <span class="cmt">// 문자 입력 (앞 공백 중요!)</span>
+<span class="fn">scanf</span>(<span class="str">"%f"</span>, &amp;x);         <span class="cmt">// 실수 입력</span></pre>
+      <div class="note">⚠ scanf에는 반드시 <code>&amp;</code>(주소연산자)를 붙여야 한다. 단, 배열(문자열)은 예외.</div>
+    </div>
+    <div class="card">
+      <span class="tag tag-coral">자주 하는 실수</span>
+      <pre><span class="cmt">// 잘못된 코드</span>
+<span class="fn">scanf</span>(<span class="str">"%d"</span>, a);   <span class="cmt">← & 빠짐 → 오류!</span>
+
+<span class="cmt">// 올바른 코드</span>
+<span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;a);  <span class="cmt">← & 필수</span>
+
+<span class="cmt">// 문자 입력 시 앞에 공백</span>
+<span class="fn">scanf</span>(<span class="str">" %c"</span>, &amp;ch); <span class="cmt">← 앞 공백으로 개행문자 무시</span></pre>
+    </div>
+  </div>
+
+  <!-- 예제 모음 -->
+  <div id="sec-examples" class="section">
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;" id="ex-nav">
+      <button class="nav-btn active" onclick="showEx(0,this)">정수 출력</button>
+      <button class="nav-btn" onclick="showEx(1,this)">두 수의 합</button>
+      <button class="nav-btn" onclick="showEx(2,this)">정수 입출력</button>
+      <button class="nav-btn" onclick="showEx(3,this)">두 수 입력합</button>
+      <button class="nav-btn" onclick="showEx(4,this)">문자 입출력</button>
+    </div>
+    <div id="ex-content"></div>
+  </div>
+
+  <!-- 변수 상자 -->
+  <div id="sec-sandbox" class="section">
+    <div class="card">
+      <span class="tag tag-teal">인터랙티브 변수 상자</span>
+      <h3>변수에 값을 넣고 연산 결과를 확인하세요</h3>
+    </div>
+    <div class="card">
+      <div class="sim-row">
+        <label>변수 a</label>
+        <input type="number" id="sbA" value="10" oninput="updateSandbox()"/>
+        <label>변수 b</label>
+        <input type="number" id="sbB" value="20" oninput="updateSandbox()"/>
+      </div>
+      <div class="box-row" id="sb-boxes" style="margin: 12px 0 16px;"></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px;" id="sb-results"></div>
+    </div>
+    <div class="card">
+      <span class="tag tag-blue">생성되는 C 코드</span>
+      <pre id="sb-code"></pre>
+    </div>
+  </div>
+
+  <!-- 시뮬레이터 -->
+  <div id="sec-sim" class="section">
+    <div class="card">
+      <span class="tag tag-blue">시뮬레이터</span>
+      <h3>예제를 선택하고 값을 입력해보세요</h3>
+    </div>
+    <div class="card">
+      <div class="sim-row">
+        <label>예제 선택</label>
+        <select id="simType" onchange="updateSimUI()">
+          <option value="print_int">정수 변수 출력</option>
+          <option value="sum_two">두 정수 합</option>
+          <option value="print_float">실수 출력</option>
+          <option value="print_char">문자 출력</option>
+          <option value="multi_ops">사칙연산</option>
+        </select>
+      </div>
+      <div id="sim-inputs"></div>
+      <button class="run-btn" onclick="runSim()">실행 ▶</button>
+    </div>
+    <div class="card">
+      <div id="sim-code" style="margin-bottom:10px;"></div>
+      <div style="font-size:13px; color:#888780; margin-bottom:6px;">출력 결과</div>
+      <div class="sim-output" id="simOutput">실행 버튼을 눌러보세요</div>
+    </div>
+  </div>
+
+  <!-- 퀴즈 -->
+  <div id="sec-quiz" class="section">
+    <div id="quiz-container"></div>
+  </div>
+</div>
+
+<script>
+function showSection(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav > .nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'sandbox') updateSandbox();
+}
+
+// ── Examples ─────────────────────────────────────────────
+const examples = [
+  { title:'정수 변수 출력', tag:'tag-green',
+    prob:'정수 하나를 저장하는 변수를 만들고 10을 넣어 출력하시오.', out:'10',
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="fn">int</span> main() {
+    <span class="fn">int</span> a = 10;   <span class="cmt">// 정수 변수 선언 + 값 저장</span>
+    <span class="fn">printf</span>(<span class="str">"%d"</span>, a); <span class="cmt">// 출력</span>
+    <span class="kw">return</span> 0;
+}` },
+  { title:'두 수의 합', tag:'tag-blue',
+    prob:'정수 2개를 변수에 저장하여 합을 출력하시오.', out:'30',
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="fn">int</span> main() {
+    <span class="fn">int</span> a = 10;
+    <span class="fn">int</span> b = 20;
+    <span class="fn">int</span> sum = a <span class="op">+</span> b;
+    <span class="fn">printf</span>(<span class="str">"%d"</span>, sum);
+    <span class="kw">return</span> 0;
+}` },
+  { title:'정수 입출력', tag:'tag-amber',
+    prob:'정수 1개를 입력받아 그대로 출력하시오.\n입력: 5', out:'5',
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="fn">int</span> main() {
+    <span class="fn">int</span> a;
+    <span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;a);   <span class="cmt">// 입력</span>
+    <span class="fn">printf</span>(<span class="str">"%d"</span>, a);   <span class="cmt">// 출력</span>
+    <span class="kw">return</span> 0;
+}` },
+  { title:'두 수 입력 합', tag:'tag-teal',
+    prob:'정수 2개를 입력받아 합을 출력하시오.\n입력: 3 7', out:'10',
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="fn">int</span> main() {
+    <span class="fn">int</span> a, b;
+    <span class="fn">scanf</span>(<span class="str">"%d %d"</span>, &amp;a, &amp;b);
+    <span class="fn">printf</span>(<span class="str">"%d"</span>, a <span class="op">+</span> b);
+    <span class="kw">return</span> 0;
+}` },
+  { title:'문자 입출력', tag:'tag-purple',
+    prob:'문자 1개를 입력받아 출력하시오.\n입력: A', out:'A',
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="fn">int</span> main() {
+    <span class="fn">char</span> ch;
+    <span class="fn">scanf</span>(<span class="str">" %c"</span>, &amp;ch);  <span class="cmt">// 앞 공백 중요</span>
+    <span class="fn">printf</span>(<span class="str">"%c"</span>, ch);
+    <span class="kw">return</span> 0;
+}` }
+];
+
+function showEx(idx, btn) {
+  document.querySelectorAll('#ex-nav .nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const ex = examples[idx];
+  document.getElementById('ex-content').innerHTML = `
+    <div class="card">
+      <span class="tag ${ex.tag}">${ex.title}</span>
+      <h3>문제</h3>
+      <p style="white-space:pre-wrap;">${ex.prob}</p>
+      <h3 style="margin-top:10px;">예상 출력</h3>
+      <div class="sim-output" style="min-height:36px; margin-top:6px;">${ex.out}</div>
+    </div>
+    <div class="card">
+      <span class="tag tag-blue">정답 코드</span>
+      <pre>${ex.code}</pre>
+    </div>`;
+}
+showEx(0, document.querySelector('#ex-nav .nav-btn'));
+
+// ── Sandbox ──────────────────────────────────────────────
+function updateSandbox() {
+  const a = parseFloat(document.getElementById('sbA').value) || 0;
+  const b = parseFloat(document.getElementById('sbB').value) || 0;
+
+  const colors = [['#E6F1FB','#0C447C'],['#EAF3DE','#27500A']];
+  document.getElementById('sb-boxes').innerHTML = [
+    {name:'a', val:a}, {name:'b', val:b}
+  ].map(({name,val},i) => `
+    <div class="var-box">
+      <div class="box-label">int ${name} = ${val};</div>
+      <div class="box-body" style="background:${colors[i][0]}; border-color:${colors[i][1]}; color:${colors[i][1]};">${val}</div>
+      <div class="box-type" style="background:${colors[i][0]}; color:${colors[i][1]};">${name} (int)</div>
+    </div>`).join('');
+
+  const stats = [
+    ['a + b', a+b, '#E6F1FB','#0C447C'],
+    ['a - b', a-b, '#EAF3DE','#27500A'],
+    ['a * b', a*b, '#FAEEDA','#633806'],
+    ['a / b', b!==0 ? (a/b).toFixed(2) : '÷0!', '#EEEDFE','#3C3489'],
+    ['a % b', b!==0 ? (Math.trunc(a)%Math.trunc(b)) : '÷0!', '#FAECE7','#712B13']
+  ];
+  document.getElementById('sb-results').innerHTML = stats.map(([lbl,val,bg,fg]) => `
+    <div style="background:${bg}; border-radius:10px; padding:12px; text-align:center;">
+      <div style="font-size:11px; font-weight:700; color:${fg}; margin-bottom:4px; font-family:'Consolas',monospace;">${lbl}</div>
+      <div style="font-size:20px; font-weight:700; color:${fg};">${val}</div>
+    </div>`).join('');
+
+  document.getElementById('sb-code').innerHTML = hlCode(
+`int a = ${Math.trunc(a)};
+int b = ${Math.trunc(b)};
+printf("a+b = %d\\n", a+b);
+printf("a-b = %d\\n", a-b);
+printf("a*b = %d\\n", a*b);`);
+}
+updateSandbox();
+
+// ── Simulator ────────────────────────────────────────────
+const simDefs = {
+  print_int:  [{lbl:'a값',id:'sA',type:'number',def:42}],
+  sum_two:    [{lbl:'a',id:'sA',type:'number',def:3},{lbl:'b',id:'sB',type:'number',def:7}],
+  print_float:[{lbl:'값',id:'sA',type:'number',def:3.14}],
+  print_char: [{lbl:'문자',id:'sA',type:'text',def:'A',w:'60px'}],
+  multi_ops:  [{lbl:'a',id:'sA',type:'number',def:10},{lbl:'b',id:'sB',type:'number',def:3}]
+};
+
+const simRun = {
+  print_int:  (a)   => `${Math.trunc(a)}`,
+  sum_two:    (a,b) => `${Math.trunc(a)+Math.trunc(b)}`,
+  print_float:(a)   => `${parseFloat(a).toFixed(2)}`,
+  print_char: (ch)  => `${(ch||'A')[0]}`,
+  multi_ops:  (a,b) => {
+    a=Math.trunc(a); b=Math.trunc(b);
+    return [`a + b = ${a+b}`, `a - b = ${a-b}`, `a * b = ${a*b}`,
+            `a / b = ${b?parseFloat((a/b).toFixed(2)):'오류'}`,
+            `a % b = ${b?(a%b):'오류'}`].join('\n');
+  }
+};
+
+const simCodeTpl = {
+  print_int:  a => `int a = ${Math.trunc(a)};\nprintf("%d", a);`,
+  sum_two:    (a,b)=>`int a = ${Math.trunc(a)}, b = ${Math.trunc(b)};\nprintf("%d", a + b);`,
+  print_float:a => `double x = ${parseFloat(a).toFixed(2)};\nprintf("%.2f", x);`,
+  print_char: ch=> `char ch = '${(ch||'A')[0]}';\nprintf("%c", ch);`,
+  multi_ops:  (a,b)=>{a=Math.trunc(a);b=Math.trunc(b); return `int a=${a}, b=${b};\nprintf("a + b = %d\\n", a+b);\nprintf("a - b = %d\\n", a-b);\nprintf("a * b = %d\\n", a*b);`;}
+};
+
+function updateSimUI() {
+  const type = document.getElementById('simType').value;
+  document.getElementById('sim-inputs').innerHTML = simDefs[type].map(d => `
+    <div class="sim-row">
+      <label>${d.lbl}</label>
+      <input type="${d.type}" id="${d.id}" value="${d.def}" ${d.w?`style="width:${d.w}"`:''}/>
+    </div>`).join('');
+}
+
+function hlCode(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\b(int|float|double|char|long|return|printf|scanf)\b/g,'<span class="kw">$1</span>')
+    .replace(/"[^"]*"/g, m=>`<span class="str">${m}</span>`)
+    .replace(/(==|!=|>=|<=|&&|\+=|-=|\+\+|--)/g,'<span class="op">$1</span>');
+}
+
+function runSim() {
+  const type = document.getElementById('simType').value;
+  const defs = simDefs[type];
+  const vals = defs.map(d => {
+    const el = document.getElementById(d.id);
+    return d.type === 'text' ? el.value : parseFloat(el.value)||0;
+  });
+  const result = vals.length === 2 ? simRun[type](vals[0],vals[1]) : simRun[type](vals[0]);
+  const code   = vals.length === 2 ? simCodeTpl[type](vals[0],vals[1]) : simCodeTpl[type](vals[0]);
+  document.getElementById('simOutput').textContent = result;
+  document.getElementById('sim-code').innerHTML = `<pre>${hlCode(code)}</pre>`;
+}
+
+updateSimUI();
+setTimeout(runSim, 50);
+
+// ── Quiz ─────────────────────────────────────────────────
+const quizzes = [
+  { q:'정수를 저장할 때 사용하는 자료형은?', opts:['float','double','int','char'], ans:2, explain:'int는 정수(Integer)를 저장하는 자료형입니다.' },
+  { q:'다음 중 올바른 변수 이름은?', opts:['1num','int','_score','my-var'], ans:2, explain:'변수 이름은 영문자 또는 _로 시작해야 합니다. 숫자 시작, 예약어, 하이픈은 불가합니다.' },
+  { q:'scanf로 정수를 입력받을 때 올바른 코드는?', opts:['scanf("%d", a)','scanf("%d", &a)','scanf("%d", *a)','scanf(a, "%d")'], ans:1, explain:'scanf는 주소연산자 &를 반드시 붙여야 합니다.' },
+  { q:'실수를 출력할 때 사용하는 서식 지정자는?', opts:['%d','%c','%f','%s'], ans:2, explain:'%f는 float/double 실수를 출력합니다.' },
+  { q:'char ch = \'A\'; 에서 작은따옴표를 사용하는 이유는?', opts:['실수이기 때문','문자열이기 때문','문자 1개이기 때문','정수이기 때문'], ans:2, explain:'C언어에서 문자 1개는 작은따옴표(\'), 문자열은 큰따옴표(\")를 사용합니다.' },
+  { q:'printf("%.2f", 3.14159); 의 출력 결과는?', opts:['3','3.14159','3.14','3.1'], ans:2, explain:'%.2f는 소수점 아래 2자리까지 출력하므로 3.14가 됩니다.' }
+];
+
+let qIdx=0, answered=false, qScore=0;
+function renderQuiz() {
+  const q = quizzes[qIdx];
+  document.getElementById('quiz-container').innerHTML = `
+    <div class="card">
+      <span class="tag tag-purple">퀴즈 ${qIdx+1} / ${quizzes.length}</span>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-options">${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`).join('')}</div>
+      <div class="quiz-feedback" id="quiz-fb"></div>
+      <div class="quiz-nav">
+        <button onclick="prevQuiz()" ${qIdx===0?'disabled':''}>← 이전</button>
+        <button onclick="nextQuiz()" id="quiz-next" style="display:none;">다음 →</button>
+        <span class="quiz-progress">점수: ${qScore} / ${quizzes.length}</span>
+      </div>
+    </div>`;
+}
+function answerQuiz(i) {
+  if (answered) return; answered=true;
+  const q=quizzes[qIdx];
+  document.querySelectorAll('.quiz-opt').forEach((b,idx)=>{
+    if(idx===q.ans) b.classList.add('correct'); else if(idx===i) b.classList.add('wrong'); b.disabled=true;
+  });
+  const fb=document.getElementById('quiz-fb');
+  fb.style.display='block';
+  if(i===q.ans){fb.textContent='✓ 정답! '+q.explain; fb.className='quiz-feedback ok'; qScore++;}
+  else{fb.textContent='✗ 오답. '+q.explain; fb.className='quiz-feedback no';}
+  const nb=document.getElementById('quiz-next'); if(nb) nb.style.display='inline-block';
+}
+function nextQuiz() {
+  if(qIdx<quizzes.length-1){qIdx++;answered=false;renderQuiz();}
+  else{
+    document.getElementById('quiz-container').innerHTML=`
+      <div class="card" style="text-align:center;padding:2.5rem 1rem;">
+        <span class="tag tag-green">완료!</span>
+        <div style="font-size:36px;font-weight:700;margin:1rem 0;">${qScore} <span style="font-size:18px;color:#888780;font-weight:400;">/ ${quizzes.length}</span></div>
+        <p style="font-size:15px;">${qScore===quizzes.length?'완벽합니다!':qScore>=4?'잘했어요!':'다시 공부하고 도전해보세요!'}</p>
+        <button class="run-btn" style="margin-top:1.5rem;padding:10px 24px;font-size:14px;" onclick="resetQuiz()">다시 풀기</button>
+      </div>`;
+  }
+}
+function prevQuiz(){if(qIdx>0){qIdx--;answered=false;renderQuiz();}}
+function resetQuiz(){qIdx=0;qScore=0;answered=false;renderQuiz();}
+renderQuiz();
+</script>
+</body>
+</html>

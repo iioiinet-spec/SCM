@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C언어 if문 튜토리얼</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif; background: #f5f5f0; color: #1a1a18; min-height: 100vh; }
+.page { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+h1 { font-size: 22px; font-weight: 600; margin-bottom: 0.25rem; }
+.subtitle { font-size: 14px; color: #888780; margin-bottom: 1.5rem; }
+.nav { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.nav-btn {
+  padding: 6px 14px; border-radius: 999px;
+  border: 1px solid #d3d1c7;
+  background: #fff;
+  color: #5f5e5a;
+  font-size: 13px; cursor: pointer; transition: all 0.15s;
+}
+.nav-btn.active {
+  background: #2c2c2a; color: #fff; border-color: #2c2c2a; font-weight: 500;
+}
+.nav-btn:hover:not(.active) { background: #f1efe8; }
+.section { display: none; }
+.section.active { display: block; }
+.card {
+  background: #fff;
+  border: 1px solid #e4e2d8;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+.tag {
+  display: inline-block;
+  font-size: 11px; font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+  letter-spacing: 0.03em;
+}
+.tag-blue { background: #E6F1FB; color: #0C447C; }
+.tag-green { background: #EAF3DE; color: #27500A; }
+.tag-amber { background: #FAEEDA; color: #633806; }
+.tag-coral { background: #FAECE7; color: #712B13; }
+.tag-purple { background: #EEEDFE; color: #3C3489; }
+h3 { font-size: 15px; font-weight: 600; color: #1a1a18; margin-bottom: 6px; }
+p { font-size: 14px; color: #5f5e5a; line-height: 1.65; margin-bottom: 8px; }
+pre {
+  background: #f1efe8;
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 13px;
+  font-family: 'Consolas', 'D2Coding', monospace;
+  color: #2c2c2a;
+  overflow-x: auto;
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+code { font-family: 'Consolas', 'D2Coding', monospace; font-size: 13px; background: #f1efe8; padding: 1px 5px; border-radius: 4px; }
+.kw { color: #185FA5; font-weight: 600; }
+.fn { color: #3B6D11; }
+.str { color: #BA7517; }
+.cmt { color: #888780; font-style: italic; }
+.op { color: #993C1D; font-weight: 600; }
+.quiz-q { font-size: 14px; font-weight: 600; color: #1a1a18; margin-bottom: 12px; white-space: pre-wrap; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt {
+  padding: 10px 14px;
+  border: 1px solid #e4e2d8;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #1a1a18;
+  background: #fff;
+  text-align: left;
+  transition: all 0.15s;
+}
+.quiz-opt:hover:not(:disabled) { background: #f1efe8; }
+.quiz-opt.correct { background: #EAF3DE; border-color: #639922; color: #27500A; font-weight: 500; }
+.quiz-opt.wrong { background: #FCEBEB; border-color: #E24B4A; color: #791F1F; }
+.quiz-feedback { margin-top: 10px; font-size: 14px; font-weight: 500; padding: 8px 12px; border-radius: 8px; }
+.quiz-feedback.ok { color: #3B6D11; background: #EAF3DE; }
+.quiz-feedback.no { color: #A32D2D; background: #FCEBEB; }
+.quiz-nav { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+.quiz-nav button {
+  padding: 7px 16px; border-radius: 8px;
+  border: 1px solid #d3d1c7;
+  background: #fff; color: #1a1a18;
+  font-size: 13px; cursor: pointer;
+}
+.quiz-nav button:hover:not(:disabled) { background: #f1efe8; }
+.quiz-nav button:disabled { opacity: 0.4; cursor: default; }
+.quiz-progress { font-size: 12px; color: #888780; margin-left: auto; }
+.sim-row { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+.sim-row label { font-size: 13px; color: #5f5e5a; min-width: 70px; }
+select, input[type=number] {
+  padding: 6px 10px; border-radius: 8px;
+  border: 1px solid #d3d1c7;
+  font-size: 14px; background: #fff; color: #1a1a18;
+}
+input[type=number] { width: 90px; }
+.sim-btn {
+  padding: 7px 18px; border-radius: 8px;
+  border: 1px solid #d3d1c7;
+  background: #f1efe8; color: #1a1a18;
+  font-size: 13px; cursor: pointer;
+}
+.sim-btn:hover { background: #fff; }
+.sim-output {
+  background: #f1efe8;
+  border-radius: 8px;
+  padding: 1rem;
+  font-family: 'Consolas', 'D2Coding', monospace;
+  font-size: 14px;
+  color: #2c2c2a;
+  min-height: 44px;
+  border: 1px solid #e4e2d8;
+}
+.flow-box {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #e4e2d8;
+  font-size: 13px;
+  text-align: center;
+  display: inline-block;
+  background: #fff;
+}
+.flow-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.flow-row { display: flex; gap: 20px; align-items: center; }
+.arrow { color: #888780; font-size: 18px; }
+.highlight { background: #E6F1FB; border-color: #378ADD; color: #0C447C; font-weight: 500; }
+.note { background: #f1efe8; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #5f5e5a; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>C언어 if문 튜토리얼</h1>
+  <p class="subtitle">조건문 완전 정복 — 단독 if부터 논리연산자까지</p>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="showSection('intro', this)">if문 개요</button>
+    <button class="nav-btn" onclick="showSection('basic', this)">단독 if</button>
+    <button class="nav-btn" onclick="showSection('else', this)">if-else</button>
+    <button class="nav-btn" onclick="showSection('elif', this)">else if</button>
+    <button class="nav-btn" onclick="showSection('nested', this)">중첩 if</button>
+    <button class="nav-btn" onclick="showSection('logic', this)">논리연산자</button>
+    <button class="nav-btn" onclick="showSection('sim', this)">시뮬레이터</button>
+    <button class="nav-btn" onclick="showSection('quiz', this)">퀴즈</button>
+  </div>
+
+  <!-- 1. 개요 -->
+  <div id="sec-intro" class="section active">
+    <div class="card">
+      <span class="tag tag-blue">if문이란?</span>
+      <h3>조건에 따라 코드를 실행하는 문법</h3>
+      <p>"만약 ~라면 실행한다"를 코드로 표현한다. 조건이 <strong>참(true)</strong>이면 실행, <strong>거짓(false)</strong>이면 건너뛴다.</p>
+    </div>
+    <div class="card">
+      <span class="tag tag-amber">조건식에 쓰는 연산자</span>
+      <h3>비교 연산자</h3>
+      <p style="margin-bottom:8px;">
+        <code>&gt;</code> 크다 &nbsp;
+        <code>&lt;</code> 작다 &nbsp;
+        <code>==</code> 같다 &nbsp;
+        <code>!=</code> 다르다 &nbsp;
+        <code>&gt;=</code> 이상 &nbsp;
+        <code>&lt;=</code> 이하
+      </p>
+      <h3 style="margin-top:10px;">논리 연산자</h3>
+      <p>
+        <code>&amp;&amp;</code> AND (둘 다 참) &nbsp;
+        <code>||</code> OR (하나라도 참) &nbsp;
+        <code>!</code> NOT (반대로)
+      </p>
+    </div>
+    <div class="card">
+      <span class="tag tag-coral">주의!</span>
+      <h3>== 와 = 헷갈리지 말기</h3>
+      <p><code>==</code> 는 비교, <code>=</code> 는 대입(값 넣기). if 조건식에는 반드시 <code>==</code> 를 사용해야 한다.</p>
+    </div>
+  </div>
+
+  <!-- 2. 단독 if -->
+  <div id="sec-basic" class="section">
+    <div class="card">
+      <span class="tag tag-blue">단독 if</span>
+      <h3>기본 문법</h3>
+      <pre><span class="kw">if</span> (조건) {
+    실행문;
+}</pre>
+      <p>조건이 참이면 { } 안 실행. 거짓이면 아무것도 안 함.</p>
+    </div>
+    <div class="card">
+      <div class="flow-wrap">
+        <div class="flow-box" style="background:#f1efe8;">조건 검사</div>
+        <div class="arrow">↓</div>
+        <div class="flow-row">
+          <div>
+            <div style="font-size:12px; color:#888780; text-align:center; margin-bottom:4px;">참(true)</div>
+            <div class="flow-box highlight">{ } 안 실행</div>
+          </div>
+          <div>
+            <div style="font-size:12px; color:#888780; text-align:center; margin-bottom:4px;">거짓(false)</div>
+            <div class="flow-box" style="color:#888780;">아무것도 안 함</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <span class="tag tag-green">예제</span>
+      <h3>양수면 POSITIVE 출력</h3>
+      <pre><span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="fn">int</span> main() {
+    <span class="fn">int</span> x;
+    <span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;x);
+
+    <span class="kw">if</span> (x <span class="op">&gt;</span> 0) {
+        <span class="fn">printf</span>(<span class="str">"POSITIVE"</span>);
+    }
+
+    <span class="kw">return</span> 0;
+}</pre>
+    </div>
+  </div>
+
+  <!-- 3. if-else -->
+  <div id="sec-else" class="section">
+    <div class="card">
+      <span class="tag tag-blue">if - else</span>
+      <h3>기본 문법</h3>
+      <pre><span class="kw">if</span> (조건) {
+    실행문1;
+} <span class="kw">else</span> {
+    실행문2;
+}</pre>
+      <p>조건이 참이면 실행문1, 거짓이면 실행문2. 둘 중 하나는 반드시 실행된다.</p>
+    </div>
+    <div class="card">
+      <div class="flow-wrap">
+        <div class="flow-box" style="background:#f1efe8;">조건 검사</div>
+        <div class="arrow">↓</div>
+        <div class="flow-row">
+          <div>
+            <div style="font-size:12px; color:#888780; text-align:center; margin-bottom:4px;">참(true)</div>
+            <div class="flow-box highlight">실행문1</div>
+          </div>
+          <div>
+            <div style="font-size:12px; color:#888780; text-align:center; margin-bottom:4px;">거짓(false)</div>
+            <div class="flow-box" style="background:#FAEEDA; border-color:#EF9F27; color:#633806;">실행문2 (else)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <span class="tag tag-green">예제</span>
+      <h3>짝수면 EVEN, 아니면 ODD 출력</h3>
+      <pre><span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="fn">int</span> main() {
+    <span class="fn">int</span> x;
+    <span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;x);
+
+    <span class="kw">if</span> (x <span class="op">%</span> 2 <span class="op">==</span> 0) {
+        <span class="fn">printf</span>(<span class="str">"EVEN"</span>);
+    } <span class="kw">else</span> {
+        <span class="fn">printf</span>(<span class="str">"ODD"</span>);
+    }
+
+    <span class="kw">return</span> 0;
+}</pre>
+    </div>
+  </div>
+
+  <!-- 4. else if -->
+  <div id="sec-elif" class="section">
+    <div class="card">
+      <span class="tag tag-blue">if - else if - else</span>
+      <h3>여러 조건 검사</h3>
+      <pre><span class="kw">if</span> (조건1) {
+    실행문1;
+} <span class="kw">else if</span> (조건2) {
+    실행문2;
+} <span class="kw">else</span> {
+    실행문3;
+}</pre>
+      <p>위에서부터 순서대로 검사. 처음으로 참이 되는 블록 하나만 실행. 모두 거짓이면 else 실행.</p>
+    </div>
+    <div class="card">
+      <span class="tag tag-green">예제</span>
+      <h3>점수로 학점 출력 (90→A, 80→B, 70→C, 나머지→F)</h3>
+      <pre><span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="fn">int</span> main() {
+    <span class="fn">int</span> score;
+    <span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;score);
+
+    <span class="kw">if</span> (score <span class="op">&gt;=</span> 90) {
+        <span class="fn">printf</span>(<span class="str">"A"</span>);
+    } <span class="kw">else if</span> (score <span class="op">&gt;=</span> 80) {
+        <span class="fn">printf</span>(<span class="str">"B"</span>);
+    } <span class="kw">else if</span> (score <span class="op">&gt;=</span> 70) {
+        <span class="fn">printf</span>(<span class="str">"C"</span>);
+    } <span class="kw">else</span> {
+        <span class="fn">printf</span>(<span class="str">"F"</span>);
+    }
+
+    <span class="kw">return</span> 0;
+}</pre>
+    </div>
+    <div class="note">
+      핵심: score가 85면 <code>score &gt;= 80</code>에서 멈추고 아래 조건은 검사하지 않는다.
+    </div>
+  </div>
+
+  <!-- 5. 중첩 if -->
+  <div id="sec-nested" class="section">
+    <div class="card">
+      <span class="tag tag-blue">중첩 if</span>
+      <h3>if 안에 if</h3>
+      <pre><span class="kw">if</span> (조건1) {
+    <span class="kw">if</span> (조건2) {
+        실행문;
+    }
+}</pre>
+      <p>조건1도 만족 AND 조건2도 만족할 때 단계적으로 검사. 예: "양수이면서 짝수"</p>
+    </div>
+    <div class="card">
+      <span class="tag tag-green">예제</span>
+      <h3>양수면 POS, 양수이면서 짝수면 EVEN도 출력</h3>
+      <pre><span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="fn">int</span> main() {
+    <span class="fn">int</span> x;
+    <span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;x);
+
+    <span class="kw">if</span> (x <span class="op">&gt;</span> 0) {
+        <span class="fn">printf</span>(<span class="str">"POS\n"</span>);
+
+        <span class="kw">if</span> (x <span class="op">%</span> 2 <span class="op">==</span> 0) {
+            <span class="fn">printf</span>(<span class="str">"EVEN\n"</span>);
+        }
+    }
+
+    <span class="kw">return</span> 0;
+}</pre>
+    </div>
+  </div>
+
+  <!-- 6. 논리연산자 -->
+  <div id="sec-logic" class="section">
+    <div class="card">
+      <span class="tag tag-blue">&amp;&amp; (AND)</span>
+      <h3>둘 다 참이어야 참</h3>
+      <pre><span class="kw">if</span> (x <span class="op">&gt;</span> 0 <span class="op">&amp;&amp;</span> x <span class="op">%</span> 2 <span class="op">==</span> 0)
+<span class="cmt">// 양수이면서 짝수</span></pre>
+    </div>
+    <div class="card">
+      <span class="tag tag-green">|| (OR)</span>
+      <h3>하나라도 참이면 참</h3>
+      <pre><span class="kw">if</span> (x <span class="op">==</span> 0 <span class="op">||</span> x <span class="op">==</span> 10)
+<span class="cmt">// x가 0이거나 10이면</span></pre>
+    </div>
+    <div class="card">
+      <span class="tag tag-amber">! (NOT)</span>
+      <h3>참/거짓을 반대로</h3>
+      <pre><span class="kw">if</span> (<span class="op">!</span>(x <span class="op">&gt;</span> 0))
+<span class="cmt">// x가 양수가 아님 (0 또는 음수)</span></pre>
+    </div>
+    <div class="card">
+      <span class="tag tag-purple">범위 조건</span>
+      <h3>10 이상 20 이하</h3>
+      <pre><span class="kw">if</span> (x <span class="op">&gt;=</span> 10 <span class="op">&amp;&amp;</span> x <span class="op">&lt;=</span> 20)
+<span class="cmt">// AND로 묶기</span></pre>
+      <div class="note">범위 조건은 반드시 <code>&amp;&amp;</code> (AND)로 두 조건을 연결한다.</div>
+    </div>
+  </div>
+
+  <!-- 7. 시뮬레이터 -->
+  <div id="sec-sim" class="section">
+    <div class="card">
+      <span class="tag tag-blue">시뮬레이터</span>
+      <h3>예제를 선택하고 숫자를 입력해보세요</h3>
+      <p>C 코드를 직접 실행해서 결과를 확인할 수 있습니다.</p>
+    </div>
+    <div class="card">
+      <div class="sim-row">
+        <label>예제 선택</label>
+        <select id="simType">
+          <option value="positive">양수 판별 (단독 if)</option>
+          <option value="evenodd">짝수/홀수 (if-else)</option>
+          <option value="grade">학점 (else if)</option>
+          <option value="nested">양수+짝수 (중첩 if)</option>
+          <option value="andop">양수 AND 짝수 (&&)</option>
+        </select>
+      </div>
+      <div class="sim-row">
+        <label>정수 입력</label>
+        <input type="number" id="simInput" value="8" />
+        <button class="sim-btn" onclick="runSim()">실행 ▶</button>
+      </div>
+      <div id="simCode" style="margin-bottom:10px;"></div>
+      <div style="font-size:13px; color:#888780; margin-bottom:6px;">출력 결과</div>
+      <div class="sim-output" id="simOutput">실행 버튼을 눌러보세요</div>
+    </div>
+  </div>
+
+  <!-- 8. 퀴즈 -->
+  <div id="sec-quiz" class="section">
+    <div id="quiz-container"></div>
+  </div>
+</div>
+
+<script>
+function showSection(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+const simCodes = {
+  positive: {
+    code: `if (x > 0) {\n    printf("POSITIVE");\n}`,
+    run: x => x > 0 ? "POSITIVE" : "(출력 없음)"
+  },
+  evenodd: {
+    code: `if (x % 2 == 0) {\n    printf("EVEN");\n} else {\n    printf("ODD");\n}`,
+    run: x => x % 2 === 0 ? "EVEN" : "ODD"
+  },
+  grade: {
+    code: `if (score >= 90) {\n    printf("A");\n} else if (score >= 80) {\n    printf("B");\n} else if (score >= 70) {\n    printf("C");\n} else {\n    printf("F");\n}`,
+    run: x => x >= 90 ? "A" : x >= 80 ? "B" : x >= 70 ? "C" : "F"
+  },
+  nested: {
+    code: `if (x > 0) {\n    printf("POS\\n");\n    if (x % 2 == 0) {\n        printf("EVEN\\n");\n    }\n}`,
+    run: x => {
+      let out = [];
+      if (x > 0) { out.push("POS"); if (x % 2 === 0) out.push("EVEN"); }
+      return out.length ? out.join("\n") : "(출력 없음)";
+    }
+  },
+  andop: {
+    code: `if (x > 0 && x % 2 == 0) {\n    printf("YES");\n} else {\n    printf("NO");\n}`,
+    run: x => (x > 0 && x % 2 === 0) ? "YES" : "NO"
+  }
+};
+
+function runSim() {
+  const type = document.getElementById('simType').value;
+  const val = parseInt(document.getElementById('simInput').value);
+  const sim = simCodes[type];
+  document.getElementById('simOutput').textContent = isNaN(val) ? "유효한 정수를 입력하세요" : sim.run(val);
+  const escaped = sim.code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const highlighted = escaped
+    .replace(/\b(if|else|printf|return)\b/g, '<span class="kw">$1</span>')
+    .replace(/"[^"]*"/g, s => `<span class="str">${s}</span>`)
+    .replace(/(%=?|==|!=|>=|<=|&&|>|<)/g, '<span class="op">$1</span>');
+  document.getElementById('simCode').innerHTML = `<pre style="margin:0">${highlighted}</pre>`;
+}
+runSim();
+
+const quizzes = [
+  { q: "다음 코드에서 x = 7일 때 출력은?\n\nif (x > 5) { printf(\"BIG\"); }", opts: ["BIG","(출력 없음)","오류","5"], ans: 0, explain: "7 > 5는 참이므로 BIG가 출력됩니다." },
+  { q: "다음 중 짝수를 판별하는 올바른 조건식은?", opts: ["x == 2","x % 2 == 0","x / 2 == 0","x = 0"], ans: 1, explain: "나머지 연산자 %를 써서 2로 나눈 나머지가 0인지 확인합니다." },
+  { q: "score = 85일 때 아래 코드의 출력은?\n\nif (score >= 90) printf(\"A\");\nelse if (score >= 80) printf(\"B\");\nelse if (score >= 70) printf(\"C\");\nelse printf(\"F\");", opts: ["A","B","C","F"], ans: 1, explain: "85 >= 90은 거짓, 85 >= 80은 참이므로 B가 출력됩니다." },
+  { q: "= 와 == 의 차이는?", opts: ["둘 다 비교 연산자","= 는 대입, == 는 비교","= 는 비교, == 는 대입","차이 없음"], ans: 1, explain: "= 는 값을 넣는 대입, == 는 두 값이 같은지 비교합니다." },
+  { q: "x = 12일 때 다음 조건 결과는?\n\nif (x > 0 && x % 2 == 0)", opts: ["참(true)","거짓(false)","오류","알 수 없음"], ans: 0, explain: "12 > 0 (참) AND 12 % 2 == 0 (참) → 둘 다 참이므로 결과는 참입니다." },
+  { q: "다음 중 '10 이상 20 이하' 조건을 올바르게 표현한 것은?", opts: ["10 <= x <= 20","x >= 10 && x <= 20","x >= 10 || x <= 20","x == 10 && x == 20"], ans: 1, explain: "범위 조건은 && (AND)로 두 조건을 연결합니다." }
+];
+
+let qIdx = 0, answered = false, score = 0;
+
+function renderQuiz() {
+  const q = quizzes[qIdx];
+  let optsHtml = q.opts.map((o, i) =>
+    `<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`
+  ).join('');
+  document.getElementById('quiz-container').innerHTML = `
+    <div class="card">
+      <span class="tag tag-purple">퀴즈 ${qIdx+1} / ${quizzes.length}</span>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-options" id="quiz-opts">${optsHtml}</div>
+      <div class="quiz-feedback" id="quiz-fb" style="display:none;"></div>
+      <div class="quiz-nav">
+        <button onclick="prevQuiz()" ${qIdx===0?'disabled':''}>← 이전</button>
+        <button onclick="nextQuiz()" id="quiz-next" style="display:none;">다음 →</button>
+        <span class="quiz-progress">점수: ${score} / ${quizzes.length}</span>
+      </div>
+    </div>`;
+}
+
+function answerQuiz(i) {
+  if (answered) return;
+  answered = true;
+  const q = quizzes[qIdx];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach((btn, idx) => {
+    if (idx === q.ans) btn.classList.add('correct');
+    else if (idx === i) btn.classList.add('wrong');
+    btn.disabled = true;
+  });
+  const fb = document.getElementById('quiz-fb');
+  fb.style.display = 'block';
+  if (i === q.ans) {
+    fb.textContent = "✓ 정답! " + q.explain;
+    fb.className = 'quiz-feedback ok';
+    score++;
+  } else {
+    fb.textContent = "✗ 오답. " + q.explain;
+    fb.className = 'quiz-feedback no';
+  }
+  const nextBtn = document.getElementById('quiz-next');
+  if (nextBtn) nextBtn.style.display = 'inline-block';
+}
+
+function nextQuiz() {
+  if (qIdx < quizzes.length - 1) {
+    qIdx++; answered = false; renderQuiz();
+  } else {
+    document.getElementById('quiz-container').innerHTML = `
+      <div class="card" style="text-align:center; padding:2.5rem 1rem;">
+        <span class="tag tag-green">완료!</span>
+        <div style="font-size:36px; font-weight:700; margin:1rem 0; color:#1a1a18;">${score} <span style="font-size:18px; color:#888780; font-weight:400;">/ ${quizzes.length}</span></div>
+        <p style="font-size:15px;">${score === quizzes.length ? '완벽합니다!' : score >= 4 ? '잘했어요! 조금 더 연습해보세요.' : '다시 한번 공부하고 도전해보세요!'}</p>
+        <button class="sim-btn" style="margin-top:1.5rem; padding: 10px 24px; font-size:14px;" onclick="resetQuiz()">다시 풀기</button>
+      </div>`;
+  }
+}
+
+function prevQuiz() {
+  if (qIdx > 0) { qIdx--; answered = false; renderQuiz(); }
+}
+
+function resetQuiz() { qIdx = 0; score = 0; answered = false; renderQuiz(); }
+
+renderQuiz();
+</script>
+</body>
+</html>

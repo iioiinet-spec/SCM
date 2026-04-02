@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C언어 while문 튜토리얼</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif; background: #f5f5f0; color: #1a1a18; min-height: 100vh; }
+.page { max-width: 780px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+h1 { font-size: 22px; font-weight: 600; margin-bottom: 0.25rem; }
+.subtitle { font-size: 14px; color: #888780; margin-bottom: 1.5rem; }
+.nav { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.nav-btn {
+  padding: 6px 14px; border-radius: 999px;
+  border: 1px solid #d3d1c7; background: #fff;
+  color: #5f5e5a; font-size: 13px; cursor: pointer; transition: all 0.15s;
+}
+.nav-btn.active { background: #2c2c2a; color: #fff; border-color: #2c2c2a; font-weight: 500; }
+.nav-btn:hover:not(.active) { background: #f1efe8; }
+.section { display: none; }
+.section.active { display: block; }
+.card { background: #fff; border: 1px solid #e4e2d8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 999px; margin-bottom: 8px; }
+.tag-blue   { background: #E6F1FB; color: #0C447C; }
+.tag-green  { background: #EAF3DE; color: #27500A; }
+.tag-amber  { background: #FAEEDA; color: #633806; }
+.tag-coral  { background: #FAECE7; color: #712B13; }
+.tag-purple { background: #EEEDFE; color: #3C3489; }
+.tag-teal   { background: #E1F5EE; color: #085041; }
+.tag-red    { background: #FCEBEB; color: #791F1F; }
+h3 { font-size: 15px; font-weight: 600; color: #1a1a18; margin-bottom: 6px; }
+p  { font-size: 14px; color: #5f5e5a; line-height: 1.65; margin-bottom: 8px; }
+pre {
+  background: #f1efe8; border-radius: 8px; padding: 1rem;
+  font-size: 13px; font-family: 'Consolas', 'D2Coding', monospace;
+  color: #2c2c2a; overflow-x: auto; line-height: 1.7; margin-bottom: 8px;
+}
+code { font-family: 'Consolas', 'D2Coding', monospace; font-size: 13px; background: #f1efe8; padding: 1px 5px; border-radius: 4px; }
+.kw  { color: #185FA5; font-weight: 600; }
+.fn  { color: #3B6D11; }
+.str { color: #BA7517; }
+.cmt { color: #888780; font-style: italic; }
+.op  { color: #993C1D; font-weight: 600; }
+.note { background: #f1efe8; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #5f5e5a; margin-top: 8px; }
+
+/* flow */
+.flow-wrap { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 0.75rem 0; }
+.flow-box { padding: 8px 20px; border-radius: 8px; border: 1px solid #e4e2d8; font-size: 13px; text-align: center; background: #fff; min-width: 150px; }
+.flow-cond   { background: #E6F1FB; border-color: #378ADD; color: #0C447C; font-weight: 500; }
+.flow-action { background: #EAF3DE; border-color: #639922; color: #27500A; font-weight: 500; }
+.flow-end    { background: #f1efe8; border-color: #d3d1c7; color: #5f5e5a; }
+.flow-row    { display: flex; gap: 24px; align-items: flex-start; }
+.flow-col    { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.arrow       { color: #888780; font-size: 15px; line-height: 1; }
+.arrow-lbl   { font-size: 11px; color: #888780; }
+
+/* compare table */
+.cmp-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.cmp-table th { background: #f1efe8; padding: 8px 12px; border: 1px solid #e4e2d8; font-weight: 600; text-align: center; }
+.cmp-table td { padding: 8px 12px; border: 1px solid #e4e2d8; text-align: center; vertical-align: middle; }
+.cmp-table tr:nth-child(even) td { background: #faf9f6; }
+
+/* trace */
+.trace-table { border-collapse: collapse; width: 100%; font-size: 13px; }
+.trace-table th { background: #f1efe8; padding: 7px 10px; border: 1px solid #e4e2d8; font-weight: 600; text-align: center; }
+.trace-table td { padding: 7px 10px; border: 1px solid #e4e2d8; text-align: center; font-family: 'Consolas', monospace; }
+.trace-table tr.hi td { background: #E6F1FB; color: #0C447C; font-weight: 600; }
+.trace-table tr.end td { background: #FCEBEB; color: #791F1F; }
+.step-ctrl { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+.step-ctrl button { padding: 6px 14px; border-radius: 8px; border: 1px solid #d3d1c7; background: #fff; font-size: 13px; cursor: pointer; }
+.step-ctrl button:hover:not(:disabled) { background: #f1efe8; }
+.step-ctrl button:disabled { opacity: 0.4; cursor: default; }
+.step-info { font-size: 12px; color: #888780; margin-left: auto; }
+
+/* pattern cards */
+.pat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 10px; margin-top: 8px; }
+.pat-card { background: #f1efe8; border-radius: 10px; padding: 12px 14px; }
+.pat-card .lbl { font-size: 11px; font-weight: 700; color: #888780; margin-bottom: 6px; }
+.pat-card pre { margin: 0; padding: 8px; font-size: 12px; }
+
+/* sim */
+.sim-row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+.sim-row label { font-size: 13px; color: #5f5e5a; min-width: 70px; }
+select, input[type=number], input[type=text] { padding: 6px 10px; border-radius: 8px; border: 1px solid #d3d1c7; font-size: 14px; background: #fff; color: #1a1a18; }
+input[type=number] { width: 100px; }
+input[type=text]   { width: 160px; }
+.run-btn { padding: 7px 20px; border-radius: 8px; border: 1px solid #d3d1c7; background: #f1efe8; color: #1a1a18; font-size: 13px; cursor: pointer; }
+.run-btn:hover { background: #fff; }
+.sim-output { background: #f1efe8; border-radius: 8px; padding: 1rem; font-family: 'Consolas','D2Coding',monospace; font-size: 14px; color: #2c2c2a; min-height: 50px; border: 1px solid #e4e2d8; white-space: pre; overflow-x: auto; }
+
+/* quiz */
+.quiz-q { font-size: 14px; font-weight: 600; color: #1a1a18; margin-bottom: 12px; white-space: pre-wrap; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { padding: 10px 14px; border: 1px solid #e4e2d8; border-radius: 8px; font-size: 14px; cursor: pointer; color: #1a1a18; background: #fff; text-align: left; transition: all 0.15s; }
+.quiz-opt:hover:not(:disabled) { background: #f1efe8; }
+.quiz-opt.correct { background: #EAF3DE; border-color: #639922; color: #27500A; font-weight: 500; }
+.quiz-opt.wrong   { background: #FCEBEB; border-color: #E24B4A; color: #791F1F; }
+.quiz-feedback { margin-top: 10px; font-size: 14px; font-weight: 500; padding: 8px 12px; border-radius: 8px; display: none; }
+.quiz-feedback.ok { color: #3B6D11; background: #EAF3DE; }
+.quiz-feedback.no { color: #A32D2D; background: #FCEBEB; }
+.quiz-nav { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+.quiz-nav button { padding: 7px 16px; border-radius: 8px; border: 1px solid #d3d1c7; background: #fff; color: #1a1a18; font-size: 13px; cursor: pointer; }
+.quiz-nav button:hover:not(:disabled) { background: #f1efe8; }
+.quiz-nav button:disabled { opacity: 0.4; cursor: default; }
+.quiz-progress { font-size: 12px; color: #888780; margin-left: auto; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>C언어 while문 튜토리얼</h1>
+  <p class="subtitle">조건 반복의 핵심 — 입력 처리부터 자릿수 분해까지</p>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="showSection('intro',this)">개요</button>
+    <button class="nav-btn" onclick="showSection('syntax',this)">문법 구조</button>
+    <button class="nav-btn" onclick="showSection('compare',this)">for vs while</button>
+    <button class="nav-btn" onclick="showSection('patterns',this)">핵심 패턴</button>
+    <button class="nav-btn" onclick="showSection('examples',this)">예제 모음</button>
+    <button class="nav-btn" onclick="showSection('trace',this)">실행 추적</button>
+    <button class="nav-btn" onclick="showSection('sim',this)">시뮬레이터</button>
+    <button class="nav-btn" onclick="showSection('quiz',this)">퀴즈</button>
+  </div>
+
+  <!-- 개요 -->
+  <div id="sec-intro" class="section active">
+    <div class="card">
+      <span class="tag tag-blue">while문이란?</span>
+      <h3>조건이 참인 동안 계속 반복하는 반복문</h3>
+      <p>for문은 <strong>횟수 반복</strong>에 강하고, while문은 <strong>조건이 유지되는 동안</strong> 반복에 강하다.</p>
+    </div>
+    <div class="card">
+      <span class="tag tag-amber">대표 사용처</span>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin-top:6px;">
+        <div style="background:#f1efe8; border-radius:10px; padding:12px 14px;">
+          <div style="font-size:11px; font-weight:700; color:#888780; margin-bottom:4px;">센티넬 입력</div>
+          <p style="font-size:13px; margin:0;">특정 값이 나오면 종료</p>
+        </div>
+        <div style="background:#f1efe8; border-radius:10px; padding:12px 14px;">
+          <div style="font-size:11px; font-weight:700; color:#888780; margin-bottom:4px;">값 감소 반복</div>
+          <p style="font-size:13px; margin:0;">0이 될 때까지 반복</p>
+        </div>
+        <div style="background:#f1efe8; border-radius:10px; padding:12px 14px;">
+          <div style="font-size:11px; font-weight:700; color:#888780; margin-bottom:4px;">자릿수 분해</div>
+          <p style="font-size:13px; margin:0;">10으로 나누기 반복</p>
+        </div>
+        <div style="background:#f1efe8; border-radius:10px; padding:12px 14px;">
+          <div style="font-size:11px; font-weight:700; color:#888780; margin-bottom:4px;">EOF 입력</div>
+          <p style="font-size:13px; margin:0;">입력 끝날 때까지 반복</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <span class="tag tag-red">무한루프 주의!</span>
+      <h3>조건을 바꾸는 코드가 반드시 있어야 한다</h3>
+      <pre><span class="kw">while</span> (x <span class="op">&gt;</span> 0) {
+    x<span class="op">--</span>; <span class="cmt">← 이게 없으면 영원히 반복</span>
+}</pre>
+    </div>
+  </div>
+
+  <!-- 문법 구조 -->
+  <div id="sec-syntax" class="section">
+    <div class="card">
+      <span class="tag tag-blue">기본 문법</span>
+      <pre><span class="kw">while</span> (조건) {
+    실행문;
+    <span class="cmt">// 조건을 바꾸는 코드</span>
+}</pre>
+    </div>
+    <div class="card">
+      <span class="tag tag-green">동작 순서</span>
+      <div class="flow-wrap">
+        <div class="flow-box flow-cond">① 조건 검사</div>
+        <div class="flow-row">
+          <div class="flow-col">
+            <div class="arrow-lbl">참(true) ↓</div>
+            <div class="flow-box flow-action">② 실행문 실행</div>
+            <div class="arrow">↓</div>
+            <div class="flow-box" style="background:#FAEEDA;border-color:#EF9F27;color:#633806;font-weight:500;">③ 조건 변화 (i++)</div>
+            <div style="font-size:12px; color:#888780; margin-top:2px;">↑ 다시 조건 검사</div>
+          </div>
+          <div class="flow-col" style="margin-top:24px;">
+            <div class="arrow-lbl">거짓(false) →</div>
+            <div class="flow-box flow-end">④ 즉시 종료</div>
+          </div>
+        </div>
+      </div>
+      <div class="note">조건을 먼저 검사하므로, 처음부터 거짓이면 한 번도 실행되지 않는다.</div>
+    </div>
+    <div class="card">
+      <span class="tag tag-purple">do-while 비교</span>
+      <pre><span class="cmt">/* while: 조건 먼저 → 0번 가능 */</span>
+<span class="kw">while</span> (조건) { 실행문; }
+
+<span class="cmt">/* do-while: 일단 실행 → 최소 1번 */</span>
+<span class="kw">do</span> { 실행문; } <span class="kw">while</span> (조건);</pre>
+    </div>
+  </div>
+
+  <!-- for vs while -->
+  <div id="sec-compare" class="section">
+    <div class="card">
+      <span class="tag tag-teal">for vs while 비교</span>
+      <table class="cmp-table" style="margin-top:8px;">
+        <thead><tr><th>구분</th><th>for문</th><th>while문</th></tr></thead>
+        <tbody>
+          <tr><td>강점</td><td>횟수가 정해진 반복</td><td>조건이 유지되는 동안 반복</td></tr>
+          <tr><td>초기식</td><td>for 헤더에 포함</td><td>while 앞에 별도 선언</td></tr>
+          <tr><td>증감식</td><td>for 헤더에 포함</td><td>실행문 안에 직접 작성</td></tr>
+          <tr><td>0회 실행</td><td>가능</td><td>가능</td></tr>
+          <tr><td>대표 패턴</td><td>1~N 출력, 배열 순회</td><td>센티넬 입력, 자릿수 분해, EOF</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <span class="tag tag-green">같은 결과, 다른 문법</span>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div>
+          <div style="font-size:12px; font-weight:700; color:#0C447C; margin-bottom:6px;">for문</div>
+          <pre style="margin:0;">
+<span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>1; i<span class="op">&lt;=</span>5; i<span class="op">++</span>)
+    <span class="fn">printf</span>(<span class="str">"%d "</span>, i);</pre>
+        </div>
+        <div>
+          <div style="font-size:12px; font-weight:700; color:#27500A; margin-bottom:6px;">while문</div>
+          <pre style="margin:0;">
+<span class="fn">int</span> i <span class="op">=</span> 1;
+<span class="kw">while</span> (i <span class="op">&lt;=</span> 5) {
+    <span class="fn">printf</span>(<span class="str">"%d "</span>, i);
+    i<span class="op">++</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 핵심 패턴 -->
+  <div id="sec-patterns" class="section">
+    <div class="card">
+      <span class="tag tag-blue">while 핵심 패턴 4가지</span>
+      <div class="pat-grid">
+        <div class="pat-card">
+          <div class="lbl">① 횟수 반복 (for 대체)</div>
+          <pre>i = 1;
+<span class="kw">while</span>(i<span class="op">&lt;=</span>N) {
+    ...
+    i<span class="op">++</span>;
+}</pre>
+        </div>
+        <div class="pat-card">
+          <div class="lbl">② 센티넬 입력</div>
+          <pre><span class="kw">while</span>(1) {
+    <span class="fn">scanf</span>(...);
+    <span class="kw">if</span>(종료값)
+        <span class="kw">break</span>;
+    ...
+}</pre>
+        </div>
+        <div class="pat-card">
+          <div class="lbl">③ 자릿수 처리</div>
+          <pre><span class="kw">while</span>(n <span class="op">&gt;</span> 0) {
+    n<span class="op">%</span>10;   <span class="cmt">// 1의 자리</span>
+    n<span class="op">/=</span>10;  <span class="cmt">// 자리 제거</span>
+}</pre>
+        </div>
+        <div class="pat-card">
+          <div class="lbl">④ EOF 입력</div>
+          <pre><span class="kw">while</span>(
+  <span class="fn">scanf</span>(<span class="str">"%d"</span>,&x)
+  <span class="op">==</span>1) {
+    ...
+}</pre>
+        </div>
+      </div>
+    </div>
+    <div class="note">패턴 ②에서 <code>while(1)</code>은 조건이 항상 참이므로 무한루프. 반드시 <code>break</code>로 탈출해야 한다.</div>
+  </div>
+
+  <!-- 예제 모음 -->
+  <div id="sec-examples" class="section">
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;" id="ex-nav">
+      <button class="nav-btn active" onclick="showEx(0,this)">1~N 출력</button>
+      <button class="nav-btn" onclick="showEx(1,this)">1~N 합</button>
+      <button class="nav-btn" onclick="showEx(2,this)">0 입력까지 합</button>
+      <button class="nav-btn" onclick="showEx(3,this)">자릿수 합</button>
+      <button class="nav-btn" onclick="showEx(4,this)">EOF 입력</button>
+    </div>
+    <div id="ex-content"></div>
+  </div>
+
+  <!-- 실행 추적 -->
+  <div id="sec-trace" class="section">
+    <div class="card">
+      <span class="tag tag-teal">단계별 실행 추적기</span>
+      <h3>패턴을 선택하고 값을 입력하세요</h3>
+      <div class="sim-row" style="margin-top:10px;">
+        <label>패턴</label>
+        <select id="traceType" onchange="buildTrace()">
+          <option value="count">횟수 반복 (i&lt;=N)</option>
+          <option value="digit">자릿수 분해</option>
+        </select>
+        <label id="traceValLbl">N</label>
+        <input type="number" id="traceVal" value="4" min="1" max="99999" oninput="buildTrace()"/>
+      </div>
+    </div>
+    <div class="card">
+      <div class="step-ctrl" id="trace-ctrl">
+        <button onclick="traceStep(-1)" id="trace-prev" disabled>← 이전</button>
+        <button onclick="traceStep(1)"  id="trace-next">다음 →</button>
+        <button onclick="traceReset()">처음으로</button>
+        <span class="step-info" id="trace-info"></span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="trace-table">
+          <thead id="trace-head"></thead>
+          <tbody id="trace-body"></tbody>
+        </table>
+      </div>
+      <div id="trace-msg" style="margin-top:10px; font-size:14px; color:#5f5e5a;"></div>
+    </div>
+  </div>
+
+  <!-- 시뮬레이터 -->
+  <div id="sec-sim" class="section">
+    <div class="card">
+      <span class="tag tag-blue">시뮬레이터</span>
+      <h3>예제를 선택하고 값을 입력해보세요</h3>
+    </div>
+    <div class="card">
+      <div class="sim-row">
+        <label>예제 선택</label>
+        <select id="simType" onchange="updateSimUI()">
+          <option value="count">1~N 출력</option>
+          <option value="sum">1~N 합</option>
+          <option value="sentinel">0 나올 때까지 합 (공백 구분)</option>
+          <option value="digit">자릿수 합</option>
+        </select>
+      </div>
+      <div id="sim-inputs"></div>
+      <button class="run-btn" onclick="runSim()">실행 ▶</button>
+    </div>
+    <div class="card">
+      <div id="sim-code" style="margin-bottom:10px;"></div>
+      <div style="font-size:13px; color:#888780; margin-bottom:6px;">출력 결과</div>
+      <div class="sim-output" id="simOutput">실행 버튼을 눌러보세요</div>
+    </div>
+  </div>
+
+  <!-- 퀴즈 -->
+  <div id="sec-quiz" class="section">
+    <div id="quiz-container"></div>
+  </div>
+</div>
+
+<script>
+function showSection(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav > .nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── Examples ─────────────────────────────────────────────
+const examples = [
+  { title:'1부터 N까지 출력', tag:'tag-green',
+    prob:'정수 N을 입력받아 1부터 N까지 출력하시오.\n입력: 5', out:'1 2 3 4 5',
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="fn">int</span> main() {
+    <span class="fn">int</span> n;
+    <span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;n);
+
+    <span class="fn">int</span> i = 1;
+    <span class="kw">while</span> (i <span class="op">&lt;=</span> n) {
+        <span class="fn">printf</span>(<span class="str">"%d "</span>, i);
+        i<span class="op">++</span>;
+    }
+    <span class="kw">return</span> 0;
+}` },
+  { title:'1부터 N까지 합', tag:'tag-blue',
+    prob:'정수 N을 입력받아 1~N 합을 출력하시오.\n입력: 5', out:'15',
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="fn">int</span> main() {
+    <span class="fn">int</span> n;
+    <span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;n);
+
+    <span class="fn">int</span> i = 1;
+    <span class="fn">long long</span> sum = 0;
+
+    <span class="kw">while</span> (i <span class="op">&lt;=</span> n) {
+        sum <span class="op">+=</span> i;
+        i<span class="op">++</span>;
+    }
+
+    <span class="fn">printf</span>(<span class="str">"%lld"</span>, sum);
+    <span class="kw">return</span> 0;
+}` },
+  { title:'0 입력까지 합 (센티넬)', tag:'tag-amber',
+    prob:'0이 입력될 때까지 합산 후 출력하시오.\n입력: 3 5 2 0', out:'10',
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="fn">int</span> main() {
+    <span class="fn">int</span> x;
+    <span class="fn">long long</span> sum = 0;
+
+    <span class="kw">while</span> (1) {
+        <span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;x);
+        <span class="kw">if</span> (x <span class="op">==</span> 0) <span class="kw">break</span>;
+        sum <span class="op">+=</span> x;
+    }
+
+    <span class="fn">printf</span>(<span class="str">"%lld"</span>, sum);
+    <span class="kw">return</span> 0;
+}` },
+  { title:'자릿수 합', tag:'tag-teal',
+    prob:'정수 N의 각 자리 숫자의 합을 출력하시오.\n입력: 1234', out:'10',
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="fn">int</span> main() {
+    <span class="fn">int</span> n;
+    <span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;n);
+
+    <span class="fn">int</span> sum = 0;
+
+    <span class="kw">while</span> (n <span class="op">&gt;</span> 0) {
+        sum <span class="op">+=</span> (n <span class="op">%</span> 10);
+        n <span class="op">/=</span> 10;
+    }
+
+    <span class="fn">printf</span>(<span class="str">"%d"</span>, sum);
+    <span class="kw">return</span> 0;
+}` },
+  { title:'EOF까지 입력 출력', tag:'tag-purple',
+    prob:'입력이 끝날 때(EOF)까지 정수를 한 줄씩 출력하시오.\n입력: 1 2 3', out:'1\n2\n3',
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="fn">int</span> main() {
+    <span class="fn">int</span> x;
+
+    <span class="kw">while</span> (<span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;x) <span class="op">==</span> 1) {
+        <span class="fn">printf</span>(<span class="str">"%d\n"</span>, x);
+    }
+
+    <span class="kw">return</span> 0;
+}` }
+];
+
+function showEx(idx, btn) {
+  document.querySelectorAll('#ex-nav .nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const ex = examples[idx];
+  document.getElementById('ex-content').innerHTML = `
+    <div class="card">
+      <span class="tag ${ex.tag}">${ex.title}</span>
+      <h3>문제</h3>
+      <p style="white-space:pre-wrap;">${ex.prob}</p>
+      <h3 style="margin-top:10px;">예상 출력</h3>
+      <div class="sim-output" style="min-height:36px; margin-top:6px;">${ex.out}</div>
+    </div>
+    <div class="card">
+      <span class="tag tag-blue">정답 코드</span>
+      <pre>${ex.code}</pre>
+    </div>`;
+}
+showEx(0, document.querySelector('#ex-nav .nav-btn'));
+
+// ── Trace ────────────────────────────────────────────────
+let traceData = [], traceIdx = 0;
+
+function buildTrace() {
+  const type = document.getElementById('traceType').value;
+  const val  = parseInt(document.getElementById('traceVal').value) || 4;
+  traceData = [];
+
+  if (type === 'count') {
+    document.getElementById('traceValLbl').textContent = 'N';
+    const N = Math.min(val, 10);
+    document.getElementById('trace-head').innerHTML = '<tr><th>단계</th><th>i</th><th>조건(i&lt;=N)</th><th>sum/동작</th></tr>';
+    traceData.push({i:1, cond:'-', act:`초기화: i=1`});
+    for (let i=1; i<=N+1; i++) {
+      const ok = i <= N;
+      traceData.push({i, cond:`${i}<=${N} → ${ok?'참':'거짓'}`, act: ok ? `printf("%d ", ${i})` : '종료', end:!ok});
+      if (!ok) break;
+      traceData.push({i:i+1, cond:'-', act:`i++ → i=${i+1}`});
+    }
+  } else {
+    document.getElementById('traceValLbl').textContent = 'N';
+    const N = Math.min(Math.abs(val)||1234, 99999);
+    document.getElementById('trace-head').innerHTML = '<tr><th>단계</th><th>n</th><th>조건(n&gt;0)</th><th>동작</th></tr>';
+    traceData.push({i:N, cond:'-', act:`초기값: n=${N}`});
+    let n = N, sum = 0;
+    while (true) {
+      const ok = n > 0;
+      traceData.push({i:n, cond:`${n}>0 → ${ok?'참':'거짓'}`, act: ok ? `sum+=${n%10}(1의자리), sum=${sum+(n%10)}` : '종료', end:!ok});
+      if (!ok) break;
+      sum += n % 10;
+      n = Math.floor(n / 10);
+      traceData.push({i:n, cond:'-', act:`n/=10 → n=${n}`});
+      if (traceData.length > 40) break;
+    }
+  }
+  traceIdx = 0;
+  renderTrace();
+}
+
+function renderTrace() {
+  const rows = traceData.slice(0, traceIdx+1);
+  document.getElementById('trace-body').innerHTML = rows.map((r, idx) => {
+    const cls = idx===traceIdx ? (r.end ? 'end' : 'hi') : '';
+    return `<tr class="${cls}"><td>${idx+1}</td><td>${r.i}</td><td>${r.cond}</td><td>${r.act}</td></tr>`;
+  }).join('');
+  document.getElementById('trace-info').textContent = `${traceIdx+1} / ${traceData.length}`;
+  document.getElementById('trace-prev').disabled = traceIdx === 0;
+  document.getElementById('trace-next').disabled = traceIdx === traceData.length-1;
+  document.getElementById('trace-msg').textContent = traceData[traceIdx].act;
+}
+
+function traceStep(d) { traceIdx = Math.max(0, Math.min(traceData.length-1, traceIdx+d)); renderTrace(); }
+function traceReset() { traceIdx = 0; renderTrace(); }
+buildTrace();
+
+// ── Simulator ────────────────────────────────────────────
+const simDefs = {
+  count:    [{lbl:'N',id:'sA',def:5,max:100}],
+  sum:      [{lbl:'N',id:'sA',def:10,max:1000}],
+  sentinel: [{lbl:'수열 (공백, 마지막 0)',id:'sA',def:'3 5 2 0',type:'text'}],
+  digit:    [{lbl:'N',id:'sA',def:1234,max:999999}]
+};
+
+function updateSimUI() {
+  const type = document.getElementById('simType').value;
+  document.getElementById('sim-inputs').innerHTML = simDefs[type].map(d => {
+    if (d.type === 'text')
+      return `<div class="sim-row"><label>${d.lbl}</label><input type="text" id="${d.id}" value="${d.def}" style="width:200px;"/></div>`;
+    return `<div class="sim-row"><label>${d.lbl}</label><input type="number" id="${d.id}" value="${d.def}" min="1" max="${d.max||999}"/></div>`;
+  }).join('');
+}
+
+const simRun = {
+  count:    a => { let r='',i=1; while(i<=a){r+=i+' ';i++;} return r.trim(); },
+  sum:      a => { let s=0,i=1; while(i<=a){s+=i;i++;} return String(s); },
+  sentinel: str => {
+    const nums = str.trim().split(/\s+/).map(Number);
+    let s=0;
+    for(const x of nums){ if(x===0) break; s+=x; }
+    return String(s);
+  },
+  digit:    a => { let s=0,n=Math.abs(a); while(n>0){s+=n%10;n=Math.floor(n/10);} return String(s); }
+};
+
+const simCodeTpl = {
+  count:    a => `int i = 1;\nwhile (i <= ${a}) {\n    printf("%d ", i);\n    i++;\n}`,
+  sum:      a => `int i=1; long long sum=0;\nwhile (i <= ${a}) {\n    sum += i;\n    i++;\n}\nprintf("%lld", sum);`,
+  sentinel: () => `while (1) {\n    scanf("%d", &x);\n    if (x == 0) break;\n    sum += x;\n}\nprintf("%lld", sum);`,
+  digit:    a => `int n=${a}, sum=0;\nwhile (n > 0) {\n    sum += (n % 10);\n    n /= 10;\n}\nprintf("%d", sum);`
+};
+
+function hlCode(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\b(while|for|if|break|int|long|return|do)\b/g,'<span class="kw">$1</span>')
+    .replace(/"[^"]*"/g, m=>`<span class="str">${m}</span>`)
+    .replace(/(==|!=|>=|<=|&&|\|\||\+=|-=|\+\+|--|\/=|%)/g,'<span class="op">$1</span>');
+}
+
+function runSim() {
+  const type = document.getElementById('simType').value;
+  const defs = simDefs[type];
+  let result, code;
+  if (defs[0].type === 'text') {
+    const v = document.getElementById(defs[0].id).value;
+    result = simRun[type](v);
+    code   = simCodeTpl[type](v);
+  } else {
+    const a = parseInt(document.getElementById(defs[0].id).value) || defs[0].def;
+    result = simRun[type](a);
+    code   = simCodeTpl[type](a);
+  }
+  document.getElementById('simOutput').textContent = result;
+  document.getElementById('sim-code').innerHTML = `<pre>${hlCode(code)}</pre>`;
+}
+
+updateSimUI();
+setTimeout(runSim, 50);
+
+// ── Quiz ─────────────────────────────────────────────────
+const quizzes = [
+  { q:'while문에서 조건이 처음부터 거짓이면?', opts:['오류가 난다','한 번은 실행된다','한 번도 실행 안 된다','무한루프가 된다'], ans:2, explain:'while은 조건을 먼저 검사하므로 처음부터 거짓이면 0번 실행됩니다.' },
+  { q:'while(1) { ... } 에서 루프를 탈출하려면?', opts:['return','exit','break','continue'], ans:2, explain:'while(1)은 무한루프이므로 break를 사용해야 탈출할 수 있습니다.' },
+  { q:'자릿수를 한 자리씩 분리할 때 사용하는 연산은?', opts:['n/10으로 몫','n%10으로 나머지','n-10','n*10'], ans:1, explain:'n%10이 1의 자리, n/=10으로 자리를 제거합니다. 나머지를 먼저 얻는다.' },
+  { q:'EOF까지 입력받는 while 조건은?', opts:['while(scanf(...)!=0)','while(scanf(...)==1)','while(!EOF)','while(x!=NULL)'], ans:1, explain:'scanf는 성공적으로 읽은 항목 수를 반환하므로 ==1 로 비교합니다.' },
+  { q:'while문과 do-while문의 핵심 차이는?', opts:['속도 차이','실행 최소 횟수 차이','증감식 위치 차이','조건식 개수 차이'], ans:1, explain:'while은 최소 0번, do-while은 최소 1번 실행됩니다. 조건 검사 위치가 다르기 때문입니다.' },
+  { q:'n=100일 때 while(n>0){ n/=10; } 는 몇 번 반복되나?', opts:['2번','3번','10번','100번'], ans:1, explain:'100→10→1→0. 조건 검사 결과: 참,참,참,거짓. 실행은 3번입니다.' }
+];
+
+let qIdx=0, answered=false, qScore=0;
+function renderQuiz() {
+  const q = quizzes[qIdx];
+  document.getElementById('quiz-container').innerHTML = `
+    <div class="card">
+      <span class="tag tag-purple">퀴즈 ${qIdx+1} / ${quizzes.length}</span>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-options">${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`).join('')}</div>
+      <div class="quiz-feedback" id="quiz-fb"></div>
+      <div class="quiz-nav">
+        <button onclick="prevQuiz()" ${qIdx===0?'disabled':''}>← 이전</button>
+        <button onclick="nextQuiz()" id="quiz-next" style="display:none;">다음 →</button>
+        <span class="quiz-progress">점수: ${qScore} / ${quizzes.length}</span>
+      </div>
+    </div>`;
+}
+function answerQuiz(i) {
+  if (answered) return; answered = true;
+  const q = quizzes[qIdx];
+  document.querySelectorAll('.quiz-opt').forEach((b,idx)=>{
+    if(idx===q.ans) b.classList.add('correct'); else if(idx===i) b.classList.add('wrong'); b.disabled=true;
+  });
+  const fb = document.getElementById('quiz-fb');
+  fb.style.display='block';
+  if(i===q.ans){fb.textContent='✓ 정답! '+q.explain; fb.className='quiz-feedback ok'; qScore++;}
+  else{fb.textContent='✗ 오답. '+q.explain; fb.className='quiz-feedback no';}
+  const nb=document.getElementById('quiz-next'); if(nb) nb.style.display='inline-block';
+}
+function nextQuiz() {
+  if(qIdx<quizzes.length-1){qIdx++;answered=false;renderQuiz();}
+  else{
+    document.getElementById('quiz-container').innerHTML=`
+      <div class="card" style="text-align:center;padding:2.5rem 1rem;">
+        <span class="tag tag-green">완료!</span>
+        <div style="font-size:36px;font-weight:700;margin:1rem 0;">${qScore} <span style="font-size:18px;color:#888780;font-weight:400;">/ ${quizzes.length}</span></div>
+        <p style="font-size:15px;">${qScore===quizzes.length?'완벽합니다!':qScore>=4?'잘했어요!':'다시 공부하고 도전해보세요!'}</p>
+        <button class="run-btn" style="margin-top:1.5rem;padding:10px 24px;font-size:14px;" onclick="resetQuiz()">다시 풀기</button>
+      </div>`;
+  }
+}
+function prevQuiz(){if(qIdx>0){qIdx--;answered=false;renderQuiz();}}
+function resetQuiz(){qIdx=0;qScore=0;answered=false;renderQuiz();}
+renderQuiz();
+</script>
+</body>
+</html>

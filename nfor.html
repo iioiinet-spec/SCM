@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C언어 중첩 for문 튜토리얼</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif; background: #f5f5f0; color: #1a1a18; min-height: 100vh; }
+.page { max-width: 780px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+h1 { font-size: 22px; font-weight: 600; margin-bottom: 0.25rem; }
+.subtitle { font-size: 14px; color: #888780; margin-bottom: 1.5rem; }
+.nav { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.nav-btn {
+  padding: 6px 14px; border-radius: 999px;
+  border: 1px solid #d3d1c7; background: #fff;
+  color: #5f5e5a; font-size: 13px; cursor: pointer; transition: all 0.15s;
+}
+.nav-btn.active { background: #2c2c2a; color: #fff; border-color: #2c2c2a; font-weight: 500; }
+.nav-btn:hover:not(.active) { background: #f1efe8; }
+.section { display: none; }
+.section.active { display: block; }
+.card {
+  background: #fff; border: 1px solid #e4e2d8;
+  border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem;
+}
+.tag {
+  display: inline-block; font-size: 11px; font-weight: 600;
+  padding: 2px 10px; border-radius: 999px; margin-bottom: 8px;
+}
+.tag-blue { background: #E6F1FB; color: #0C447C; }
+.tag-green { background: #EAF3DE; color: #27500A; }
+.tag-amber { background: #FAEEDA; color: #633806; }
+.tag-coral { background: #FAECE7; color: #712B13; }
+.tag-purple { background: #EEEDFE; color: #3C3489; }
+.tag-teal { background: #E1F5EE; color: #085041; }
+h3 { font-size: 15px; font-weight: 600; color: #1a1a18; margin-bottom: 6px; }
+p { font-size: 14px; color: #5f5e5a; line-height: 1.65; margin-bottom: 8px; }
+pre {
+  background: #f1efe8; border-radius: 8px; padding: 1rem;
+  font-size: 13px; font-family: 'Consolas', 'D2Coding', monospace;
+  color: #2c2c2a; overflow-x: auto; line-height: 1.7; margin-bottom: 8px;
+}
+code { font-family: 'Consolas', 'D2Coding', monospace; font-size: 13px; background: #f1efe8; padding: 1px 5px; border-radius: 4px; }
+.kw  { color: #185FA5; font-weight: 600; }
+.fn  { color: #3B6D11; }
+.str { color: #BA7517; }
+.cmt { color: #888780; font-style: italic; }
+.op  { color: #993C1D; font-weight: 600; }
+.note { background: #f1efe8; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #5f5e5a; margin-top: 8px; }
+
+/* flow */
+.flow-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 1rem 0; }
+.flow-box { padding: 8px 18px; border-radius: 8px; border: 1px solid #e4e2d8; font-size: 13px; text-align: center; background: #fff; min-width: 130px; }
+.flow-outer { background: #E6F1FB; border-color: #378ADD; color: #0C447C; font-weight: 500; }
+.flow-inner { background: #EAF3DE; border-color: #639922; color: #27500A; font-weight: 500; }
+.flow-end   { background: #f1efe8; border-color: #d3d1c7; color: #5f5e5a; }
+.arrow { color: #888780; font-size: 15px; }
+.arrow-lbl { font-size: 11px; color: #888780; }
+
+/* star visualizer */
+.star-grid { display: inline-block; font-family: 'Consolas', monospace; font-size: 18px; line-height: 1.4; letter-spacing: 2px; }
+.star-cell { display: inline-block; width: 24px; text-align: center; transition: all 0.2s; }
+.star-cell.lit  { color: #185FA5; }
+.star-cell.off  { color: #e4e2d8; }
+.star-cell.spc  { color: transparent; }
+
+/* trace table */
+.trace-table { border-collapse: collapse; width: 100%; font-size: 13px; }
+.trace-table th { background: #f1efe8; padding: 7px 10px; border: 1px solid #e4e2d8; font-weight: 600; text-align: center; }
+.trace-table td { padding: 7px 10px; border: 1px solid #e4e2d8; text-align: center; font-family: 'Consolas', monospace; }
+.trace-table tr.hi-outer td { background: #E6F1FB; color: #0C447C; font-weight: 600; }
+.trace-table tr.hi-inner td { background: #EAF3DE; color: #27500A; font-weight: 500; }
+.step-controls { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+.step-controls button { padding: 6px 14px; border-radius: 8px; border: 1px solid #d3d1c7; background: #fff; font-size: 13px; cursor: pointer; }
+.step-controls button:hover:not(:disabled) { background: #f1efe8; }
+.step-controls button:disabled { opacity: 0.4; cursor: default; }
+.step-info { font-size: 12px; color: #888780; margin-left: auto; }
+
+/* simulator */
+.sim-row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+.sim-row label { font-size: 13px; color: #5f5e5a; min-width: 70px; }
+select, input[type=number] { padding: 6px 10px; border-radius: 8px; border: 1px solid #d3d1c7; font-size: 14px; background: #fff; color: #1a1a18; }
+input[type=number] { width: 80px; }
+.run-btn { padding: 7px 20px; border-radius: 8px; border: 1px solid #d3d1c7; background: #f1efe8; color: #1a1a18; font-size: 13px; cursor: pointer; }
+.run-btn:hover { background: #fff; }
+.sim-output { background: #f1efe8; border-radius: 8px; padding: 1rem; font-family: 'Consolas', 'D2Coding', monospace; font-size: 14px; color: #2c2c2a; min-height: 50px; border: 1px solid #e4e2d8; white-space: pre; overflow-x: auto; }
+
+/* star live preview */
+.star-preview { font-family: 'Consolas', monospace; font-size: 15px; line-height: 1.5; letter-spacing: 1px; background: #f1efe8; border-radius: 8px; padding: 12px 16px; border: 1px solid #e4e2d8; white-space: pre; min-height: 40px; }
+
+/* quiz */
+.quiz-q { font-size: 14px; font-weight: 600; color: #1a1a18; margin-bottom: 12px; white-space: pre-wrap; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { padding: 10px 14px; border: 1px solid #e4e2d8; border-radius: 8px; font-size: 14px; cursor: pointer; color: #1a1a18; background: #fff; text-align: left; transition: all 0.15s; }
+.quiz-opt:hover:not(:disabled) { background: #f1efe8; }
+.quiz-opt.correct { background: #EAF3DE; border-color: #639922; color: #27500A; font-weight: 500; }
+.quiz-opt.wrong   { background: #FCEBEB; border-color: #E24B4A; color: #791F1F; }
+.quiz-feedback { margin-top: 10px; font-size: 14px; font-weight: 500; padding: 8px 12px; border-radius: 8px; display: none; }
+.quiz-feedback.ok { color: #3B6D11; background: #EAF3DE; }
+.quiz-feedback.no { color: #A32D2D; background: #FCEBEB; }
+.quiz-nav { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+.quiz-nav button { padding: 7px 16px; border-radius: 8px; border: 1px solid #d3d1c7; background: #fff; color: #1a1a18; font-size: 13px; cursor: pointer; }
+.quiz-nav button:hover:not(:disabled) { background: #f1efe8; }
+.quiz-nav button:disabled { opacity: 0.4; cursor: default; }
+.quiz-progress { font-size: 12px; color: #888780; margin-left: auto; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>C언어 중첩 for문 튜토리얼</h1>
+  <p class="subtitle">반복 안의 반복 — 별찍기부터 완전탐색까지</p>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="showSection('intro',this)">개요</button>
+    <button class="nav-btn" onclick="showSection('syntax',this)">문법 구조</button>
+    <button class="nav-btn" onclick="showSection('trace',this)">실행 추적</button>
+    <button class="nav-btn" onclick="showSection('patterns',this)">핵심 패턴</button>
+    <button class="nav-btn" onclick="showSection('examples',this)">예제 모음</button>
+    <button class="nav-btn" onclick="showSection('star',this)">별찍기 뷰어</button>
+    <button class="nav-btn" onclick="showSection('sim',this)">시뮬레이터</button>
+    <button class="nav-btn" onclick="showSection('quiz',this)">퀴즈</button>
+  </div>
+
+  <!-- 개요 -->
+  <div id="sec-intro" class="section active">
+    <div class="card">
+      <span class="tag tag-blue">중첩 for문이란?</span>
+      <h3>for문 안에 또 다른 for문이 들어있는 구조</h3>
+      <p>"반복 안에서 또 반복"이 일어난다. 2차원 구조를 표현할 때 핵심으로 사용된다.</p>
+    </div>
+    <div class="card">
+      <span class="tag tag-amber">어디에 쓰나?</span>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:6px;">
+        <div style="background:#f1efe8; border-radius:10px; padding:12px 14px;">
+          <div style="font-size:11px; font-weight:700; color:#888780; margin-bottom:4px;">2차원 배열</div>
+          <p style="font-size:13px; margin:0;">행·열을 각각 반복 처리</p>
+        </div>
+        <div style="background:#f1efe8; border-radius:10px; padding:12px 14px;">
+          <div style="font-size:11px; font-weight:700; color:#888780; margin-bottom:4px;">별찍기</div>
+          <p style="font-size:13px; margin:0;">행=줄, 열=칸 구조</p>
+        </div>
+        <div style="background:#f1efe8; border-radius:10px; padding:12px 14px;">
+          <div style="font-size:11px; font-weight:700; color:#888780; margin-bottom:4px;">구구단 전체</div>
+          <p style="font-size:13px; margin:0;">단×줄 이중 반복</p>
+        </div>
+        <div style="background:#f1efe8; border-radius:10px; padding:12px 14px;">
+          <div style="font-size:11px; font-weight:700; color:#888780; margin-bottom:4px;">완전탐색</div>
+          <p style="font-size:13px; margin:0;">O(N²) 기본형</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <span class="tag tag-coral">반복 횟수 공식</span>
+      <h3>총 반복 횟수 = 바깥 반복 × 안쪽 반복</h3>
+      <p>예) 바깥 i: 1~3 (3번) × 안쪽 j: 1~2 (2번) = <strong>총 6번</strong></p>
+    </div>
+  </div>
+
+  <!-- 문법 구조 -->
+  <div id="sec-syntax" class="section">
+    <div class="card">
+      <span class="tag tag-blue">기본 문법</span>
+      <pre><span class="kw">for</span>(초기식1; 조건식1; 증감식1) {   <span class="cmt">← 바깥 for (행)</span>
+
+    <span class="kw">for</span>(초기식2; 조건식2; 증감식2) { <span class="cmt">← 안쪽 for (열)</span>
+        실행문;
+    }
+
+    <span class="fn">printf</span>(<span class="str">"\n"</span>); <span class="cmt">← 줄바꿈은 바깥 for 안에</span>
+}</pre>
+    </div>
+    <div class="card">
+      <span class="tag tag-green">동작 흐름</span>
+      <div class="flow-wrap">
+        <div class="flow-box flow-outer">① 바깥 초기식 (i=1)</div>
+        <div class="arrow">↓</div>
+        <div class="flow-box flow-outer">② 바깥 조건 검사 (i&lt;=N)</div>
+        <div class="arrow">↓ 참</div>
+        <div class="flow-box flow-inner">③ 안쪽 초기식 (j=1)</div>
+        <div class="arrow">↓</div>
+        <div class="flow-box flow-inner">④ 안쪽 조건 검사 (j&lt;=M)</div>
+        <div class="arrow">↓ 참</div>
+        <div class="flow-box" style="background:#EEEDFE; border-color:#7F77DD; color:#3C3489; font-weight:500;">⑤ 실행문 + 안쪽 증감 (j++)</div>
+        <div class="arrow">↑ 반복 → 거짓이면</div>
+        <div class="flow-box flow-outer">⑥ 줄바꿈 + 바깥 증감 (i++)</div>
+        <div class="arrow">↑ 바깥 반복 → 거짓이면</div>
+        <div class="flow-box flow-end">⑦ 종료</div>
+      </div>
+    </div>
+    <div class="note">
+      핵심: 바깥 for가 1번 돌 때, 안쪽 for는 처음부터 끝까지 완전히 다 돈다.
+    </div>
+  </div>
+
+  <!-- 실행 추적 -->
+  <div id="sec-trace" class="section">
+    <div class="card">
+      <span class="tag tag-teal">단계별 실행 추적기</span>
+      <h3>for(i=1;i&lt;=행;i++) × for(j=1;j&lt;=열;j++)</h3>
+      <div class="sim-row" style="margin-top:10px;">
+        <label>바깥(행)</label>
+        <input type="number" id="traceR" value="3" min="1" max="5"/>
+        <label>안쪽(열)</label>
+        <input type="number" id="traceC" value="2" min="1" max="5"/>
+        <button class="run-btn" onclick="buildTrace()">생성</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="step-controls" id="trace-ctrl" style="display:none;">
+        <button onclick="traceStep(-1)" id="trace-prev" disabled>← 이전</button>
+        <button onclick="traceStep(1)"  id="trace-next">다음 →</button>
+        <button onclick="traceReset()">처음으로</button>
+        <span class="step-info" id="trace-info"></span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="trace-table" id="trace-tbl">
+          <thead><tr><th>단계</th><th>i</th><th>j</th><th>동작</th></tr></thead>
+          <tbody id="trace-body"></tbody>
+        </table>
+      </div>
+      <div id="trace-msg" style="margin-top:10px; font-size:14px; color:#5f5e5a;"></div>
+    </div>
+  </div>
+
+  <!-- 핵심 패턴 -->
+  <div id="sec-patterns" class="section">
+    <div class="card">
+      <span class="tag tag-blue">핵심 이해 포인트</span>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span style="min-width:90px; font-size:12px; font-weight:700; color:#0C447C; background:#E6F1FB; padding:3px 8px; border-radius:4px; text-align:center;">바깥 for</span>
+          <span style="font-size:14px; color:#5f5e5a;">→ 행(줄) 제어</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span style="min-width:90px; font-size:12px; font-weight:700; color:#27500A; background:#EAF3DE; padding:3px 8px; border-radius:4px; text-align:center;">안쪽 for</span>
+          <span style="font-size:14px; color:#5f5e5a;">→ 열(칸) 제어</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span style="min-width:90px; font-size:12px; font-weight:700; color:#633806; background:#FAEEDA; padding:3px 8px; border-radius:4px; text-align:center;">줄바꿈</span>
+          <span style="font-size:14px; color:#5f5e5a;">→ 바깥 for 안 (안쪽 for 끝난 직후)</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span style="min-width:90px; font-size:12px; font-weight:700; color:#712B13; background:#FAECE7; padding:3px 8px; border-radius:4px; text-align:center;">별 개수</span>
+          <span style="font-size:14px; color:#5f5e5a;">→ 안쪽 for 조건 변경</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span style="min-width:90px; font-size:12px; font-weight:700; color:#3C3489; background:#EEEDFE; padding:3px 8px; border-radius:4px; text-align:center;">공백+별</span>
+          <span style="font-size:14px; color:#5f5e5a;">→ 공백 for + 별 for 두 개 사용</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <span class="tag tag-green">행×열 패턴</span>
+      <pre><span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>1; i<span class="op">&lt;=</span>행; i<span class="op">++</span>){
+    <span class="kw">for</span>(<span class="fn">int</span> j<span class="op">=</span>1; j<span class="op">&lt;=</span>열; j<span class="op">++</span>){
+        <span class="fn">printf</span>(<span class="str">"*"</span>);
+    }
+    <span class="fn">printf</span>(<span class="str">"\n"</span>);
+}</pre>
+    </div>
+    <div class="card">
+      <span class="tag tag-amber">삼각형 패턴</span>
+      <pre><span class="cmt">/* 직각삼각형: 안쪽 조건을 j&lt;=i 로 변경 */</span>
+<span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>1; i<span class="op">&lt;=</span>n; i<span class="op">++</span>){
+    <span class="kw">for</span>(<span class="fn">int</span> j<span class="op">=</span>1; j<span class="op">&lt;=</span>i; j<span class="op">++</span>)
+        <span class="fn">printf</span>(<span class="str">"*"</span>);
+    <span class="fn">printf</span>(<span class="str">"\n"</span>);
+}</pre>
+    </div>
+    <div class="card">
+      <span class="tag tag-coral">공백+별 정렬 패턴</span>
+      <pre><span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>1; i<span class="op">&lt;=</span>n; i<span class="op">++</span>){
+    <span class="kw">for</span>(<span class="fn">int</span> s<span class="op">=</span>1; s<span class="op">&lt;=</span>n<span class="op">-</span>i; s<span class="op">++</span>) <span class="fn">printf</span>(<span class="str">" "</span>); <span class="cmt">← 공백</span>
+    <span class="kw">for</span>(<span class="fn">int</span> j<span class="op">=</span>1; j<span class="op">&lt;=</span>i;   j<span class="op">++</span>) <span class="fn">printf</span>(<span class="str">"*"</span>); <span class="cmt">← 별</span>
+    <span class="fn">printf</span>(<span class="str">"\n"</span>);
+}</pre>
+    </div>
+  </div>
+
+  <!-- 예제 모음 -->
+  <div id="sec-examples" class="section">
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;" id="ex-nav">
+      <button class="nav-btn active" onclick="showEx(0,this)">3×3 별</button>
+      <button class="nav-btn" onclick="showEx(1,this)">N×M 별</button>
+      <button class="nav-btn" onclick="showEx(2,this)">좌표 출력</button>
+      <button class="nav-btn" onclick="showEx(3,this)">구구단 전체</button>
+      <button class="nav-btn" onclick="showEx(4,this)">직각삼각형</button>
+      <button class="nav-btn" onclick="showEx(5,this)">역삼각형</button>
+      <button class="nav-btn" onclick="showEx(6,this)">오른쪽 정렬</button>
+      <button class="nav-btn" onclick="showEx(7,this)">숫자 사각형</button>
+    </div>
+    <div id="ex-content"></div>
+  </div>
+
+  <!-- 별찍기 뷰어 -->
+  <div id="sec-star" class="section">
+    <div class="card">
+      <span class="tag tag-purple">인터랙티브 별찍기 뷰어</span>
+      <h3>패턴을 선택하고 N값을 바꿔보세요</h3>
+    </div>
+    <div class="card">
+      <div class="sim-row">
+        <label>패턴</label>
+        <select id="starType" onchange="renderStar()">
+          <option value="rect">직사각형 N×N</option>
+          <option value="tri">직각삼각형</option>
+          <option value="rtri">역삼각형</option>
+          <option value="rtri2">오른쪽 정렬 삼각형</option>
+          <option value="num">숫자 사각형</option>
+        </select>
+        <label>N</label>
+        <input type="number" id="starN" value="5" min="1" max="9" oninput="renderStar()"/>
+      </div>
+      <div style="font-size:13px; color:#888780; margin-bottom:6px;">미리보기</div>
+      <div class="star-preview" id="star-prev"></div>
+    </div>
+    <div class="card" id="star-code-card">
+      <span class="tag tag-blue">해당 코드</span>
+      <pre id="star-code"></pre>
+    </div>
+  </div>
+
+  <!-- 시뮬레이터 -->
+  <div id="sec-sim" class="section">
+    <div class="card">
+      <span class="tag tag-blue">시뮬레이터</span>
+      <h3>예제를 선택하고 값을 입력해보세요</h3>
+    </div>
+    <div class="card">
+      <div class="sim-row">
+        <label>예제 선택</label>
+        <select id="simType" onchange="updateSimUI()">
+          <option value="rect">N×M 별 사각형</option>
+          <option value="tri">직각삼각형</option>
+          <option value="rtri">역삼각형</option>
+          <option value="rtri2">오른쪽 정렬 삼각형</option>
+          <option value="gugu">구구단 (i단~j단)</option>
+          <option value="coord">좌표 출력 N×N</option>
+          <option value="numrect">숫자 사각형</option>
+        </select>
+      </div>
+      <div id="sim-inputs"></div>
+      <button class="run-btn" onclick="runSim()">실행 ▶</button>
+    </div>
+    <div class="card">
+      <div id="sim-code" style="margin-bottom:10px;"></div>
+      <div style="font-size:13px; color:#888780; margin-bottom:6px;">출력 결과</div>
+      <div class="sim-output" id="simOutput">실행 버튼을 눌러보세요</div>
+    </div>
+  </div>
+
+  <!-- 퀴즈 -->
+  <div id="sec-quiz" class="section">
+    <div id="quiz-container"></div>
+  </div>
+</div>
+
+<script>
+function showSection(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav > .nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── Examples ───────────────────────────────────────────────
+const examples = [
+  { title:"3×3 별 출력", tag:"tag-green",
+    prob:"3행 3열 별을 출력하시오.", out:"***\n***\n***",
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>1;i<span class="op">&lt;=</span>3;i<span class="op">++</span>){\n        <span class="kw">for</span>(<span class="fn">int</span> j<span class="op">=</span>1;j<span class="op">&lt;=</span>3;j<span class="op">++</span>)\n            <span class="fn">printf</span>(<span class="str">"*"</span>);\n        <span class="fn">printf</span>(<span class="str">"\\n"</span>);\n    }\n    <span class="kw">return</span> 0;\n}` },
+  { title:"N×M 별 출력", tag:"tag-blue",
+    prob:"행 N, 열 M 입력 → 별 출력\n입력: 2 4", out:"****\n****",
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="fn">int</span> n,m;\n    <span class="fn">scanf</span>(<span class="str">"%d %d"</span>,&amp;n,&amp;m);\n\n    <span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>1;i<span class="op">&lt;=</span>n;i<span class="op">++</span>){\n        <span class="kw">for</span>(<span class="fn">int</span> j<span class="op">=</span>1;j<span class="op">&lt;=</span>m;j<span class="op">++</span>)\n            <span class="fn">printf</span>(<span class="str">"*"</span>);\n        <span class="fn">printf</span>(<span class="str">"\\n"</span>);\n    }\n    <span class="kw">return</span> 0;\n}` },
+  { title:"좌표 출력", tag:"tag-amber",
+    prob:"0~2 좌표를 출력하시오.", out:"(0,0) (1,0) (2,0)\n(0,1) (1,1) (2,1)\n(0,2) (1,2) (2,2)",
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="kw">for</span>(<span class="fn">int</span> y<span class="op">=</span>0;y<span class="op">&lt;</span>3;y<span class="op">++</span>){\n        <span class="kw">for</span>(<span class="fn">int</span> x<span class="op">=</span>0;x<span class="op">&lt;</span>3;x<span class="op">++</span>)\n            <span class="fn">printf</span>(<span class="str">"(%d,%d) "</span>,x,y);\n        <span class="fn">printf</span>(<span class="str">"\\n"</span>);\n    }\n    <span class="kw">return</span> 0;\n}` },
+  { title:"구구단 전체", tag:"tag-purple",
+    prob:"2단부터 9단까지 출력하시오.", out:"2 x 1 = 2\n2 x 2 = 4\n...\n9 x 9 = 81",
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>2;i<span class="op">&lt;=</span>9;i<span class="op">++</span>){\n        <span class="kw">for</span>(<span class="fn">int</span> j<span class="op">=</span>1;j<span class="op">&lt;=</span>9;j<span class="op">++</span>)\n            <span class="fn">printf</span>(<span class="str">"%d x %d = %d\\n"</span>,i,j,i<span class="op">*</span>j);\n        <span class="fn">printf</span>(<span class="str">"\\n"</span>);\n    }\n    <span class="kw">return</span> 0;\n}` },
+  { title:"직각삼각형", tag:"tag-teal",
+    prob:"N 입력 → 직각삼각형 별 출력\n입력: 5", out:"*\n**\n***\n****\n*****",
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="fn">int</span> n;\n    <span class="fn">scanf</span>(<span class="str">"%d"</span>,&amp;n);\n\n    <span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>1;i<span class="op">&lt;=</span>n;i<span class="op">++</span>){\n        <span class="kw">for</span>(<span class="fn">int</span> j<span class="op">=</span>1;j<span class="op">&lt;=</span>i;j<span class="op">++</span>)\n            <span class="fn">printf</span>(<span class="str">"*"</span>);\n        <span class="fn">printf</span>(<span class="str">"\\n"</span>);\n    }\n    <span class="kw">return</span> 0;\n}` },
+  { title:"역삼각형", tag:"tag-coral",
+    prob:"N 입력 → 역삼각형 출력\n입력: 5", out:"*****\n****\n***\n**\n*",
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="fn">int</span> n;\n    <span class="fn">scanf</span>(<span class="str">"%d"</span>,&amp;n);\n\n    <span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>n;i<span class="op">&gt;=</span>1;i<span class="op">--</span>){\n        <span class="kw">for</span>(<span class="fn">int</span> j<span class="op">=</span>1;j<span class="op">&lt;=</span>i;j<span class="op">++</span>)\n            <span class="fn">printf</span>(<span class="str">"*"</span>);\n        <span class="fn">printf</span>(<span class="str">"\\n"</span>);\n    }\n    <span class="kw">return</span> 0;\n}` },
+  { title:"오른쪽 정렬 삼각형", tag:"tag-blue",
+    prob:"N 입력 → 오른쪽 정렬 별 출력\n입력: 5", out:"    *\n   **\n  ***\n ****\n*****",
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="fn">int</span> n;\n    <span class="fn">scanf</span>(<span class="str">"%d"</span>,&amp;n);\n\n    <span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>1;i<span class="op">&lt;=</span>n;i<span class="op">++</span>){\n        <span class="kw">for</span>(<span class="fn">int</span> s<span class="op">=</span>1;s<span class="op">&lt;=</span>n<span class="op">-</span>i;s<span class="op">++</span>) <span class="fn">printf</span>(<span class="str">" "</span>);\n        <span class="kw">for</span>(<span class="fn">int</span> j<span class="op">=</span>1;j<span class="op">&lt;=</span>i;j<span class="op">++</span>)  <span class="fn">printf</span>(<span class="str">"*"</span>);\n        <span class="fn">printf</span>(<span class="str">"\\n"</span>);\n    }\n    <span class="kw">return</span> 0;\n}` },
+  { title:"숫자 사각형", tag:"tag-green",
+    prob:"3×3 숫자 출력 (행 번호)", out:"111\n222\n333",
+    code:`<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>1;i<span class="op">&lt;=</span>3;i<span class="op">++</span>){\n        <span class="kw">for</span>(<span class="fn">int</span> j<span class="op">=</span>1;j<span class="op">&lt;=</span>3;j<span class="op">++</span>)\n            <span class="fn">printf</span>(<span class="str">"%d"</span>,i);\n        <span class="fn">printf</span>(<span class="str">"\\n"</span>);\n    }\n    <span class="kw">return</span> 0;\n}` }
+];
+
+function showEx(idx, btn) {
+  document.querySelectorAll('#ex-nav .nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const ex = examples[idx];
+  document.getElementById('ex-content').innerHTML = `
+    <div class="card">
+      <span class="tag ${ex.tag}">${ex.title}</span>
+      <h3>문제</h3>
+      <p style="white-space:pre-wrap;">${ex.prob}</p>
+      <h3 style="margin-top:10px;">예상 출력</h3>
+      <div class="sim-output" style="min-height:36px; margin-top:6px;">${ex.out}</div>
+    </div>
+    <div class="card">
+      <span class="tag tag-blue">정답 코드</span>
+      <pre>${ex.code}</pre>
+    </div>`;
+}
+showEx(0, document.querySelector('#ex-nav .nav-btn'));
+
+// ── Trace ───────────────────────────────────────────────
+let traceData = [], traceIdx = 0;
+
+function buildTrace() {
+  const R = Math.min(parseInt(document.getElementById('traceR').value)||3, 5);
+  const C = Math.min(parseInt(document.getElementById('traceC').value)||2, 5);
+  traceData = [];
+  traceData.push({i:'-',j:'-',act:'바깥 초기식: i=1',type:'outer'});
+  for (let i=1; i<=R+1; i++) {
+    if (i > R) { traceData.push({i,j:'-',act:`바깥 조건 i<=${R} → 거짓 → 종료`,type:'end'}); break; }
+    traceData.push({i,j:'-',act:`바깥 조건 i<=${R} → 참`,type:'outer'});
+    traceData.push({i,j:'-',act:`안쪽 초기식: j=1`,type:'inner'});
+    for (let j=1; j<=C+1; j++) {
+      if (j > C) { traceData.push({i,j,act:`안쪽 조건 j<=${C} → 거짓 → printf("\\n") 줄바꿈`,type:'inner'}); break; }
+      traceData.push({i,j,act:`안쪽 조건 j<=${C} → 참 → printf("i=%d j=%d\\n",${i},${j})`,type:'inner'});
+      traceData.push({i,j:j+1,act:`안쪽 증감: j++ → j=${j+1}`,type:'inner'});
+    }
+    if (i < R) traceData.push({i:i+1,j:'-',act:`바깥 증감: i++ → i=${i+1}`,type:'outer'});
+  }
+  traceIdx = 0;
+  document.getElementById('trace-ctrl').style.display = 'flex';
+  renderTrace();
+}
+
+function renderTrace() {
+  const rows = traceData.slice(0, traceIdx+1);
+  document.getElementById('trace-body').innerHTML = rows.map((r,idx)=>{
+    const cls = idx===traceIdx ? (r.type==='outer'?'hi-outer':r.type==='inner'?'hi-inner':'') : '';
+    return `<tr class="${cls}"><td>${idx+1}</td><td>${r.i}</td><td>${r.j}</td><td>${r.act}</td></tr>`;
+  }).join('');
+  document.getElementById('trace-info').textContent = `${traceIdx+1} / ${traceData.length}`;
+  document.getElementById('trace-prev').disabled = traceIdx === 0;
+  document.getElementById('trace-next').disabled = traceIdx === traceData.length-1;
+  document.getElementById('trace-msg').textContent = traceData[traceIdx].act;
+}
+
+function traceStep(d) { traceIdx = Math.max(0, Math.min(traceData.length-1, traceIdx+d)); renderTrace(); }
+function traceReset() { traceIdx = 0; renderTrace(); }
+buildTrace();
+
+// ── Star viewer ────────────────────────────────────────
+const starCodes = {
+  rect:  n=>`for(int i=1;i<=${n};i++){\n    for(int j=1;j<=${n};j++)\n        printf("*");\n    printf("\\n");\n}`,
+  tri:   n=>`for(int i=1;i<=${n};i++){\n    for(int j=1;j<=i;j++)\n        printf("*");\n    printf("\\n");\n}`,
+  rtri:  n=>`for(int i=${n};i>=1;i--){\n    for(int j=1;j<=i;j++)\n        printf("*");\n    printf("\\n");\n}`,
+  rtri2: n=>`for(int i=1;i<=${n};i++){\n    for(int s=1;s<=${n}-i;s++) printf(" ");\n    for(int j=1;j<=i;j++)  printf("*");\n    printf("\\n");\n}`,
+  num:   n=>`for(int i=1;i<=${n};i++){\n    for(int j=1;j<=${n};j++)\n        printf("%d",i);\n    printf("\\n");\n}`
+};
+const starDraw = {
+  rect:  n=>Array.from({length:n},()=>'*'.repeat(n)).join('\n'),
+  tri:   n=>Array.from({length:n},(_,i)=>'*'.repeat(i+1)).join('\n'),
+  rtri:  n=>Array.from({length:n},(_,i)=>'*'.repeat(n-i)).join('\n'),
+  rtri2: n=>Array.from({length:n},(_,i)=>' '.repeat(n-i-1)+'*'.repeat(i+1)).join('\n'),
+  num:   n=>Array.from({length:n},(_,i)=>String(i+1).repeat(n)).join('\n')
+};
+
+function renderStar() {
+  const type = document.getElementById('starType').value;
+  const N = Math.min(parseInt(document.getElementById('starN').value)||5, 9);
+  document.getElementById('star-prev').textContent = starDraw[type](N);
+  document.getElementById('star-code').innerHTML = hlCode(starCodes[type](N));
+}
+renderStar();
+
+// ── Simulator ──────────────────────────────────────────
+const simDefs = {
+  rect:    [{lbl:'행(N)',id:'sA',def:3},{lbl:'열(M)',id:'sB',def:4}],
+  tri:     [{lbl:'N',id:'sA',def:5}],
+  rtri:    [{lbl:'N',id:'sA',def:5}],
+  rtri2:   [{lbl:'N',id:'sA',def:5}],
+  gugu:    [{lbl:'시작 단',id:'sA',def:2},{lbl:'끝 단',id:'sB',def:4}],
+  coord:   [{lbl:'N',id:'sA',def:3}],
+  numrect: [{lbl:'N',id:'sA',def:3}]
+};
+const simRun = {
+  rect:    (a,b)=>{ let r=''; for(let i=1;i<=a;i++){for(let j=1;j<=b;j++)r+='*'; r+='\n';} return r.trim(); },
+  tri:     (a)=>  { let r=''; for(let i=1;i<=a;i++){r+='*'.repeat(i)+'\n';} return r.trim(); },
+  rtri:    (a)=>  { let r=''; for(let i=a;i>=1;i--){r+='*'.repeat(i)+'\n';} return r.trim(); },
+  rtri2:   (a)=>  { let r=''; for(let i=1;i<=a;i++){r+=' '.repeat(a-i)+'*'.repeat(i)+'\n';} return r.trim(); },
+  gugu:    (a,b)=>{ let r=''; for(let i=a;i<=b;i++){for(let j=1;j<=9;j++)r+=`${i} x ${j} = ${i*j}\n`; r+='\n';} return r.trim(); },
+  coord:   (a)=>  { let r=''; for(let y=0;y<a;y++){for(let x=0;x<a;x++)r+=`(${x},${y}) `; r+='\n';} return r.trim(); },
+  numrect: (a)=>  { let r=''; for(let i=1;i<=a;i++){for(let j=1;j<=a;j++)r+=i; r+='\n';} return r.trim(); }
+};
+const simCodeTpl = {
+  rect:    (a,b)=>`for(int i=1;i<=${a};i++){\n    for(int j=1;j<=${b};j++)\n        printf("*");\n    printf("\\n");\n}`,
+  tri:     (a)=>  `for(int i=1;i<=${a};i++){\n    for(int j=1;j<=i;j++)\n        printf("*");\n    printf("\\n");\n}`,
+  rtri:    (a)=>  `for(int i=${a};i>=1;i--){\n    for(int j=1;j<=i;j++)\n        printf("*");\n    printf("\\n");\n}`,
+  rtri2:   (a)=>  `for(int i=1;i<=${a};i++){\n    for(int s=1;s<=${a}-i;s++) printf(" ");\n    for(int j=1;j<=i;j++)  printf("*");\n    printf("\\n");\n}`,
+  gugu:    (a,b)=>`for(int i=${a};i<=${b};i++){\n    for(int j=1;j<=9;j++)\n        printf("%d x %d = %d\\n",i,j,i*j);\n    printf("\\n");\n}`,
+  coord:   (a)=>  `for(int y=0;y<${a};y++){\n    for(int x=0;x<${a};x++)\n        printf("(%d,%d) ",x,y);\n    printf("\\n");\n}`,
+  numrect: (a)=>  `for(int i=1;i<=${a};i++){\n    for(int j=1;j<=${a};j++)\n        printf("%d",i);\n    printf("\\n");\n}`
+};
+
+function updateSimUI() {
+  const type = document.getElementById('simType').value;
+  document.getElementById('sim-inputs').innerHTML = simDefs[type].map(d=>
+    `<div class="sim-row"><label>${d.lbl}</label><input type="number" id="${d.id}" value="${d.def}" min="1" max="20"/></div>`
+  ).join('');
+}
+
+function runSim() {
+  const type = document.getElementById('simType').value;
+  const defs = simDefs[type];
+  const a = parseInt(document.getElementById(defs[0].id).value)||defs[0].def;
+  const b = defs[1] ? parseInt(document.getElementById(defs[1].id).value)||defs[1].def : undefined;
+  const result = b!==undefined ? simRun[type](a,b) : simRun[type](a);
+  const code   = b!==undefined ? simCodeTpl[type](a,b) : simCodeTpl[type](a);
+  document.getElementById('simOutput').textContent = result;
+  document.getElementById('sim-code').innerHTML = `<pre>${hlCode(code)}</pre>`;
+}
+
+function hlCode(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\b(for|int|printf|char|if|return)\b/g,'<span class="kw">$1</span>')
+    .replace(/"[^"]*"/g, m=>`<span class="str">${m}</span>`)
+    .replace(/(%=?|==|!=|>=|<=|&&|\+=|-=|\+\+|--|>(?!=)|(?<![<>])(?<!=)<(?![=]))/g,'<span class="op">$&</span>');
+}
+
+updateSimUI();
+setTimeout(runSim, 50);
+
+// ── Quiz ───────────────────────────────────────────────
+const quizzes = [
+  { q:"for(i=1;i<=3;i++) 안에 for(j=1;j<=4;j++) 가 있으면 총 몇 번 실행되나?", opts:["3번","4번","7번","12번"], ans:3, explain:"바깥 3번 × 안쪽 4번 = 12번. 총 반복 횟수는 곱한다." },
+  { q:"별찍기에서 줄바꿈 printf(\"\\n\")은 어디에 넣어야 하나?", opts:["안쪽 for 안에","안쪽 for 바깥, 바깥 for 안에","바깥 for 바깥에","아무데나"], ans:1, explain:"안쪽 for(열)가 끝난 뒤, 바깥 for(행) 안에서 줄바꿈해야 한 행이 끝난다." },
+  { q:"직각삼각형(행이 늘수록 별 1개씩 증가)을 만들 때 안쪽 조건은?", opts:["j<=n","j<=i","j<i","j<=n-i"], ans:1, explain:"행 번호 i만큼 별을 찍으므로 j<=i 로 조건을 설정한다." },
+  { q:"오른쪽 정렬 삼각형에서 i행의 공백 개수는? (전체 N줄)", opts:["i개","N-i개","N+i개","i-1개"], ans:1, explain:"1행에 N-1개, 2행에 N-2개... N행에 0개 → N-i개 공백." },
+  { q:"for(int y=0;y<3;y++) 안에 for(int x=0;x<3;x++) 가 있을 때 좌표 (x=2,y=1) 은 몇 번째 출력인가?", opts:["3번째","5번째","6번째","8번째"], ans:2, explain:"y=0: (0,0)(1,0)(2,0) → y=1: (0,1)(1,1)(2,1) — (2,1)은 6번째." },
+  { q:"중첩 for문의 시간복잡도는?", opts:["O(1)","O(N)","O(N²)","O(log N)"], ans:2, explain:"N번 반복 안에 N번 반복이 있으면 총 N×N = N² 이므로 O(N²)." }
+];
+
+let qIdx=0, answered=false, qScore=0;
+function renderQuiz() {
+  const q = quizzes[qIdx];
+  document.getElementById('quiz-container').innerHTML = `
+    <div class="card">
+      <span class="tag tag-purple">퀴즈 ${qIdx+1} / ${quizzes.length}</span>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-options">${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`).join('')}</div>
+      <div class="quiz-feedback" id="quiz-fb"></div>
+      <div class="quiz-nav">
+        <button onclick="prevQuiz()" ${qIdx===0?'disabled':''}>← 이전</button>
+        <button onclick="nextQuiz()" id="quiz-next" style="display:none;">다음 →</button>
+        <span class="quiz-progress">점수: ${qScore} / ${quizzes.length}</span>
+      </div>
+    </div>`;
+}
+function answerQuiz(i) {
+  if (answered) return; answered=true;
+  const q=quizzes[qIdx];
+  document.querySelectorAll('.quiz-opt').forEach((b,idx)=>{
+    if(idx===q.ans) b.classList.add('correct'); else if(idx===i) b.classList.add('wrong'); b.disabled=true;
+  });
+  const fb=document.getElementById('quiz-fb');
+  fb.style.display='block';
+  if(i===q.ans){fb.textContent='✓ 정답! '+q.explain; fb.className='quiz-feedback ok'; qScore++;}
+  else{fb.textContent='✗ 오답. '+q.explain; fb.className='quiz-feedback no';}
+  const nb=document.getElementById('quiz-next'); if(nb) nb.style.display='inline-block';
+}
+function nextQuiz() {
+  if(qIdx<quizzes.length-1){qIdx++;answered=false;renderQuiz();}
+  else{
+    document.getElementById('quiz-container').innerHTML=`
+      <div class="card" style="text-align:center;padding:2.5rem 1rem;">
+        <span class="tag tag-green">완료!</span>
+        <div style="font-size:36px;font-weight:700;margin:1rem 0;">${qScore} <span style="font-size:18px;color:#888780;font-weight:400;">/ ${quizzes.length}</span></div>
+        <p style="font-size:15px;">${qScore===quizzes.length?'완벽합니다!':qScore>=4?'잘했어요!':'다시 공부하고 도전해보세요!'}</p>
+        <button class="run-btn" style="margin-top:1.5rem;padding:10px 24px;font-size:14px;" onclick="resetQuiz()">다시 풀기</button>
+      </div>`;
+  }
+}
+function prevQuiz(){if(qIdx>0){qIdx--;answered=false;renderQuiz();}}
+function resetQuiz(){qIdx=0;qScore=0;answered=false;renderQuiz();}
+renderQuiz();
+</script>
+</body>
+</html>

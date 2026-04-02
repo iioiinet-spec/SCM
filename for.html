@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C언어 for문 튜토리얼</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif; background: #f5f5f0; color: #1a1a18; min-height: 100vh; }
+.page { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+h1 { font-size: 22px; font-weight: 600; margin-bottom: 0.25rem; }
+.subtitle { font-size: 14px; color: #888780; margin-bottom: 1.5rem; }
+.nav { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.nav-btn {
+  padding: 6px 14px; border-radius: 999px;
+  border: 1px solid #d3d1c7; background: #fff;
+  color: #5f5e5a; font-size: 13px; cursor: pointer; transition: all 0.15s;
+}
+.nav-btn.active { background: #2c2c2a; color: #fff; border-color: #2c2c2a; font-weight: 500; }
+.nav-btn:hover:not(.active) { background: #f1efe8; }
+.section { display: none; }
+.section.active { display: block; }
+.card {
+  background: #fff; border: 1px solid #e4e2d8;
+  border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem;
+}
+.tag {
+  display: inline-block; font-size: 11px; font-weight: 600;
+  padding: 2px 10px; border-radius: 999px; margin-bottom: 8px; letter-spacing: 0.03em;
+}
+.tag-blue { background: #E6F1FB; color: #0C447C; }
+.tag-green { background: #EAF3DE; color: #27500A; }
+.tag-amber { background: #FAEEDA; color: #633806; }
+.tag-coral { background: #FAECE7; color: #712B13; }
+.tag-purple { background: #EEEDFE; color: #3C3489; }
+.tag-teal { background: #E1F5EE; color: #085041; }
+h3 { font-size: 15px; font-weight: 600; color: #1a1a18; margin-bottom: 6px; }
+p { font-size: 14px; color: #5f5e5a; line-height: 1.65; margin-bottom: 8px; }
+pre {
+  background: #f1efe8; border-radius: 8px; padding: 1rem;
+  font-size: 13px; font-family: 'Consolas', 'D2Coding', monospace;
+  color: #2c2c2a; overflow-x: auto; line-height: 1.7; margin-bottom: 8px;
+}
+code { font-family: 'Consolas', 'D2Coding', monospace; font-size: 13px; background: #f1efe8; padding: 1px 5px; border-radius: 4px; }
+.kw { color: #185FA5; font-weight: 600; }
+.fn { color: #3B6D11; }
+.str { color: #BA7517; }
+.cmt { color: #888780; font-style: italic; }
+.op { color: #993C1D; font-weight: 600; }
+.note { background: #f1efe8; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #5f5e5a; margin-top: 8px; }
+
+/* flow diagram */
+.flow-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 1rem 0; }
+.flow-box {
+  padding: 8px 20px; border-radius: 8px; border: 1px solid #e4e2d8;
+  font-size: 13px; text-align: center; background: #fff; min-width: 140px;
+}
+.flow-diamond {
+  padding: 8px 20px; border-radius: 8px; border: 1px solid #378ADD;
+  font-size: 13px; text-align: center; background: #E6F1FB; color: #0C447C;
+  font-weight: 500; min-width: 140px;
+}
+.flow-action { background: #EAF3DE; border-color: #639922; color: #27500A; font-weight: 500; }
+.flow-end { background: #f1efe8; border-color: #d3d1c7; color: #5f5e5a; }
+.flow-row { display: flex; gap: 20px; align-items: flex-start; }
+.flow-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.arrow { color: #888780; font-size: 16px; line-height: 1; }
+.arrow-label { font-size: 11px; color: #888780; }
+
+/* patterns grid */
+.pattern-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.pattern-card {
+  background: #fff; border: 1px solid #e4e2d8; border-radius: 10px;
+  padding: 12px 14px;
+}
+.pattern-card .label { font-size: 11px; font-weight: 600; color: #888780; margin-bottom: 6px; }
+.pattern-card pre { margin: 0; padding: 8px; font-size: 12px; }
+
+/* simulator */
+.sim-row { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+.sim-row label { font-size: 13px; color: #5f5e5a; min-width: 70px; }
+select, input[type=number], input[type=text] {
+  padding: 6px 10px; border-radius: 8px;
+  border: 1px solid #d3d1c7; font-size: 14px; background: #fff; color: #1a1a18;
+}
+input[type=number] { width: 90px; }
+input[type=text] { width: 60px; }
+.sim-btn {
+  padding: 7px 18px; border-radius: 8px; border: 1px solid #d3d1c7;
+  background: #f1efe8; color: #1a1a18; font-size: 13px; cursor: pointer;
+}
+.sim-btn:hover { background: #fff; }
+.sim-output {
+  background: #f1efe8; border-radius: 8px; padding: 1rem;
+  font-family: 'Consolas', 'D2Coding', monospace; font-size: 14px;
+  color: #2c2c2a; min-height: 50px; border: 1px solid #e4e2d8; white-space: pre-wrap;
+}
+.sim-extra { margin-bottom: 10px; }
+
+/* step visualizer */
+.step-wrap { overflow-x: auto; }
+.step-table { border-collapse: collapse; width: 100%; font-size: 13px; }
+.step-table th { background: #f1efe8; padding: 7px 12px; text-align: center; border: 1px solid #e4e2d8; font-weight: 600; }
+.step-table td { padding: 7px 12px; text-align: center; border: 1px solid #e4e2d8; font-family: 'Consolas', monospace; }
+.step-table tr.active-row td { background: #E6F1FB; color: #0C447C; font-weight: 500; }
+.step-controls { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+.step-controls button {
+  padding: 6px 14px; border-radius: 8px; border: 1px solid #d3d1c7;
+  background: #fff; font-size: 13px; cursor: pointer;
+}
+.step-controls button:hover { background: #f1efe8; }
+.step-controls button:disabled { opacity: 0.4; cursor: default; }
+.step-info { font-size: 13px; color: #5f5e5a; margin-left: auto; }
+
+/* quiz */
+.quiz-q { font-size: 14px; font-weight: 600; color: #1a1a18; margin-bottom: 12px; white-space: pre-wrap; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt {
+  padding: 10px 14px; border: 1px solid #e4e2d8; border-radius: 8px;
+  font-size: 14px; cursor: pointer; color: #1a1a18; background: #fff; text-align: left; transition: all 0.15s;
+}
+.quiz-opt:hover:not(:disabled) { background: #f1efe8; }
+.quiz-opt.correct { background: #EAF3DE; border-color: #639922; color: #27500A; font-weight: 500; }
+.quiz-opt.wrong { background: #FCEBEB; border-color: #E24B4A; color: #791F1F; }
+.quiz-feedback { margin-top: 10px; font-size: 14px; font-weight: 500; padding: 8px 12px; border-radius: 8px; display: none; }
+.quiz-feedback.ok { color: #3B6D11; background: #EAF3DE; }
+.quiz-feedback.no { color: #A32D2D; background: #FCEBEB; }
+.quiz-nav { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+.quiz-nav button {
+  padding: 7px 16px; border-radius: 8px; border: 1px solid #d3d1c7;
+  background: #fff; color: #1a1a18; font-size: 13px; cursor: pointer;
+}
+.quiz-nav button:hover:not(:disabled) { background: #f1efe8; }
+.quiz-nav button:disabled { opacity: 0.4; cursor: default; }
+.quiz-progress { font-size: 12px; color: #888780; margin-left: auto; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>C언어 for문 튜토리얼</h1>
+  <p class="subtitle">반복문 완전 정복 — 기본 문법부터 배열까지</p>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="showSection('intro',this)">개요</button>
+    <button class="nav-btn" onclick="showSection('syntax',this)">문법 구조</button>
+    <button class="nav-btn" onclick="showSection('patterns',this)">핵심 패턴</button>
+    <button class="nav-btn" onclick="showSection('examples',this)">예제 모음</button>
+    <button class="nav-btn" onclick="showSection('step',this)">단계별 추적</button>
+    <button class="nav-btn" onclick="showSection('sim',this)">시뮬레이터</button>
+    <button class="nav-btn" onclick="showSection('quiz',this)">퀴즈</button>
+  </div>
+
+  <!-- 개요 -->
+  <div id="sec-intro" class="section active">
+    <div class="card">
+      <span class="tag tag-blue">for문이란?</span>
+      <h3>같은 코드를 여러 번 반복 실행하는 문법</h3>
+      <p>반복 횟수가 정해져 있을 때 가장 많이 사용한다. 배열 처리, 누적합, 별찍기, 완전탐색의 핵심이다.</p>
+    </div>
+    <div class="card">
+      <span class="tag tag-amber">어디에 쓰나?</span>
+      <div class="pattern-grid" style="margin-top:4px;">
+        <div class="pattern-card">
+          <div class="label">배열 처리</div>
+          <p style="font-size:13px; margin:0;">인덱스 0~N-1 순서로 반복</p>
+        </div>
+        <div class="pattern-card">
+          <div class="label">누적합</div>
+          <p style="font-size:13px; margin:0;">sum += i 패턴으로 합계 계산</p>
+        </div>
+        <div class="pattern-card">
+          <div class="label">출력 반복</div>
+          <p style="font-size:13px; margin:0;">별찍기, 구구단, 문자 반복</p>
+        </div>
+        <div class="pattern-card">
+          <div class="label">완전탐색</div>
+          <p style="font-size:13px; margin:0;">모든 경우를 하나씩 검사</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 문법 구조 -->
+  <div id="sec-syntax" class="section">
+    <div class="card">
+      <span class="tag tag-blue">기본 문법</span>
+      <pre><span class="kw">for</span>(초기식; 조건식; 증감식) {
+    실행문;
+}</pre>
+    </div>
+    <div class="card">
+      <span class="tag tag-green">동작 순서</span>
+      <div class="flow-wrap">
+        <div class="flow-box" style="background:#f1efe8;">① 초기식 실행 <code style="font-size:11px;">int i=1</code></div>
+        <div class="arrow">↓</div>
+        <div class="flow-diamond">② 조건식 검사 <code style="font-size:11px;">i&lt;=N</code></div>
+        <div class="arrow">↓</div>
+        <div class="flow-row">
+          <div class="flow-col">
+            <div class="arrow-label">참(true)</div>
+            <div class="flow-box flow-action">③ 실행문 실행</div>
+            <div class="arrow">↓</div>
+            <div class="flow-box" style="background:#FAEEDA; border-color:#EF9F27; color:#633806;">④ 증감식 실행 <code style="font-size:11px;">i++</code></div>
+            <div class="arrow">↑ 다시 검사</div>
+          </div>
+          <div class="flow-col" style="margin-top: 20px;">
+            <div class="arrow-label">거짓(false)</div>
+            <div class="flow-box flow-end">⑤ 반복 종료</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <span class="tag tag-amber">구성요소 설명</span>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
+        <div style="display:flex; gap:10px; align-items:baseline;">
+          <span style="min-width:70px; font-size:12px; font-weight:600; color:#0C447C; background:#E6F1FB; padding:2px 8px; border-radius:4px;">초기식</span>
+          <span style="font-size:14px; color:#5f5e5a;">반복 시작값 설정 — <code>int i=0;</code></span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:baseline;">
+          <span style="min-width:70px; font-size:12px; font-weight:600; color:#27500A; background:#EAF3DE; padding:2px 8px; border-radius:4px;">조건식</span>
+          <span style="font-size:14px; color:#5f5e5a;">반복 계속 여부 — <code>i&lt;10</code></span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:baseline;">
+          <span style="min-width:70px; font-size:12px; font-weight:600; color:#633806; background:#FAEEDA; padding:2px 8px; border-radius:4px;">증감식</span>
+          <span style="font-size:14px; color:#5f5e5a;">반복 변화 — <code>i++</code> <code>i--</code> <code>i+=2</code></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 핵심 패턴 -->
+  <div id="sec-patterns" class="section">
+    <div class="card">
+      <span class="tag tag-blue">핵심 패턴 5가지</span>
+      <div class="pattern-grid" style="margin-top:8px;">
+        <div class="pattern-card">
+          <div class="label">① 1부터 N까지</div>
+          <pre>for(int i=1;
+    i&lt;=N; i++)</pre>
+        </div>
+        <div class="pattern-card">
+          <div class="label">② 배열 (0~N-1)</div>
+          <pre>for(int i=0;
+    i&lt;N; i++)</pre>
+        </div>
+        <div class="pattern-card">
+          <div class="label">③ 감소 반복</div>
+          <pre>for(int i=10;
+    i&gt;=1; i--)</pre>
+        </div>
+        <div class="pattern-card">
+          <div class="label">④ k씩 증가</div>
+          <pre>for(int i=0;
+    i&lt;=10; i+=2)</pre>
+        </div>
+        <div class="pattern-card">
+          <div class="label">⑤ 누적합</div>
+          <pre>sum = 0;
+sum += i;</pre>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      배열 인덱스는 0부터 시작하므로 <code>i&lt;N</code> (less than N) 패턴을 사용한다. <code>i&lt;=N</code> 이면 범위 초과 오류!
+    </div>
+  </div>
+
+  <!-- 예제 모음 -->
+  <div id="sec-examples" class="section">
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;" id="ex-nav">
+      <button class="nav-btn active" onclick="showEx(0,this)">1~10 출력</button>
+      <button class="nav-btn" onclick="showEx(1,this)">합 구하기</button>
+      <button class="nav-btn" onclick="showEx(2,this)">짝수 출력</button>
+      <button class="nav-btn" onclick="showEx(3,this)">역순 출력</button>
+      <button class="nav-btn" onclick="showEx(4,this)">N까지 합</button>
+      <button class="nav-btn" onclick="showEx(5,this)">문자 반복</button>
+      <button class="nav-btn" onclick="showEx(6,this)">구구단 3단</button>
+      <button class="nav-btn" onclick="showEx(7,this)">배열 합</button>
+    </div>
+    <div id="ex-content"></div>
+  </div>
+
+  <!-- 단계별 추적 -->
+  <div id="sec-step" class="section">
+    <div class="card">
+      <span class="tag tag-teal">단계별 실행 추적기</span>
+      <h3>for(int i=1; i&lt;=N; i++) 의 i 변화를 추적합니다</h3>
+      <div class="sim-row" style="margin-top:10px;">
+        <label>N 값</label>
+        <input type="number" id="stepN" value="5" min="1" max="10" />
+        <button class="sim-btn" onclick="buildStep()">생성</button>
+      </div>
+    </div>
+    <div class="card" id="step-area">
+      <div class="step-controls" id="step-ctrl" style="display:none;">
+        <button onclick="stepPrev()" id="step-prev" disabled>← 이전</button>
+        <button onclick="stepNext()" id="step-next">다음 →</button>
+        <button onclick="stepReset()">처음으로</button>
+        <span class="step-info" id="step-info"></span>
+      </div>
+      <div class="step-wrap">
+        <table class="step-table" id="step-table"><thead><tr><th>단계</th><th>i</th><th>조건(i&lt;=N)</th><th>동작</th></tr></thead><tbody id="step-body"></tbody></table>
+      </div>
+      <div id="step-msg" style="margin-top:10px; font-size:14px; color:#5f5e5a;"></div>
+    </div>
+  </div>
+
+  <!-- 시뮬레이터 -->
+  <div id="sec-sim" class="section">
+    <div class="card">
+      <span class="tag tag-blue">시뮬레이터</span>
+      <h3>예제를 선택하고 값을 입력해보세요</h3>
+    </div>
+    <div class="card">
+      <div class="sim-row">
+        <label>예제 선택</label>
+        <select id="simType" onchange="updateSimInputs()">
+          <option value="count">1~N 출력</option>
+          <option value="sum">1~N 합</option>
+          <option value="even">짝수만 출력 (1~N)</option>
+          <option value="reverse">N~1 역순 출력</option>
+          <option value="charrepeat">문자 n번 반복</option>
+          <option value="gugu">구구단 (단 선택)</option>
+        </select>
+      </div>
+      <div id="sim-inputs" class="sim-extra"></div>
+      <button class="sim-btn" onclick="runSim()">실행 ▶</button>
+    </div>
+    <div class="card">
+      <div id="sim-code" style="margin-bottom:10px;"></div>
+      <div style="font-size:13px; color:#888780; margin-bottom:6px;">출력 결과</div>
+      <div class="sim-output" id="simOutput">실행 버튼을 눌러보세요</div>
+    </div>
+  </div>
+
+  <!-- 퀴즈 -->
+  <div id="sec-quiz" class="section">
+    <div id="quiz-container"></div>
+  </div>
+</div>
+
+<script>
+// Section navigation
+function showSection(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// Examples
+const examples = [
+  {
+    title: "1부터 10까지 출력",
+    tag: "tag-green",
+    problem: "1부터 10까지 출력하시오.",
+    output: "1 2 3 4 5 6 7 8 9 10",
+    code: `<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>1; i<span class="op">&lt;=</span>10; i<span class="op">++</span>){\n        <span class="fn">printf</span>(<span class="str">"%d "</span>, i);\n    }\n    <span class="kw">return</span> 0;\n}`
+  },
+  {
+    title: "1~100 합 구하기",
+    tag: "tag-blue",
+    problem: "1부터 100까지의 합을 출력하시오.",
+    output: "5050",
+    code: `<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="fn">int</span> sum<span class="op">=</span>0;\n\n    <span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>1; i<span class="op">&lt;=</span>100; i<span class="op">++</span>){\n        sum <span class="op">+=</span> i;\n    }\n\n    <span class="fn">printf</span>(<span class="str">"%d"</span>, sum);\n    <span class="kw">return</span> 0;\n}`
+  },
+  {
+    title: "짝수만 출력",
+    tag: "tag-amber",
+    problem: "1~20 중 짝수만 출력하시오.",
+    output: "2 4 6 8 10 12 14 16 18 20",
+    code: `<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>2; i<span class="op">&lt;=</span>20; i<span class="op">+=</span>2){\n        <span class="fn">printf</span>(<span class="str">"%d "</span>, i);\n    }\n    <span class="kw">return</span> 0;\n}`
+  },
+  {
+    title: "역순 출력",
+    tag: "tag-coral",
+    problem: "10부터 1까지 출력하시오.",
+    output: "10 9 8 7 6 5 4 3 2 1",
+    code: `<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>10; i<span class="op">&gt;=</span>1; i<span class="op">--</span>){\n        <span class="fn">printf</span>(<span class="str">"%d "</span>, i);\n    }\n    <span class="kw">return</span> 0;\n}`
+  },
+  {
+    title: "입력값까지 합",
+    tag: "tag-blue",
+    problem: "정수 N을 입력받아 1~N의 합을 출력하시오.\n입력: 5",
+    output: "15",
+    code: `<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="fn">int</span> N, sum<span class="op">=</span>0;\n    <span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;N);\n\n    <span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>1; i<span class="op">&lt;=</span>N; i<span class="op">++</span>){\n        sum <span class="op">+=</span> i;\n    }\n\n    <span class="fn">printf</span>(<span class="str">"%d"</span>, sum);\n    <span class="kw">return</span> 0;\n}`
+  },
+  {
+    title: "문자 반복 출력",
+    tag: "tag-teal",
+    problem: "문자 1개와 횟수를 입력받아 반복 출력하시오.\n입력: A 5",
+    output: "AAAAA",
+    code: `<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="fn">char</span> ch;\n    <span class="fn">int</span> n;\n\n    <span class="fn">scanf</span>(<span class="str">" %c %d"</span>, &amp;ch, &amp;n);\n\n    <span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>0; i<span class="op">&lt;</span>n; i<span class="op">++</span>){\n        <span class="fn">printf</span>(<span class="str">"%c"</span>, ch);\n    }\n\n    <span class="kw">return</span> 0;\n}`
+  },
+  {
+    title: "구구단 3단",
+    tag: "tag-purple",
+    problem: "구구단 3단을 출력하시오.",
+    output: "3 x 1 = 3\n3 x 2 = 6\n...\n3 x 9 = 27",
+    code: `<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>1; i<span class="op">&lt;=</span>9; i<span class="op">++</span>){\n        <span class="fn">printf</span>(<span class="str">"3 x %d = %d\\n"</span>, i, 3<span class="op">*</span>i);\n    }\n    <span class="kw">return</span> 0;\n}`
+  },
+  {
+    title: "입력 배열 합",
+    tag: "tag-green",
+    problem: "정수 5개를 입력받아 총합을 출력하시오.\n입력: 1 2 3 4 5",
+    output: "15",
+    code: `<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>\n\n<span class="fn">int</span> main(){\n    <span class="fn">int</span> a[5], sum<span class="op">=</span>0;\n\n    <span class="kw">for</span>(<span class="fn">int</span> i<span class="op">=</span>0; i<span class="op">&lt;</span>5; i<span class="op">++</span>){\n        <span class="fn">scanf</span>(<span class="str">"%d"</span>, &amp;a[i]);\n        sum <span class="op">+=</span> a[i];\n    }\n\n    <span class="fn">printf</span>(<span class="str">"%d"</span>, sum);\n    <span class="kw">return</span> 0;\n}`
+  }
+];
+
+function showEx(idx, btn) {
+  document.querySelectorAll('#ex-nav .nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const ex = examples[idx];
+  document.getElementById('ex-content').innerHTML = `
+    <div class="card">
+      <span class="tag ${ex.tag}">${ex.title}</span>
+      <h3>문제</h3>
+      <p style="white-space:pre-wrap;">${ex.problem}</p>
+      <h3 style="margin-top:10px;">예상 출력</h3>
+      <div class="sim-output" style="min-height:36px; margin-top:6px;">${ex.output}</div>
+    </div>
+    <div class="card">
+      <span class="tag tag-blue">정답 코드</span>
+      <pre>${ex.code}</pre>
+    </div>`;
+}
+showEx(0, document.querySelector('#ex-nav .nav-btn'));
+
+// Step tracer
+let stepData = [], stepIdx = 0;
+
+function buildStep() {
+  const N = parseInt(document.getElementById('stepN').value) || 5;
+  stepData = [];
+  stepData.push({ step: 0, i: 1, cond: '-', action: '초기식: i=1' });
+  for (let i = 1; i <= N + 1; i++) {
+    const cond = i <= N;
+    if (!cond) {
+      stepData.push({ step: stepData.length, i, cond: `${i}<=${N} → 거짓`, action: '반복 종료' });
+      break;
+    }
+    stepData.push({ step: stepData.length, i, cond: `${i}<=${N} → 참`, action: `printf("%d ", ${i}) 출력` });
+    stepData.push({ step: stepData.length, i: i + 1, cond: '-', action: `증감식: i++ → i=${i+1}` });
+  }
+  stepIdx = 0;
+  renderStep();
+  document.getElementById('step-ctrl').style.display = 'flex';
+}
+
+function renderStep() {
+  const tbody = document.getElementById('step-body');
+  tbody.innerHTML = stepData.slice(0, stepIdx + 1).map((r, idx) =>
+    `<tr class="${idx === stepIdx ? 'active-row' : ''}">
+      <td>${r.step + 1}</td><td>${r.i}</td><td>${r.cond}</td><td>${r.action}</td>
+    </tr>`
+  ).join('');
+  document.getElementById('step-info').textContent = `${stepIdx + 1} / ${stepData.length}`;
+  document.getElementById('step-prev').disabled = stepIdx === 0;
+  document.getElementById('step-next').disabled = stepIdx === stepData.length - 1;
+  const cur = stepData[stepIdx];
+  document.getElementById('step-msg').textContent = cur.action;
+}
+
+function stepNext() { if (stepIdx < stepData.length - 1) { stepIdx++; renderStep(); } }
+function stepPrev() { if (stepIdx > 0) { stepIdx--; renderStep(); } }
+function stepReset() { stepIdx = 0; renderStep(); }
+
+// Build initial step
+buildStep();
+
+// Simulator
+const simDefs = {
+  count: { label: 'N', type: 'number', def: 5 },
+  sum: { label: 'N', type: 'number', def: 10 },
+  even: { label: 'N', type: 'number', def: 20 },
+  reverse: { label: 'N', type: 'number', def: 5 },
+  charrepeat: { label1: '문자', type1: 'text', def1: 'A', label2: '횟수', type2: 'number', def2: 5 },
+  gugu: { label: '단', type: 'number', def: 3 }
+};
+
+const simCodes = {
+  count: n => `for(int i=1; i<=${n}; i++)\n    printf("%d ", i);`,
+  sum: n => `int sum=0;\nfor(int i=1; i<=${n}; i++)\n    sum += i;\nprintf("%d", sum);`,
+  even: n => `for(int i=2; i<=${n}; i+=2)\n    printf("%d ", i);`,
+  reverse: n => `for(int i=${n}; i>=1; i--)\n    printf("%d ", i);`,
+  charrepeat: (ch, n) => `for(int i=0; i<${n}; i++)\n    printf("%c", '${ch}');`,
+  gugu: n => `for(int i=1; i<=9; i++)\n    printf("${n} x %d = %d\\n", i, ${n}*i);`
+};
+
+const simRun = {
+  count: n => Array.from({length:n},(_,i)=>i+1).join(' '),
+  sum: n => { let s=0; for(let i=1;i<=n;i++) s+=i; return String(s); },
+  even: n => { let r=[]; for(let i=2;i<=n;i+=2) r.push(i); return r.join(' '); },
+  reverse: n => Array.from({length:n},(_,i)=>n-i).join(' '),
+  charrepeat: (ch, n) => ch.repeat(n),
+  gugu: n => Array.from({length:9},(_,i)=>`${n} x ${i+1} = ${n*(i+1)}`).join('\n')
+};
+
+function updateSimInputs() {
+  const type = document.getElementById('simType').value;
+  const d = simDefs[type];
+  let html = '';
+  if (type === 'charrepeat') {
+    html = `<div class="sim-row"><label>${d.label1}</label><input type="text" id="simA" value="${d.def1}" maxlength="1" style="width:60px;"/></div>
+            <div class="sim-row"><label>${d.label2}</label><input type="number" id="simB" value="${d.def2}" min="1" max="20"/></div>`;
+  } else {
+    html = `<div class="sim-row"><label>${d.label}</label><input type="number" id="simA" value="${d.def}" min="1" max="50"/></div>`;
+  }
+  document.getElementById('sim-inputs').innerHTML = html;
+}
+
+function highlight(code) {
+  return code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\b(for|int|printf|char|if|return)\b/g,'<span class="kw">$1</span>')
+    .replace(/"[^"]*"/g, s=>`<span class="str">${s}</span>`)
+    .replace(/(%=?|==|!=|>=|<=|&&|\+=|-=|\+\+|--|>|<)/g,'<span class="op">$1</span>');
+}
+
+function runSim() {
+  const type = document.getElementById('simType').value;
+  const aEl = document.getElementById('simA');
+  let result, codeStr;
+  if (type === 'charrepeat') {
+    const ch = aEl ? aEl.value.trim()[0] || 'A' : 'A';
+    const n = parseInt(document.getElementById('simB').value) || 5;
+    result = simRun.charrepeat(ch, n);
+    codeStr = simCodes.charrepeat(ch, n);
+  } else {
+    const n = parseInt(aEl ? aEl.value : 5) || 5;
+    result = simRun[type](n);
+    codeStr = simCodes[type](n);
+  }
+  document.getElementById('simOutput').textContent = result;
+  document.getElementById('sim-code').innerHTML = `<pre>${highlight(codeStr)}</pre>`;
+}
+
+updateSimInputs();
+setTimeout(runSim, 50);
+
+// Quiz
+const quizzes = [
+  { q: "for(int i=1; i<=5; i++) 에서 실행문은 몇 번 반복되나?", opts: ["4번","5번","6번","무한"], ans: 1, explain: "i=1,2,3,4,5 총 5번 참이 되므로 5번 실행됩니다." },
+  { q: "배열 int a[5]를 순서대로 처리할 때 올바른 반복 조건은?", opts: ["i<=5","i<5","i<=4","i<6"], ans: 1, explain: "배열 인덱스는 0~4이므로 i<5 (i<N) 패턴을 사용합니다." },
+  { q: "1~100 합을 구하는 코드의 핵심 라인은?", opts: ["sum = i","sum == i","sum += i","i += sum"], ans: 2, explain: "누적합은 sum += i 패턴으로 매 반복마다 i를 더합니다." },
+  { q: "for(int i=10; i>=1; i--) 에서 i가 처음으로 거짓이 되는 값은?", opts: ["0","1","10","11"], ans: 0, explain: "i=0일 때 0>=1이 거짓이 되어 반복이 종료됩니다." },
+  { q: "for(int i=0; i<=10; i+=2) 는 짝수를 몇 개 출력하나?", opts: ["5개","6개","10개","11개"], ans: 1, explain: "0,2,4,6,8,10 — 총 6개의 짝수를 출력합니다." },
+  { q: "초기식에서 int i=0 대신 i=5로 시작하면 실행 횟수는?", opts: ["변하지 않는다","줄어든다","늘어난다","오류가 난다"], ans: 1, explain: "시작값이 5이면 조건식을 더 빨리 벗어나므로 실행 횟수가 줄어듭니다." }
+];
+
+let qIdx = 0, answered = false, qScore = 0;
+
+function renderQuiz() {
+  const q = quizzes[qIdx];
+  document.getElementById('quiz-container').innerHTML = `
+    <div class="card">
+      <span class="tag tag-purple">퀴즈 ${qIdx+1} / ${quizzes.length}</span>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-options">${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`).join('')}</div>
+      <div class="quiz-feedback" id="quiz-fb"></div>
+      <div class="quiz-nav">
+        <button onclick="prevQuiz()" ${qIdx===0?'disabled':''}>← 이전</button>
+        <button onclick="nextQuiz()" id="quiz-next" style="display:none;">다음 →</button>
+        <span class="quiz-progress">점수: ${qScore} / ${quizzes.length}</span>
+      </div>
+    </div>`;
+}
+
+function answerQuiz(i) {
+  if (answered) return;
+  answered = true;
+  const q = quizzes[qIdx];
+  document.querySelectorAll('.quiz-opt').forEach((btn, idx) => {
+    if (idx === q.ans) btn.classList.add('correct');
+    else if (idx === i) btn.classList.add('wrong');
+    btn.disabled = true;
+  });
+  const fb = document.getElementById('quiz-fb');
+  fb.style.display = 'block';
+  if (i === q.ans) { fb.textContent = "✓ 정답! " + q.explain; fb.className = 'quiz-feedback ok'; qScore++; }
+  else { fb.textContent = "✗ 오답. " + q.explain; fb.className = 'quiz-feedback no'; }
+  const nb = document.getElementById('quiz-next');
+  if (nb) nb.style.display = 'inline-block';
+}
+
+function nextQuiz() {
+  if (qIdx < quizzes.length - 1) { qIdx++; answered = false; renderQuiz(); }
+  else {
+    document.getElementById('quiz-container').innerHTML = `
+      <div class="card" style="text-align:center; padding:2.5rem 1rem;">
+        <span class="tag tag-green">완료!</span>
+        <div style="font-size:36px; font-weight:700; margin:1rem 0;">${qScore} <span style="font-size:18px; color:#888780; font-weight:400;">/ ${quizzes.length}</span></div>
+        <p style="font-size:15px;">${qScore===quizzes.length?'완벽합니다!':qScore>=4?'잘했어요!':'다시 공부하고 도전해보세요!'}</p>
+        <button class="sim-btn" style="margin-top:1.5rem; padding:10px 24px; font-size:14px;" onclick="resetQuiz()">다시 풀기</button>
+      </div>`;
+  }
+}
+
+function prevQuiz() { if (qIdx > 0) { qIdx--; answered = false; renderQuiz(); } }
+function resetQuiz() { qIdx = 0; qScore = 0; answered = false; renderQuiz(); }
+renderQuiz();
+</script>
+</body>
+</html>
