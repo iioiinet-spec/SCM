@@ -1,1 +1,14 @@
 C언어 1단계
+
+
+[] C언어 수업자료 2 []
+
+arrp, arrp2
+08. 배열패턴-arrp
+08. 배열패턴2-arrp2
+
+func
+09. 함수-func
+
+struct
+11. 구조체-struct
