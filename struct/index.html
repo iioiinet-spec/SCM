@@ -1,0 +1,403 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary)}
+.hero{padding:2.4rem 1.5rem 1.4rem;text-align:center;border-bottom:0.5px solid var(--color-border-tertiary)}
+.htag{display:inline-block;font-family:var(--font-mono);font-size:11px;color:var(--color-text-info);background:var(--color-background-info);padding:3px 10px;border-radius:20px;margin-bottom:.9rem;letter-spacing:.06em}
+.hero h1{font-size:22px;font-weight:500;margin-bottom:.4rem}
+.hero p{font-size:13px;color:var(--color-text-secondary);margin-bottom:1.4rem}
+.nav{display:flex;border-bottom:0.5px solid var(--color-border-tertiary);overflow-x:auto}
+.nb{font-size:12px;font-family:var(--font-mono);padding:10px 16px;color:var(--color-text-secondary);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;background:none;border-left:none;border-right:none;border-top:none}
+.nb:hover{color:var(--color-text-primary)}
+.nb.on{color:var(--color-text-info);border-bottom-color:var(--color-border-info)}
+.pane{display:none;padding:1.2rem 1.5rem}.pane.on{display:block}
+.slbl{font-size:11px;font-family:var(--font-mono);color:var(--color-text-tertiary);letter-spacing:.08em;margin-bottom:.8rem;text-transform:uppercase}
+
+/* CONCEPT */
+.ccard{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.2rem 1.3rem;margin-bottom:1rem}
+.cctitle{font-size:14px;font-weight:500;margin-bottom:.7rem;display:flex;align-items:center;gap:8px}
+.ccnum{font-family:var(--font-mono);font-size:11px;color:var(--color-text-tertiary)}
+.ccbody{font-size:13px;color:var(--color-text-secondary);line-height:1.8}
+.code-block{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;margin:.8rem 0}
+.code-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.code-lang{font-family:var(--font-mono);font-size:11px;color:var(--color-text-tertiary)}
+.copy-btn{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary);background:none;border:none;cursor:pointer;padding:2px 8px;border-radius:4px;transition:all .15s}
+.copy-btn:hover{color:var(--color-text-primary)}
+pre{padding:1rem 1.2rem;overflow-x:auto;font-family:var(--font-mono);font-size:12.5px;line-height:1.9;color:var(--color-text-primary)}
+.kw{color:#c792ea}.fn{color:#82aaff}.str{color:#c3e88d}.num{color:#f78c6c}.cmt{color:var(--color-text-tertiary);font-style:italic}.ty{color:#5dcaa5}.op{color:#ef9f27}
+.tip-box{background:var(--color-background-warning);border:0.5px solid var(--color-border-warning);border-radius:var(--border-radius-md);padding:.75rem 1rem;font-size:13px;color:var(--color-text-warning);margin-top:.6rem;font-family:var(--font-mono);line-height:1.7}
+.ok-box{background:var(--color-background-success);border:0.5px solid var(--color-border-success);border-radius:var(--border-radius-md);padding:.75rem 1rem;font-size:13px;color:var(--color-text-success);margin-top:.6rem;font-family:var(--font-mono);line-height:1.7}
+.err-box{background:var(--color-background-danger);border:0.5px solid var(--color-border-danger);border-radius:var(--border-radius-md);padding:.75rem 1rem;font-size:13px;color:var(--color-text-danger);margin-top:.6rem;font-family:var(--font-mono);line-height:1.7}
+
+/* SIM */
+.sim-wrap{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.2rem;margin-bottom:1rem}
+.sim-title{font-size:13px;font-weight:500;margin-bottom:1rem;color:var(--color-text-secondary);font-family:var(--font-mono)}
+.field-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:1rem}
+.field-item{display:flex;flex-direction:column;gap:4px}
+.field-label{font-size:11px;font-family:var(--font-mono);color:var(--color-text-secondary)}
+.field-type{font-size:10px;font-family:var(--font-mono);color:var(--color-text-info);background:var(--color-background-info);padding:1px 6px;border-radius:3px;width:fit-content;margin-bottom:2px}
+.field-input{font-family:var(--font-mono);font-size:13px;padding:7px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);width:100%}
+.sbtn{font-size:12px;font-family:var(--font-mono);padding:7px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.sbtn:hover{border-color:var(--color-border-info);color:var(--color-text-info)}
+.sbtn.p{border-color:var(--color-border-info);color:var(--color-text-info);background:var(--color-background-info)}
+.output-box{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:.9rem 1.1rem;font-family:var(--font-mono);font-size:13px;line-height:1.9;color:var(--color-text-secondary);min-height:60px;margin-top:.8rem}
+.output-box span{color:var(--color-text-primary);font-weight:500}
+.struct-visual{margin:1rem 0}
+.sv-box{border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);overflow:hidden;display:inline-block;min-width:200px}
+.sv-hdr{background:var(--color-background-info);padding:6px 12px;font-family:var(--font-mono);font-size:12px;color:var(--color-text-info);font-weight:500}
+.sv-row{display:flex;align-items:stretch;border-top:0.5px solid var(--color-border-tertiary)}
+.sv-type{font-family:var(--font-mono);font-size:11px;color:var(--color-text-info);background:var(--color-background-info);padding:6px 8px;min-width:70px;display:flex;align-items:center;justify-content:center}
+.sv-name{font-family:var(--font-mono);font-size:12px;color:var(--color-text-secondary);padding:6px 10px;display:flex;align-items:center;min-width:80px;border-right:0.5px solid var(--color-border-tertiary)}
+.sv-val{font-family:var(--font-mono);font-size:12px;padding:6px 10px;display:flex;align-items:center;color:var(--color-text-primary);font-weight:500;min-width:100px}
+.sbtns{display:flex;gap:8px;flex-wrap:wrap}
+select{font-size:12px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono)}
+
+/* QUIZ */
+.qpb{height:3px;background:var(--color-border-tertiary);border-radius:2px;margin-bottom:1.1rem}
+.qpf{height:100%;background:var(--color-border-info);border-radius:2px;transition:width .3s}
+.qhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem}
+.qtxt{font-size:14px;font-weight:500;line-height:1.6;margin-bottom:1rem;padding:.8rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md)}
+.qopts{display:flex;flex-direction:column;gap:7px;margin-bottom:.9rem}
+.qo{padding:.65rem 1rem;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;cursor:pointer;text-align:left;background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono);transition:all .15s;line-height:1.5}
+.qo:hover{border-color:var(--color-border-info);color:var(--color-text-info)}
+.qo.ok{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success)}
+.qo.no{background:var(--color-background-danger);border-color:var(--color-border-danger);color:var(--color-text-danger)}
+.qexp{font-size:13px;line-height:1.7;padding:.75rem 1rem;border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-secondary);margin-bottom:.9rem;display:none;font-family:var(--font-mono)}
+.qexp.show{display:block}
+.qnav{display:flex;align-items:center;justify-content:space-between}
+.qscr{font-size:12px;font-family:var(--font-mono);padding:4px 10px;border-radius:20px;background:var(--color-background-success);color:var(--color-text-success)}
+.cat-tag{display:inline-block;font-size:10px;font-family:var(--font-mono);padding:2px 8px;border-radius:12px;margin-bottom:.5rem;background:var(--color-background-info);color:var(--color-text-info)}
+</style>
+
+<h2 class="sr-only">C언어 구조체(struct) — 인터랙티브 학습 홈페이지</h2>
+
+<div class="hero">
+  <div class="htag">C LANGUAGE · STRUCT</div>
+  <h1>구조체(struct) 완전 정복</h1>
+  <p>개념 · 시뮬레이터 · 자주 하는 실수 · 퀴즈 — 한 페이지로 끝내기</p>
+</div>
+
+<div class="nav">
+  <button class="nb on" onclick="sp('concept',this)">개념 학습</button>
+  <button class="nb" onclick="sp('sim',this)">구조체 시뮬레이터</button>
+  <button class="nb" onclick="sp('err',this)">자주 하는 실수</button>
+  <button class="nb" onclick="sp('quiz',this)">퀴즈</button>
+</div>
+
+<!-- CONCEPT -->
+<div class="pane on" id="pane-concept">
+
+  <div class="slbl">구조체란?</div>
+  <div class="ccard">
+    <div class="cctitle"><span class="ccnum">01</span>구조체(struct)의 정의</div>
+    <div class="ccbody">서로 <strong>다른 자료형</strong>의 변수를 하나로 묶는 <strong>사용자 정의 자료형</strong>입니다.<br>배열은 같은 자료형만 저장하지만, 구조체는 int·char·float 등을 함께 묶을 수 있습니다.</div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="code-lang">C — 구조체 기본 형식</span><button class="copy-btn" onclick="cp(this,0)">복사</button></div>
+      <pre id="code0"><span class="kw">struct</span> <span class="ty">Student</span> {
+    <span class="ty">char</span>  name[<span class="num">20</span>];  <span class="cmt">// 이름 (문자열)</span>
+    <span class="ty">int</span>   age;        <span class="cmt">// 나이 (정수)</span>
+    <span class="ty">float</span> height;     <span class="cmt">// 키  (실수)</span>
+};                   <span class="cmt">// ← 세미콜론 필수!</span></pre>
+    </div>
+  </div>
+
+  <div class="ccard">
+    <div class="cctitle"><span class="ccnum">02</span>구조체 변수 선언 · 멤버 접근</div>
+    <div class="ccbody">구조체 자료형으로 <strong>변수를 선언</strong>하고, <strong>. 연산자</strong>로 멤버에 접근합니다.</div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="code-lang">C — 선언 · 접근 · 출력</span><button class="copy-btn" onclick="cp(this,1)">복사</button></div>
+      <pre id="code1"><span class="kw">struct</span> <span class="ty">Student</span> s1;      <span class="cmt">// 구조체 변수 선언</span>
+
+<span class="fn">strcpy</span>(s1.name, <span class="str">"Kim"</span>);  <span class="cmt">// 문자열 → strcpy</span>
+s1.age    = <span class="num">14</span>;           <span class="cmt">// 정수   → 직접 대입</span>
+s1.height = <span class="num">160.5</span>;        <span class="cmt">// 실수   → 직접 대입</span>
+
+<span class="fn">printf</span>(<span class="str">"%s\n"</span>, s1.name);
+<span class="fn">printf</span>(<span class="str">"%d\n"</span>, s1.age);
+<span class="fn">printf</span>(<span class="str">"%.1f\n"</span>, s1.height);</pre>
+    </div>
+  </div>
+
+  <div class="ccard">
+    <div class="cctitle"><span class="ccnum">03</span>구조체 배열 — 여러 명 관리</div>
+    <div class="ccbody">구조체와 배열을 결합하면 <strong>여러 개의 데이터</strong>를 체계적으로 관리할 수 있습니다.</div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="code-lang">C — 구조체 배열</span><button class="copy-btn" onclick="cp(this,2)">복사</button></div>
+      <pre id="code2"><span class="kw">struct</span> <span class="ty">Student</span> s[<span class="num">3</span>];   <span class="cmt">// 학생 3명</span>
+
+<span class="fn">strcpy</span>(s[<span class="num">0</span>].name, <span class="str">"Kim"</span>);
+s[<span class="num">0</span>].age = <span class="num">14</span>;
+
+<span class="fn">strcpy</span>(s[<span class="num">1</span>].name, <span class="str">"Lee"</span>);
+s[<span class="num">1</span>].age = <span class="num">15</span>;
+
+<span class="fn">printf</span>(<span class="str">"%s %d\n"</span>, s[<span class="num">0</span>].name, s[<span class="num">0</span>].age);
+<span class="fn">printf</span>(<span class="str">"%s %d\n"</span>, s[<span class="num">1</span>].name, s[<span class="num">1</span>].age);</pre>
+    </div>
+  </div>
+
+  <div class="ccard">
+    <div class="cctitle"><span class="ccnum">04</span>완성 예제 — 학생 정보 저장 · 출력</div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="code-lang">C — 전체 코드</span><button class="copy-btn" onclick="cp(this,3)">복사</button></div>
+      <pre id="code3"><span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;string.h&gt;</span>
+
+<span class="kw">struct</span> <span class="ty">Student</span> {
+    <span class="ty">char</span> name[<span class="num">20</span>];
+    <span class="ty">int</span>  age;
+    <span class="ty">int</span>  score;
+};
+
+<span class="ty">int</span> <span class="fn">main</span>() {
+    <span class="kw">struct</span> <span class="ty">Student</span> s;
+
+    <span class="fn">strcpy</span>(s.name, <span class="str">"Jisu"</span>);
+    s.age   = <span class="num">14</span>;
+    s.score = <span class="num">95</span>;
+
+    <span class="fn">printf</span>(<span class="str">"이름: %s\n"</span>, s.name);
+    <span class="fn">printf</span>(<span class="str">"나이: %d\n"</span>, s.age);
+    <span class="fn">printf</span>(<span class="str">"점수: %d\n"</span>, s.score);
+
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+    </div>
+    <div class="ok-box">실행 결과:<br>이름: Jisu<br>나이: 14<br>점수: 95</div>
+  </div>
+
+  <div class="ccard">
+    <div class="cctitle"><span class="ccnum">05</span>배열 vs 구조체 차이</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:.4rem">
+      <div>
+        <div style="font-size:11px;font-family:var(--font-mono);color:var(--color-text-tertiary);margin-bottom:.4rem">배열(array)</div>
+        <div class="code-block" style="margin:0"><pre style="padding:.7rem 1rem"><span class="ty">int</span> arr[<span class="num">5</span>];</pre></div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-top:.4rem">같은 자료형 여러 개</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-family:var(--font-mono);color:var(--color-text-tertiary);margin-bottom:.4rem">구조체(struct)</div>
+        <div class="code-block" style="margin:0"><pre style="padding:.7rem 1rem"><span class="kw">struct</span> <span class="ty">S</span> {
+  <span class="ty">char</span> n[<span class="num">20</span>];
+  <span class="ty">int</span>  a;
+};</pre></div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-top:.4rem">다른 자료형 한 묶음</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SIM -->
+<div class="pane" id="pane-sim">
+
+  <div class="sim-wrap">
+    <div class="sim-title">구조체 빌더 — 멤버를 입력하고 구조체 메모리 구조와 출력 확인</div>
+    <div style="margin-bottom:.9rem">
+      <select id="struct-tmpl" onchange="loadTmpl()" style="margin-right:8px">
+        <option value="student">Student (이름·나이·점수)</option>
+        <option value="rect">Rectangle (가로·세로)</option>
+        <option value="product">Product (이름·가격)</option>
+        <option value="person">Person (이름·나이·키)</option>
+      </select>
+      <button class="sbtn" onclick="runStruct()">실행 (출력)</button>
+    </div>
+    <div class="field-grid" id="field-grid"></div>
+    <div class="struct-visual" id="sv"></div>
+    <div class="output-box" id="out">값을 입력하고 실행 버튼을 누르세요</div>
+  </div>
+
+  <div class="sim-wrap">
+    <div class="sim-title">scanf 입력 방식 체험 — 문자열 vs 숫자 멤버 차이</div>
+    <div class="code-block">
+      <div class="code-hdr"><span class="code-lang">입력 방식 비교</span></div>
+      <pre><span class="cmt">// 문자열 배열 → & 없음</span>
+<span class="fn">scanf</span>(<span class="str">"%s"</span>, p.name);
+
+<span class="cmt">// 정수/실수 → & 필요</span>
+<span class="fn">scanf</span>(<span class="str">"%d"</span>, <span class="op">&amp;</span>p.price);
+<span class="fn">scanf</span>(<span class="str">"%f"</span>, <span class="op">&amp;</span>p.height);</pre>
+    </div>
+    <div class="tip-box">
+      배열 이름(name)은 이미 <strong>주소값</strong>이므로 &를 붙이지 않습니다.<br>
+      int, float 등 일반 변수는 반드시 <strong>&변수명</strong>으로 주소를 전달해야 합니다.
+    </div>
+  </div>
+
+</div>
+
+<!-- ERROR -->
+<div class="pane" id="pane-err">
+  <div class="slbl">자주 하는 실수 4가지</div>
+
+  <div class="ccard">
+    <div class="cctitle"><span class="ccnum" style="color:#e24b4a">실수 1</span>구조체 정의 끝 세미콜론 빠뜨리기</div>
+    <div class="err-box">틀린 예: struct Student { ... }  ← ; 없음</div>
+    <div class="ok-box">맞는 예: struct Student { ... };  ← 반드시 ; 필요</div>
+    <div class="ccbody" style="margin-top:.6rem">구조체 정의는 선언문이므로 중괄호 뒤에 반드시 세미콜론이 와야 합니다.</div>
+  </div>
+
+  <div class="ccard">
+    <div class="cctitle"><span class="ccnum" style="color:#e24b4a">실수 2</span>문자열 멤버에 = 대입 사용</div>
+    <div class="err-box">틀린 예: s1.name = "Kim";  ← 문자열은 = 대입 불가</div>
+    <div class="ok-box">맞는 예: strcpy(s1.name, "Kim");  ← strcpy 사용</div>
+    <div class="ccbody" style="margin-top:.6rem">char 배열은 포인터가 아니라 배열이므로 = 로 직접 대입할 수 없습니다. strcpy를 사용해야 합니다.</div>
+  </div>
+
+  <div class="ccard">
+    <div class="cctitle"><span class="ccnum" style="color:#e24b4a">실수 3</span>. 연산자 빠뜨리기</div>
+    <div class="err-box">틀린 예: s1 age = 14;  ← . 없음</div>
+    <div class="ok-box">맞는 예: s1.age = 14;  ← . 으로 멤버 접근</div>
+    <div class="ccbody" style="margin-top:.6rem">구조체 변수와 멤버 이름 사이에는 반드시 <code>.</code> 이 있어야 합니다.</div>
+  </div>
+
+  <div class="ccard">
+    <div class="cctitle"><span class="ccnum" style="color:#e24b4a">실수 4</span>scanf에서 & 잘못 사용</div>
+    <div class="err-box">틀린 예: scanf("%s", &p.name);  ← 문자열에 & 붙이면 경고</div>
+    <div class="err-box" style="margin-top:4px">틀린 예: scanf("%d", p.price);   ← 정수에 & 없으면 오류</div>
+    <div class="ok-box" style="margin-top:6px">맞는 예: scanf("%s", p.name);<br>맞는 예: scanf("%d", &p.price);</div>
+  </div>
+
+  <div class="ccard">
+    <div class="cctitle"><span class="ccnum">정리</span>실수 방지 체크리스트</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:.4rem">
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.7rem .9rem;font-family:var(--font-mono);font-size:12px;color:var(--color-text-secondary);line-height:1.8">구조체 닫는 중괄호 뒤<br>→ <span style="color:var(--color-text-success)">; 필수</span></div>
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.7rem .9rem;font-family:var(--font-mono);font-size:12px;color:var(--color-text-secondary);line-height:1.8">문자열 대입<br>→ <span style="color:var(--color-text-success)">strcpy 사용</span></div>
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.7rem .9rem;font-family:var(--font-mono);font-size:12px;color:var(--color-text-secondary);line-height:1.8">멤버 접근<br>→ <span style="color:var(--color-text-success)">변수.멤버</span></div>
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.7rem .9rem;font-family:var(--font-mono);font-size:12px;color:var(--color-text-secondary);line-height:1.8">scanf 숫자<br>→ <span style="color:var(--color-text-success)">&변수 필수</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="pane" id="pane-quiz">
+  <div id="quiz-area"></div>
+</div>
+
+<script>
+const TMPLS={
+  student:{name:'Student',fields:[{n:'name',t:'char[20]',ph:'Kim',str:true},{n:'age',t:'int',ph:'14',str:false},{n:'score',t:'int',ph:'92',str:false}]},
+  rect:{name:'Rectangle',fields:[{n:'width',t:'int',ph:'8',str:false},{n:'height',t:'int',ph:'5',str:false}]},
+  product:{name:'Product',fields:[{n:'name',t:'char[30]',ph:'pencil',str:true},{n:'price',t:'int',ph:'1200',str:false}]},
+  person:{name:'Person',fields:[{n:'name',t:'char[20]',ph:'Lee',str:true},{n:'age',t:'int',ph:'15',str:false},{n:'height',t:'float',ph:'165.3',str:false}]}
+};
+const CODES=[
+  `struct Student {\n    char  name[20];\n    int   age;\n    float height;\n};`,
+  `struct Student s1;\nstrcpy(s1.name, "Kim");\ns1.age    = 14;\ns1.height = 160.5;\nprintf("%s\\n", s1.name);\nprintf("%d\\n", s1.age);\nprintf("%.1f\\n", s1.height);`,
+  `struct Student s[3];\nstrcpy(s[0].name, "Kim");\ns[0].age = 14;\nstrcpy(s[1].name, "Lee");\ns[1].age = 15;\nprintf("%s %d\\n", s[0].name, s[0].age);\nprintf("%s %d\\n", s[1].name, s[1].age);`,
+  `#include <stdio.h>\n#include <string.h>\n\nstruct Student {\n    char name[20];\n    int  age;\n    int  score;\n};\n\nint main() {\n    struct Student s;\n    strcpy(s.name, "Jisu");\n    s.age   = 14;\n    s.score = 95;\n    printf("이름: %s\\n", s.name);\n    printf("나이: %d\\n", s.age);\n    printf("점수: %d\\n", s.score);\n    return 0;\n}`
+];
+function cp(btn,i){navigator.clipboard.writeText(CODES[i]).then(()=>{btn.textContent='복사됨!';setTimeout(()=>btn.textContent='복사',1500);});}
+
+function loadTmpl(){
+  const tmpl=TMPLS[document.getElementById('struct-tmpl').value];
+  const g=document.getElementById('field-grid');
+  g.innerHTML=tmpl.fields.map(f=>`
+<div class="field-item">
+  <div class="field-type">${f.t}</div>
+  <div class="field-label">${f.n}</div>
+  <input class="field-input" id="fi_${f.n}" placeholder="${f.ph}" value="${f.ph}">
+</div>`).join('');
+  renderSV(tmpl,tmpl.fields.map(f=>f.ph));
+  document.getElementById('out').innerHTML='값을 수정하고 실행 버튼을 누르세요';
+}
+
+function renderSV(tmpl,vals){
+  const sv=document.getElementById('sv');
+  sv.innerHTML=`<div class="sv-box">
+    <div class="sv-hdr">struct ${tmpl.name}</div>
+    ${tmpl.fields.map((f,i)=>`<div class="sv-row">
+      <div class="sv-name">${f.n}</div>
+      <div class="sv-type">${f.t}</div>
+      <div class="sv-val">${vals[i]||'—'}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function runStruct(){
+  const tmpl=TMPLS[document.getElementById('struct-tmpl').value];
+  const vals=tmpl.fields.map(f=>document.getElementById('fi_'+f.n).value.trim()||f.ph);
+  renderSV(tmpl,vals);
+  let out='<span>// 실행 결과</span><br>';
+  tmpl.fields.forEach((f,i)=>{
+    const v=vals[i];
+    if(f.t==='float')out+=`${f.n}: <span>${parseFloat(v).toFixed(1)}</span><br>`;
+    else if(f.t==='int')out+=`${f.n}: <span>${parseInt(v)||0}</span><br>`;
+    else out+=`${f.n}: <span>${v}</span><br>`;
+  });
+  if(tmpl.name==='Rectangle'){
+    const w=parseInt(vals[0])||0,h=parseInt(vals[1])||0;
+    out+=`넓이: <span>${w*h}</span><br>둘레: <span>${2*(w+h)}</span>`;
+  }
+  document.getElementById('out').innerHTML=out;
+}
+
+/* QUIZ */
+const QUIZ=[
+  {q:"구조체(struct)의 올바른 설명은?",opts:["같은 자료형만 묶는다","다른 자료형도 함께 묶을 수 있다","배열과 완전히 같다","함수 안에서만 선언 가능하다"],ans:1,exp:"구조체는 서로 다른 자료형(int, char, float 등)을 하나로 묶는 사용자 정의 자료형입니다.",cat:"개념"},
+  {q:"구조체 정의 시 닫는 중괄호 뒤에 반드시 붙여야 하는 것은?",opts:["콤마 ,","세미콜론 ;","중괄호 {","괄호 ()"],ans:1,exp:"struct 정의는 선언문이므로 닫는 } 뒤에 반드시 ; 를 붙여야 합니다.",cat:"문법"},
+  {q:"구조체 멤버에 접근할 때 사용하는 연산자는?",opts:["->","::",".","/"],ans:2,exp:"점(.) 연산자로 구조체 변수의 멤버에 접근합니다. 예: s1.age",cat:"문법"},
+  {q:"다음 중 문자열 멤버에 값을 넣는 올바른 방법은?",opts:['s1.name = "Kim";','strcpy(s1.name, "Kim");','s1.name[] = "Kim";','copy(s1.name, "Kim");'],ans:1,exp:'char 배열에는 = 직접 대입이 불가능합니다. string.h의 strcpy 함수를 사용해야 합니다.',cat:"문법"},
+  {q:"struct Student s[3]; 의 의미는?",opts:["구조체 정의","Student 구조체 변수 3개짜리 배열","3가지 다른 구조체","Student라는 이름의 함수"],ans:1,exp:"구조체 배열로 Student 타입 변수를 3개 만드는 선언입니다. s[0], s[1], s[2]로 접근합니다.",cat:"배열"},
+  {q:"s[1].age = 15; 에서 s[1]이 뜻하는 것은?",opts:["두 번째 멤버","첫 번째 구조체 변수","두 번째 구조체 변수","배열 크기"],ans:2,exp:"인덱스는 0부터 시작하므로 s[1]은 두 번째 구조체 변수를 가리킵니다.",cat:"배열"},
+  {q:"정수 멤버를 scanf로 입력받을 때 올바른 형식은?",opts:["scanf(\"%d\", p.price);","scanf(\"%d\", p->price);","scanf(\"%d\", &p.price);","scanf(\"%d\", *p.price);"],ans:2,exp:"일반 변수(int, float 등)는 scanf에서 주소 연산자 &를 붙여야 합니다.",cat:"입출력"},
+  {q:"문자열 배열 멤버를 scanf로 입력받을 때 올바른 형식은?",opts:["scanf(\"%s\", &p.name);","scanf(\"%s\", p.name);","scanf(\"%c\", p.name);","scanf(\"%s\", *p.name);"],ans:1,exp:"배열 이름 자체가 주소이므로 & 없이 p.name으로 사용합니다.",cat:"입출력"},
+  {q:"다음 구조체에서 넓이를 계산하는 올바른 식은?\nstruct Rectangle r; r.width=8; r.height=5;",opts:["r.width + r.height","r * width * height","r.width * r.height","Rectangle.width * Rectangle.height"],ans:2,exp:"구조체 변수 r의 멤버에 .으로 접근해 r.width * r.height 로 계산합니다. 결과: 40",cat:"계산"},
+  {q:"배열과 구조체의 차이로 올바른 것은?",opts:["배열은 다른 자료형도 묶는다","구조체는 같은 자료형만 묶는다","배열은 같은 자료형, 구조체는 다른 자료형도 묶는다","둘 다 완전히 같다"],ans:2,exp:"배열(array)은 같은 자료형 여러 개, 구조체(struct)는 서로 다른 자료형도 하나로 묶습니다.",cat:"개념"},
+  {q:"struct Student s1, s2; 로 선언하면 몇 개의 구조체 변수가 만들어지나?",opts:["1개","2개","3개","선언 오류"],ans:1,exp:"쉼표로 구분해 여러 구조체 변수를 한 번에 선언할 수 있습니다. s1, s2 두 개가 만들어집니다.",cat:"문법"},
+  {q:"구조체 안의 각 변수를 부르는 이름은?",opts:["요소(element)","인덱스(index)","멤버(member)","파라미터(parameter)"],ans:2,exp:"구조체 안에 선언된 변수들을 멤버(member)라고 합니다.",cat:"개념"},
+];
+
+let userAns=new Array(12).fill(-1),qIdx=0,solved=0,correct=0;
+
+function initQ(){
+  const q=QUIZ[qIdx];
+  const pct=Math.round((qIdx)/12*100);
+  document.getElementById('quiz-area').innerHTML=`
+<div class="qpb"><div class="qpf" style="width:${pct}%"></div></div>
+<div class="qhdr">
+  <span style="font-size:13px;font-weight:500">${qIdx+1}/12 문제</span>
+  <div style="display:flex;gap:8px;align-items:center">
+    <span class="qscr">정답 ${correct}/${solved}</span>
+    <button class="sbtn" onclick="jumpQ(${Math.max(0,qIdx-1)})" ${qIdx===0?'style="opacity:.4;pointer-events:none"':''}>이전</button>
+  </div>
+</div>
+<div class="qnum"><span class="cat-tag">${q.cat}</span> &nbsp;문제 ${qIdx+1}</div>
+<div class="qtxt">${q.q.replace(/\n/g,'<br>')}</div>
+<div class="qopts">${q.opts.map((o,i)=>`<button class="qo" onclick="ansQ(${i})">${o}</button>`).join('')}</div>
+<div class="qexp" id="qexp">${q.exp}</div>
+<div class="qnav">
+  <button class="sbtn" id="nbt" onclick="jumpQ(${Math.min(11,qIdx+1)})" style="opacity:.4;pointer-events:none">다음 문제</button>
+  <span style="font-size:12px;font-family:var(--font-mono);color:var(--color-text-tertiary)">${qIdx+1} / 12</span>
+</div>`;
+  if(userAns[qIdx]!==-1)restoreQ(userAns[qIdx]);
+}
+
+function restoreQ(ch){
+  const q=QUIZ[qIdx];
+  document.querySelectorAll('.qo').forEach((o,i)=>{o.style.pointerEvents='none';if(i===q.ans)o.classList.add('ok');if(i===ch&&ch!==q.ans)o.classList.add('no');});
+  document.getElementById('qexp').classList.add('show');
+  const nb=document.getElementById('nbt');if(nb){nb.style.opacity='1';nb.style.pointerEvents='auto';}
+}
+
+function ansQ(ch){
+  if(userAns[qIdx]!==-1)return;
+  const q=QUIZ[qIdx];userAns[qIdx]=ch;
+  document.querySelectorAll('.qo').forEach((o,i)=>{o.style.pointerEvents='none';if(i===q.ans)o.classList.add('ok');if(i===ch&&ch!==q.ans)o.classList.add('no');});
+  document.getElementById('qexp').classList.add('show');
+  const nb=document.getElementById('nbt');if(nb){nb.style.opacity='1';nb.style.pointerEvents='auto';}
+  solved=userAns.filter(a=>a!==-1).length;
+  correct=QUIZ.filter((_,k)=>userAns[k]===QUIZ[k].ans).length;
+}
+
+function jumpQ(n){qIdx=n;initQ();}
+
+function sp(id,btn){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pane-'+id).classList.add('on');
+  btn.classList.add('on');
+}
+
+loadTmpl();
+initQ();
+</script>
