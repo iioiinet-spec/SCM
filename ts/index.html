@@ -1,0 +1,431 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary)}
+.hero{padding:2.4rem 1.5rem 1.4rem;text-align:center;border-bottom:0.5px solid var(--color-border-tertiary)}
+.htag{display:inline-block;font-family:var(--font-mono);font-size:11px;color:var(--color-text-info);background:var(--color-background-info);padding:3px 10px;border-radius:20px;margin-bottom:.9rem;letter-spacing:.06em}
+.hero h1{font-size:22px;font-weight:500;margin-bottom:.4rem}
+.hero p{font-size:13px;color:var(--color-text-secondary)}
+.nav{display:flex;border-bottom:0.5px solid var(--color-border-tertiary);overflow-x:auto}
+.nb{font-size:12px;font-family:var(--font-mono);padding:10px 16px;color:var(--color-text-secondary);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s;background:none;border-left:none;border-right:none;border-top:none}
+.nb:hover{color:var(--color-text-primary)}.nb.on{color:var(--color-text-info);border-bottom-color:var(--color-border-info)}
+.pane{display:none;padding:1.2rem 1.5rem}.pane.on{display:block}
+.slbl{font-size:11px;font-family:var(--font-mono);color:var(--color-text-tertiary);letter-spacing:.08em;margin-bottom:.8rem;text-transform:uppercase}
+.cc{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.2rem 1.3rem;margin-bottom:1rem}
+.cct{font-size:14px;font-weight:500;margin-bottom:.7rem;display:flex;align-items:center;gap:8px}
+.ccn{font-family:var(--font-mono);font-size:11px;color:var(--color-text-tertiary)}
+.ccb{font-size:13px;color:var(--color-text-secondary);line-height:1.8}
+.cb{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;margin:.8rem 0}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.cl{font-family:var(--font-mono);font-size:11px;color:var(--color-text-tertiary)}
+.cpb{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary);background:none;border:none;cursor:pointer;padding:2px 8px;border-radius:4px;transition:all .15s}
+.cpb:hover{color:var(--color-text-primary)}
+pre{padding:.9rem 1.1rem;overflow-x:auto;font-family:var(--font-mono);font-size:12.5px;line-height:1.9;color:var(--color-text-primary)}
+.kw{color:#c792ea}.fn{color:#82aaff}.str{color:#c3e88d}.num{color:#f78c6c}.cmt{color:var(--color-text-tertiary);font-style:italic}.ty{color:#5dcaa5}.op{color:#ef9f27}.hl{background:rgba(127,119,221,.18);border-radius:3px;padding:0 2px}
+.ok{background:var(--color-background-success);border:0.5px solid var(--color-border-success);border-radius:var(--border-radius-md);padding:.7rem 1rem;font-size:13px;color:var(--color-text-success);margin-top:.6rem;font-family:var(--font-mono);line-height:1.8}
+.warn{background:var(--color-background-warning);border:0.5px solid var(--color-border-warning);border-radius:var(--border-radius-md);padding:.7rem 1rem;font-size:13px;color:var(--color-text-warning);margin-top:.6rem;line-height:1.8}
+.er{background:var(--color-background-danger);border:0.5px solid var(--color-border-danger);border-radius:var(--border-radius-md);padding:.7rem 1rem;font-size:13px;color:var(--color-text-danger);margin-top:.5rem;font-family:var(--font-mono);line-height:1.8}
+.tag{display:inline-block;font-size:10px;font-family:var(--font-mono);padding:2px 8px;border-radius:12px}
+.ti{background:var(--color-background-info);color:var(--color-text-info)}
+.tw{background:var(--color-background-warning);color:var(--color-text-warning)}
+.te{background:var(--color-background-danger);color:var(--color-text-danger)}
+.ts{background:var(--color-background-success);color:var(--color-text-success)}
+/* SIM */
+.sw{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.2rem;margin-bottom:1rem}
+.st{font-size:13px;font-weight:500;margin-bottom:.9rem;color:var(--color-text-secondary);font-family:var(--font-mono)}
+.sbtns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.9rem}
+.sbtn{font-size:12px;font-family:var(--font-mono);padding:6px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.sbtn:hover{border-color:var(--color-border-info);color:var(--color-text-info)}
+.sbtn.pi{border-color:var(--color-border-info);color:var(--color-text-info);background:var(--color-background-info)}
+select,input[type=text],input[type=number]{font-size:12px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono)}
+/* struct visual */
+.sv{border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);overflow:hidden;display:inline-block;min-width:200px;margin-bottom:1rem}
+.sv-hdr{padding:7px 14px;font-family:var(--font-mono);font-size:12px;font-weight:500;background:var(--color-background-info);color:var(--color-text-info)}
+.sv-row{display:flex;border-top:0.5px solid var(--color-border-tertiary)}
+.sv-t{font-family:var(--font-mono);font-size:11px;color:var(--color-text-info);background:var(--color-background-info);padding:6px 8px;min-width:72px;display:flex;align-items:center;justify-content:center;border-right:0.5px solid var(--color-border-tertiary)}
+.sv-n{font-family:var(--font-mono);font-size:12px;color:var(--color-text-secondary);padding:6px 10px;min-width:72px;border-right:0.5px solid var(--color-border-tertiary);display:flex;align-items:center}
+.sv-v{font-family:var(--font-mono);font-size:13px;padding:6px 10px;font-weight:500;min-width:100px;display:flex;align-items:center;color:var(--color-text-primary);transition:all .25s}
+.sv-v.filled{color:var(--color-text-success)}
+.slog{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.8rem 1rem;font-family:var(--font-mono);font-size:12px;line-height:2;color:var(--color-text-secondary);min-height:56px}
+.slog .hi{color:var(--color-text-success);font-weight:500}
+.slog .hl{color:var(--color-text-primary);font-weight:500}
+.slog .inf{color:var(--color-text-info);font-weight:500}
+/* builder */
+.field-row{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.field-label{font-family:var(--font-mono);font-size:12px;color:var(--color-text-secondary);min-width:60px}
+/* QUIZ */
+.qpb{height:3px;background:var(--color-border-tertiary);border-radius:2px;margin-bottom:1.1rem}
+.qpf{height:100%;background:var(--color-border-info);border-radius:2px;transition:width .3s}
+.qhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem}
+.qtxt{font-size:14px;font-weight:500;line-height:1.6;margin-bottom:1rem;padding:.8rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md)}
+.qopts{display:flex;flex-direction:column;gap:7px;margin-bottom:.9rem}
+.qo{padding:.65rem 1rem;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;cursor:pointer;text-align:left;background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono);transition:all .15s;line-height:1.5}
+.qo:hover{border-color:var(--color-border-info);color:var(--color-text-info)}
+.qo.ok{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success)}
+.qo.no{background:var(--color-background-danger);border-color:var(--color-border-danger);color:var(--color-text-danger)}
+.qexp{font-size:13px;line-height:1.7;padding:.75rem 1rem;border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-secondary);margin-bottom:.9rem;display:none;font-family:var(--font-mono)}
+.qexp.show{display:block}
+.qnav{display:flex;align-items:center;justify-content:space-between}
+.qscr{font-size:12px;font-family:var(--font-mono);padding:4px 10px;border-radius:20px;background:var(--color-background-success);color:var(--color-text-success)}
+</style>
+
+<h2 class="sr-only">C언어 typedef struct 완전 정복 — 인터랙티브 학습 홈페이지</h2>
+
+<div class="hero">
+  <div class="htag">C LANGUAGE · TYPEDEF STRUCT</div>
+  <h1>typedef struct 완전 정복</h1>
+  <p>typedef의 역할 · 구조체 빌더 · 비교 시뮬레이터 · 퀴즈</p>
+</div>
+
+<div class="nav">
+  <button class="nb on" onclick="sp('concept',this)">개념 학습</button>
+  <button class="nb" onclick="sp('sim',this)">구조체 빌더</button>
+  <button class="nb" onclick="sp('err',this)">자주 하는 실수</button>
+  <button class="nb" onclick="sp('quiz',this)">퀴즈</button>
+</div>
+
+<!-- CONCEPT -->
+<div class="pane on" id="pane-concept">
+
+  <div class="slbl">typedef란 무엇인가</div>
+
+  <div class="cc">
+    <div class="cct"><span class="ccn">01</span>typedef의 역할 — 자료형에 별명 붙이기</div>
+    <div class="ccb">typedef는 기존 자료형에 <strong>새 이름(별명)</strong>을 붙이는 기능입니다. 구조체와 함께 쓰면 매번 <code>struct</code>를 쓰는 불편함을 없앨 수 있습니다.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:.8rem">
+      <div>
+        <div style="font-size:11px;font-family:var(--font-mono);color:var(--color-text-tertiary);margin-bottom:.4rem">typedef 없이</div>
+        <div class="cb" style="margin:0"><pre style="padding:.7rem 1rem"><span class="kw">struct</span> <span class="ty">Student</span> {
+    <span class="ty">char</span> name[<span class="num">20</span>];
+    <span class="ty">int</span> age;
+};
+<span class="kw">struct</span> <span class="ty">Student</span> s1; <span class="cmt">// 불편</span></pre></div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-family:var(--font-mono);color:var(--color-text-tertiary);margin-bottom:.4rem">typedef 사용</div>
+        <div class="cb" style="margin:0"><pre style="padding:.7rem 1rem"><span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="ty">char</span> name[<span class="num">20</span>];
+    <span class="ty">int</span> age;
+} <span class="ty">Student</span>;
+<span class="ty">Student</span> s1; <span class="cmt">// 편리!</span></pre></div>
+      </div>
+    </div>
+    <div class="ok" style="margin-top:10px">차이: struct Student s1; → Student s1;<br>구조체를 일반 자료형처럼 사용 가능!</div>
+  </div>
+
+  <div class="cc">
+    <div class="cct"><span class="ccn">02</span>typedef struct 해부하기</div>
+    <div class="ccb">코드 한 줄씩 분해해 보면:</div>
+    <div class="cb">
+      <div class="ch"><span class="cl">C — 각 부분의 역할</span></div>
+      <pre><span class="kw">typedef</span> <span class="kw">struct</span> <span class="ty">Student</span> {   <span class="cmt">// ① typedef + 구조체 원래 이름</span>
+    <span class="ty">char</span> name[<span class="num">20</span>];            <span class="cmt">// ② 멤버들</span>
+    <span class="ty">int</span>  age;
+} <span class="ty">Student</span>;                  <span class="cmt">// ③ 새 별명 (이게 핵심!)</span></pre>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:.4rem">
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.6rem .8rem;font-family:var(--font-mono);font-size:12px"><div style="color:var(--color-text-tertiary);font-size:10px;margin-bottom:3px">① struct Student</div><div style="color:var(--color-text-secondary)">구조체 원래 이름</div></div>
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.6rem .8rem;font-family:var(--font-mono);font-size:12px"><div style="color:var(--color-text-tertiary);font-size:10px;margin-bottom:3px">② { ... }</div><div style="color:var(--color-text-secondary)">멤버 정의</div></div>
+      <div style="background:var(--color-background-info);border-radius:var(--border-radius-md);padding:.6rem .8rem;font-family:var(--font-mono);font-size:12px"><div style="color:var(--color-text-info);font-size:10px;margin-bottom:3px">③ } Student;</div><div style="color:var(--color-text-info)">새 이름 ← 핵심!</div></div>
+    </div>
+  </div>
+
+  <div class="cc">
+    <div class="cct"><span class="ccn">03</span>두 가지 작성 방식 비교</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:.4rem">
+      <div>
+        <div style="font-size:11px;font-family:var(--font-mono);color:var(--color-text-tertiary);margin-bottom:.4rem">방식 A — 원래 이름 있음</div>
+        <div class="cb" style="margin:0"><pre style="padding:.65rem .9rem;font-size:11.5px"><span class="kw">typedef</span> <span class="kw">struct</span> <span class="ty">Student</span> {
+    <span class="ty">char</span> name[<span class="num">20</span>];
+    <span class="ty">int</span> age;
+} <span class="ty">Student</span>;</pre></div>
+        <div style="font-size:11px;color:var(--color-text-secondary);margin-top:.3rem;font-family:var(--font-mono)">struct Student s1; 또는 Student s1;</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-family:var(--font-mono);color:var(--color-text-tertiary);margin-bottom:.4rem">방식 B — 별명만 (더 간단)</div>
+        <div class="cb" style="margin:0"><pre style="padding:.65rem .9rem;font-size:11.5px"><span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="ty">char</span> name[<span class="num">20</span>];
+    <span class="ty">int</span> age;
+} <span class="ty">Student</span>;</pre></div>
+        <div style="font-size:11px;color:var(--color-text-secondary);margin-top:.3rem;font-family:var(--font-mono)">Student s1; 만 사용</div>
+      </div>
+    </div>
+    <div class="warn" style="margin-top:8px">초보자에게는 방식 B(별명만)가 더 간단하고 이해하기 쉽습니다.</div>
+  </div>
+
+  <div class="cc">
+    <div class="cct"><span class="ccn">04</span>비유로 이해하기</div>
+    <div class="ccb" style="margin-bottom:.6rem">긴 이름에 짧은 별명을 붙이는 것과 같습니다.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.8rem 1rem">
+        <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:.4rem">현실</div>
+        <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.7">김민수학생대표1반<br>→ 별명: <strong style="color:var(--color-text-primary)">민수</strong></div>
+      </div>
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.8rem 1rem">
+        <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:.4rem">코드</div>
+        <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.7;font-family:var(--font-mono)">struct Student<br>→ 별명: <strong style="color:var(--color-text-info)">Student</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cc">
+    <div class="cctitle" style="font-size:14px;font-weight:500;margin-bottom:.7rem;display:flex;align-items:center;gap:8px"><span class="ccn">05</span>마무리 예제 — Book 구조체</div>
+    <div class="cb">
+      <div class="ch"><span class="cl">C — 전체 코드</span><button class="cpb" onclick="doCp(this,0)">복사</button></div>
+      <pre id="s0"><span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;string.h&gt;</span>
+
+<span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="ty">char</span> title[<span class="num">30</span>];
+    <span class="ty">int</span>  price;
+} <span class="ty">Book</span>;
+
+<span class="ty">int</span> <span class="fn">main</span>() {
+    <span class="ty">Book</span> b1;
+    <span class="fn">strcpy</span>(b1.title, <span class="str">"CProgramming"</span>);
+    b1.price = <span class="num">18000</span>;
+
+    <span class="fn">printf</span>(<span class="str">"책 제목: %s\n"</span>, b1.title);
+    <span class="fn">printf</span>(<span class="str">"가격: %d원\n"</span>, b1.price);
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+    </div>
+    <div class="ok">책 제목: CProgramming<br>가격: 18000원</div>
+  </div>
+
+</div>
+
+<!-- SIM -->
+<div class="pane" id="pane-sim">
+
+  <div class="sw">
+    <div class="st">typedef struct 빌더 — 템플릿 선택 후 값 입력, 구조체 메모리 시각화</div>
+    <div class="sbtns">
+      <select id="tmpl" onchange="loadTmpl()">
+        <option value="Student">Student (이름·나이)</option>
+        <option value="Point">Point (x·y 좌표)</option>
+        <option value="Product">Product (이름·가격)</option>
+        <option value="Book">Book (제목·가격)</option>
+        <option value="Rectangle">Rectangle (가로·세로)</option>
+      </select>
+      <button class="sbtn pi" onclick="runSim()">실행 (출력)</button>
+      <button class="sbtn" onclick="resetSim()">초기화</button>
+    </div>
+    <div id="field-area"></div>
+    <div id="sv-area"></div>
+    <div class="slog" id="sim-out">값을 입력하고 실행 버튼을 누르세요</div>
+  </div>
+
+  <div class="sw">
+    <div class="st">typedef 유무 코드 비교기 — 선택한 구조체로 두 방식을 나란히 비교</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" id="compare-area"></div>
+  </div>
+
+</div>
+
+<!-- ERR -->
+<div class="pane" id="pane-err">
+  <div class="slbl">자주 하는 실수 4가지</div>
+
+  <div class="cc">
+    <div class="cct"><span class="ccn" style="color:#e24b4a">실수 1</span>닫는 중괄호 뒤 세미콜론 빠뜨리기</div>
+    <div class="er">typedef struct { int age; } Student  ← ; 없음</div>
+    <div class="ok" style="margin-top:6px">typedef struct { int age; } Student;  ← ; 필수</div>
+    <div class="ccb" style="margin-top:.6rem">typedef 구조체는 선언문이므로 마지막에 반드시 세미콜론이 있어야 합니다.</div>
+  </div>
+
+  <div class="cc">
+    <div class="cct"><span class="ccn" style="color:#e24b4a">실수 2</span>문자열 멤버에 = 대입 사용</div>
+    <div class="er">s1.name = "Minsu";  ← char 배열에 = 대입 불가</div>
+    <div class="ok" style="margin-top:6px">strcpy(s1.name, "Minsu");  ← strcpy 사용</div>
+    <div class="ccb" style="margin-top:.6rem">char 배열은 포인터가 아니므로 = 으로 직접 대입할 수 없습니다. strcpy(string.h)를 사용하세요.</div>
+  </div>
+
+  <div class="cc">
+    <div class="cct"><span class="ccn" style="color:#e24b4a">실수 3</span>typedef 이름을 변수로 착각</div>
+    <div class="er">typedef struct { int x; int y; } Point;<br>← 여기서 Point는 자료형 이름, 변수가 아님</div>
+    <div class="ok" style="margin-top:6px">Point p1;  ← 변수는 따로 선언해야 함<br>p1.x = 3;  p1.y = 7;</div>
+    <div class="ccb" style="margin-top:.6rem">typedef 뒤의 이름은 자료형 이름입니다. 변수를 만들려면 별도로 선언해야 합니다.</div>
+  </div>
+
+  <div class="cc">
+    <div class="cct"><span class="ccn" style="color:#e24b4a">실수 4</span>멤버 접근에서 . 빠뜨리기</div>
+    <div class="er">p1 x = 3;  ← . 없음</div>
+    <div class="ok" style="margin-top:6px">p1.x = 3;  ← . 연산자 필수</div>
+    <div class="ccb" style="margin-top:.6rem">구조체 변수와 멤버 이름 사이에는 반드시 점(.) 연산자가 있어야 합니다.</div>
+  </div>
+
+  <div class="cc">
+    <div class="cct"><span class="ccn">정리</span>실수 방지 체크리스트</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-top:.4rem">
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.7rem .9rem;font-family:var(--font-mono);font-size:12px;line-height:1.8;color:var(--color-text-secondary)">} TypeName; 끝에<br>→ <span style="color:var(--color-text-success)">; 반드시</span></div>
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.7rem .9rem;font-family:var(--font-mono);font-size:12px;line-height:1.8;color:var(--color-text-secondary)">문자열 대입<br>→ <span style="color:var(--color-text-success)">strcpy 사용</span></div>
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.7rem .9rem;font-family:var(--font-mono);font-size:12px;line-height:1.8;color:var(--color-text-secondary)">typedef 이름<br>→ <span style="color:var(--color-text-success)">자료형, 변수 따로</span></div>
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.7rem .9rem;font-family:var(--font-mono);font-size:12px;line-height:1.8;color:var(--color-text-secondary)">멤버 접근<br>→ <span style="color:var(--color-text-success)">변수.멤버</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="pane" id="pane-quiz">
+  <div id="quiz-area"></div>
+</div>
+
+<script>
+const TMPLS={
+  Student:{fields:[{n:'name',t:'char[20]',str:true,ph:'Minsu'},{n:'age',t:'int',str:false,ph:'14'}]},
+  Point:{fields:[{n:'x',t:'int',str:false,ph:'3'},{n:'y',t:'int',str:false,ph:'7'}]},
+  Product:{fields:[{n:'name',t:'char[30]',str:true,ph:'notebook'},{n:'price',t:'int',str:false,ph:'2500'}]},
+  Book:{fields:[{n:'title',t:'char[30]',str:true,ph:'CProgramming'},{n:'price',t:'int',str:false,ph:'18000'}]},
+  Rectangle:{fields:[{n:'width',t:'int',str:false,ph:'8'},{n:'height',t:'int',str:false,ph:'5'}]}
+};
+const SRCS=[
+`#include <stdio.h>\n#include <string.h>\n\ntypedef struct {\n    char title[30];\n    int  price;\n} Book;\n\nint main() {\n    Book b1;\n    strcpy(b1.title, "CProgramming");\n    b1.price = 18000;\n    printf("책 제목: %s\\n", b1.title);\n    printf("가격: %d원\\n", b1.price);\n    return 0;\n}`
+];
+function doCp(btn,i){navigator.clipboard.writeText(SRCS[i]).then(()=>{btn.textContent='복사됨!';setTimeout(()=>btn.textContent='복사',1400);});}
+
+function getTmpl(){return document.getElementById('tmpl').value;}
+
+function loadTmpl(){
+  const name=getTmpl();
+  const tmpl=TMPLS[name];
+  // fields
+  const fa=document.getElementById('field-area');
+  fa.innerHTML='<div class="sbtns" style="flex-direction:column;gap:6px">'+
+    tmpl.fields.map(f=>`
+<div class="field-row">
+  <span class="field-label">${f.n}</span>
+  <span style="font-size:10px;font-family:var(--font-mono);color:var(--color-text-info);background:var(--color-background-info);padding:1px 6px;border-radius:3px;margin-right:6px">${f.t}</span>
+  <input type="text" id="fi_${f.n}" value="${f.ph}" placeholder="${f.ph}" style="width:160px">
+</div>`).join('')+'</div>';
+  renderSV(name, tmpl.fields.map(f=>f.ph));
+  renderCompare(name,tmpl);
+  document.getElementById('sim-out').innerHTML='값을 수정하고 실행 버튼을 누르세요';
+}
+
+function renderSV(name,vals){
+  const tmpl=TMPLS[name];
+  document.getElementById('sv-area').innerHTML=`<div class="sv">
+<div class="sv-hdr">typedef struct → ${name}</div>
+${tmpl.fields.map((f,i)=>`
+<div class="sv-row">
+  <div class="sv-n">${f.n}</div>
+  <div class="sv-t">${f.t}</div>
+  <div class="sv-v">${vals[i]||'—'}</div>
+</div>`).join('')}
+</div>`;
+}
+
+function runSim(){
+  const name=getTmpl();
+  const tmpl=TMPLS[name];
+  const vals=tmpl.fields.map(f=>document.getElementById('fi_'+f.n).value.trim()||f.ph);
+  renderSV(name,vals);
+  document.getElementById('sv-area').querySelectorAll('.sv-v').forEach((el,i)=>{el.textContent=vals[i];el.classList.add('filled');});
+  let out='<span class="hl">// 실행 결과</span><br>';
+  tmpl.fields.forEach((f,i)=>{
+    const v=vals[i];
+    out+=`${f.n}: <span class="hi">${f.t==='int'?(parseInt(v)||0):v}</span><br>`;
+  });
+  if(name==='Rectangle'){
+    const w=parseInt(vals[0])||0,h=parseInt(vals[1])||0;
+    out+=`넓이: <span class="hi">${w*h}</span>  둘레: <span class="hi">${2*(w+h)}</span>`;
+  }
+  document.getElementById('sim-out').innerHTML=out;
+}
+
+function resetSim(){
+  const name=getTmpl();
+  const tmpl=TMPLS[name];
+  tmpl.fields.forEach(f=>{const el=document.getElementById('fi_'+f.n);if(el)el.value=f.ph;});
+  renderSV(name,tmpl.fields.map(f=>f.ph));
+  document.getElementById('sim-out').innerHTML='값을 수정하고 실행 버튼을 누르세요';
+}
+
+function renderCompare(name,tmpl){
+  const mems=tmpl.fields.map(f=>`    ${f.t} ${f.n};`).join('\n');
+  const ca=document.getElementById('compare-area');
+  ca.innerHTML=`
+<div>
+  <div style="font-size:11px;font-family:var(--font-mono);color:var(--color-text-tertiary);margin-bottom:.4rem">typedef 없이</div>
+  <div class="cb" style="margin:0"><pre style="font-size:11.5px;padding:.7rem .9rem"><span class="kw">struct</span> <span class="ty">${name}</span> {
+${mems.split('\n').map(l=>`<span class="ty">${l.trim().split(' ')[0]}</span> ${l.trim().split(' ').slice(1).join(' ')}`).join('\n')}
+};
+<span class="kw">struct</span> <span class="ty">${name}</span> s1;
+<span class="kw">struct</span> <span class="ty">${name}</span> s2;</pre></div>
+  <div style="font-size:12px;color:var(--color-text-danger);margin-top:.4rem;font-family:var(--font-mono)">struct를 매번 써야 함</div>
+</div>
+<div>
+  <div style="font-size:11px;font-family:var(--font-mono);color:var(--color-text-tertiary);margin-bottom:.4rem">typedef 사용</div>
+  <div class="cb" style="margin:0"><pre style="font-size:11.5px;padding:.7rem .9rem"><span class="kw">typedef</span> <span class="kw">struct</span> {
+${mems.split('\n').map(l=>`<span class="ty">${l.trim().split(' ')[0]}</span> ${l.trim().split(' ').slice(1).join(' ')}`).join('\n')}
+} <span class="ty">${name}</span>;
+<span class="ty">${name}</span> s1;
+<span class="ty">${name}</span> s2;</pre></div>
+  <div style="font-size:12px;color:var(--color-text-success);margin-top:.4rem;font-family:var(--font-mono)">간결하게 사용 가능!</div>
+</div>`;
+}
+
+/* QUIZ */
+const QUIZ=[
+  {q:"typedef를 사용하는 주된 이유는?",opts:["새로운 기능 추가","자료형에 새 이름을 붙여 편리하게 사용","메모리 절약","속도 향상"],ans:1,exp:"typedef는 기존 자료형에 별명을 붙이는 기능입니다. struct를 매번 쓰는 불편함을 줄여줍니다."},
+  {q:"다음 중 typedef struct를 올바르게 쓴 것은?",opts:["typedef struct { int x; int y; } Point","typedef struct { int x; int y; } Point;","struct typedef { int x; int y; } Point;","typedef { int x; int y; } struct Point;"],ans:1,exp:"typedef struct { 멤버들; } 새이름; 형태로 세미콜론으로 끝나야 합니다."},
+  {q:"typedef struct { char name[20]; int age; } Student; 로 선언 후 변수를 만드는 올바른 방법은?",opts:["struct Student s1;","typedef Student s1;","Student s1;","Student(s1);"],ans:2,exp:"typedef를 사용하면 Student s1; 처럼 일반 자료형처럼 간단하게 선언할 수 있습니다."},
+  {q:"typedef struct 끝에 반드시 있어야 하는 것은?",opts:["중괄호 {","마침표 .","세미콜론 ;","콤마 ,"],ans:2,exp:"typedef struct { ... } TypeName; 처럼 닫는 중괄호와 이름 뒤에 반드시 세미콜론이 있어야 합니다."},
+  {q:"char name[20] 멤버에 값을 넣는 올바른 방법은?",opts:['s1.name = "Kim";','name[s1] = "Kim";','strcpy(s1.name, "Kim");','copy(s1.name, "Kim");'],ans:2,exp:'char 배열은 = 으로 직접 대입할 수 없습니다. string.h 의 strcpy 함수를 사용해야 합니다.'},
+  {q:"typedef struct { int x; int y; } Point; 에서 Point의 역할은?",opts:["변수 이름","함수 이름","구조체 자료형 이름(별명)","멤버 이름"],ans:2,exp:"Point는 자료형 이름(별명)입니다. 변수는 Point p1; 처럼 따로 선언해야 합니다."},
+  {q:"typedef 없는 struct와 typedef struct의 가장 큰 차이는?",opts:["멤버 수가 다름","typedef 없이는 struct를 항상 앞에 붙여야 함","typedef 없이는 출력 불가","기능 자체가 다름"],ans:1,exp:"typedef 없이는 struct Student s1;, typedef 있으면 Student s1; 로 선언합니다. 기능은 동일합니다."},
+  {q:"typedef struct Point { int x; int y; } Point; 에서 사용 가능한 변수 선언 방법은?",opts:["Point p1; 만 가능","struct Point p1; 만 가능","둘 다 가능","둘 다 불가능"],ans:2,exp:"원래 이름(struct Point)과 별명(Point) 둘 다 선언해두었으므로 두 방식 모두 사용 가능합니다."},
+  {q:"p1.x = 3; 에서 . 의 역할은?",opts:["포인터 역참조","구조체 멤버 접근","배열 인덱스","비교 연산"],ans:1,exp:"점(.) 연산자는 구조체 변수에서 멤버에 접근할 때 사용합니다."},
+  {q:"typedef struct { int width; int height; } Rectangle; 선언 후 넓이를 구하는 올바른 식은?",opts:["Rectangle.width * Rectangle.height","r.width * r.height","width * height","r->width * r->height"],ans:1,exp:"구조체 변수 r의 멤버에 .으로 접근합니다. r.width * r.height 로 넓이를 계산합니다."},
+  {q:"scanf로 int 멤버(price)를 입력받는 올바른 방법은?",opts:["scanf(\"%d\", p.price);","scanf(\"%d\", &p.price);","scanf(\"%d\", *p.price);","scanf(\"%d\", p->price);"],ans:1,exp:"일반 int 변수는 &p.price 처럼 주소 연산자 &를 붙여야 합니다."},
+  {q:"typedef의 핵심 역할을 가장 잘 설명한 것은?",opts:["새로운 자료형을 만든다","기존 자료형에 새 이름을 붙인다","변수를 자동 초기화한다","메모리를 동적 할당한다"],ans:1,exp:"typedef는 기존 자료형(struct 포함)에 새 이름(별명)을 붙이는 기능입니다. 자료형 자체를 새로 만드는 것이 아닙니다."},
+];
+
+let userAns=new Array(12).fill(-1),qIdx=0,solved=0,correct=0;
+function initQ(){
+  const q=QUIZ[qIdx];
+  const pct=Math.round(qIdx/12*100);
+  document.getElementById('quiz-area').innerHTML=`
+<div class="qpb"><div class="qpf" style="width:${pct}%"></div></div>
+<div class="qhdr">
+  <span style="font-size:13px;font-weight:500">${qIdx+1}/12 문제</span>
+  <div style="display:flex;gap:8px;align-items:center">
+    <span class="qscr">정답 ${correct}/${solved}</span>
+    <button class="sbtn" onclick="jq(${Math.max(0,qIdx-1)})" ${qIdx===0?'style="opacity:.4;pointer-events:none"':''}>이전</button>
+  </div>
+</div>
+<div class="qtxt">${q.q}</div>
+<div class="qopts">${q.opts.map((o,i)=>`<button class="qo" onclick="aq(${i})">${o}</button>`).join('')}</div>
+<div class="qexp" id="qe">${q.exp}</div>
+<div class="qnav">
+  <button class="sbtn" id="nb" onclick="jq(${Math.min(11,qIdx+1)})" style="opacity:.4;pointer-events:none">다음 문제</button>
+  <span style="font-size:12px;font-family:var(--font-mono);color:var(--color-text-tertiary)">${qIdx+1} / 12</span>
+</div>`;
+  if(userAns[qIdx]!==-1){
+    const ch=userAns[qIdx];
+    document.querySelectorAll('.qo').forEach((o,i)=>{o.style.pointerEvents='none';if(i===QUIZ[qIdx].ans)o.classList.add('ok');if(i===ch&&ch!==QUIZ[qIdx].ans)o.classList.add('no');});
+    document.getElementById('qe').classList.add('show');
+    const nb=document.getElementById('nb');if(nb){nb.style.opacity='1';nb.style.pointerEvents='auto';}
+  }
+}
+function aq(ch){
+  if(userAns[qIdx]!==-1)return;
+  const q=QUIZ[qIdx];userAns[qIdx]=ch;
+  document.querySelectorAll('.qo').forEach((o,i)=>{o.style.pointerEvents='none';if(i===q.ans)o.classList.add('ok');if(i===ch&&ch!==q.ans)o.classList.add('no');});
+  document.getElementById('qe').classList.add('show');
+  const nb=document.getElementById('nb');if(nb){nb.style.opacity='1';nb.style.pointerEvents='auto';}
+  solved=userAns.filter(a=>a!==-1).length;
+  correct=QUIZ.filter((_,k)=>userAns[k]===QUIZ[k].ans).length;
+}
+function jq(n){qIdx=n;initQ();}
+function sp(id,btn){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pane-'+id).classList.add('on');
+  btn.classList.add('on');
+}
+
+loadTmpl();
+initQ();
+</script>
