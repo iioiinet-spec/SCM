@@ -10,5 +10,8 @@ arrp, arrp2
 func
 09. 함수-func
 
+pointer
+10. 포인터-pointer
+
 struct
 11. 구조체-struct
