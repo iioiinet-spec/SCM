@@ -15,3 +15,6 @@ pointer
 
 struct
 11. 구조체-struct
+
+ts
+12. typedef struct
