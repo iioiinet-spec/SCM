@@ -1,0 +1,561 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.root{font-family:var(--font-sans);padding:2rem 0}
+.hero{margin-bottom:1.75rem}
+.hero-ey{font-size:11px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:6px;letter-spacing:.06em}
+.hero-title{font-size:22px;font-weight:500;margin-bottom:6px}
+.hero-desc{font-size:13px;color:var(--color-text-secondary);line-height:1.7;margin-bottom:1rem;max-width:540px}
+.hero-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:11px;padding:3px 10px;border-radius:9px;border:0.5px solid;font-weight:500}
+.tb{background:#E6F1FB;color:#0C447C;border-color:#85B7EB}
+.tg{background:#EAF3DE;color:#27500A;border-color:#97C459}
+.ta{background:#FAEEDA;color:#633806;border-color:#EF9F27}
+.tr{background:#FCEBEB;color:#A32D2D;border-color:#F09595}
+.tp{background:#EEEDFE;color:#26215C;border-color:#AFA9EC}
+
+.nav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:1.75rem}
+.nc{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.875rem 1rem;cursor:pointer;transition:all .15s}
+.nc:hover{background:var(--color-background-secondary);border-color:var(--color-border-secondary)}
+.nc.active{border-color:var(--color-text-primary);background:var(--color-background-secondary)}
+.nc.active .nn{color:var(--color-text-primary)}
+.nn{font-size:10px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:3px}
+.nm{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.nd{font-size:11px;color:var(--color-text-secondary)}
+
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1rem}
+.card h3{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px}
+.card p,.card li{font-size:13px;line-height:1.7;color:var(--color-text-primary)}
+.card ul{list-style:none;padding-left:10px}
+.card li::before{content:"· ";color:var(--color-text-tertiary)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.code{font-family:var(--font-mono);font-size:12px;line-height:1.9;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 16px;overflow-x:auto;white-space:pre;margin-bottom:1rem}
+.hl{background:#FAEEDA;border-radius:2px;padding:0 2px}
+.kw{color:#534AB7}.fn{color:#185FA5}.cm{color:var(--color-text-tertiary)}.nu{color:#0F6E56}.str{color:#993C1D}.op{color:#E24B4A;font-weight:500}
+.info-box{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 14px;font-size:13px;color:var(--color-text-primary);line-height:1.6;min-height:42px;margin-bottom:1rem}
+.btn-row{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+button.btn{font-size:13px;padding:7px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary);cursor:pointer;transition:all .15s}
+button.btn:hover{background:var(--color-background-secondary)}
+button.btn:active{transform:scale(.98)}
+button.btn.pri{background:var(--color-text-primary);color:var(--color-background-primary);border-color:transparent}
+button.btn:disabled{opacity:.4;cursor:not-allowed}
+.sep{height:0.5px;background:var(--color-border-tertiary);margin:1.25rem 0}
+
+.ex-tabs{display:flex;gap:4px;margin-bottom:1rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.et{padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--color-text-secondary);border-bottom:2px solid transparent;transition:all .2s}
+.et.on{color:var(--color-text-primary);border-bottom-color:var(--color-text-primary)}
+
+.mem-scene{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;margin-bottom:1rem}
+.mem-box{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:10px 14px;min-width:140px;background:var(--color-background-primary)}
+.mem-box h4{font-size:11px;font-weight:500;color:var(--color-text-secondary);margin-bottom:8px}
+.mem-field{margin-bottom:6px}
+.mf-label{font-size:10px;color:var(--color-text-tertiary);font-family:var(--font-mono);margin-bottom:2px}
+.mf-val{font-size:13px;font-weight:500;font-family:var(--font-mono);padding:3px 8px;border-radius:4px;border:0.5px solid;transition:all .3s}
+.mv-orig{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
+.mv-copy{background:#EAF3DE;border-color:#3B6D11;color:#173404}
+.mv-changed{background:#FAEEDA;border-color:#854F0B;color:#412402}
+.mv-ptr{background:#EEEDFE;border-color:#534AB7;color:#26215C}
+.mv-empty{background:var(--color-background-secondary);border-color:var(--color-border-tertiary);color:var(--color-text-tertiary)}
+.arrow-label{font-size:12px;color:var(--color-text-secondary);display:flex;align-items:center;gap:4px;padding-top:24px}
+.arrow-line{width:32px;height:0.5px;background:var(--color-border-secondary)}
+
+.op-badge{display:inline-block;font-size:12px;font-weight:500;padding:2px 10px;border-radius:4px;font-family:var(--font-mono);margin:0 2px}
+.ob-dot{background:#E6F1FB;color:#0C447C;border:0.5px solid #85B7EB}
+.ob-arr{background:#EEEDFE;color:#26215C;border:0.5px solid #AFA9EC}
+
+.code-line-block{font-family:var(--font-mono);font-size:12px;line-height:2;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 16px;margin-bottom:1rem}
+.cl{display:block;border-radius:3px;padding:0 4px;margin:0 -4px;cursor:pointer;transition:background .1s}
+.cl:hover{background:var(--color-background-primary)}
+.cl.sel{background:#FAEEDA}
+
+.mistake-item{border:0.5px solid var(--color-border-tertiary);border-left:2px solid #E24B4A;border-radius:0 var(--border-radius-lg) var(--border-radius-lg) 0;padding:10px 14px;margin-bottom:8px;background:var(--color-background-secondary)}
+.mistake-item h4{font-size:13px;font-weight:500;color:#A32D2D;margin-bottom:6px}
+.mistake-inner{display:flex;gap:10px;flex-wrap:wrap}
+.mi-wrong{padding:6px 10px;background:#FCEBEB;border:0.5px solid #E24B4A;border-radius:var(--border-radius-md);font-size:12px;font-family:var(--font-mono);color:#A32D2D}
+.mi-right{padding:6px 10px;background:#EAF3DE;border:0.5px solid #3B6D11;border-radius:var(--border-radius-md);font-size:12px;font-family:var(--font-mono);color:#173404}
+.mi-label{font-size:10px;margin-bottom:2px;font-weight:500}
+
+.prog{height:4px;background:var(--color-border-tertiary);border-radius:2px;margin-bottom:1rem}
+.prog-fill{height:100%;background:#1D9E75;border-radius:2px;transition:width .3s}
+.quiz-q{font-size:14px;font-weight:500;margin-bottom:12px;line-height:1.6}
+.quiz-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.quiz-opt{text-align:left;padding:10px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;cursor:pointer;transition:all .15s;color:var(--color-text-primary)}
+.quiz-opt:hover{background:var(--color-background-secondary)}
+.quiz-opt.ok{background:#EAF3DE;border-color:#639922;color:#173404}
+.quiz-opt.ng{background:#FCEBEB;border-color:#E24B4A;color:#501313}
+.quiz-res{font-size:13px;padding:10px 14px;border-radius:var(--border-radius-md);margin-bottom:12px}
+.quiz-res.ok{background:#EAF3DE;color:#173404}
+.quiz-res.ng{background:#FCEBEB;color:#501313}
+</style>
+
+<div class="root">
+<h2 style="position:absolute;opacity:0;pointer-events:none">구조체를 함수에 전달하기 학습 홈페이지</h2>
+
+<div class="hero">
+  <div class="hero-ey">C언어 구조체 심화</div>
+  <div class="hero-title">구조체를 함수에 전달하기</div>
+  <div class="hero-desc">구조체를 함수에 넘기는 두 가지 방법 — 복사 전달과 주소 전달 — 의 차이를 인터랙티브하게 배웁니다.</div>
+  <div class="hero-tags">
+    <span class="tag tb">구조체</span>
+    <span class="tag tg">값 전달</span>
+    <span class="tag ta">주소 전달</span>
+    <span class="tag tr">포인터</span>
+    <span class="tag tp">. vs -></span>
+  </div>
+</div>
+
+<div class="nav-grid">
+  <div class="nc active" onclick="SP(0)"><div class="nn">01</div><div class="nm">개념</div><div class="nd">왜 함수에 전달?</div></div>
+  <div class="nc" onclick="SP(1)"><div class="nn">02</div><div class="nm">두 가지 방법</div><div class="nd">복사 vs 주소</div></div>
+  <div class="nc" onclick="SP(2)"><div class="nn">03</div><div class="nm">메모리 시각화</div><div class="nd">원본 vs 복사본</div></div>
+  <div class="nc" onclick="SP(3)"><div class="nn">04</div><div class="nm">예제 3종</div><div class="nd">출력·복사·주소</div></div>
+  <div class="nc" onclick="SP(4)"><div class="nn">05</div><div class="nm">시뮬레이터</div><div class="nd">단계별 실행</div></div>
+  <div class="nc" onclick="SP(5)"><div class="nn">06</div><div class="nm">. vs -></div><div class="nd">연산자 비교</div></div>
+  <div class="nc" onclick="SP(6)"><div class="nn">07</div><div class="nm">코드 해설</div><div class="nd">줄별 클릭 설명</div></div>
+  <div class="nc" onclick="SP(7)"><div class="nn">08</div><div class="nm">실수 모음</div><div class="nd">자주 하는 3가지</div></div>
+  <div class="nc" onclick="SP(8)"><div class="nn">09</div><div class="nm">퀴즈</div><div class="nd">이해 점검</div></div>
+</div>
+
+<!-- 01 개념 -->
+<div class="panel active" id="p0">
+  <div class="card" style="margin-bottom:1rem">
+    <h3>한 줄 정의</h3>
+    <p style="font-size:14px;font-weight:500">"main에서 만든 구조체 변수를 다른 함수로 보내서 출력·수정·계산에 활용하는 것"</p>
+  </div>
+  <div class="two">
+    <div class="card"><h3>왜 쓰는가?</h3><ul><li>코드를 역할별로 나눌 수 있다</li><li>한 함수가 한 가지 일만 맡는다</li><li>재사용이 쉬워진다</li></ul></div>
+    <div class="card"><h3>실제 쓰임새</h3><ul><li>printStudent() — 출력 전담</li><li>changeScore() — 값 수정</li><li>getArea() — 계산 후 반환</li></ul></div>
+  </div>
+  <div class="card">
+    <h3>핵심 흐름</h3>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">
+      <div style="padding:8px 14px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:12px"><span style="font-family:var(--font-mono);color:#534AB7">typedef struct</span>로 구조체 만들기</div>
+      <div style="padding:4px 14px;font-size:11px;color:var(--color-text-tertiary)">↓</div>
+      <div style="padding:8px 14px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:12px">구조체 변수 선언 및 값 저장</div>
+      <div style="padding:4px 14px;font-size:11px;color:var(--color-text-tertiary)">↓</div>
+      <div style="padding:8px 14px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:12px">함수에 구조체 전달 (복사 or 주소)</div>
+      <div style="padding:4px 14px;font-size:11px;color:var(--color-text-tertiary)">↓</div>
+      <div style="padding:8px 14px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:12px">함수 안에서 .또는 -> 로 멤버 접근</div>
+    </div>
+  </div>
+</div>
+
+<!-- 02 두 가지 방법 -->
+<div class="panel" id="p1">
+  <div class="two">
+    <div class="card" style="border-top:2px solid #185FA5">
+      <h3 style="color:#185FA5">방법 1 — 복사 전달</h3>
+      <div class="code" style="margin-bottom:8px"><span class="kw">void</span> <span class="fn">func</span>(Student s)</div>
+      <ul>
+        <li>구조체 전체가 복사됨</li>
+        <li>함수 안 s는 복사본</li>
+        <li>원본이 안 바뀜</li>
+        <li>호출: <span style="font-family:var(--font-mono);font-size:12px">func(s1);</span></li>
+        <li>멤버 접근: <span style="font-family:var(--font-mono);font-size:12px">s.score</span></li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:2px solid #534AB7">
+      <h3 style="color:#534AB7">방법 2 — 주소 전달</h3>
+      <div class="code" style="margin-bottom:8px"><span class="kw">void</span> <span class="fn">func</span>(Student *s)</div>
+      <ul>
+        <li>구조체 주소만 전달됨</li>
+        <li>원본에 직접 접근</li>
+        <li>원본이 바뀜</li>
+        <li>호출: <span style="font-family:var(--font-mono);font-size:12px">func(&s1);</span></li>
+        <li>멤버 접근: <span style="font-family:var(--font-mono);font-size:12px">s->score</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1rem">
+    <h3>비유로 이해하기</h3>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px">
+      <div style="flex:1;min-width:140px;padding:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)">
+        <div style="font-size:11px;color:#185FA5;font-weight:500;margin-bottom:4px">복사 전달</div>
+        <div style="font-size:12px;color:var(--color-text-secondary)">학생 정보가 적힌 종이를 <strong style="font-weight:500">복사</strong>해서 전달. 복사본에 적어도 원본은 그대로.</div>
+      </div>
+      <div style="flex:1;min-width:140px;padding:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)">
+        <div style="font-size:11px;color:#534AB7;font-weight:500;margin-bottom:4px">주소 전달</div>
+        <div style="font-size:12px;color:var(--color-text-secondary)">원본 종이가 있는 <strong style="font-weight:500">위치</strong>를 알려줌. 그 위치에서 직접 수정 가능.</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>언제 어떤 방법을?</h3>
+    <ul>
+      <li>출력·읽기만 할 때 → 복사 전달도 충분</li>
+      <li>원본 값을 수정해야 할 때 → 주소 전달</li>
+      <li>구조체가 클 때 → 주소 전달이 더 효율적</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 03 메모리 시각화 -->
+<div class="panel" id="p2">
+  <div class="card" style="margin-bottom:1rem">
+    <h3>복사 전달일 때 메모리 상태</h3>
+    <p style="margin-bottom:12px;font-size:12px;color:var(--color-text-secondary)">함수가 호출되면 s1의 복사본 s가 생깁니다. 함수 안에서 s.score를 바꿔도 원본 s1은 그대로입니다.</p>
+    <div class="mem-scene">
+      <div class="mem-box">
+        <h4>main — s1 (원본)</h4>
+        <div class="mem-field"><div class="mf-label">name</div><div class="mf-val mv-orig">"Jisu"</div></div>
+        <div class="mem-field"><div class="mf-label">score</div><div class="mf-val mv-orig">80</div></div>
+      </div>
+      <div class="arrow-label"><div class="arrow-line"></div><span>복사</span><div class="arrow-line"></div></div>
+      <div class="mem-box">
+        <h4>changeScore() — s (복사본)</h4>
+        <div class="mem-field"><div class="mf-label">name</div><div class="mf-val mv-copy">"Jisu"</div></div>
+        <div class="mem-field"><div class="mf-label">score</div><div class="mf-val mv-changed">100 ← 바뀜</div></div>
+      </div>
+      <div class="mem-box" style="border-color:#3B6D11">
+        <h4>함수 종료 후 원본</h4>
+        <div class="mem-field"><div class="mf-label">s1.score</div><div class="mf-val mv-orig">80 (그대로)</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>주소 전달일 때 메모리 상태</h3>
+    <p style="margin-bottom:12px;font-size:12px;color:var(--color-text-secondary)">포인터 s는 s1의 주소를 가리킵니다. s->score를 바꾸면 원본 s1.score가 직접 바뀝니다.</p>
+    <div class="mem-scene">
+      <div class="mem-box">
+        <h4>main — s1 (원본)</h4>
+        <div class="mem-field"><div class="mf-label">score (before)</div><div class="mf-val mv-orig">80</div></div>
+        <div class="mem-field"><div class="mf-label">score (after)</div><div class="mf-val mv-changed">100 ← 직접 변경!</div></div>
+      </div>
+      <div class="arrow-label"><div class="arrow-line"></div><span>가리킴</span><div class="arrow-line"></div></div>
+      <div class="mem-box">
+        <h4>changeScore() — *s (포인터)</h4>
+        <div class="mem-field"><div class="mf-label">s</div><div class="mf-val mv-ptr">&s1 주소</div></div>
+        <div class="mem-field"><div class="mf-label">s->score</div><div class="mf-val mv-ptr">= 100 (원본에)</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 04 예제 3종 -->
+<div class="panel" id="p3">
+  <div class="ex-tabs">
+    <button class="et on" onclick="showEx(0)">예제1 — 출력 (복사)</button>
+    <button class="et" onclick="showEx(1)">예제2 — 복사의 함정</button>
+    <button class="et" onclick="showEx(2)">예제3 — 주소 전달</button>
+  </div>
+  <div id="ex0">
+    <div class="card" style="margin-bottom:.75rem"><h3>학생 정보 출력 — 복사 전달로 충분</h3><p>출력만 하므로 원본을 바꿀 필요 없습니다. 값을 그냥 복사해서 전달합니다.</p></div>
+    <div class="code"><span class="kw">void</span> <span class="fn">printStudent</span>(Student s) {
+    printf(<span class="str">"이름: %s\n"</span>, s.name);  <span class="cm">// s.멤버 — 점(.) 사용</span>
+    printf(<span class="str">"나이: %d\n"</span>, s.age);
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    Student s1;
+    strcpy(s1.name, <span class="str">"Minsu"</span>); s1.age = <span class="nu">14</span>;
+    <span class="fn">printStudent</span>(s1);  <span class="cm">// 그냥 전달</span>
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</div>
+    <div class="card"><h3>실행 결과</h3><div class="code" style="margin:0">이름: Minsu
+나이: 14</div></div>
+  </div>
+  <div id="ex1" style="display:none">
+    <div class="card" style="margin-bottom:.75rem;border-left:2px solid #E24B4A;border-radius:0 var(--border-radius-lg) var(--border-radius-lg) 0"><h3 style="color:#A32D2D">복사의 함정 — 함수 안에서 바꿔도 원본은 그대로!</h3><p>changeScore(s1)을 호출하면 s1의 복사본이 함수로 들어갑니다. 함수 안에서 score를 100으로 바꿔도, main의 s1.score는 80 그대로입니다.</p></div>
+    <div class="code"><span class="kw">void</span> <span class="fn">changeScore</span>(Student s) {
+    s.score = <span class="nu">100</span>;
+    printf(<span class="str">"함수 안: %d\n"</span>, s.score);  <span class="cm">// 100</span>
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    Student s1; s1.score = <span class="nu">80</span>;
+    <span class="fn">changeScore</span>(s1);
+    printf(<span class="str">"main: %d\n"</span>, s1.score);   <span class="cm">// 80 (그대로!)</span>
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</div>
+    <div class="card"><h3>실행 결과</h3><div class="code" style="margin:0">함수 안: 100
+main: 80</div></div>
+  </div>
+  <div id="ex2" style="display:none">
+    <div class="card" style="margin-bottom:.75rem;border-left:2px solid #534AB7;border-radius:0 var(--border-radius-lg) var(--border-radius-lg) 0"><h3 style="color:#26215C">주소 전달 — 원본을 직접 수정</h3><p>changeScore(&s1)로 주소를 보냅니다. 함수 안의 *s는 s1을 직접 가리키므로, s->score = 100이 원본에 반영됩니다.</p></div>
+    <div class="code"><span class="kw">void</span> <span class="fn">changeScore</span>(Student <span class="op">*</span>s) {
+    s<span class="op">-></span>score = <span class="nu">100</span>;  <span class="cm">// -> 사용!</span>
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    Student s1; s1.score = <span class="nu">80</span>;
+    <span class="fn">changeScore</span>(<span class="op">&</span>s1);  <span class="cm">// 주소 전달</span>
+    printf(<span class="str">"바뀐 점수: %d\n"</span>, s1.score);  <span class="cm">// 100!</span>
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</div>
+    <div class="card"><h3>실행 결과</h3><div class="code" style="margin:0">바뀐 점수: 100</div></div>
+  </div>
+</div>
+
+<!-- 05 시뮬레이터 -->
+<div class="panel" id="p4">
+  <div style="display:flex;gap:8px;margin-bottom:1rem">
+    <button class="btn" id="sim-mode-copy" onclick="setMode('copy')" style="border-color:#185FA5;color:#0C447C">복사 전달</button>
+    <button class="btn pri" id="sim-mode-ptr" onclick="setMode('ptr')">주소 전달</button>
+  </div>
+  <div class="btn-row">
+    <button class="btn pri" onclick="simReset()">처음부터</button>
+    <button class="btn" id="sim-nb" onclick="simStep()">다음 단계 ▶</button>
+    <button class="btn" id="sim-auto" onclick="simAuto()">자동 실행</button>
+  </div>
+  <div class="info-box" id="sim-info">모드를 선택하고 시작 버튼을 누르세요.</div>
+  <div class="mem-scene" id="sim-scene"></div>
+  <div class="code" id="sim-code"></div>
+</div>
+
+<!-- 06 . vs -> -->
+<div class="panel" id="p5">
+  <div class="two">
+    <div class="card" style="border-top:2px solid #185FA5">
+      <h3 style="color:#185FA5">점(.) — 일반 구조체 변수</h3>
+      <div class="code" style="margin-bottom:8px">Student s1;
+s1.score = <span class="nu">90</span>;
+s1.name <span class="cm">// ← .사용</span></div>
+      <ul><li>s1은 구조체 그 자체</li><li>직접 점으로 멤버 접근</li></ul>
+    </div>
+    <div class="card" style="border-top:2px solid #534AB7">
+      <h3 style="color:#534AB7">화살표(->) — 구조체 포인터</h3>
+      <div class="code" style="margin-bottom:8px">Student <span class="op">*</span>s;
+s<span class="op">-></span>score = <span class="nu">90</span>;
+s<span class="op">-></span>name <span class="cm">// ← ->사용</span></div>
+      <ul><li>s는 주소를 담은 포인터</li><li>->가 주소를 따라 멤버 접근</li></ul>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1rem">
+    <h3>->의 정체</h3>
+    <p style="margin-bottom:8px"><span class="op-badge ob-arr">s->score</span> 는 <span class="op-badge ob-dot">(*s).score</span> 와 완전히 동일합니다.</p>
+    <div class="code" style="margin:0">s->score = <span class="nu">100</span>;      <span class="cm">// 짧고 읽기 쉬움</span>
+(*s).score = <span class="nu">100</span>;    <span class="cm">// 풀어 쓴 것 — 같은 의미</span></div>
+  </div>
+  <div class="card">
+    <h3>인터랙티브 선택 — 클릭해서 확인</h3>
+    <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:10px">어떤 상황인지 선택하면 올바른 연산자와 접근 방법을 알려드립니다.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+      <button class="btn" onclick="showOp('var')">일반 변수 Student s1</button>
+      <button class="btn" onclick="showOp('ptr')">포인터 Student *s</button>
+    </div>
+    <div class="info-box" id="op-info" style="min-height:36px">위 버튼을 클릭하세요.</div>
+  </div>
+</div>
+
+<!-- 07 코드 해설 -->
+<div class="panel" id="p6">
+  <div class="info-box" id="ce-info" style="min-height:40px">코드 줄을 클릭하면 설명이 표시됩니다.</div>
+  <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px">예제 3 (주소 전달) 코드 해설:</div>
+  <div class="code-line-block" id="ce-block"></div>
+</div>
+
+<!-- 08 실수 모음 -->
+<div class="panel" id="p7">
+  <div class="mistake-item">
+    <h4>실수 1 — 주소가 필요한데 그냥 보내기</h4>
+    <div class="mistake-inner">
+      <div><div class="mi-label" style="color:#A32D2D">틀림</div><div class="mi-wrong">changeScore(s1);  // *s 함수에 그냥 전달</div></div>
+      <div><div class="mi-label" style="color:#27500A">맞음</div><div class="mi-right">changeScore(&s1); // &로 주소 전달</div></div>
+    </div>
+  </div>
+  <div class="mistake-item">
+    <h4>실수 2 — 포인터인데 . 사용하기</h4>
+    <div class="mistake-inner">
+      <div><div class="mi-label" style="color:#A32D2D">틀림</div><div class="mi-wrong">s.score = 100;   // s가 포인터면 오류</div></div>
+      <div><div class="mi-label" style="color:#27500A">맞음</div><div class="mi-right">s->score = 100;  // 포인터엔 -></div></div>
+    </div>
+  </div>
+  <div class="mistake-item">
+    <h4>실수 3 — 일반 변수인데 -> 사용하기</h4>
+    <div class="mistake-inner">
+      <div><div class="mi-label" style="color:#A32D2D">틀림</div><div class="mi-wrong">s1->score = 100; // s1은 일반 변수</div></div>
+      <div><div class="mi-label" style="color:#27500A">맞음</div><div class="mi-right">s1.score = 100;  // 일반 변수엔 .</div></div>
+    </div>
+  </div>
+  <div class="sep"></div>
+  <div class="card">
+    <h3>한눈에 비교표</h3>
+    <div style="overflow-x:auto;margin-top:6px">
+      <table style="font-size:12px;border-collapse:collapse;width:100%;min-width:360px">
+        <thead><tr>
+          <th style="padding:6px 10px;text-align:left;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)">항목</th>
+          <th style="padding:6px 10px;text-align:left;border-bottom:0.5px solid var(--color-border-tertiary);color:#185FA5">복사 전달</th>
+          <th style="padding:6px 10px;text-align:left;border-bottom:0.5px solid var(--color-border-tertiary);color:#534AB7">주소 전달</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="padding:6px 10px;color:var(--color-text-secondary)">함수 선언</td><td style="padding:6px 10px;font-family:var(--font-mono)">func(Student s)</td><td style="padding:6px 10px;font-family:var(--font-mono)">func(Student *s)</td></tr>
+          <tr style="background:var(--color-background-secondary)"><td style="padding:6px 10px;color:var(--color-text-secondary)">호출</td><td style="padding:6px 10px;font-family:var(--font-mono)">func(s1)</td><td style="padding:6px 10px;font-family:var(--font-mono)">func(&s1)</td></tr>
+          <tr><td style="padding:6px 10px;color:var(--color-text-secondary)">멤버 접근</td><td style="padding:6px 10px;font-family:var(--font-mono)">s.score</td><td style="padding:6px 10px;font-family:var(--font-mono)">s->score</td></tr>
+          <tr style="background:var(--color-background-secondary)"><td style="padding:6px 10px;color:var(--color-text-secondary)">원본 변경</td><td style="padding:6px 10px;color:#A32D2D">안 됨</td><td style="padding:6px 10px;color:#27500A">됨</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 09 퀴즈 -->
+<div class="panel" id="p8">
+  <div class="prog"><div class="prog-fill" id="qprog" style="width:0%"></div></div>
+  <div id="quiz-body"></div>
+</div>
+</div>
+
+<script>
+function SP(i){
+  document.querySelectorAll('.nc').forEach((c,j)=>c.classList.toggle('active',j===i));
+  document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+}
+
+function showEx(i){
+  [0,1,2].forEach(j=>{document.getElementById('ex'+j).style.display=j===i?'block':'none';});
+  document.querySelectorAll('.et').forEach((t,j)=>t.classList.toggle('on',j===i));
+}
+
+function showOp(t){
+  const info=document.getElementById('op-info');
+  if(t==='var') info.innerHTML=`<strong style="font-weight:500">일반 구조체 변수</strong> — <span style="font-family:var(--font-mono);color:#185FA5">s1.score</span>, <span style="font-family:var(--font-mono);color:#185FA5">s1.name</span> 처럼 <span style="font-family:var(--font-mono);font-weight:500">점(.)</span>으로 접근합니다.`;
+  else info.innerHTML=`<strong style="font-weight:500">구조체 포인터</strong> — <span style="font-family:var(--font-mono);color:#534AB7">s->score</span>, <span style="font-family:var(--font-mono);color:#534AB7">s->name</span> 처럼 <span style="font-family:var(--font-mono);font-weight:500">화살표(->)</span>로 접근합니다. <span style="font-family:var(--font-mono)">s->score</span>는 <span style="font-family:var(--font-mono)">(*s).score</span>와 같습니다.`;
+}
+
+let simMode='ptr',simSteps=[],simIdx=0,simTimer=null;
+function setMode(m){
+  simMode=m;
+  document.getElementById('sim-mode-copy').className='btn'+(m==='copy'?' pri':'');
+  document.getElementById('sim-mode-ptr').className='btn'+(m==='ptr'?' pri':'');
+  if(m==='copy'){document.getElementById('sim-mode-copy').style.cssText='';document.getElementById('sim-mode-ptr').style.cssText='';}
+  else{document.getElementById('sim-mode-copy').style.cssText='border-color:#185FA5;color:#0C447C';document.getElementById('sim-mode-ptr').style.cssText='';}
+  simReset();
+}
+function buildSimSteps(){
+  if(simMode==='copy'){
+    return[
+      {info:'Student s1 선언, score=80 저장',s1:80,s:null,ptr:false,cline:0},
+      {info:'changeScore(s1) 호출 — s1의 복사본이 매개변수 s로 들어감',s1:80,s:80,ptr:false,cline:1},
+      {info:'함수 안: s.score = 100 — 복사본만 바뀜',s1:80,s:100,ptr:false,cline:2},
+      {info:'함수 종료 — 복사본 s는 사라짐. 원본 s1.score는 80 그대로',s1:80,s:null,ptr:false,cline:3},
+      {info:'printf: main s1.score = 80 (원본 변경 안 됨)',s1:80,s:null,ptr:false,cline:4},
+    ];
+  } else {
+    return[
+      {info:'Student s1 선언, score=80 저장',s1:80,s:null,ptr:false,cline:0},
+      {info:'changeScore(&s1) 호출 — s1의 주소가 포인터 *s로 전달됨',s1:80,s:'&s1',ptr:true,cline:1},
+      {info:'함수 안: s->score = 100 — 주소를 따라 원본 s1.score가 직접 100으로 바뀜',s1:100,s:'&s1',ptr:true,cline:2},
+      {info:'함수 종료 — 원본 s1.score가 100으로 바뀐 상태',s1:100,s:null,ptr:false,cline:3},
+      {info:'printf: s1.score = 100 (원본 변경됨!)',s1:100,s:null,ptr:false,cline:4},
+    ];
+  }
+}
+function renderSimScene(step){
+  const sc=document.getElementById('sim-scene');
+  const isPtr=simMode==='ptr';
+  let html=`<div class="mem-box"><h4>main — s1 (원본)</h4><div class="mem-field"><div class="mf-label">score</div><div class="mf-val ${step.s1===100?'mv-changed':'mv-orig'}">${step.s1}</div></div></div>`;
+  if(step.s!==null){
+    if(isPtr){
+      html+=`<div class="arrow-label"><div class="arrow-line"></div><span>가리킴</span><div class="arrow-line"></div></div>`;
+      html+=`<div class="mem-box"><h4>changeScore() — *s</h4><div class="mem-field"><div class="mf-label">s (주소)</div><div class="mf-val mv-ptr">&s1</div></div></div>`;
+    } else {
+      html+=`<div class="arrow-label"><div class="arrow-line"></div><span>복사</span><div class="arrow-line"></div></div>`;
+      html+=`<div class="mem-box"><h4>changeScore() — s (복사본)</h4><div class="mem-field"><div class="mf-label">score</div><div class="mf-val ${step.s===100?'mv-changed':'mv-copy'}">${step.s}</div></div></div>`;
+    }
+  }
+  sc.innerHTML=html;
+}
+const SIM_LINES_COPY=[
+  `Student s1; s1.score = <span class="nu">80</span>;`,
+  `<span class="fn">changeScore</span>(s1);  <span class="cm">// 복사본 전달</span>`,
+  `    s.score = <span class="nu">100</span>;  <span class="cm">// 복사본만 바뀜</span>`,
+  `<span class="cm">// 함수 종료 — 복사본 소멸</span>`,
+  `printf(s1.score);  <span class="cm">// 80 (원본 그대로)</span>`,
+];
+const SIM_LINES_PTR=[
+  `Student s1; s1.score = <span class="nu">80</span>;`,
+  `<span class="fn">changeScore</span>(<span class="op">&</span>s1);  <span class="cm">// 주소 전달</span>`,
+  `    s<span class="op">-></span>score = <span class="nu">100</span>;  <span class="cm">// 원본 직접 수정!</span>`,
+  `<span class="cm">// 함수 종료 — 원본 s1.score=100</span>`,
+  `printf(s1.score);  <span class="cm">// 100 (원본 바뀜!)</span>`,
+];
+function updateSimCode(line){
+  const lines=simMode==='copy'?SIM_LINES_COPY:SIM_LINES_PTR;
+  document.getElementById('sim-code').innerHTML=lines.map((l,i)=>i===line?`<span class="hl">${l}</span>`:l).join('\n');
+}
+function simReset(){
+  if(simTimer){clearInterval(simTimer);simTimer=null;document.getElementById('sim-auto').textContent='자동 실행';}
+  simSteps=buildSimSteps();simIdx=0;
+  document.getElementById('sim-nb').disabled=false;
+  document.getElementById('sim-info').textContent='시작 버튼을 누르세요.';
+  renderSimScene({s1:0,s:null,ptr:false});
+  updateSimCode(-1);
+}
+function simStep(){
+  if(simIdx>=simSteps.length){document.getElementById('sim-nb').disabled=true;return;}
+  const s=simSteps[simIdx++];
+  document.getElementById('sim-info').textContent=s.info;
+  renderSimScene(s);
+  updateSimCode(s.cline);
+  if(simIdx>=simSteps.length)document.getElementById('sim-nb').disabled=true;
+}
+function simAuto(){
+  if(simTimer){clearInterval(simTimer);simTimer=null;document.getElementById('sim-auto').textContent='자동 실행';return;}
+  document.getElementById('sim-auto').textContent='정지';
+  simTimer=setInterval(()=>{if(simIdx>=simSteps.length){clearInterval(simTimer);simTimer=null;document.getElementById('sim-auto').textContent='자동 실행';return;}simStep();},950);
+}
+
+const CE_LINES=[
+  {c:'typedef struct { char name[20]; int score; } Student;',e:'Student 구조체 타입을 정의합니다. typedef로 이름을 붙여 일반 자료형처럼 사용할 수 있습니다.'},
+  {c:'void changeScore(Student *s) {',e:'Student 포인터 *s를 매개변수로 받습니다. *s는 구조체의 주소를 저장합니다.'},
+  {c:'    s->score = 100;',e:'->는 포인터가 가리키는 구조체의 멤버에 접근합니다. (*s).score = 100과 동일합니다. 원본이 직접 바뀝니다.'},
+  {c:'}',e:'함수 종료. 포인터 s는 사라지지만 원본 s1.score는 이미 100으로 바뀌어 있습니다.'},
+  {c:'Student s1;',e:'main에서 Student 구조체 변수 s1을 선언합니다.'},
+  {c:'strcpy(s1.name, "Jisu"); s1.score = 80;',e:'s1의 name 멤버에 "Jisu"를, score에 80을 저장합니다.'},
+  {c:'changeScore(&s1);',e:'&s1은 s1의 주소입니다. 이 주소가 함수의 포인터 매개변수 *s로 전달됩니다.'},
+  {c:'printf("바뀐 점수: %d\\n", s1.score);',e:'함수에서 원본을 직접 수정했으므로 s1.score가 100으로 출력됩니다.'},
+];
+(function buildCE(){
+  const b=document.getElementById('ce-block');
+  if(!b)return;
+  b.innerHTML=CE_LINES.map((l,i)=>`<span class="cl" id="ce${i}" onclick="showCE(${i})">${escH(l.c)}</span>`).join('');
+  applySyn();
+})();
+function escH(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function applySyn(){
+  document.querySelectorAll('[id^="ce"]').forEach(el=>{
+    el.innerHTML=el.innerHTML
+      .replace(/\b(typedef|struct|void|char|int|return|if|for)\b/g,'<span class="kw">$1</span>')
+      .replace(/\b(printf|scanf|strcpy|changeScore|printStudent|main)\b/g,'<span class="fn">$1</span>')
+      .replace(/\/\/.*/g,'<span class="cm">$&</span>')
+      .replace(/"([^"]*)"/g,'<span class="str">"$1"</span>')
+      .replace(/\b(\d+)\b/g,'<span class="nu">$1</span>');
+  });
+}
+function showCE(i){
+  document.querySelectorAll('.cl').forEach((el,j)=>el.classList.toggle('sel',j===i));
+  document.getElementById('ce-info').textContent=CE_LINES[i].e;
+}
+
+const QZ=[
+  {q:'구조체를 그냥 전달할 때 (Student s) 함수 안에서 멤버에 접근하는 올바른 방법은?',opts:['s->score','(*s).score','s.score','&s.score'],ans:2,exp:'일반 구조체 변수는 점(.)으로 멤버에 접근합니다. s->는 포인터일 때만 씁니다.'},
+  {q:'구조체 주소를 받는 함수(Student *s)에서 score를 100으로 바꾸는 코드는?',opts:['s.score = 100;','*s.score = 100;','s->score = 100;','(*s)->score = 100;'],ans:2,exp:'포인터로 구조체 멤버에 접근할 때는 -> 연산자를 씁니다. s->score = 100은 (*s).score = 100과 동일합니다.'},
+  {q:'changeScore(Student *s) 함수를 호출할 때 올바른 코드는?',opts:['changeScore(s1);','changeScore(*s1);','changeScore(&s1);','changeScore(s1.addr);'],ans:2,exp:'포인터 매개변수를 받는 함수를 호출할 때는 & 연산자로 주소를 전달해야 합니다. &s1은 s1의 메모리 주소입니다.'},
+  {q:'구조체를 그냥 전달했을 때 함수 안에서 값을 바꾸면?',opts:['원본도 함께 바뀐다','복사본만 바뀌고 원본은 그대로다','컴파일 오류가 난다','자동으로 원본도 동기화된다'],ans:1,exp:'그냥 전달하면 값이 복사되어 들어갑니다. 함수 안의 변수는 복사본이므로 아무리 바꿔도 원본에 영향이 없습니다.'},
+  {q:'s->score는 다음 중 어떤 코드와 동일한가?',opts:['s.score','&s.score','(*s).score','*s.score'],ans:2,exp:'->는 포인터가 가리키는 곳으로 이동(*)한 뒤 멤버에 접근(.)하는 것의 줄임입니다. s->score == (*s).score'},
+  {q:'출력만 하는 함수에 구조체를 전달할 때 권장하는 방법은?',opts:['반드시 주소를 전달해야 한다','그냥 전달(복사)해도 충분하다','포인터를 여러 개 써야 한다','반환값으로만 처리해야 한다'],ans:1,exp:'읽기·출력만 하는 경우 원본을 바꿀 필요가 없으므로 그냥 전달해도 됩니다. 원본 수정이 필요할 때만 주소 전달을 씁니다.'},
+];
+let qi=0,qs=0;
+function renderQ(){
+  document.getElementById('qprog').style.width=(qi/QZ.length*100)+'%';
+  const body=document.getElementById('quiz-body');
+  if(qi>=QZ.length){
+    body.innerHTML=`<div class="card" style="text-align:center;padding:2rem"><p style="font-size:22px;font-weight:500;margin-bottom:8px">${qs}/${QZ.length}</p><p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1rem">${qs===QZ.length?'완벽합니다!':qs>=4?'잘 했어요!':'다시 도전해보세요.'}</p><button class="btn pri" onclick="qi=0;qs=0;renderQ()">다시 풀기</button></div>`;
+    document.getElementById('qprog').style.width='100%';
+    return;
+  }
+  const q=QZ[qi];
+  body.innerHTML=`<div class="quiz-q">Q${qi+1}. ${q.q}</div><div class="quiz-opts">${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="ansQ(${i})">${o}</button>`).join('')}</div><div id="qr"></div><div id="qn"></div>`;
+}
+function ansQ(i){
+  const q=QZ[qi];
+  document.querySelectorAll('.quiz-opt').forEach((b,j)=>{b.disabled=true;if(j===q.ans)b.classList.add('ok');else if(j===i)b.classList.add('ng');});
+  if(i===q.ans)qs++;
+  document.getElementById('qr').innerHTML=`<div class="quiz-res ${i===q.ans?'ok':'ng'}">${i===q.ans?'정답입니다!':'오답입니다.'} ${q.exp}</div>`;
+  document.getElementById('qn').innerHTML=`<button class="btn pri" onclick="qi++;renderQ()">${qi+1<QZ.length?'다음 문제':'결과 보기'} ▶</button>`;
+}
+
+simReset();
+renderQ();
+</script>
