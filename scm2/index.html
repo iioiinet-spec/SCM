@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C-Programming Master Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --text-main: #333;
+            --text-sub: #7f8c8d;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-sub);
+            font-size: 1.1rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border-top: 5px solid var(--accent-color);
+        }
+
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            color: var(--primary-color);
+        }
+
+        .section-title i {
+            margin-right: 10px;
+        }
+
+        .link-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .link-item {
+            margin-bottom: 12px;
+        }
+
+        .link-item a {
+            text-decoration: none;
+            color: var(--text-main);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: background 0.2s;
+            font-weight: 500;
+        }
+
+        .link-item a:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 5px;
+            background: #e1e8ed;
+            color: #606f7b;
+        }
+
+        .link-item a:hover .badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8rem; }
+            .section-card { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>C Programming Roadmap</h1>
+        <p>기초 문법부터 심화 구조체까지 한눈에 확인하세요</p>
+        <p>온라인 교재 : 세영코딩연구소</p>
+
+    </header>
+
+    <div class="dashboard-grid">
+        <div class="section-card">
+            <div class="section-title">Step 1. 기초 및 제어문</div>
+            <ul class="link-list">
+                <li class="link-item">
+                    <a href="https://iioiinet-spec.github.io/SCM/" target="_blank">
+                        기본 / 입출력 / 제어문 <span class="badge">Essential</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">Step 2. 배열 패턴 학습</div>
+            <ul class="link-list">
+                <li class="link-item">
+                    <a href="https://iioiinet-spec.github.io/SCM/arrp/" target="_blank">
+                        08. 배열패턴 1 <span class="badge">Array</span>
+                    </a>
+                </li>
+                <li class="link-item">
+                    <a href="https://iioiinet-spec.github.io/SCM/arrp2/" target="_blank">
+                        08. 배열패턴 2 <span class="badge">Advanced</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">Step 3. 함수와 포인터</div>
+            <ul class="link-list">
+                <li class="link-item">
+                    <a href="https://iioiinet-spec.github.io/SCM/func/" target="_blank">
+                        09. 함수 (func) <span class="badge">Logic</span>
+                    </a>
+                </li>
+                <li class="link-item">
+                    <a href="https://iioiinet-spec.github.io/SCM/pointer/" target="_blank">
+                        10. 포인터 (pointer) <span class="badge">Memory</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">Step 4. 구조체와 사용자 정의 타입</div>
+            <ul class="link-list">
+                <li class="link-item">
+                    <a href="https://iioiinet-spec.github.io/SCM/struct/" target="_blank">
+                        11. 구조체 기초 <span class="badge">Struct</span>
+                    </a>
+                </li>
+                <li class="link-item">
+                    <a href="https://iioiinet-spec.github.io/SCM/ts/" target="_blank">
+                        12. typedef struct <span class="badge">Type</span>
+                    </a>
+                </li>
+                <li class="link-item">
+                    <a href="https://iioiinet-spec.github.io/SCM/sarr/" target="_blank">
+                        13. 구조체 배열 <span class="badge">Collection</span>
+                    </a>
+                </li>
+                <li class="link-item">
+                    <a href="https://iioiinet-spec.github.io/SCM/tsf/" target="_blank">
+                        14. typedef 구조체 함수전달 <span class="badge">Deep Dive</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
