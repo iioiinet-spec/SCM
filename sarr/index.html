@@ -1,0 +1,601 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.root{font-family:var(--font-sans);padding:2rem 0}
+.hero{margin-bottom:1.75rem}
+.hero-eyebrow{font-size:11px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:6px;letter-spacing:.06em}
+.hero-title{font-size:22px;font-weight:500;margin-bottom:6px}
+.hero-desc{font-size:13px;color:var(--color-text-secondary);line-height:1.7;margin-bottom:1rem;max-width:540px}
+.hero-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:11px;padding:3px 10px;border-radius:9px;border:0.5px solid;font-weight:500}
+.tag-b{background:#E6F1FB;color:#0C447C;border-color:#85B7EB}
+.tag-g{background:#EAF3DE;color:#27500A;border-color:#97C459}
+.tag-a{background:#FAEEDA;color:#633806;border-color:#EF9F27}
+.tag-p{background:#EEEDFE;color:#26215C;border-color:#AFA9EC}
+
+.nav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:1.75rem}
+.nav-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.875rem 1rem;cursor:pointer;transition:all .15s}
+.nav-card:hover{background:var(--color-background-secondary);border-color:var(--color-border-secondary)}
+.nav-card.active{border-color:var(--color-text-primary);background:var(--color-background-secondary)}
+.nav-card.active .nc-num{color:var(--color-text-primary)}
+.nc-num{font-size:10px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:3px}
+.nc-name{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.nc-desc{font-size:11px;color:var(--color-text-secondary)}
+
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1rem}
+.card h3{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px}
+.card p,.card li{font-size:13px;line-height:1.7;color:var(--color-text-primary)}
+.card ul{list-style:none;padding-left:10px}
+.card li::before{content:"· ";color:var(--color-text-tertiary)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:1rem}
+.code{font-family:var(--font-mono);font-size:12px;line-height:1.9;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 16px;overflow-x:auto;white-space:pre;margin-bottom:1rem}
+.hl{background:#FAEEDA;border-radius:2px;padding:0 2px}
+.kw{color:#534AB7}.fn{color:#185FA5}.cm{color:var(--color-text-tertiary)}.nu{color:#0F6E56}.str{color:#993C1D}
+.info-box{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 14px;font-size:13px;color:var(--color-text-primary);line-height:1.6;min-height:42px;margin-bottom:1rem}
+.btn-row{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+button.btn{font-size:13px;padding:7px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary);cursor:pointer;transition:all .15s}
+button.btn:hover{background:var(--color-background-secondary)}
+button.btn:active{transform:scale(.98)}
+button.btn.pri{background:var(--color-text-primary);color:var(--color-background-primary);border-color:transparent}
+button.btn:disabled{opacity:.4;cursor:not-allowed}
+.sep{height:0.5px;background:var(--color-border-tertiary);margin:1.25rem 0}
+
+.arr-vis{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:flex-start}
+.arr-slot{border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-lg);padding:10px 12px;min-width:110px;background:var(--color-background-primary);transition:all .25s}
+.arr-slot.hl-slot{background:#E6F1FB;border-color:#185FA5}
+.arr-slot.hl-cur{background:#EF9F27;border-color:#854F0B}
+.arr-idx{font-size:10px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:6px;font-family:var(--font-mono)}
+.arr-field{font-size:12px;color:var(--color-text-secondary);margin-bottom:2px}
+.arr-val{font-size:13px;font-weight:500;font-family:var(--font-mono);color:var(--color-text-primary)}
+.arr-val.filled{color:#0C447C}
+.arr-val.empty{color:var(--color-text-tertiary)}
+
+.mem-wrap{display:flex;gap:6px;flex-direction:column;margin-bottom:1rem}
+.mem-row{display:flex;align-items:center;gap:6px}
+.mem-addr{font-family:var(--font-mono);font-size:11px;color:var(--color-text-tertiary);min-width:60px}
+.mem-block{height:28px;border-radius:4px;border:0.5px solid;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;font-family:var(--font-mono);flex:1}
+.mb-name{background:#E6F1FB;border-color:#185FA5;color:#0C447C}
+.mb-age{background:#EAF3DE;border-color:#3B6D11;color:#173404}
+.mb-empty{background:var(--color-background-secondary);border-color:var(--color-border-tertiary);color:var(--color-text-tertiary)}
+
+.code-line-block{font-family:var(--font-mono);font-size:12px;line-height:2;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 16px;margin-bottom:1rem}
+.cl{display:block;border-radius:3px;padding:0 4px;margin:0 -4px;cursor:pointer;transition:background .1s}
+.cl:hover{background:var(--color-background-primary)}
+.cl.sel{background:#FAEEDA}
+
+.ex-tab-row{display:flex;gap:4px;margin-bottom:1rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.ex-tab{padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--color-text-secondary);border-bottom:2px solid transparent;transition:all .2s}
+.ex-tab.on{color:var(--color-text-primary);border-bottom-color:var(--color-text-primary)}
+
+.quiz-q{font-size:14px;font-weight:500;margin-bottom:12px;line-height:1.6}
+.quiz-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.quiz-opt{text-align:left;padding:10px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);font-size:13px;cursor:pointer;transition:all .15s;color:var(--color-text-primary)}
+.quiz-opt:hover{background:var(--color-background-secondary)}
+.quiz-opt.ok{background:#EAF3DE;border-color:#639922;color:#173404}
+.quiz-opt.ng{background:#FCEBEB;border-color:#E24B4A;color:#501313}
+.quiz-res{font-size:13px;padding:10px 14px;border-radius:var(--border-radius-md);margin-bottom:12px}
+.quiz-res.ok{background:#EAF3DE;color:#173404}
+.quiz-res.ng{background:#FCEBEB;color:#501313}
+.prog{height:4px;background:var(--color-border-tertiary);border-radius:2px;margin-bottom:1rem}
+.prog-fill{height:100%;background:#1D9E75;border-radius:2px;transition:width .3s}
+.practice-item{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem;margin-bottom:8px;background:var(--color-background-secondary)}
+.practice-item h4{font-size:13px;font-weight:500;margin-bottom:4px;color:var(--color-text-primary)}
+.practice-item p{font-size:12px;color:var(--color-text-secondary);line-height:1.6}
+</style>
+
+<div class="root">
+<h2 style="position:absolute;opacity:0;pointer-events:none">C언어 구조체 배열 학습 홈페이지</h2>
+
+<div class="hero">
+  <div class="hero-eyebrow">C언어 자료구조</div>
+  <div class="hero-title">구조체 배열 (Struct Array)</div>
+  <div class="hero-desc">여러 정보를 하나로 묶는 구조체를 여러 개 저장하는 방법. 학생 관리, 좌표 저장, 상품 목록 등 실제 프로그램에서 가장 자주 쓰이는 패턴입니다.</div>
+  <div class="hero-tags">
+    <span class="tag tag-b">구조체</span>
+    <span class="tag tag-g">배열</span>
+    <span class="tag tag-a">반복문</span>
+    <span class="tag tag-p">typedef</span>
+  </div>
+</div>
+
+<div class="nav-grid">
+  <div class="nav-card active" onclick="SP(0)"><div class="nc-num">01</div><div class="nc-name">개념</div><div class="nc-desc">왜 필요한가</div></div>
+  <div class="nav-card" onclick="SP(1)"><div class="nc-num">02</div><div class="nc-name">구조와 접근</div><div class="nc-desc">선언·접근 방법</div></div>
+  <div class="nav-card" onclick="SP(2)"><div class="nc-num">03</div><div class="nc-name">메모리 구조</div><div class="nc-desc">내부 배치 시각화</div></div>
+  <div class="nav-card" onclick="SP(3)"><div class="nc-num">04</div><div class="nc-name">예제 3종</div><div class="nc-desc">학생·좌표·상품</div></div>
+  <div class="nav-card" onclick="SP(4)"><div class="nc-num">05</div><div class="nc-name">시뮬레이터</div><div class="nc-desc">배열 채우기</div></div>
+  <div class="nav-card" onclick="SP(5)"><div class="nc-num">06</div><div class="nc-name">코드 해설</div><div class="nc-desc">줄별 클릭 설명</div></div>
+  <div class="nav-card" onclick="SP(6)"><div class="nc-num">07</div><div class="nc-name">연습문제</div><div class="nc-desc">3가지 과제</div></div>
+  <div class="nav-card" onclick="SP(7)"><div class="nc-num">08</div><div class="nc-name">퀴즈</div><div class="nc-desc">이해 점검</div></div>
+</div>
+
+<!-- 01 개념 -->
+<div class="panel active" id="p0">
+  <div class="card" style="margin-bottom:1rem">
+    <h3>한 줄 정의</h3>
+    <p style="font-size:14px;font-weight:500">"여러 개의 구조체를 한 번에 관리하는 가장 기본적인 방법"</p>
+  </div>
+  <div class="two">
+    <div class="card"><h3>구조체만 쓸 때</h3>
+      <div class="code" style="margin:0">Student s1;
+Student s2;
+Student s3;
+<span class="cm">// 30명이면 30줄...</span></div>
+    </div>
+    <div class="card"><h3>구조체 배열을 쓰면</h3>
+      <div class="code" style="margin:0">Student s[<span class="nu">30</span>];
+<span class="cm">// 30명도 한 줄!</span>
+
+<span class="kw">for</span>(<span class="kw">int</span> i=<span class="nu">0</span>;i&lt;<span class="nu">30</span>;i++)
+  printf(s[i].name);</div>
+    </div>
+  </div>
+  <div class="three">
+    <div class="card"><h3>구조체</h3><p>여러 정보를 하나로 묶음<br><span style="font-family:var(--font-mono);font-size:11px;color:#185FA5">이름 + 나이 = Student</span></p></div>
+    <div class="card"><h3>배열</h3><p>같은 것을 여러 개 저장<br><span style="font-family:var(--font-mono);font-size:11px;color:#185FA5">Student[30]</span></p></div>
+    <div class="card"><h3>구조체 배열</h3><p>같은 구조를 여러 개<br><span style="font-family:var(--font-mono);font-size:11px;color:#185FA5">학생 30명 관리</span></p></div>
+  </div>
+  <div class="card">
+    <h3>실제로 쓰이는 곳</h3>
+    <ul>
+      <li>학생 관리 시스템 (이름 + 점수 + 학번)</li>
+      <li>상품 목록 (이름 + 가격 + 재고)</li>
+      <li>게임 캐릭터 목록 (이름 + 체력 + 레벨)</li>
+      <li>지도 좌표 데이터 (x + y + 레이블)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 02 구조와 접근 -->
+<div class="panel" id="p1">
+  <div class="card" style="margin-bottom:1rem">
+    <h3>선언 형식</h3>
+    <div class="code" style="margin:0"><span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="kw">char</span> name[<span class="nu">20</span>];   <span class="cm">// 멤버 1</span>
+    <span class="kw">int</span>  age;         <span class="cm">// 멤버 2</span>
+} Student;            <span class="cm">// 구조체 이름</span>
+
+Student s[<span class="nu">3</span>];        <span class="cm">// 구조체 배열 선언</span></div>
+  </div>
+  <div class="card" style="margin-bottom:1rem">
+    <h3>접근 방법 — 배열[인덱스].멤버</h3>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">
+      <div style="display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:13px;padding:8px 12px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)">
+        <span style="color:#534AB7">s</span><span style="color:var(--color-text-secondary)">[</span><span style="color:#0F6E56">0</span><span style="color:var(--color-text-secondary)">].</span><span style="color:#185FA5">name</span>
+        <span style="color:var(--color-text-tertiary);font-size:12px">→ 0번째 학생의 이름</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:13px;padding:8px 12px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)">
+        <span style="color:#534AB7">s</span><span style="color:var(--color-text-secondary)">[</span><span style="color:#0F6E56">1</span><span style="color:var(--color-text-secondary)">].</span><span style="color:#185FA5">age</span>
+        <span style="color:var(--color-text-tertiary);font-size:12px">→ 1번째 학생의 나이</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:13px;padding:8px 12px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)">
+        <span style="color:#534AB7">s</span><span style="color:var(--color-text-secondary)">[</span><span style="color:#0F6E56">i</span><span style="color:var(--color-text-secondary)">].</span><span style="color:#185FA5">name</span>
+        <span style="color:var(--color-text-tertiary);font-size:12px">→ i번째 학생의 이름 (반복문)</span>
+      </div>
+    </div>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3>문자열 저장 — strcpy 사용</h3>
+      <div class="code" style="margin:0">strcpy(s[<span class="nu">0</span>].name, <span class="str">"Kim"</span>);
+<span class="cm">// s[0].name = "Kim"; 은 틀림!</span></div>
+    </div>
+    <div class="card">
+      <h3>숫자 저장 — 직접 대입</h3>
+      <div class="code" style="margin:0">s[<span class="nu">0</span>].age = <span class="nu">14</span>;
+<span class="cm">// 숫자는 바로 대입 가능</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>인덱스 클릭 — 접근 경로 확인</h3>
+    <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:10px">아래 슬롯을 클릭하면 접근 방법이 표시됩니다.</p>
+    <div class="arr-vis" id="access-vis"></div>
+    <div class="info-box" id="access-info" style="min-height:36px">슬롯을 클릭하세요.</div>
+  </div>
+</div>
+
+<!-- 03 메모리 구조 -->
+<div class="panel" id="p2">
+  <div class="card" style="margin-bottom:1rem">
+    <h3>메모리 안에서의 배치</h3>
+    <p style="margin-bottom:10px">구조체 배열은 메모리에서 각 구조체가 연속으로 배치됩니다. Student 하나는 name(20바이트) + age(4바이트) = 24바이트입니다.</p>
+    <div id="mem-vis" class="mem-wrap"></div>
+  </div>
+  <div class="two">
+    <div class="card"><h3>배열 인덱스 계산</h3><p style="font-family:var(--font-mono);font-size:12px;margin-top:4px">s[i] 시작 주소<br>= s[0] + i × sizeof(Student)</p></div>
+    <div class="card"><h3>멤버 접근</h3><p style="font-family:var(--font-mono);font-size:12px;margin-top:4px">s[i].name → 구조체 시작<br>s[i].age → +20바이트 위치</p></div>
+  </div>
+  <div class="card">
+    <h3>크기 비교</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+      <div style="padding:8px 12px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:12px">
+        <div style="color:var(--color-text-secondary);font-size:10px;margin-bottom:3px">char name[20]</div>
+        <div style="font-family:var(--font-mono);font-weight:500">20 bytes</div>
+      </div>
+      <div style="padding:8px 12px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:12px">
+        <div style="color:var(--color-text-secondary);font-size:10px;margin-bottom:3px">int age</div>
+        <div style="font-family:var(--font-mono);font-weight:500">4 bytes</div>
+      </div>
+      <div style="padding:8px 12px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:12px">
+        <div style="color:var(--color-text-secondary);font-size:10px;margin-bottom:3px">Student 1개</div>
+        <div style="font-family:var(--font-mono);font-weight:500">≈ 24 bytes</div>
+      </div>
+      <div style="padding:8px 12px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px">
+        <div style="color:var(--color-text-secondary);font-size:10px;margin-bottom:3px">Student[3]</div>
+        <div style="font-family:var(--font-mono);font-weight:500">≈ 72 bytes</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 04 예제 3종 -->
+<div class="panel" id="p3">
+  <div class="ex-tab-row">
+    <button class="ex-tab on" onclick="showEx(0)">예제1 — 학생</button>
+    <button class="ex-tab" onclick="showEx(1)">예제2 — 좌표</button>
+    <button class="ex-tab" onclick="showEx(2)">예제3 — 상품</button>
+  </div>
+  <div id="ex0">
+    <div class="card" style="margin-bottom:1rem">
+      <h3>학생 3명 이름·나이 저장 및 출력</h3>
+      <p>Student s[3]에 Kim(14), Lee(15), Park(16)을 저장하고 반복문으로 출력합니다.</p>
+    </div>
+    <div class="code"><span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="kw">char</span> name[<span class="nu">20</span>];
+    <span class="kw">int</span> age;
+} Student;
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    Student s[<span class="nu">3</span>];
+
+    <span class="fn">strcpy</span>(s[<span class="nu">0</span>].name, <span class="str">"Kim"</span>); s[<span class="nu">0</span>].age = <span class="nu">14</span>;
+    <span class="fn">strcpy</span>(s[<span class="nu">1</span>].name, <span class="str">"Lee"</span>); s[<span class="nu">1</span>].age = <span class="nu">15</span>;
+    <span class="fn">strcpy</span>(s[<span class="nu">2</span>].name, <span class="str">"Park"</span>); s[<span class="nu">2</span>].age = <span class="nu">16</span>;
+
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="nu">0</span>; i&lt;<span class="nu">3</span>; i++)
+        <span class="fn">printf</span>(<span class="str">"이름: %s, 나이: %d\n"</span>, s[i].name, s[i].age);
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</div>
+    <div class="card"><h3>실행 결과</h3>
+      <div class="code" style="margin:0">이름: Kim, 나이: 14
+이름: Lee, 나이: 15
+이름: Park, 나이: 16</div>
+    </div>
+    <div id="ex0-vis" class="arr-vis"></div>
+  </div>
+  <div id="ex1" style="display:none">
+    <div class="card" style="margin-bottom:1rem">
+      <h3>점 3개의 좌표 저장 및 출력</h3>
+      <p>Point p[3]에 (1,2), (3,4), (5,6) 저장 후 반복문으로 출력합니다.</p>
+    </div>
+    <div class="code"><span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="kw">int</span> x;
+    <span class="kw">int</span> y;
+} Point;
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    Point p[<span class="nu">3</span>];
+
+    p[<span class="nu">0</span>].x=<span class="nu">1</span>; p[<span class="nu">0</span>].y=<span class="nu">2</span>;
+    p[<span class="nu">1</span>].x=<span class="nu">3</span>; p[<span class="nu">1</span>].y=<span class="nu">4</span>;
+    p[<span class="nu">2</span>].x=<span class="nu">5</span>; p[<span class="nu">2</span>].y=<span class="nu">6</span>;
+
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="nu">0</span>; i&lt;<span class="nu">3</span>; i++)
+        <span class="fn">printf</span>(<span class="str">"(%d, %d)\n"</span>, p[i].x, p[i].y);
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</div>
+    <div id="ex1-vis" style="margin-bottom:1rem">
+      <div class="arr-vis" id="ex1-arr"></div>
+    </div>
+    <div class="card"><h3>실행 결과</h3>
+      <div class="code" style="margin:0">(1, 2)
+(3, 4)
+(5, 6)</div>
+    </div>
+  </div>
+  <div id="ex2" style="display:none">
+    <div class="card" style="margin-bottom:1rem">
+      <h3>상품 2개 입력받아 출력</h3>
+      <p>scanf로 이름과 가격을 입력받고 반복문으로 출력합니다.</p>
+    </div>
+    <div class="code"><span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="kw">char</span> name[<span class="nu">20</span>];
+    <span class="kw">int</span> price;
+} Product;
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    Product p[<span class="nu">2</span>];
+
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="nu">0</span>; i&lt;<span class="nu">2</span>; i++) {
+        scanf(<span class="str">"%s"</span>, p[i].name);
+        scanf(<span class="str">"%d"</span>, &amp;p[i].price);
+    }
+    <span class="kw">for</span>(<span class="kw">int</span> i=<span class="nu">0</span>; i&lt;<span class="nu">2</span>; i++)
+        <span class="fn">printf</span>(<span class="str">"이름: %s, 가격: %d원\n"</span>, p[i].name, p[i].price);
+    <span class="kw">return</span> <span class="nu">0</span>;
+}</div>
+    <div class="card"><h3>입력 예시 → 출력</h3>
+      <div class="two" style="margin:0">
+        <div><div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:4px">입력</div><div class="code" style="margin:0">Apple
+1500
+Banana
+800</div></div>
+        <div><div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:4px">출력</div><div class="code" style="margin:0">이름: Apple, 가격: 1500원
+이름: Banana, 가격: 800원</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 05 시뮬레이터 -->
+<div class="panel" id="p4">
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1rem;line-height:1.6">Student s[3] 배열에 데이터가 저장되는 과정을 단계별로 확인하세요.</p>
+  <div class="btn-row">
+    <button class="btn pri" onclick="simReset()">처음부터</button>
+    <button class="btn" id="sim-nb" onclick="simStep()">다음 단계 ▶</button>
+    <button class="btn" id="sim-auto" onclick="simAuto()">자동 실행</button>
+  </div>
+  <div class="info-box" id="sim-info">시작 버튼을 누르세요.</div>
+  <div id="sim-arr" class="arr-vis"></div>
+  <div class="code" id="sim-code"></div>
+</div>
+
+<!-- 06 코드 해설 -->
+<div class="panel" id="p5">
+  <div class="info-box" id="ce-info" style="min-height:40px">코드 줄을 클릭하면 설명이 표시됩니다.</div>
+  <div class="code-line-block" id="ce-block"></div>
+</div>
+
+<!-- 07 연습문제 -->
+<div class="panel" id="p6">
+  <div class="practice-item">
+    <h4>연습 1 — 학생 5명 이름·점수 저장 및 출력</h4>
+    <p>Student 구조체에 name[20]과 score 멤버를 만들고, 5명을 저장·출력하세요.</p>
+    <div class="code" style="margin-top:8px;font-size:11px"><span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="kw">char</span> name[<span class="nu">20</span>];
+    <span class="kw">int</span>  score;
+} Student;
+
+Student s[<span class="nu">5</span>];
+<span class="cm">// s[0].score, s[1].score ... 채워보기</span></div>
+  </div>
+  <div class="practice-item">
+    <h4>연습 2 — 책 3권 제목·가격 입력받아 출력</h4>
+    <p>Book 구조체에 title[30]과 price를 만들고, scanf로 입력받아 출력하세요.</p>
+    <div class="code" style="margin-top:8px;font-size:11px"><span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="kw">char</span> title[<span class="nu">30</span>];
+    <span class="kw">int</span>  price;
+} Book;
+
+Book b[<span class="nu">3</span>];
+<span class="cm">// for문으로 입력받기</span></div>
+  </div>
+  <div class="practice-item">
+    <h4>연습 3 — 사각형 2개 가로·세로 저장, 넓이 출력</h4>
+    <p>Rect 구조체에 width, height를 만들고, 넓이(width×height)를 계산해 출력하세요.</p>
+    <div class="code" style="margin-top:8px;font-size:11px"><span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="kw">int</span> width;
+    <span class="kw">int</span> height;
+} Rect;
+
+Rect r[<span class="nu">2</span>];
+<span class="cm">// r[i].width * r[i].height = 넓이</span></div>
+  </div>
+  <div class="sep"></div>
+  <div class="card">
+    <h3>핵심 정리</h3>
+    <ul>
+      <li>구조체 배열은 구조체를 여러 개 저장하는 배열</li>
+      <li>선언: <span style="font-family:var(--font-mono);font-size:12px">구조체이름 배열이름[개수]</span></li>
+      <li>접근: <span style="font-family:var(--font-mono);font-size:12px">배열[i].멤버</span></li>
+      <li>반복문과 함께 쓰면 코드가 매우 간결해짐</li>
+      <li>문자열은 strcpy, 숫자는 직접 대입 또는 scanf</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 08 퀴즈 -->
+<div class="panel" id="p7">
+  <div class="prog"><div class="prog-fill" id="qprog" style="width:0%"></div></div>
+  <div id="quiz-body"></div>
+</div>
+
+</div>
+
+<script>
+function SP(i){
+  document.querySelectorAll('.nav-card').forEach((c,j)=>c.classList.toggle('active',j===i));
+  document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+}
+
+const STUDENTS=[{name:'Kim',age:14},{name:'Lee',age:15},{name:'Park',age:16}];
+
+(function buildAccessVis(){
+  const w=document.getElementById('access-vis');
+  if(!w)return;
+  STUDENTS.forEach((st,i)=>{
+    const d=document.createElement('div');
+    d.className='arr-slot';d.style.cursor='pointer';
+    d.innerHTML=`<div class="arr-idx">s[${i}]</div><div class="arr-field">name</div><div class="arr-val filled">"${st.name}"</div><div class="arr-field" style="margin-top:4px">age</div><div class="arr-val filled">${st.age}</div>`;
+    d.onclick=()=>{
+      document.querySelectorAll('#access-vis .arr-slot').forEach(el=>el.classList.remove('hl-slot'));
+      d.classList.add('hl-slot');
+      document.getElementById('access-info').innerHTML=`<span style="font-family:var(--font-mono)">s[${i}].name = "${st.name}"</span>  &nbsp;&nbsp;  <span style="font-family:var(--font-mono)">s[${i}].age = ${st.age}</span>`;
+    };
+    w.appendChild(d);
+  });
+})();
+
+(function buildMemVis(){
+  const w=document.getElementById('mem-vis');
+  if(!w)return;
+  STUDENTS.forEach((st,i)=>{
+    const r=document.createElement('div');r.className='mem-row';
+    r.innerHTML=`<div class="mem-addr">s[${i}]</div><div class="mem-block mb-name">name: "${st.name}"</div><div class="mem-block mb-age">age: ${st.age}</div>`;
+    w.appendChild(r);
+  });
+})();
+
+(function buildEx0Vis(){
+  const w=document.getElementById('ex0-vis');
+  if(!w)return;
+  STUDENTS.forEach((st,i)=>{
+    const d=document.createElement('div');d.className='arr-slot';
+    d.innerHTML=`<div class="arr-idx">s[${i}]</div><div class="arr-field">name</div><div class="arr-val filled">"${st.name}"</div><div class="arr-field" style="margin-top:4px">age</div><div class="arr-val filled">${st.age}</div>`;
+    w.appendChild(d);
+  });
+})();
+
+(function buildEx1Arr(){
+  const pts=[{x:1,y:2},{x:3,y:4},{x:5,y:6}];
+  const w=document.getElementById('ex1-arr');
+  if(!w)return;
+  pts.forEach((pt,i)=>{
+    const d=document.createElement('div');d.className='arr-slot';
+    d.innerHTML=`<div class="arr-idx">p[${i}]</div><div class="arr-field">x</div><div class="arr-val filled">${pt.x}</div><div class="arr-field" style="margin-top:4px">y</div><div class="arr-val filled">${pt.y}</div>`;
+    w.appendChild(d);
+  });
+})();
+
+function showEx(i){
+  [0,1,2].forEach(j=>{document.getElementById('ex'+j).style.display=j===i?'block':'none';});
+  document.querySelectorAll('.ex-tab').forEach((t,j)=>t.classList.toggle('on',j===i));
+}
+
+let simSteps=[],simIdx=0,simTimer=null;
+function buildSimSteps(){
+  const steps=[];
+  const arr=[{name:'?',age:'?'},{name:'?',age:'?'},{name:'?',age:'?'}];
+  const snap=()=>arr.map(a=>({...a}));
+  steps.push({arr:snap(),cur:-1,field:'',info:'Student s[3] 선언. 아직 아무 값도 없습니다.',cline:0});
+  arr[0].name='Kim';
+  steps.push({arr:snap(),cur:0,field:'name',info:'strcpy(s[0].name, "Kim") — 0번째 학생 이름 저장',cline:1});
+  arr[0].age=14;
+  steps.push({arr:snap(),cur:0,field:'age',info:'s[0].age = 14 — 0번째 학생 나이 저장',cline:2});
+  arr[1].name='Lee';
+  steps.push({arr:snap(),cur:1,field:'name',info:'strcpy(s[1].name, "Lee") — 1번째 학생 이름 저장',cline:3});
+  arr[1].age=15;
+  steps.push({arr:snap(),cur:1,field:'age',info:'s[1].age = 15 — 1번째 학생 나이 저장',cline:4});
+  arr[2].name='Park';
+  steps.push({arr:snap(),cur:2,field:'name',info:'strcpy(s[2].name, "Park") — 2번째 학생 이름 저장',cline:5});
+  arr[2].age=16;
+  steps.push({arr:snap(),cur:2,field:'age',info:'s[2].age = 16 — 2번째 학생 나이 저장',cline:6});
+  for(let i=0;i<3;i++){
+    steps.push({arr:snap(),cur:i,field:'print',info:`printf: 이름: ${arr[i].name}, 나이: ${arr[i].age}`,cline:7});
+  }
+  steps.push({arr:snap(),cur:-1,field:'',info:'완료! 3명의 학생 정보가 모두 출력되었습니다.',cline:8});
+  return steps;
+}
+function renderSimArr(arr,cur){
+  const w=document.getElementById('sim-arr');w.innerHTML='';
+  arr.forEach((st,i)=>{
+    const d=document.createElement('div');
+    d.className='arr-slot'+(i===cur?' hl-cur':'');
+    d.innerHTML=`<div class="arr-idx">s[${i}]</div><div class="arr-field">name</div><div class="arr-val ${st.name==='?'?'empty':'filled'}">${st.name==='?'?'—':'"'+st.name+'"'}</div><div class="arr-field" style="margin-top:4px">age</div><div class="arr-val ${st.age==='?'?'empty':'filled'}">${st.age==='?'?'—':st.age}</div>`;
+    w.appendChild(d);
+  });
+}
+const SIM_LINES=[
+  `Student s[<span class="nu">3</span>];  <span class="cm">// 선언</span>`,
+  `<span class="fn">strcpy</span>(s[<span class="nu">0</span>].name, <span class="str">"Kim"</span>);`,
+  `s[<span class="nu">0</span>].age = <span class="nu">14</span>;`,
+  `<span class="fn">strcpy</span>(s[<span class="nu">1</span>].name, <span class="str">"Lee"</span>);`,
+  `s[<span class="nu">1</span>].age = <span class="nu">15</span>;`,
+  `<span class="fn">strcpy</span>(s[<span class="nu">2</span>].name, <span class="str">"Park"</span>);`,
+  `s[<span class="nu">2</span>].age = <span class="nu">16</span>;`,
+  `<span class="kw">for</span>(i=<span class="nu">0</span>;i&lt;<span class="nu">3</span>;i++) printf(s[i].name, s[i].age);`,
+  `<span class="cm">// 완료</span>`,
+];
+function updateSimCode(line){
+  document.getElementById('sim-code').innerHTML=SIM_LINES.map((l,i)=>i===line?`<span class="hl">${l}</span>`:l).join('\n');
+}
+function simReset(){
+  if(simTimer){clearInterval(simTimer);simTimer=null;document.getElementById('sim-auto').textContent='자동 실행';}
+  simSteps=buildSimSteps();simIdx=0;
+  document.getElementById('sim-nb').disabled=false;
+  document.getElementById('sim-info').textContent='시작 버튼을 누르세요.';
+  renderSimArr([{name:'?',age:'?'},{name:'?',age:'?'},{name:'?',age:'?'}],-1);
+  updateSimCode(-1);
+}
+function simStep(){
+  if(simIdx>=simSteps.length){document.getElementById('sim-nb').disabled=true;return;}
+  const s=simSteps[simIdx++];
+  document.getElementById('sim-info').textContent=s.info;
+  renderSimArr(s.arr,s.cur);
+  updateSimCode(s.cline);
+  if(simIdx>=simSteps.length)document.getElementById('sim-nb').disabled=true;
+}
+function simAuto(){
+  if(simTimer){clearInterval(simTimer);simTimer=null;document.getElementById('sim-auto').textContent='자동 실행';return;}
+  document.getElementById('sim-auto').textContent='정지';
+  simTimer=setInterval(()=>{if(simIdx>=simSteps.length){clearInterval(simTimer);simTimer=null;document.getElementById('sim-auto').textContent='자동 실행';return;}simStep();},850);
+}
+
+const CE_LINES=[
+  {c:'#include <stdio.h>',e:'입출력 함수를 사용하기 위한 헤더입니다.'},
+  {c:'#include <string.h>',e:'문자열 복사 함수 strcpy()를 사용하기 위한 헤더입니다.'},
+  {c:'typedef struct {',e:'새로운 구조체 타입을 정의합니다. typedef로 이름을 붙입니다.'},
+  {c:'    char name[20];',e:'최대 19글자(+\0)의 문자열을 저장할 멤버입니다.'},
+  {c:'    int age;',e:'정수형 나이를 저장할 멤버입니다.'},
+  {c:'} Student;',e:'구조체 이름을 Student로 붙입니다. 이제 Student라는 새 타입이 생겼습니다.'},
+  {c:'Student s[3];',e:'Student 타입의 구조체를 3개 저장하는 배열 s를 선언합니다.'},
+  {c:'strcpy(s[0].name, "Kim");',e:'s[0]의 name 멤버에 "Kim"을 복사합니다. 문자열은 = 대신 strcpy를 씁니다.'},
+  {c:'s[0].age = 14;',e:'s[0]의 age 멤버에 14를 저장합니다. 숫자는 바로 대입합니다.'},
+  {c:'for(int i = 0; i < 3; i++) {',e:'인덱스 0, 1, 2를 반복하면서 모든 학생 정보를 처리합니다.'},
+  {c:'    printf("이름: %s, 나이: %d\\n", s[i].name, s[i].age);',e:'s[i].name과 s[i].age로 i번째 학생의 이름과 나이에 접근해 출력합니다.'},
+];
+(function buildCEBlock(){
+  const b=document.getElementById('ce-block');
+  if(!b)return;
+  b.innerHTML=CE_LINES.map((l,i)=>`<span class="cl" id="celine${i}" onclick="showCE(${i})">${escH(l.c)}</span>`).join('');
+  applySyn2();
+})();
+function escH(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function applySyn2(){
+  document.querySelectorAll('[id^="celine"]').forEach(el=>{
+    el.innerHTML=el.innerHTML
+      .replace(/\b(typedef|struct|char|int|for|return|void)\b/g,'<span class="kw">$1</span>')
+      .replace(/\b(printf|scanf|strcpy|main)\b/g,'<span class="fn">$1</span>')
+      .replace(/\/\/.*/g,'<span class="cm">$&</span>')
+      .replace(/"([^"]*)"/g,'<span class="str">"$1"</span>')
+      .replace(/\b(\d+)\b/g,'<span class="nu">$1</span>');
+  });
+}
+function showCE(i){
+  document.querySelectorAll('.cl').forEach((el,j)=>el.classList.toggle('sel',j===i));
+  document.getElementById('ce-info').textContent=CE_LINES[i].e;
+}
+
+const QZ=[
+  {q:'구조체 배열 Student s[5]에서 3번째 학생 이름에 접근하는 올바른 코드는?',opts:['s.name[2]','s[2].name','s[3].name','name[s[2]]'],ans:1,exp:'배열 인덱스는 0부터 시작합니다. 3번째는 s[2]이고, 멤버 접근은 .name입니다. 형식: 배열[인덱스].멤버'},
+  {q:'구조체의 char 멤버에 문자열을 저장할 때 올바른 방법은?',opts:['s[0].name = "Kim";','name[s[0]] = "Kim";','strcpy(s[0].name, "Kim");','s[0].name = strcpy("Kim");'],ans:2,exp:'문자열(char 배열)은 = 연산자로 직접 대입할 수 없습니다. strcpy(dest, src) 함수를 사용해야 합니다. string.h 헤더가 필요합니다.'},
+  {q:'Student s[3]을 선언했을 때 유효한 인덱스 범위는?',opts:['1 ~ 3','0 ~ 2','0 ~ 3','1 ~ 4'],ans:1,exp:'C언어 배열은 항상 0부터 시작합니다. s[3]이면 s[0], s[1], s[2]까지 유효합니다. s[3]에 접근하면 범위 초과 오류입니다.'},
+  {q:'구조체 배열을 반복문과 함께 쓰는 가장 큰 이점은?',opts:['메모리를 더 적게 사용한다','같은 구조의 데이터를 반복 처리할 수 있다','포인터 없이 동적 할당이 가능하다','구조체를 중첩할 수 있다'],ans:1,exp:'구조체 배열의 핵심 장점은 for(int i=0;i<n;i++) s[i].멤버 형태로 동일한 로직을 모든 원소에 적용할 수 있다는 것입니다.'},
+  {q:'아래 코드에서 틀린 부분은?\n  Product p[2];\n  p[0].name = "Apple";',opts:['p[0]은 유효한 인덱스가 아니다','char 배열에 = 로 문자열을 대입할 수 없다','name 멤버에 접근하는 방법이 틀렸다','Product 구조체는 2개를 선언할 수 없다'],ans:1,exp:'char 배열(name[20])에 문자열을 = 로 직접 대입하면 컴파일 오류 또는 경고가 발생합니다. strcpy(p[0].name, "Apple")을 사용해야 합니다.'},
+  {q:'int형 멤버 값을 scanf로 입력받을 때 올바른 코드는?',opts:['scanf("%d", s[i].age);','scanf("%d", &s[i].age);','scanf("%d", &s.age[i]);','scanf("%d", s.age[i]);'],ans:1,exp:'scanf로 정수를 입력받으려면 주소 연산자 &가 필요합니다. 구조체 배열 멤버의 주소는 &s[i].age 형태입니다.'},
+];
+let qi=0,qs=0;
+function renderQ(){
+  document.getElementById('qprog').style.width=(qi/QZ.length*100)+'%';
+  const body=document.getElementById('quiz-body');
+  if(qi>=QZ.length){
+    body.innerHTML=`<div class="card" style="text-align:center;padding:2rem"><p style="font-size:22px;font-weight:500;margin-bottom:8px">${qs}/${QZ.length}</p><p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1rem">${qs===QZ.length?'완벽합니다!':qs>=4?'잘 했어요!':'다시 도전해보세요.'}</p><button class="btn pri" onclick="qi=0;qs=0;renderQ()">다시 풀기</button></div>`;
+    document.getElementById('qprog').style.width='100%';
+    return;
+  }
+  const q=QZ[qi];
+  body.innerHTML=`<div class="quiz-q">Q${qi+1}. ${q.q}</div><div class="quiz-opts">${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="ansQ(${i})">${o}</button>`).join('')}</div><div id="qr"></div><div id="qn"></div>`;
+}
+function ansQ(i){
+  const q=QZ[qi];
+  document.querySelectorAll('.quiz-opt').forEach((b,j)=>{b.disabled=true;if(j===q.ans)b.classList.add('ok');else if(j===i)b.classList.add('ng');});
+  if(i===q.ans)qs++;
+  document.getElementById('qr').innerHTML=`<div class="quiz-res ${i===q.ans?'ok':'ng'}">${i===q.ans?'정답입니다!':'오답입니다.'} ${q.exp}</div>`;
+  document.getElementById('qn').innerHTML=`<button class="btn pri" onclick="qi++;renderQ()">${qi+1<QZ.length?'다음 문제':'결과 보기'} ▶</button>`;
+}
+
+simReset();
+renderQ();
+</script>
