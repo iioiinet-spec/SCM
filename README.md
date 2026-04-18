@@ -18,3 +18,6 @@ struct
 
 ts
 12. typedef struct
+
+sarr
+구조체 배열
