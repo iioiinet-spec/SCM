@@ -1,0 +1,446 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{padding:0.75rem 0 1rem}
+.top-bar{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px;flex-wrap:wrap;gap:6px}
+.top-title{font-size:17px;font-weight:500;color:var(--color-text-primary)}
+.top-sub{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.date-badge{background:var(--color-background-info);color:var(--color-text-info);font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px}
+.tabs{display:flex;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:14px;gap:0}
+.tab{padding:8px 16px;font-size:13px;color:var(--color-text-secondary);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:all 0.15s;white-space:nowrap}
+.tab.on{color:var(--color-text-primary);font-weight:500;border-bottom-color:var(--color-text-primary)}
+.panel{display:none}
+.panel.on{display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:12px;padding:14px 16px}
+.card-sm{background:var(--color-background-secondary);border-radius:8px;padding:10px 12px;margin-bottom:8px}
+.sec{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:10px}
+.price-big{font-size:24px;font-weight:500;color:var(--color-text-primary);line-height:1.2}
+.price-sub{font-size:12px;color:var(--color-text-tertiary);margin-top:2px;margin-bottom:10px}
+.chg-up{color:#e24b4a;font-size:13px;font-weight:500}
+.chg-dn{color:#3b6d11;font-size:13px;font-weight:500}
+.chg-mixed{color:#854f0b;font-size:13px;font-weight:500}
+.divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:10px 0}
+.badge{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;margin-right:4px}
+.b-buy{background:#eaf3de;color:#3b6d11}
+.b-sbuy{background:#e6f1fb;color:#0c447c}
+.b-hot{background:#fcebeb;color:#a32d2d}
+.range-wrap{position:relative;height:5px;background:var(--color-background-tertiary);border-radius:3px;margin:6px 0 12px}
+.range-fill{position:absolute;height:5px;border-radius:3px}
+.range-dot{position:absolute;width:10px;height:10px;border-radius:50%;top:-2.5px;transform:translateX(-50%)}
+.tr-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.tr-label{font-size:12px;color:var(--color-text-secondary)}
+.tr-val{font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.tbar-bg{height:4px;background:var(--color-background-tertiary);border-radius:2px;margin-bottom:9px}
+.tbar{height:4px;border-radius:2px}
+.op-who{font-size:10px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:3px}
+.op-txt{font-size:12px;color:var(--color-text-primary);line-height:1.55}
+.fc-chip{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:8px;padding:7px 10px;text-align:center;flex:1;min-width:60px}
+.fc-lbl{font-size:10px;color:var(--color-text-tertiary);margin-bottom:2px}
+.fc-val{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.fc-row{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.risk-row{display:flex;flex-wrap:wrap;gap:5px}
+.rtag{font-size:11px;padding:3px 8px;border-radius:4px}
+.r-up{background:#eaf3de;color:#3b6d11}
+.r-dn{background:#fcebeb;color:#a32d2d}
+.news-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;vertical-align:2px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.stat-box{background:var(--color-background-secondary);border-radius:8px;padding:10px 12px}
+.stat-lbl{font-size:11px;color:var(--color-text-tertiary);margin-bottom:3px}
+.stat-val{font-size:16px;font-weight:500;color:var(--color-text-primary)}
+.note{font-size:11px;color:var(--color-text-tertiary);line-height:1.5;padding:8px 12px;background:var(--color-background-secondary);border-radius:8px;margin-top:10px}
+.hl-box{border-left:3px solid;padding:8px 12px;border-radius:0 8px 8px 0;margin-bottom:8px;background:var(--color-background-secondary)}
+.icon-label{font-size:12px;color:var(--color-text-secondary);display:flex;align-items:center;gap:4px}
+</style>
+
+<div class="wrap">
+  <div class="top-bar">
+    <div>
+      <div class="top-title">🇰🇷 국내 대표주 전문가 전망 종합</div>
+      <div class="top-sub">국내외 증권사 리포트 · Investing.com · 머니투데이 · 비즈한국 기반</div>
+    </div>
+    <div>
+      <div class="date-badge">📅 2026년 5월 13일 기준</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" onclick="show('s')">📱 삼성전자 <span style="font-size:10px;opacity:.6">005930</span></div>
+    <div class="tab" onclick="show('h')">💾 SK하이닉스 <span style="font-size:10px;opacity:.6">000660</span></div>
+    <div class="tab" onclick="show('c')">🚗 현대자동차 <span style="font-size:10px;opacity:.6">005380</span></div>
+  </div>
+
+  <!-- ============ 삼성전자 ============ -->
+  <div id="p-s" class="panel on">
+
+    <div class="g2">
+      <!-- 현재가 카드 -->
+      <div class="card">
+        <div class="sec">오늘 주가</div>
+        <div class="price-big">266,000원</div>
+        <div style="display:flex;align-items:center;gap:6px;margin:4px 0 8px">
+          <span class="chg-up">▼ 4.66%</span>
+          <span style="font-size:11px;color:var(--color-text-tertiary)">(전일 279,000원)</span>
+        </div>
+        <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:10px">5.11 신고가 284,500원 경신 후 조정</div>
+        <hr class="divider">
+        <div class="tr-row"><span class="tr-label">52주 최저</span><span class="tr-val" style="color:#3b6d11">53,700원</span></div>
+        <div class="range-wrap">
+          <div class="range-fill" style="left:0;right:0;background:var(--color-border-tertiary);opacity:.4"></div>
+          <div class="range-dot" style="left:62%;background:#378ADD"></div>
+        </div>
+        <div class="tr-row"><span class="tr-label">52주 최고</span><span class="tr-val" style="color:#e24b4a">284,500원 (신고가)</span></div>
+        <hr class="divider">
+        <div style="margin-bottom:6px">
+          <span class="badge b-sbuy">적극매수</span>
+          <span style="font-size:11px;color:var(--color-text-tertiary)">애널리스트 36명 매수 / 1명 매도</span>
+        </div>
+        <div class="tr-row">
+          <div>
+            <div style="font-size:11px;color:var(--color-text-secondary)">12개월 평균 목표가</div>
+            <div style="font-size:18px;font-weight:500;color:var(--color-text-primary)">274,603원</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:11px;color:var(--color-text-secondary)">시가총액</div>
+            <div style="font-size:14px;font-weight:500">1,736조원</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 목표주가 카드 -->
+      <div class="card">
+        <div class="sec">증권사 목표주가 (최신순)</div>
+
+        <div class="tr-row"><span class="tr-label">🥇 SK증권 (5/7, 한동희)</span><span class="tr-val" style="color:#185fa5;font-size:14px">500,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:100%;background:#185fa5"></div></div>
+
+        <div class="tr-row"><span class="tr-label">키움증권 (5/11, 박유악)</span><span class="tr-val" style="color:#185fa5">330,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:66%;background:#85B7EB"></div></div>
+
+        <div class="tr-row"><span class="tr-label">유진투자증권 (1/30)</span><span class="tr-val">210,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:42%;background:#aaa"></div></div>
+
+        <div class="tr-row"><span class="tr-label">하나증권 (12/17)</span><span class="tr-val">155,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:31%;background:#aaa;opacity:.6"></div></div>
+
+        <hr class="divider">
+        <div class="tr-row"><span class="tr-label">📌 전체 최고</span><span class="tr-val" style="color:#e24b4a">360,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:72%;background:#e24b4a;opacity:.6"></div></div>
+        <div class="tr-row"><span class="tr-label">📌 전체 최저</span><span class="tr-val">140,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:28%;background:#aaa;opacity:.4"></div></div>
+      </div>
+    </div>
+
+    <!-- 전문가 의견 -->
+    <div class="card" style="margin-bottom:10px">
+      <div class="sec">국내외 핵심 전문가 의견</div>
+      <div class="g2">
+        <div>
+          <div class="card-sm">
+            <div class="op-who">🏦 키움증권 박유악 (2026.05.11) — 목표 33만원 ↑</div>
+            <div class="op-txt">"2026년 삼성전자 영업이익 100조원 달성 전망. 범용 D램·낸드 가격 상승폭이 시장 기대치를 웃돌며 파운드리·시스템LSI 적자 축소까지 실적 개선 기여. 업종 내 Top Pick."</div>
+          </div>
+          <div class="card-sm">
+            <div class="op-who">🏦 SK증권 한동희 (2026.05.07) — 목표 50만원 ↑</div>
+            <div class="op-txt">"메모리 재평가 초입. 12개월 선행 PER 6배는 역사적 평균(8~10배) 대비 현저 저평가. LTA 체결 확인으로 실적 안정성 구조적 개선."</div>
+          </div>
+        </div>
+        <div>
+          <div class="card-sm">
+            <div class="op-who">🌍 JP모간 (글로벌 IB) — 해외</div>
+            <div class="op-txt">"코스피 1만pt까지 상승 가능하다는 리포트 발간. AI·반도체 슈퍼사이클 핵심 수혜국으로 한국 메모리 기업 최상위 추천. HSBC·피델리티도 한국을 아시아 핵심 선호국으로 제시."</div>
+          </div>
+          <div class="card-sm">
+            <div class="op-who">🌍 골드만삭스 — 해외</div>
+            <div class="op-txt">"2Q26 DRAM 가격 +50% 상향 전망(기존 +40%). 수요가 공급을 크게 앞서는 구조. D램 생산량 월 50.5만장으로 업계 1위인 삼성이 가격 상승 시 최대 수혜."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 예측 -->
+    <div class="card" style="margin-bottom:10px">
+      <div class="sec">주가 상승 예측 타임라인 (증권사 목표가 기반)</div>
+      <div class="fc-row">
+        <div class="fc-chip"><div class="fc-lbl">현재 (5/13)</div><div class="fc-val" style="color:var(--color-text-primary)">26.6만</div></div>
+        <div class="fc-chip"><div class="fc-lbl">2026.06</div><div class="fc-val" style="color:#185fa5">33만↑</div></div>
+        <div class="fc-chip"><div class="fc-lbl">2026.하반기</div><div class="fc-val" style="color:#185fa5">36만</div></div>
+        <div class="fc-chip"><div class="fc-lbl">2026.말</div><div class="fc-val" style="color:#185fa5">50만(SK증)</div></div>
+        <div class="fc-chip"><div class="fc-lbl">2027~</div><div class="fc-val" style="color:#0c447c">100만+?</div></div>
+      </div>
+      <div class="note">⚡ 5/22일부터 삼성전자 단일종목 레버리지 ETF 상장 예정 → 최대 5.3조원 추가 자금 유입 가능 (미래에셋 추정). 2027년 삼성전자 영업이익 전망치 SK증권 494조원.</div>
+    </div>
+
+    <div class="card">
+      <div class="sec">상승 / 하락 리스크</div>
+      <div class="risk-row">
+        <span class="rtag r-up">✔ AI·HBM4 수요 구조적 성장</span>
+        <span class="rtag r-up">✔ 범용D램·낸드 가격 급등</span>
+        <span class="rtag r-up">✔ LTA 장기공급계약 체결</span>
+        <span class="rtag r-up">✔ ETF 상장 수급 유입 5/22</span>
+        <span class="rtag r-up">✔ 외국인 매수세 확대</span>
+        <span class="rtag r-dn">▼ HBM 경쟁력 SK하이닉스 대비 열위</span>
+        <span class="rtag r-dn">▼ 노조 갈등 리스크</span>
+        <span class="rtag r-dn">▼ 원화 강세</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SK하이닉스 ============ -->
+  <div id="p-h" class="panel">
+
+    <div style="background:var(--color-background-info);border:0.5px solid var(--color-border-info);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:var(--color-text-info)">
+      🚀 <strong>5/11 장 중 신고가 190만원 돌파!</strong> 5/12 기준 189만 7000원 — 연초(17만원) 대비 +1,016% 상승. 시총 2위 → 1,383조원
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="sec">오늘 주가</div>
+        <div class="price-big">1,897,000원</div>
+        <div style="display:flex;align-items:center;gap:6px;margin:4px 0 8px">
+          <span class="chg-dn">▲ 0.9%</span>
+          <span style="font-size:11px;color:var(--color-text-tertiary)">(5/12 기준)</span>
+        </div>
+        <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:10px">5/11 장 중 1,967,000원 신고가 경신</div>
+        <hr class="divider">
+        <div class="tr-row"><span class="tr-label">52주 최저</span><span class="tr-val" style="color:#3b6d11">196,500원</span></div>
+        <div class="range-wrap">
+          <div class="range-fill" style="left:0;right:0;background:var(--color-border-tertiary);opacity:.4"></div>
+          <div class="range-dot" style="left:96%;background:#1D9E75"></div>
+        </div>
+        <div class="tr-row"><span class="tr-label">52주 최고</span><span class="tr-val" style="color:#e24b4a">1,967,000원 (신고가)</span></div>
+        <hr class="divider">
+        <div style="margin-bottom:6px">
+          <span class="badge b-sbuy">적극매수</span>
+          <span style="font-size:11px;color:var(--color-text-tertiary)">애널리스트 36명 전원 매수</span>
+        </div>
+        <div class="tr-row">
+          <div>
+            <div style="font-size:11px;color:var(--color-text-secondary)">12개월 평균 목표가</div>
+            <div style="font-size:18px;font-weight:500;color:var(--color-text-primary)">1,817,130원</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:11px;color:var(--color-text-secondary)">1Q26 OPM</div>
+            <div style="font-size:14px;font-weight:500;color:#1D9E75">72% 역대최고</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sec">증권사 목표주가 (최신순)</div>
+
+        <div class="tr-row"><span class="tr-label">🥇 SK증권 (5/7, 한동희)</span><span class="tr-val" style="color:#0f6e56;font-size:14px">3,000,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:100%;background:#0f6e56"></div></div>
+
+        <div class="tr-row"><span class="tr-label">KB증권 (5/12, 김동원)</span><span class="tr-val" style="color:#1D9E75">2,800,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:93%;background:#1D9E75"></div></div>
+
+        <div class="tr-row"><span class="tr-label">미래에셋 (5/7)</span><span class="tr-val">2,700,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:90%;background:#5DCAA5"></div></div>
+
+        <div class="tr-row"><span class="tr-label">🌍 노무라 (해외 최고)</span><span class="tr-val" style="color:#0c447c">2,340,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:78%;background:#85B7EB"></div></div>
+
+        <div class="tr-row"><span class="tr-label">🌍 골드만삭스 (해외)</span><span class="tr-val">1,800,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:60%;background:#aaa"></div></div>
+
+        <div class="tr-row"><span class="tr-label">하나·한화 (보수적)</span><span class="tr-val">1,600,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:53%;background:#aaa;opacity:.5"></div></div>
+
+        <div class="tr-row" style="margin-top:4px"><span class="tr-label">최저 (Inv.com)</span><span class="tr-val">1,030,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:34%;background:#aaa;opacity:.3"></div></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="sec">국내외 핵심 전문가 의견</div>
+      <div class="g2">
+        <div>
+          <div class="card-sm">
+            <div class="op-who">🏦 KB증권 김동원 본부장 (2026.05.12) — 목표 280만원</div>
+            <div class="op-txt">"올 들어 7번째 목표주가 상향. 실적 전망치 상향 속도가 주가 상승 속도를 앞서는 중. 2Q26 영업이익 67조원 어닝서프라이즈 기대. 'AI 본편은 아직 시작도 안 했다.' 12개월 선행 PER 4.8배로 상방 잠재력 최대."</div>
+          </div>
+          <div class="card-sm">
+            <div class="op-who">🏦 SK증권 한동희 (2026.05.07) — 목표 300만원</div>
+            <div class="op-txt">"2027년까지 HBM 전 제품 가격 인상·공급 부족 지속. 2026년 영업이익 262조원, 2027년 376조원 전망. 메모리 재평가는 아직 초입."</div>
+          </div>
+        </div>
+        <div>
+          <div class="card-sm">
+            <div class="op-who">🌍 골드만삭스 — 해외</div>
+            <div class="op-txt">"최소 2026년까지 HBM3·3E 점유율 50% 이상 유지. 수요가 공급을 크게 앞서 고객 요청을 모두 수용 불가. 유리한 LTA 조건 체결 중. ADR 상장 후 글로벌 Pure Player 재평가."</div>
+          </div>
+          <div class="card-sm">
+            <div class="op-who">🌍 노무라 증권 — 해외, 목표 234만원</div>
+            <div class="op-txt">"DRAM 판가 QoQ +63%, NAND +70% 급등. HBM 수요 초과로 구조 변화 확인. 원화 강세가 주요 리스크. 2026년 영업이익 컨센서스 250조원 상회 가능."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="sec">주가 상승 예측 타임라인</div>
+      <div class="fc-row">
+        <div class="fc-chip"><div class="fc-lbl">현재 (5/13)</div><div class="fc-val">189.7만</div></div>
+        <div class="fc-chip"><div class="fc-lbl">5월 말</div><div class="fc-val" style="color:#1D9E75">216만</div></div>
+        <div class="fc-chip"><div class="fc-lbl">2026.06</div><div class="fc-val" style="color:#1D9E75">249만</div></div>
+        <div class="fc-chip"><div class="fc-lbl">2026.07</div><div class="fc-val" style="color:#1D9E75">286만</div></div>
+        <div class="fc-chip"><div class="fc-lbl">2026.말</div><div class="fc-val" style="color:#0f6e56">300만(SK증)</div></div>
+        <div class="fc-chip"><div class="fc-lbl">2027년</div><div class="fc-val" style="color:#0f6e56">376조 이익</div></div>
+      </div>
+      <div class="note">⚡ 5/22 레버리지 ETF 상장 후 수조원 추가 수급 유입 예상. 2026년 2분기 영업이익 67조원(전년비 7배) 어닝서프라이즈 기대. ADR 상장 시 글로벌 기관 추가 유입.</div>
+    </div>
+
+    <div class="card">
+      <div class="sec">상승 / 하락 리스크</div>
+      <div class="risk-row">
+        <span class="rtag r-up">✔ HBM 글로벌 점유율 1위(62%)</span>
+        <span class="rtag r-up">✔ 1Q26 OPM 72% 역대 최고</span>
+        <span class="rtag r-up">✔ 2Q26 영업이익 67조 기대</span>
+        <span class="rtag r-up">✔ AI 인프라 수요 장기 지속</span>
+        <span class="rtag r-up">✔ ADR 상장 → 외국인 유입</span>
+        <span class="rtag r-dn">▼ 원화 강세 리스크</span>
+        <span class="rtag r-dn">▼ HBM4 인증 지연 가능성</span>
+        <span class="rtag r-dn">▼ 인건비·성과급 부담 확대</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 현대차 ============ -->
+  <div id="p-c" class="panel">
+
+    <div style="background:#faeeda;border:0.5px solid #FAC775;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:12px;color:#633806">
+      🤖 <strong>5/13 장 중 +5.73% 강세!</strong> 피지컬 AI(로보틱스) 모멘텀 재점화 — 아틀라스 기계체조 영상 공개 후 급등. 52주 최고가 702,500원 근접.
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="sec">오늘 주가</div>
+        <div class="price-big">690,000원</div>
+        <div style="display:flex;align-items:center;gap:6px;margin:4px 0 8px">
+          <span class="chg-dn">▲ 6.8%</span>
+          <span style="font-size:11px;color:var(--color-text-tertiary)">(전일 646,000원)</span>
+        </div>
+        <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:10px">장 중 691,000원 / 52주 최고 702,500원 근접</div>
+        <hr class="divider">
+        <div class="tr-row"><span class="tr-label">52주 최저</span><span class="tr-val" style="color:#3b6d11">179,300원</span></div>
+        <div class="range-wrap">
+          <div class="range-fill" style="left:0;right:0;background:var(--color-border-tertiary);opacity:.4"></div>
+          <div class="range-dot" style="left:97%;background:#EF9F27"></div>
+        </div>
+        <div class="tr-row"><span class="tr-label">52주 최고</span><span class="tr-val" style="color:#e24b4a">702,500원</span></div>
+        <hr class="divider">
+        <div style="margin-bottom:6px">
+          <span class="badge b-buy">매수</span>
+          <span style="font-size:11px;color:var(--color-text-tertiary)">애널리스트 27명 전원 매수</span>
+        </div>
+        <div class="tr-row">
+          <div>
+            <div style="font-size:11px;color:var(--color-text-secondary)">12개월 평균 목표가</div>
+            <div style="font-size:18px;font-weight:500;color:var(--color-text-primary)">660,691원</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:11px;color:var(--color-text-secondary)">시가총액</div>
+            <div style="font-size:14px;font-weight:500">~140조원</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sec">증권사 목표주가 (최신순)</div>
+
+        <div class="tr-row"><span class="tr-label">🥇 Inv.com 최고 (해외)</span><span class="tr-val" style="color:#e24b4a;font-size:14px">1,000,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:100%;background:#e24b4a;opacity:.7"></div></div>
+
+        <div class="tr-row"><span class="tr-label">한화투자증권 (4/7)</span><span class="tr-val" style="color:#854f0b">660,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:66%;background:#EF9F27"></div></div>
+
+        <div class="tr-row"><span class="tr-label">SK증권 (4/3)</span><span class="tr-val">630,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:63%;background:#FAC775"></div></div>
+
+        <div class="tr-row"><span class="tr-label">유진투자증권 (4/13)</span><span class="tr-val">600,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:60%;background:#aaa"></div></div>
+
+        <div class="tr-row"><span class="tr-label">12개월 평균</span><span class="tr-val">660,691원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:66%;background:#888"></div></div>
+
+        <div class="tr-row" style="margin-top:4px"><span class="tr-label">최저 (Inv.com)</span><span class="tr-val">500,000원</span></div>
+        <div class="tbar-bg"><div class="tbar" style="width:50%;background:#aaa;opacity:.3"></div></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="sec">국내외 핵심 전문가 의견</div>
+      <div class="g2">
+        <div>
+          <div class="card-sm">
+            <div class="op-who">🏦 한화투자증권 (2026.04.07) — 목표 66만원</div>
+            <div class="op-txt">"보스턴 다이나믹스 지분가치 주당 196,468원 별도 반영. 아틀라스 RMAC(로봇 메타플랜트) 2026년 8월 가동. IPO 시 현대차 27.9% 지분 가치 145조원(99.3bn$) 반영. 로보틱스·자율주행 밸류에이션 리레이팅 핵심."</div>
+          </div>
+          <div class="card-sm">
+            <div class="op-who">🏦 SK증권 (2026.04.03) — 목표 63만원</div>
+            <div class="op-txt">"자율주행·로보틱스가 이끄는 밸류에이션 리레이팅 본격화. Waymo향 로보택시 공급 임박. 2026년 PBR 0.93배로 글로벌 완성차 대비 현저 저평가. 자율주행 상용화 모멘텀 지속."</div>
+          </div>
+        </div>
+        <div>
+          <div class="card-sm">
+            <div class="op-who">🌍 골드만삭스 — 해외</div>
+            <div class="op-txt">"'코스피 9000 간다' 리포트에서 현대차그룹 글로벌 경쟁력 최고 평가. 전동화 전환 속도·미국 공장 투자 확대가 장기 성장 동력. 피지컬 AI 분야 세계 선도 기업으로 재평가."</div>
+          </div>
+          <div class="card-sm">
+            <div class="op-who">🌍 HSBC / 피델리티 — 해외</div>
+            <div class="op-txt">"한국을 AI·반도체·로보틱스 핵심 수혜국으로 지목. 현대차 로보틱스 사업 가치가 완성차 기업을 넘어 테크 기업 밸류에이션 적용 필요. 밸류업 정책 수혜 1순위."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="sec">주가 상승 예측 타임라인</div>
+      <div class="fc-row">
+        <div class="fc-chip"><div class="fc-lbl">현재 (5/13)</div><div class="fc-val">69만원</div></div>
+        <div class="fc-chip"><div class="fc-lbl">52주 최고</div><div class="fc-val" style="color:#854f0b">70.2만</div></div>
+        <div class="fc-chip"><div class="fc-lbl">2026.06</div><div class="fc-val" style="color:#854f0b">75.8만</div></div>
+        <div class="fc-chip"><div class="fc-lbl">2026.10</div><div class="fc-val" style="color:#854f0b">92.7만</div></div>
+        <div class="fc-chip"><div class="fc-lbl">2026.말</div><div class="fc-val" style="color:#633806">100만+</div></div>
+        <div class="fc-chip"><div class="fc-lbl">BD IPO 시</div><div class="fc-val" style="color:#633806">대형 이벤트</div></div>
+      </div>
+      <div class="note">⚡ 현대차는 현재 '완성차 기업'이 아닌 '피지컬AI 플랫폼 기업'으로 재평가 중. 아틀라스 RMAC 8월 가동 + Waymo 로보택시 + 보스턴 다이나믹스 IPO 3대 모멘텀 대기. 2026년 5거래일 연속 강세.</div>
+    </div>
+
+    <div class="card">
+      <div class="sec">상승 / 하락 리스크</div>
+      <div class="risk-row">
+        <span class="rtag r-up">✔ 보스턴다이나믹스 로보틱스(IPO 기대)</span>
+        <span class="rtag r-up">✔ 아틀라스 RMAC 8월 가동</span>
+        <span class="rtag r-up">✔ Waymo 로보택시 공급 임박</span>
+        <span class="rtag r-up">✔ 저평가 PBR 0.93배</span>
+        <span class="rtag r-up">✔ 미국 공장 투자·관세 수혜</span>
+        <span class="rtag r-dn">▼ 팰리세이드 리콜 이슈</span>
+        <span class="rtag r-dn">▼ EV 전환 투자비용 부담</span>
+        <span class="rtag r-dn">▼ 글로벌 경기 둔화</span>
+        <span class="rtag r-dn">▼ 환율 변동</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 하단 공통 주의 -->
+  <div style="margin-top:12px;padding:10px 14px;background:var(--color-background-secondary);border-radius:8px;border-left:3px solid var(--color-border-secondary)">
+    <div style="font-size:11px;color:var(--color-text-tertiary);line-height:1.65">
+      ⚠️ <strong>투자 유의사항:</strong> 본 자료는 공개된 증권사 리포트 및 뉴스를 취합한 정보 제공 목적이며, 투자 권유가 아닙니다. 주가 예측치는 참고용이며 실제와 크게 다를 수 있습니다. 투자 결정 전 반드시 전문 재무상담사와 상의하세요. 주식 투자에는 원금 손실 위험이 있습니다.
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id){
+  ['s','h','c'].forEach(function(x){
+    document.getElementById('p-'+x).classList.remove('on');
+  });
+  document.getElementById('p-'+id).classList.add('on');
+  var tabs=document.querySelectorAll('.tab');
+  var idx={'s':0,'h':1,'c':2}[id];
+  tabs.forEach(function(t,i){t.classList.toggle('on',i===idx);});
+}
+</script>

@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>캘린더</title>
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #f5f5f7;
+    --surface: #ffffff;
+    --surface2: #f5f5f7;
+    --surface3: rgba(255,255,255,0.7);
+    --text: #1d1d1f;
+    --text2: #6e6e73;
+    --text3: #aeaeb2;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.12);
+    --accent: #007aff;
+    --accent2: #34aadc;
+    --red: #ff3b30;
+    --green: #34c759;
+    --orange: #ff9500;
+    --purple: #af52de;
+    --pink: #ff2d55;
+    --teal: #5ac8fa;
+    --today-bg: #007aff;
+    --today-text: #ffffff;
+    --sat: #007aff;
+    --sun: #ff3b30;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --blur: blur(20px);
+    --shadow: 0 2px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000000;
+      --surface: #1c1c1e;
+      --surface2: #2c2c2e;
+      --surface3: rgba(28,28,30,0.8);
+      --text: #f5f5f7;
+      --text2: #98989d;
+      --text3: #636366;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.14);
+      --sat: #5ac8fa;
+      --sun: #ff6961;
+      --shadow: 0 2px 12px rgba(0,0,0,0.4);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+    }
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--bg);
+    font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    color: var(--text);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px 12px;
+    background: var(--surface);
+    border-bottom: 0.5px solid var(--border2);
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
+    flex-shrink: 0;
+    z-index: 10;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .header-month {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .header-month:hover { opacity: 0.7; }
+
+  .header-year {
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--text2);
+    letter-spacing: -0.5px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: var(--surface2);
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 500;
+    transition: background 0.15s, transform 0.1s;
+    line-height: 1;
+  }
+  .btn:hover { background: var(--border); }
+  .btn:active { transform: scale(0.92); }
+
+  .btn-today {
+    width: auto;
+    padding: 0 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--surface2);
+    height: 34px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-today:hover { background: var(--border); }
+
+  /* ── DAY HEADERS ── */
+  .day-headers {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding: 8px 16px 6px;
+    background: var(--surface);
+    border-bottom: 0.5px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .day-header {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 2px 0;
+  }
+  .day-header.sat { color: var(--sat); opacity: 0.7; }
+  .day-header.sun { color: var(--sun); opacity: 0.7; }
+
+  /* ── CALENDAR GRID ── */
+  .calendar-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 0;
+    padding: 0 0 0 0;
+    overflow: hidden;
+    background: var(--border);
+    border-left: 0.5px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
+    margin: 0 0 0 0;
+  }
+
+  .day-cell {
+    background: var(--surface);
+    border-right: 0.5px solid var(--border);
+    border-top: 0.5px solid var(--border);
+    padding: 8px 8px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background 0.12s;
+    position: relative;
+    min-height: 0;
+  }
+  .day-cell:hover { background: color-mix(in srgb, var(--accent) 3%, var(--surface)); }
+  .day-cell.other-month { background: var(--surface2); }
+  .day-cell.other-month:hover { background: color-mix(in srgb, var(--text3) 5%, var(--surface2)); }
+
+  .day-cell.today .day-num-wrap .day-num {
+    background: var(--today-bg);
+    color: var(--today-text);
+  }
+
+  .day-num-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2px;
+  }
+
+  .day-num {
+    font-size: 15px;
+    font-weight: 500;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    letter-spacing: -0.3px;
+    flex-shrink: 0;
+    color: var(--text);
+    transition: background 0.15s;
+  }
+
+  .day-cell.sat .day-num { color: var(--sat); }
+  .day-cell.sun .day-num { color: var(--sun); }
+  .day-cell.other-month .day-num { color: var(--text3); }
+  .day-cell.today.sat .day-num,
+  .day-cell.today.sun .day-num { color: var(--today-text); }
+
+  .lunar-date {
+    font-size: 9.5px;
+    color: var(--text3);
+    font-weight: 400;
+  }
+
+  /* ── EVENTS ── */
+  .events-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .event-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px 2px 5px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.4;
+    cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
+    transition: opacity 0.12s, filter 0.12s;
+  }
+  .event-pill:hover { filter: brightness(0.92); }
+
+  .event-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .event-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  .more-indicator {
+    font-size: 10px;
+    color: var(--text2);
+    font-weight: 500;
+    padding: 1px 4px;
+    cursor: pointer;
+  }
+
+  /* Colors */
+  .c-blue   { background: rgba(0,122,255,0.14); color: #007aff; }
+  .c-red    { background: rgba(255,59,48,0.12);  color: #ff3b30; }
+  .c-green  { background: rgba(52,199,89,0.14);  color: #248a3d; }
+  .c-orange { background: rgba(255,149,0,0.14);  color: #c06000; }
+  .c-purple { background: rgba(175,82,222,0.14); color: #8944ab; }
+  .c-pink   { background: rgba(255,45,85,0.13);  color: #d30f45; }
+  .c-teal   { background: rgba(90,200,250,0.15); color: #0071a4; }
+  .c-gray   { background: rgba(142,142,147,0.14);color: #6c6c70; }
+
+  @media (prefers-color-scheme: dark) {
+    .c-blue   { background: rgba(10,132,255,0.22); color: #0a84ff; }
+    .c-red    { background: rgba(255,69,58,0.2);   color: #ff453a; }
+    .c-green  { background: rgba(48,209,88,0.2);   color: #30d158; }
+    .c-orange { background: rgba(255,159,10,0.2);  color: #ff9f0a; }
+    .c-purple { background: rgba(191,90,242,0.2);  color: #bf5af2; }
+    .c-pink   { background: rgba(255,55,95,0.2);   color: #ff375f; }
+    .c-teal   { background: rgba(100,210,255,0.2); color: #64d2ff; }
+    .c-gray   { background: rgba(152,152,157,0.2); color: #98989d; }
+  }
+
+  .event-dot.c-blue   { background: #007aff; }
+  .event-dot.c-red    { background: #ff3b30; }
+  .event-dot.c-green  { background: #34c759; }
+  .event-dot.c-orange { background: #ff9500; }
+  .event-dot.c-purple { background: #af52de; }
+  .event-dot.c-pink   { background: #ff2d55; }
+  .event-dot.c-teal   { background: #5ac8fa; }
+  .event-dot.c-gray   { background: #8e8e93; }
+
+  /* ── MODAL ── */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 0;
+    width: 380px;
+    max-width: 95vw;
+    box-shadow: var(--shadow-lg);
+    transform: scale(0.94) translateY(8px);
+    transition: transform 0.22s cubic-bezier(0.34, 1.28, 0.64, 1);
+    overflow: hidden;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-backdrop.open .modal {
+    transform: scale(1) translateY(0);
+  }
+
+  .modal-header {
+    padding: 20px 20px 16px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .modal-date-big {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: var(--text);
+    line-height: 1;
+  }
+  .modal-date-sub {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 4px;
+    font-weight: 400;
+  }
+
+  .modal-close {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text2);
+    font-size: 14px;
+    flex-shrink: 0;
+    transition: background 0.12s;
+  }
+  .modal-close:hover { background: var(--border); }
+
+  .modal-events {
+    padding: 12px 16px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 80px;
+  }
+
+  .modal-event-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 6px;
+    background: var(--surface2);
+    cursor: pointer;
+    transition: background 0.12s;
+    position: relative;
+  }
+  .modal-event-item:hover { background: var(--border); }
+
+  .modal-event-color {
+    width: 3px;
+    border-radius: 2px;
+    align-self: stretch;
+    flex-shrink: 0;
+    min-height: 20px;
+  }
+
+  .modal-event-info { flex: 1; min-width: 0; }
+  .modal-event-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .modal-event-time {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 2px;
+  }
+
+  .modal-event-del {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--text3);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    transition: background 0.12s, color 0.12s;
+    opacity: 0;
+    transition: opacity 0.12s;
+    flex-shrink: 0;
+  }
+  .modal-event-item:hover .modal-event-del { opacity: 1; }
+  .modal-event-del:hover { background: rgba(255,59,48,0.12); color: var(--red); }
+
+  .no-events {
+    text-align: center;
+    padding: 24px 0;
+    color: var(--text3);
+    font-size: 14px;
+  }
+
+  .modal-form {
+    padding: 12px 16px 16px;
+    border-top: 0.5px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .form-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .form-input {
+    flex: 1;
+    height: 38px;
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 0 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--surface2);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .form-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,122,255,0.15);
+  }
+  .form-input::placeholder { color: var(--text3); }
+
+  .form-select {
+    height: 38px;
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 0 10px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--surface2);
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    min-width: 90px;
+    transition: border-color 0.15s;
+  }
+  .form-select:focus { border-color: var(--accent); }
+
+  .form-textarea {
+    width: 100%;
+    height: 60px;
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--surface2);
+    outline: none;
+    resize: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    margin-bottom: 8px;
+  }
+  .form-textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,122,255,0.15);
+  }
+  .form-textarea::placeholder { color: var(--text3); }
+
+  .btn-add {
+    width: 100%;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: var(--accent);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-add:hover { background: #0066d6; }
+  .btn-add:active { transform: scale(0.98); }
+
+  /* ── COLOR DOTS ── */
+  .color-picker {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .color-opt {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.12s, border-color 0.12s;
+    flex-shrink: 0;
+  }
+  .color-opt:hover { transform: scale(1.15); }
+  .color-opt.selected { border-color: var(--text); }
+
+  /* mini-calendar popover */
+  .mini-cal {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 200;
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: var(--shadow-lg);
+    border: 0.5px solid var(--border2);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity 0.18s, transform 0.18s;
+    width: 240px;
+  }
+  .mini-cal.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .mini-cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .mini-cal-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .mini-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+  .mini-day-hdr {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text3);
+    padding: 3px 0;
+    text-transform: uppercase;
+  }
+  .mini-day {
+    text-align: center;
+    font-size: 12px;
+    padding: 4px 0;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--text);
+    transition: background 0.1s;
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mini-day:hover { background: var(--border); }
+  .mini-day.today { background: var(--accent); color: white; font-weight: 600; }
+  .mini-day.other { color: var(--text3); }
+  .mini-btn {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: var(--surface2);
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.12s;
+  }
+  .mini-btn:hover { background: var(--border); }
+
+  .header-left-wrapper {
+    position: relative;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left-wrapper">
+      <div class="header-left" id="headerTitle" onclick="toggleMiniCal()">
+        <span class="header-month" id="headerMonth"></span>
+        <span class="header-year" id="headerYear"></span>
+      </div>
+      <div class="mini-cal" id="miniCal">
+        <div class="mini-cal-header">
+          <button class="mini-btn" onclick="miniNavMonth(-1)">‹</button>
+          <span class="mini-cal-title" id="miniCalTitle"></span>
+          <button class="mini-btn" onclick="miniNavMonth(1)">›</button>
+        </div>
+        <div class="mini-cal-grid" id="miniCalGrid"></div>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn-today" onclick="goToday()">오늘</button>
+      <button class="btn" onclick="navigate(-1)">‹</button>
+      <button class="btn" onclick="navigate(1)">›</button>
+    </div>
+  </div>
+
+  <!-- DAY HEADERS -->
+  <div class="day-headers">
+    <div class="day-header sun">일</div>
+    <div class="day-header">월</div>
+    <div class="day-header">화</div>
+    <div class="day-header">수</div>
+    <div class="day-header">목</div>
+    <div class="day-header">금</div>
+    <div class="day-header sat">토</div>
+  </div>
+
+  <!-- CALENDAR GRID -->
+  <div class="calendar-grid" id="calendarGrid"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="handleBackdropClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-date-big" id="modalDateBig"></div>
+        <div class="modal-date-sub" id="modalDateSub"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-events" id="modalEvents"></div>
+    <div class="modal-form">
+      <div class="form-title">새 일정 추가</div>
+      <div class="form-row">
+        <input class="form-input" id="eventTitle" placeholder="제목" />
+        <input class="form-input" id="eventTime" type="time" style="width:100px;flex:none;" />
+      </div>
+      <textarea class="form-textarea" id="eventNote" placeholder="메모 (선택)"></textarea>
+      <div class="form-row" style="align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div class="color-picker" id="colorPicker"></div>
+        <select class="form-select" id="eventCategory">
+          <option value="">카테고리</option>
+          <option value="업무">업무</option>
+          <option value="개인">개인</option>
+          <option value="가족">가족</option>
+          <option value="건강">건강</option>
+          <option value="기념일">기념일</option>
+        </select>
+      </div>
+      <button class="btn-add" onclick="addEvent()">추가</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const MONTHS = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+const DAYS = ['일','월','화','수','목','금','토'];
+const FULL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+const COLORS = [
+  { id:'blue',   cls:'c-blue',   dot:'#007aff', dark:'#0a84ff' },
+  { id:'red',    cls:'c-red',    dot:'#ff3b30', dark:'#ff453a' },
+  { id:'green',  cls:'c-green',  dot:'#34c759', dark:'#30d158' },
+  { id:'orange', cls:'c-orange', dot:'#ff9500', dark:'#ff9f0a' },
+  { id:'purple', cls:'c-purple', dot:'#af52de', dark:'#bf5af2' },
+  { id:'pink',   cls:'c-pink',   dot:'#ff2d55', dark:'#ff375f' },
+  { id:'teal',   cls:'c-teal',   dot:'#5ac8fa', dark:'#64d2ff' },
+  { id:'gray',   cls:'c-gray',   dot:'#8e8e93', dark:'#98989d' },
+];
+
+let today = new Date();
+let current = { year: today.getFullYear(), month: today.getMonth() };
+let selectedDate = null;
+let selectedColor = 'blue';
+let miniCalState = { year: current.year, month: current.month };
+let events = {};
+
+const darkMQ = window.matchMedia('(prefers-color-scheme: dark)');
+
+function dotColor(colorId) {
+  const c = COLORS.find(x => x.id === colorId) || COLORS[0];
+  return darkMQ.matches ? c.dark : c.dot;
+}
+
+function loadEvents() {
+  try { events = JSON.parse(localStorage.getItem('cal_events') || '{}'); } catch(e) { events = {}; }
+}
+function saveEvents() {
+  localStorage.setItem('cal_events', JSON.stringify(events));
+}
+
+function dateKey(y, m, d) {
+  return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+
+function getEventsFor(key) {
+  return events[key] || [];
+}
+
+// Lunar date approximation (simplified)
+function getLunarDate(year, month, day) {
+  const offset = Math.floor((new Date(year, month, day) - new Date(2000, 0, 6)) / 86400000);
+  const lunarDays = [30,29,30,29,30,29,30,30,29,30,29,30];
+  let remaining = ((offset % 354) + 354) % 354;
+  let m = 0;
+  while (remaining >= lunarDays[m]) { remaining -= lunarDays[m]; m++; }
+  const lunarDay = remaining + 1;
+  return `${m+1}월 ${lunarDay}일`;
+}
+
+// Korean holidays
+function getHoliday(year, month, day) {
+  const holidays = {
+    '0101': '신정', '0301': '삼일절', '0505': '어린이날',
+    '0606': '현충일', '0815': '광복절', '1003': '개천절',
+    '1009': '한글날', '1225': '성탄절',
+  };
+  const key = String(month+1).padStart(2,'0') + String(day).padStart(2,'0');
+  return holidays[key] || null;
+}
+
+function renderCalendar() {
+  const { year, month } = current;
+  document.getElementById('headerMonth').textContent = MONTHS[month];
+  document.getElementById('headerYear').textContent = year + '년';
+
+  const grid = document.getElementById('calendarGrid');
+  grid.innerHTML = '';
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+  const totalCells = 42;
+
+  for (let i = 0; i < totalCells; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'day-cell';
+
+    let cellYear = year, cellMonth = month, cellDay;
+    let isOther = false;
+
+    if (i < firstDay) {
+      cellMonth = month - 1;
+      if (cellMonth < 0) { cellMonth = 11; cellYear = year - 1; }
+      cellDay = daysInPrevMonth - firstDay + i + 1;
+      isOther = true;
+    } else if (i - firstDay >= daysInMonth) {
+      cellMonth = month + 1;
+      if (cellMonth > 11) { cellMonth = 0; cellYear = year + 1; }
+      cellDay = i - firstDay - daysInMonth + 1;
+      isOther = true;
+    } else {
+      cellDay = i - firstDay + 1;
+    }
+
+    const dow = i % 7;
+    if (isOther) cell.classList.add('other-month');
+    if (dow === 0) cell.classList.add('sun');
+    if (dow === 6) cell.classList.add('sat');
+
+    const isToday = cellYear === today.getFullYear() && cellMonth === today.getMonth() && cellDay === today.getDate();
+    if (isToday) cell.classList.add('today');
+
+    const key = dateKey(cellYear, cellMonth, cellDay);
+
+    // Day number row
+    const numWrap = document.createElement('div');
+    numWrap.className = 'day-num-wrap';
+
+    const numEl = document.createElement('div');
+    numEl.className = 'day-num';
+    numEl.textContent = cellDay;
+
+    numWrap.appendChild(numEl);
+
+    const holiday = getHoliday(cellYear, cellMonth, cellDay);
+    if (holiday) {
+      const hEl = document.createElement('span');
+      hEl.style.cssText = 'font-size:9px;color:#ff3b30;font-weight:500;line-height:1;';
+      hEl.textContent = holiday;
+      numWrap.appendChild(hEl);
+      if (dow !== 0) numEl.style.color = '#ff3b30';
+    }
+
+    cell.appendChild(numWrap);
+
+    // Lunar
+    const lunarEl = document.createElement('div');
+    lunarEl.className = 'lunar-date';
+    const ln = getLunarDate(cellYear, cellMonth, cellDay);
+    lunarEl.textContent = ln.includes('1일') ? '🌑' : ln.includes('15일') ? '🌕' : '';
+    if (lunarEl.textContent) cell.appendChild(lunarEl);
+
+    // Events
+    const dayEvs = getEventsFor(key);
+    const evContainer = document.createElement('div');
+    evContainer.className = 'events-container';
+
+    const maxShow = 3;
+    dayEvs.slice(0, maxShow).forEach(ev => {
+      const pill = document.createElement('div');
+      const colorDef = COLORS.find(c => c.id === ev.color) || COLORS[0];
+      pill.className = `event-pill ${colorDef.cls}`;
+      pill.title = ev.title + (ev.note ? '\n' + ev.note : '');
+
+      const dot = document.createElement('div');
+      dot.className = `event-dot ${colorDef.cls}`;
+      pill.appendChild(dot);
+
+      const txt = document.createElement('span');
+      txt.className = 'event-text';
+      txt.textContent = (ev.time ? ev.time + ' ' : '') + ev.title;
+      pill.appendChild(txt);
+
+      pill.onclick = (e) => { e.stopPropagation(); openModal(cellYear, cellMonth, cellDay); };
+      evContainer.appendChild(pill);
+    });
+
+    if (dayEvs.length > maxShow) {
+      const more = document.createElement('div');
+      more.className = 'more-indicator';
+      more.textContent = `+${dayEvs.length - maxShow}개 더보기`;
+      evContainer.appendChild(more);
+    }
+
+    cell.appendChild(evContainer);
+    cell.onclick = () => openModal(cellYear, cellMonth, cellDay);
+    grid.appendChild(cell);
+  }
+}
+
+function navigate(dir) {
+  current.month += dir;
+  if (current.month > 11) { current.month = 0; current.year++; }
+  if (current.month < 0) { current.month = 11; current.year--; }
+  renderCalendar();
+}
+
+function goToday() {
+  current = { year: today.getFullYear(), month: today.getMonth() };
+  renderCalendar();
+}
+
+// Mini calendar
+function toggleMiniCal() {
+  const mc = document.getElementById('miniCal');
+  miniCalState = { year: current.year, month: current.month };
+  renderMiniCal();
+  mc.classList.toggle('open');
+}
+function closeMiniCal() {
+  document.getElementById('miniCal').classList.remove('open');
+}
+function miniNavMonth(dir) {
+  miniCalState.month += dir;
+  if (miniCalState.month > 11) { miniCalState.month = 0; miniCalState.year++; }
+  if (miniCalState.month < 0) { miniCalState.month = 11; miniCalState.year--; }
+  renderMiniCal();
+}
+function renderMiniCal() {
+  const { year, month } = miniCalState;
+  document.getElementById('miniCalTitle').textContent = `${year}년 ${MONTHS[month]}`;
+  const grid = document.getElementById('miniCalGrid');
+  grid.innerHTML = '';
+  DAYS.forEach((d,i) => {
+    const h = document.createElement('div');
+    h.className = 'mini-day-hdr';
+    h.textContent = d;
+    if(i===0) h.style.color='var(--sun)';
+    if(i===6) h.style.color='var(--sat)';
+    grid.appendChild(h);
+  });
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+  for (let i = 0; i < 42; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'mini-day';
+    let d, isOther = false, cellYear = year, cellMonth = month;
+    if (i < firstDay) {
+      d = daysInPrevMonth - firstDay + i + 1;
+      isOther = true;
+      cellMonth = month - 1;
+      if (cellMonth < 0) { cellMonth = 11; cellYear = year - 1; }
+    } else if (i - firstDay >= daysInMonth) {
+      d = i - firstDay - daysInMonth + 1;
+      isOther = true;
+      cellMonth = month + 1;
+      if (cellMonth > 11) { cellMonth = 0; cellYear = year + 1; }
+    } else {
+      d = i - firstDay + 1;
+    }
+    if (isOther) cell.classList.add('other');
+    const isT = cellYear === today.getFullYear() && cellMonth === today.getMonth() && d === today.getDate();
+    if (isT) cell.classList.add('today');
+    cell.textContent = d;
+    const cy = cellYear, cm = cellMonth, cd = d;
+    cell.onclick = () => {
+      current = { year: cy, month: cm };
+      renderCalendar();
+      closeMiniCal();
+    };
+    grid.appendChild(cell);
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const mc = document.getElementById('miniCal');
+  if (mc.classList.contains('open')) {
+    const wrapper = document.querySelector('.header-left-wrapper');
+    if (!wrapper.contains(e.target)) closeMiniCal();
+  }
+});
+
+// Modal
+function openModal(y, m, d) {
+  selectedDate = { y, m, d };
+  const key = dateKey(y, m, d);
+  const dow = new Date(y, m, d).getDay();
+  document.getElementById('modalDateBig').textContent = d + '일';
+  document.getElementById('modalDateSub').textContent = `${y}년 ${MONTHS[m]} · ${DAYS[dow]}요일`;
+  renderModalEvents(key);
+  document.getElementById('modalBackdrop').classList.add('open');
+  document.getElementById('eventTitle').focus();
+}
+
+function closeModal() {
+  document.getElementById('modalBackdrop').classList.remove('open');
+  clearForm();
+}
+
+function handleBackdropClick(e) {
+  if (e.target === document.getElementById('modalBackdrop')) closeModal();
+}
+
+function renderModalEvents(key) {
+  const evs = getEventsFor(key);
+  const container = document.getElementById('modalEvents');
+  container.innerHTML = '';
+  if (evs.length === 0) {
+    container.innerHTML = '<div class="no-events">일정이 없습니다</div>';
+    return;
+  }
+  evs.forEach((ev, idx) => {
+    const colorDef = COLORS.find(c => c.id === ev.color) || COLORS[0];
+    const item = document.createElement('div');
+    item.className = 'modal-event-item';
+
+    const bar = document.createElement('div');
+    bar.className = 'modal-event-color';
+    bar.style.background = dotColor(ev.color);
+    bar.style.width = '3px';
+
+    const info = document.createElement('div');
+    info.className = 'modal-event-info';
+    info.innerHTML = `<div class="modal-event-title">${escHtml(ev.title)}</div>`;
+    if (ev.time || ev.category) {
+      info.innerHTML += `<div class="modal-event-time">${ev.time ? ev.time : ''}${ev.time && ev.category ? ' · ' : ''}${ev.category || ''}</div>`;
+    }
+    if (ev.note) {
+      info.innerHTML += `<div style="font-size:12px;color:var(--text2);margin-top:3px;">${escHtml(ev.note)}</div>`;
+    }
+
+    const del = document.createElement('button');
+    del.className = 'modal-event-del';
+    del.textContent = '✕';
+    del.title = '삭제';
+    del.onclick = (e) => { e.stopPropagation(); deleteEvent(key, idx); };
+
+    item.appendChild(bar);
+    item.appendChild(info);
+    item.appendChild(del);
+    container.appendChild(item);
+  });
+}
+
+function deleteEvent(key, idx) {
+  if (!events[key]) return;
+  events[key].splice(idx, 1);
+  if (events[key].length === 0) delete events[key];
+  saveEvents();
+  renderModalEvents(key);
+  renderCalendar();
+}
+
+function addEvent() {
+  const title = document.getElementById('eventTitle').value.trim();
+  if (!title) { document.getElementById('eventTitle').focus(); return; }
+  const { y, m, d } = selectedDate;
+  const key = dateKey(y, m, d);
+  if (!events[key]) events[key] = [];
+  events[key].push({
+    title,
+    time: document.getElementById('eventTime').value,
+    note: document.getElementById('eventNote').value.trim(),
+    color: selectedColor,
+    category: document.getElementById('eventCategory').value,
+  });
+  // Sort by time
+  events[key].sort((a,b) => (a.time||'').localeCompare(b.time||''));
+  saveEvents();
+  clearForm();
+  renderModalEvents(key);
+  renderCalendar();
+}
+
+function clearForm() {
+  document.getElementById('eventTitle').value = '';
+  document.getElementById('eventTime').value = '';
+  document.getElementById('eventNote').value = '';
+  document.getElementById('eventCategory').value = '';
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Color picker
+function renderColorPicker() {
+  const cp = document.getElementById('colorPicker');
+  cp.innerHTML = '';
+  COLORS.forEach(c => {
+    const opt = document.createElement('div');
+    opt.className = 'color-opt' + (c.id === selectedColor ? ' selected' : '');
+    opt.style.background = c.dot;
+    opt.title = c.id;
+    opt.onclick = () => {
+      selectedColor = c.id;
+      document.querySelectorAll('.color-opt').forEach(el => el.classList.remove('selected'));
+      opt.classList.add('selected');
+    };
+    cp.appendChild(opt);
+  });
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'ArrowLeft') navigate(-1);
+  if (e.key === 'ArrowRight') navigate(1);
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 't' || e.key === 'T') goToday();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (document.getElementById('modalBackdrop').classList.contains('open') && e.key === 'Enter') {
+    if (e.target.tagName !== 'TEXTAREA') addEvent();
+  }
+  if (e.key === 'Escape') closeModal();
+});
+
+// Init
+loadEvents();
+renderColorPicker();
+renderCalendar();
+</script>
+</body>
+</html>
