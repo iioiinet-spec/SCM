@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Bebas+Neue&family=JetBrains+Mono:wght@400;700&display=swap');
+:root{
+  --bg:#07090F;--s1:#0E1118;--s2:#141824;--b1:#1A2035;--b2:#202840;
+  --c1:#00E5FF;--c2:#FF6B35;--c3:#4ADE80;--c4:#A78BFA;--c5:#FBBF24;--c6:#F472B6;
+  --tx:#DDE3F0;--tx2:#8892AA;--tx3:#3D4A65;
+  --red:#FF4757;--green:#4ADE80;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',sans-serif;font-size:13px;line-height:1.6;padding:18px}
+
+/* ───── 헤더 ───── */
+.rpt-hdr{border-bottom:2px solid var(--c1);padding-bottom:14px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.rpt-ttl{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:4px;color:var(--c1)}
+.rpt-sub{font-size:11px;color:var(--tx2);margin-top:3px}
+.live{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:5px;animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.rpt-meta{text-align:right;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--tx3);line-height:2}
+
+/* ───── 시황 배너 ───── */
+.mkt{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.mkt-box{background:var(--s1);border:1px solid var(--b1);border-radius:6px;padding:12px 14px;text-align:center}
+.mkt-lbl{font-size:9px;color:var(--tx3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.mkt-val{font-family:'Bebas Neue',sans-serif;font-size:22px}
+.mkt-chg{font-size:10px;margin-top:2px}
+.pos{color:var(--c2)}
+.neg{color:var(--c1)}
+.warn{color:var(--c5)}
+.up{color:var(--green)}
+
+/* ───── 섹션 타이틀 ───── */
+.sec{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:3px;color:var(--tx3);border-bottom:1px solid var(--b1);padding-bottom:7px;margin:18px 0 12px}
+
+/* ───── 종목 카드 ───── */
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:10px;margin-bottom:14px;overflow:hidden}
+.card-hdr{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:13px 16px 11px;border-bottom:1px solid var(--b1)}
+.tkr{font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 9px;border-radius:3px;font-weight:700;letter-spacing:1px;white-space:nowrap}
+.nm{font-size:15px;font-weight:700}
+.sector{font-size:10px;color:var(--tx3);margin-top:1px}
+.pr-area{text-align:right}
+.cur{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1}
+.upside-pct{font-size:11px;font-weight:700;margin-top:3px}
+
+.card-body{padding:13px 16px}
+
+/* 애널리스트 뱃지 */
+.badge-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.badge{padding:2px 9px;border-radius:3px;font-size:10px;font-weight:700}
+.b-buy{background:rgba(74,222,128,.15);color:#4ADE80}
+.b-sell{background:rgba(255,71,87,.15);color:#FF4757}
+.b-up{background:rgba(255,107,53,.15);color:#FF6B35}
+
+/* 목표가 바 */
+.tp-hdr{font-size:9px;color:var(--tx3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.tp-row{display:grid;grid-template-columns:90px 1fr 80px;gap:8px;align-items:center;margin-bottom:5px;font-size:11px}
+.tp-src{color:var(--tx2);font-size:10px}
+.tp-bar-bg{background:var(--b1);border-radius:2px;height:5px;overflow:hidden}
+.tp-bar{height:100%;border-radius:2px}
+.tp-price{font-family:'JetBrains Mono',monospace;font-size:10px;text-align:right}
+.tp-con{display:grid;grid-template-columns:90px 1fr 80px;gap:8px;align-items:center;margin-top:5px;padding-top:6px;border-top:1px dashed var(--b2)}
+
+/* 분석 2열 */
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.abox{background:var(--bg);border:1px solid var(--b1);border-radius:5px;padding:10px 12px}
+.abox-t{font-size:9px;color:var(--tx3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.ai{font-size:11px;color:var(--tx2);margin-bottom:4px;display:flex;gap:5px;line-height:1.5}
+.ai::before{content:'▸';font-size:9px;flex-shrink:0;margin-top:2px;color:var(--c1)}
+.ai.r::before{color:var(--red)}
+
+/* 전문가 인용 */
+.eq{padding:10px 13px;border-left:2px solid;border-radius:0 5px 5px 0;margin-top:10px;font-size:11px;color:var(--tx2);line-height:1.7}
+.eq-src{font-size:10px;color:var(--tx3);margin-top:4px}
+
+/* 요약 테이블 */
+.stbl{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}
+.stbl th{background:var(--b1);color:var(--tx3);font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:8px 10px;text-align:left;font-weight:500}
+.stbl td{padding:9px 10px;border-bottom:1px solid var(--b1);color:var(--tx2)}
+.stbl tr:hover td{background:rgba(255,255,255,.015)}
+.mn{font-family:'JetBrains Mono',monospace;font-size:10px}
+
+/* 리스크 박스 */
+.risk-box{background:rgba(255,71,87,.05);border:1px solid rgba(255,71,87,.18);border-radius:7px;padding:12px 15px;margin-top:14px}
+.risk-ttl{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;color:var(--red);margin-bottom:8px}
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ri{font-size:11px;color:var(--tx2);display:flex;gap:5px}
+.ri::before{content:'⚠';font-size:10px;color:var(--red);flex-shrink:0}
+
+/* 면책 */
+.disc{margin-top:14px;padding:9px 13px;border:1px solid var(--b1);border-radius:5px;font-size:10px;color:var(--tx3);line-height:1.7}
+
+/* 애니메이션 */
+.fi{opacity:0;transform:translateY(10px);animation:fi .5s ease forwards}
+@keyframes fi{to{opacity:1;transform:none}}
+.d1{animation-delay:.05s}.d2{animation-delay:.12s}.d3{animation-delay:.2s}
+.d4{animation-delay:.28s}.d5{animation-delay:.36s}.d6{animation-delay:.44s}
+
+@media(max-width:600px){
+  .mkt{grid-template-columns:1fr 1fr}
+  .ag{grid-template-columns:1fr}
+  .risk-grid{grid-template-columns:1fr}
+  .stbl{font-size:10px}
+  .tp-row,.tp-con{grid-template-columns:70px 1fr 65px}
+}
+</style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<div class="rpt-hdr fi">
+  <div>
+    <div class="rpt-ttl">KOREA EQUITY RESEARCH REPORT</div>
+    <div class="rpt-sub"><span class="live"></span>2026.05.22 기준 · 코스피 7,800P · 5개 핵심 종목 전문가 종합 전망</div>
+  </div>
+  <div class="rpt-meta">
+    데이터: SK증권·노무라·모건스탠리·삼성증권·메리츠·맥쿼리<br>
+    현재가: 당일 제공가 기준 (2026.05.22)<br>
+    본 리포트는 참고용이며 투자 권유가 아닙니다
+  </div>
+</div>
+
+<!-- 시황 배너 -->
+<div class="mkt fi d1">
+  <div class="mkt-box">
+    <div class="mkt-lbl">KOSPI</div>
+    <div class="mkt-val up">7,800</div>
+    <div class="mkt-chg warn">8,000 고점 후 조정</div>
+  </div>
+  <div class="mkt-box">
+    <div class="mkt-lbl">코스피 연간 상승률</div>
+    <div class="mkt-val pos">+78%</div>
+    <div class="mkt-chg up">세계 주요지수 1위</div>
+  </div>
+  <div class="mkt-box">
+    <div class="mkt-lbl">증권가 코스피 목표</div>
+    <div class="mkt-val up">9,000~</div>
+    <div class="mkt-chg warn">일부 10,000선 제시</div>
+  </div>
+  <div class="mkt-box">
+    <div class="mkt-lbl">주요 악재</div>
+    <div class="mkt-val warn" style="font-size:18px;">복합</div>
+    <div class="mkt-chg" style="color:var(--red)">금리↑ 유가↑ 파업</div>
+  </div>
+</div>
+
+<!-- ── 반도체 섹션 ── -->
+<div class="sec fi d1">▌ SEMICONDUCTOR BIG 2</div>
+
+<!-- SK하이닉스 -->
+<div class="card fi d2">
+  <div class="card-hdr">
+    <div class="tkr" style="background:rgba(255,107,53,.15);color:#FF6B35">000660</div>
+    <div>
+      <div class="nm">SK하이닉스</div>
+      <div class="sector">HBM 세계 1위 · D램 · NAND · AI 메모리</div>
+    </div>
+    <div class="pr-area">
+      <div class="cur" style="color:#FF6B35">1,937,000원</div>
+      <div class="upside-pct pos">최고 목표가 대비 +54.9% ↑</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="badge-row">
+      <span class="badge b-buy">매수 36명</span>
+      <span class="badge b-sell">매도 1명</span>
+      <span class="badge b-up">적극 매수</span>
+      <span style="font-size:10px;color:var(--tx3);margin-left:auto">5월 +46.2% 폭등 · 사상 최고가 경신 중</span>
+    </div>
+
+    <div class="tp-hdr">증권사별 목표주가</div>
+    <!-- SK증권 300만 -->
+    <div class="tp-row">
+      <span class="tp-src">SK증권 (최고)</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:100%;background:#FF6B35"></div></div>
+      <span class="tp-price" style="color:#FF6B35">3,000,000원</span>
+    </div>
+    <!-- 노무라 234만 -->
+    <div class="tp-row">
+      <span class="tp-src">노무라증권</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:78%;background:#FBBF24"></div></div>
+      <span class="tp-price" style="color:#FBBF24">2,340,000원</span>
+    </div>
+    <!-- 맥쿼리 -->
+    <div class="tp-row">
+      <span class="tp-src">맥쿼리</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:57%;background:#A78BFA"></div></div>
+      <span class="tp-price" style="color:#A78BFA">1,700,000원</span>
+    </div>
+    <!-- 씨티 -->
+    <div class="tp-row">
+      <span class="tp-src">씨티그룹</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:47%;background:#4ADE80"></div></div>
+      <span class="tp-price" style="color:#4ADE80">1,400,000원</span>
+    </div>
+    <div class="tp-con">
+      <span class="tp-src" style="color:var(--tx)">★ 평균 컨센서스</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:48%;background:rgba(255,255,255,.35)"></div></div>
+      <span class="tp-price" style="color:var(--tx)">1,439,653원</span>
+    </div>
+
+    <div class="ag">
+      <div class="abox">
+        <div class="abox-t">📈 상승 근거</div>
+        <div class="ai">2026년 영업이익 262조원, 2027년 376조원 (SK증권)</div>
+        <div class="ai">1분기 영업이익 37.6조 — 역대 최대 경신</div>
+        <div class="ai">HBM 선행 PER 5.2배 → 글로벌 피어 대비 극단적 저평가</div>
+        <div class="ai">LTA(장기공급계약) 논의 확산 → 수익 안정성 구조화</div>
+        <div class="ai">중국 HBM3 출시 지연 — 기술 격차 2년 이상 유지</div>
+      </div>
+      <div class="abox">
+        <div class="abox-t">⚠ 리스크</div>
+        <div class="ai r">국채금리 상승 → 고PER 성장주 밸류에이션 부담</div>
+        <div class="ai r">유가 급등 → 에너지 비용 상승, 인플레 재점화</div>
+        <div class="ai r">현재가가 일부 목표가(140만~170만) 이미 상회</div>
+        <div class="ai r">삼성전자 HBM 기술 추격 가속화 가능성</div>
+      </div>
+    </div>
+    <div class="eq" style="border-color:#FF6B35;background:linear-gradient(135deg,rgba(255,107,53,.06),rgba(255,107,53,.02))">
+      <strong style="color:#FF6B35">노무라증권 (2026.04.24)</strong> — "메모리 업체들은 고객사와 물량·가격·선급금 조건에서 유리한 LTA를 논의 중이다. 계약이 성사되면 메모리 산업의 새로운 비즈니스 모델로 자리 잡으며, 높은 수익성이 중장기적으로 지속될 것이다. 삼성·하이닉스 반도체 투톱 영업이익이 전년 대비 약 7배 증가할 것으로 전망."
+      <div class="eq-src">SK하이닉스 영업이익 2026년 279조 → 2027년 378조원 전망</div>
+    </div>
+  </div>
+</div>
+
+<!-- 삼성전자 -->
+<div class="card fi d2">
+  <div class="card-hdr">
+    <div class="tkr" style="background:rgba(0,229,255,.15);color:#00E5FF">005930</div>
+    <div>
+      <div class="nm">삼성전자</div>
+      <div class="sector">D램 세계 1위 생산량 · 파운드리 · 스마트폰 · 가전</div>
+    </div>
+    <div class="pr-area">
+      <div class="cur" style="color:#00E5FF">293,000원</div>
+      <div class="upside-pct pos">최고 목표가 대비 +70.6% ↑</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="badge-row">
+      <span class="badge b-buy">매수 36명</span>
+      <span class="badge b-sell">매도 1명</span>
+      <span class="badge b-up">적극 매수</span>
+      <span style="font-size:10px;color:var(--tx3);margin-left:auto">5월 +29.5% 급등 · 30만원 눈앞</span>
+    </div>
+
+    <div class="tp-hdr">증권사별 목표주가</div>
+    <div class="tp-row">
+      <span class="tp-src">SK증권 (최고)</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:100%;background:#00E5FF"></div></div>
+      <span class="tp-price" style="color:#00E5FF">500,000원</span>
+    </div>
+    <div class="tp-row">
+      <span class="tp-src">노무라증권</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:80%;background:#4ADE80"></div></div>
+      <span class="tp-price" style="color:#4ADE80">400,000원</span>
+    </div>
+    <div class="tp-row">
+      <span class="tp-src">맥쿼리</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:68%;background:#A78BFA"></div></div>
+      <span class="tp-price" style="color:#A78BFA">340,000원</span>
+    </div>
+    <div class="tp-row">
+      <span class="tp-src">삼성증권</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:60%;background:#FBBF24"></div></div>
+      <span class="tp-price" style="color:#FBBF24">300,000원</span>
+    </div>
+    <div class="tp-row">
+      <span class="tp-src">컨센서스 하단</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:54%;background:#F472B6"></div></div>
+      <span class="tp-price" style="color:#F472B6">270,000원</span>
+    </div>
+    <div class="tp-con">
+      <span class="tp-src" style="color:var(--tx)">★ 평균 컨센서스</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:55%;background:rgba(255,255,255,.35)"></div></div>
+      <span class="tp-price" style="color:var(--tx)">274,603원</span>
+    </div>
+
+    <div class="ag">
+      <div class="abox">
+        <div class="abox-t">📈 상승 근거</div>
+        <div class="ai">2026년 영업이익 338조, 2027년 494조 (SK증권)</div>
+        <div class="ai">UBS: 매출 446조·영업이익 135조 전망</div>
+        <div class="ai">선행 PER 6배 — D램 생산량 1위 vs 저평가 공존</div>
+        <div class="ai">테일러 파운드리 장비 반입 → 테슬라칩 내년 양산</div>
+        <div class="ai">범용 D램 가격 강세 — 생산량 압도적 1위 최대 수혜</div>
+      </div>
+      <div class="abox">
+        <div class="abox-t">⚠ 리스크</div>
+        <div class="ai r">노조 파업 현실화 시 웨이퍼 2.2만장/일 손실 (1조원)</div>
+        <div class="ai r">파업 참여 예상 인원 DS부문 64% — 공장 가동 중단 위기</div>
+        <div class="ai r">HBM 기술력 SK하이닉스에 뒤처진 상황</div>
+        <div class="ai r">국채금리·유가 상승 복합 악재 지속</div>
+      </div>
+    </div>
+    <div class="eq" style="border-color:#00E5FF;background:linear-gradient(135deg,rgba(0,229,255,.06),rgba(0,229,255,.02))">
+      <strong style="color:#00E5FF">SK증권 한동희 연구원 (2026.05.07)</strong> — "한국 메모리반도체는 글로벌 AI 관련주 중 가장 높은 이익과 수익성을 갖췄고, 저평가 매력 부각은 아직 시작 단계다. 2026년 2분기 메모리 가격 강세, 2027년 HBM 전 제품 가격 인상, LTA 확산을 통한 주주환원 강화까지 12개월 선행 EPS 상승과 재평가의 여정이 함께 올 것이다."
+      <div class="eq-src">삼성전자 목표가 500,000원 제시 — "메모리 재평가는 여전히 초입에 불과"</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 모빌리티 ── -->
+<div class="sec fi d3">▌ MOBILITY & PHYSICAL AI</div>
+
+<!-- 현대차 -->
+<div class="card fi d3">
+  <div class="card-hdr">
+    <div class="tkr" style="background:rgba(74,222,128,.15);color:#4ADE80">005380</div>
+    <div>
+      <div class="nm">현대자동차</div>
+      <div class="sector">완성차 · 보스턴다이내믹스 · Physical AI · 수소</div>
+    </div>
+    <div class="pr-area">
+      <div class="cur" style="color:#4ADE80">658,000원</div>
+      <div class="upside-pct pos">최고 목표가 대비 +21.6% ↑</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="badge-row">
+      <span class="badge b-buy">매수 27명</span>
+      <span class="badge b-sell">매도 0명</span>
+      <span class="badge b-up">매수</span>
+      <span style="font-size:10px;color:var(--tx3);margin-left:auto">연초 18만원 → 65만원 · 3.6배 상승</span>
+    </div>
+
+    <div class="tp-hdr">증권사별 목표주가</div>
+    <div class="tp-row">
+      <span class="tp-src">삼성증권 (최고)</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:100%;background:#4ADE80"></div></div>
+      <span class="tp-price" style="color:#4ADE80">800,000원</span>
+    </div>
+    <div class="tp-row">
+      <span class="tp-src">메리츠증권</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:87%;background:#A78BFA"></div></div>
+      <span class="tp-price" style="color:#A78BFA">700,000원</span>
+    </div>
+    <div class="tp-row">
+      <span class="tp-src">BNK투자증권</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:81%;background:#FBBF24"></div></div>
+      <span class="tp-price" style="color:#FBBF24">650,000원</span>
+    </div>
+    <div class="tp-row">
+      <span class="tp-src">NH투자증권</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:75%;background:#00E5FF"></div></div>
+      <span class="tp-price" style="color:#00E5FF">600,000원</span>
+    </div>
+    <div class="tp-con">
+      <span class="tp-src" style="color:var(--tx)">★ 평균 컨센서스</span>
+      <div class="tp-bar-bg"><div class="tp-bar" style="width:86%;background:rgba(255,255,255,.35)"></div></div>
+      <span class="tp-price" style="color:var(--tx)">689,200원</span>
+    </div>
+
+    <div class="ag">
+      <div class="abox">
+        <div class="abox-t">📈 상승 근거</div>
+        <div class="ai">보스턴다이내믹스 — 피지컬 AI 기업으로 완전 재평가</div>
+        <div class="ai">하이브리드 판매 +48.9% YoY — 전기차 캐즘 수혜</div>
+        <div class="ai">PER 9.6배 — 글로벌 완성차 대비 저평가</div>
+        <div class="ai">컨센서스 평균 목표가 6개월 전比 +146% 급등</div>
+        <div class="ai">로봇 사업 가치 26.8조원 별도 반영 시작</div>
+      </div>
+      <div class="abox">
+        <div class="abox-t">⚠ 리스크</div>
+        <div class="ai r">대미 관세 1Q26 -8,600억원 실적 타격</div>
+        <div class="ai r">유가 상승 → 하이브리드 판매 비용 증가</div>
+        <div class="ai r">전통 실적 YoY 감소 — 주가는 AI 기대감 의존</div>
+        <div class="ai r">현재가 64만원대 — 컨센서스 평균 목표가 68.9만원 근접</div>
+      </div>
+    </div>
+    <div class="eq" style="border-color:#4ADE80;background:linear-gradient(135deg,rgba(74,222,128,.06),rgba(74,222,128,.02))">
+      <strong style="color:#4ADE80">메리츠증권 김준성 애널리스트 (2026.04.24)</strong> — "기존 차량 제조·판매 사업의 실적은 더 이상 미래 가치의 방향을 정의하지 못한다. 관세 부과에도 주가가 역대 최고치를 경신한 것이 이를 증명한다. 이제 물리 인공지능 시장 진입 여부에 대한 시장의 판단이 현대차 주가를 정의하고 있다."
+      <div class="eq-src">목표가 700,000원 유지 · 모건스탠리 코스피 연말 상단 9,500 강세 시나리오 10,000</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 지주·부품 ── -->
+<div class="sec fi d4">▌ HOLDING & COMPONENTS</div>
+
+<!-- SK스퀘어 -->
+<div class="card fi d4">
+  <div class="card-hdr">
+    <div class="tkr" style="background:rgba(167,139,250,.15);color:#A78BFA">402340</div>
+    <div>
+      <div class="nm">SK스퀘어</div>
+      <div class="sector">SK하이닉스 지분 20%+ · ICT 투자 · 코스피 시총 3위 등극</div>
+    </div>
+    <div class="pr-area">
+      <div class="cur" style="color:#A78BFA">1,180,000원</div>
+      <div class="upside-pct pos">하이닉스 NAV 연동 알파플레이</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="badge-row">
+      <span class="badge b-buy">적극 매수</span>
+      <span class="badge b-up">5월 +41.1% 폭등</span>
+      <span style="font-size:10px;color:var(--tx3);margin-left:auto">코스피 시총 3위까지 급부상</span>
+    </div>
+
+    <div class="ag" style="margin-top:8px">
+      <div class="abox">
+        <div class="abox-t">📈 핵심 투자 포인트</div>
+        <div class="ai">SK하이닉스 지분 20%+ — 하이닉스 목표가 300만원 시 NAV 재산정</div>
+        <div class="ai">코스피 내 하이닉스 비중 제한 → 기관 대체 편입처로 수급 집중</div>
+        <div class="ai">삼성그룹·SK그룹 시총 합산 3,000조 돌파 — 역대 최대</div>
+        <div class="ai">NAV 할인율 축소 진행 중 — 지분 가치 부각 구간</div>
+        <div class="ai">해외 투자자 "할인된 가격으로 하이닉스 보유" 수단으로 분류</div>
+      </div>
+      <div class="abox">
+        <div class="abox-t">⚠ 리스크</div>
+        <div class="ai r">SK하이닉스 주가 하락 시 직격타 — 상관계수 0.95 이상</div>
+        <div class="ai r">지주사 특유 할인율 — 순수 하이닉스 대비 성과 제한 가능</div>
+        <div class="ai r">금리 상승 시 지주사 밸류에이션 추가 압박</div>
+        <div class="ai r">비핵심 자산 매각 지연 시 성장 모멘텀 약화 가능</div>
+      </div>
+    </div>
+    <div class="eq" style="border-color:#A78BFA;background:linear-gradient(135deg,rgba(167,139,250,.06),rgba(167,139,250,.02))">
+      <strong style="color:#A78BFA">인베스트조선 분석 (2026.05.14)</strong> — "SK스퀘어가 코스피 시총 3위까지 뛰어올랐다. 삼성전자·SK하이닉스 비중 제한에 걸린 기관 자금이 SK스퀘어를 반도체 대체(Proxy) 투자처로 편입하면서 수급이 집중됐다. SK스퀘어는 시가총액 규모가 상대적으로 작아 하이닉스 지분가치 상승에 대한 간접 투자처로 부각되고 있다."
+      <div class="eq-src">삼성증권: "알파플레이 — 반도체 BIG2 탄력적 상승 시 동반 강세" (확률 30% 시나리오 A)</div>
+    </div>
+  </div>
+</div>
+
+<!-- 삼성전기 -->
+<div class="card fi d5">
+  <div class="card-hdr">
+    <div class="tkr" style="background:rgba(251,191,36,.15);color:#FBBF24">009150</div>
+    <div>
+      <div class="nm">삼성전기</div>
+      <div class="sector">MLCC · AI 서버 기판 · 카메라모듈 · 반도체 패키지</div>
+    </div>
+    <div class="pr-area">
+      <div class="cur" style="color:#FBBF24">1,321,000원</div>
+      <div class="upside-pct warn">단기 -4.70% 약세 후 반등 주시</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="badge-row">
+      <span class="badge b-buy">매수</span>
+      <span class="badge b-up">반도체 낙수효과 수혜주</span>
+      <span style="font-size:10px;color:var(--tx3);margin-left:auto">AI 서버 MLCC 구조적 수요 확대</span>
+    </div>
+
+    <div class="ag" style="margin-top:8px">
+      <div class="abox">
+        <div class="abox-t">📈 핵심 투자 포인트</div>
+        <div class="ai">AI 서버 MLCC — 고용량·고신뢰성 제품 ASP 구조적 급등</div>
+        <div class="ai">HBM 생산 확대 → 반도체 패키지 기판 수주 증가 직결</div>
+        <div class="ai">삼성전기: 삼성증권 "핵심 인프라·부품 강세 동반" 전망</div>
+        <div class="ai">글로벌 AI 설비투자 경쟁 → 수주 가시성 확대</div>
+        <div class="ai">삼성전자 계열사 — 안정적 내부 수요 + 외부 수주 이중 구조</div>
+      </div>
+      <div class="abox">
+        <div class="abox-t">⚠ 리스크</div>
+        <div class="ai r">스마트폰·PC 세트 수요 둔화 → 일반 MLCC 부진</div>
+        <div class="ai r">무라타·TDK 등 일본 경쟁사 점유율 경쟁</div>
+        <div class="ai r">삼성전자 파업 장기화 시 부품 발주 위축 가능</div>
+        <div class="ai r">당일 -4.70% 하락 — 단기 수급 변동성 주의</div>
+      </div>
+    </div>
+    <div class="eq" style="border-color:#FBBF24;background:linear-gradient(135deg,rgba(251,191,36,.06),rgba(251,191,36,.02))">
+      <strong style="color:#FBBF24">삼성증권 리서치센터 (2026.05.08)</strong> — "삼성전기는 반도체 슈퍼사이클의 직접 수혜를 받는 핵심 인프라 부품사다. AI 서버 증설 경쟁 심화로 고용량·고신뢰성 MLCC 및 반도체 기판 수요가 구조적으로 확대되고 있다. BIG2 상승 랠리의 낙수효과로 동반 강세가 예상된다."
+      <div class="eq-src">코스피 시나리오 A (확률 30%) — 반도체 BIG2 주도 강세 지속 시 삼성전기 동반 수혜</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 종합 요약 테이블 ── -->
+<div class="sec fi d5">▌ 5종목 종합 요약 (2026.05.22 기준)</div>
+<div class="fi d5" style="background:var(--s1);border:1px solid var(--b1);border-radius:8px;overflow:auto">
+<table class="stbl">
+  <thead>
+    <tr>
+      <th>종목</th><th>현재가</th><th>컨센서스 평균</th><th>최고 목표가</th><th>평균 대비</th><th>최고 대비</th><th>투자의견</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong style="color:#FF6B35">SK하이닉스</strong></td>
+      <td class="mn">1,937,000</td>
+      <td class="mn" style="color:var(--red)">1,439,653 ↓</td>
+      <td class="mn" style="color:#FF6B35">3,000,000</td>
+      <td class="mn" style="color:var(--red)">-25.7%</td>
+      <td class="mn" style="color:#FF6B35">+54.9%</td>
+      <td><span style="color:#4ADE80;font-weight:700">적극매수</span></td>
+    </tr>
+    <tr>
+      <td><strong style="color:#00E5FF">삼성전자</strong></td>
+      <td class="mn">293,000</td>
+      <td class="mn" style="color:#4ADE80">274,603 ↑</td>
+      <td class="mn" style="color:#00E5FF">500,000</td>
+      <td class="mn" style="color:var(--red)">-6.6%</td>
+      <td class="mn" style="color:#00E5FF">+70.6%</td>
+      <td><span style="color:#4ADE80;font-weight:700">적극매수</span></td>
+    </tr>
+    <tr>
+      <td><strong style="color:#4ADE80">현대차</strong></td>
+      <td class="mn">658,000</td>
+      <td class="mn" style="color:#4ADE80">689,200 ↑</td>
+      <td class="mn" style="color:#4ADE80">800,000</td>
+      <td class="mn" style="color:#4ADE80">+4.7%</td>
+      <td class="mn" style="color:#4ADE80">+21.6%</td>
+      <td><span style="color:#4ADE80;font-weight:700">매수</span></td>
+    </tr>
+    <tr>
+      <td><strong style="color:#A78BFA">SK스퀘어</strong></td>
+      <td class="mn">1,180,000</td>
+      <td class="mn" style="color:var(--tx2)">NAV 연동</td>
+      <td class="mn" style="color:#A78BFA">하이닉스 연동</td>
+      <td class="mn" style="color:var(--tx2)">—</td>
+      <td class="mn" style="color:#4ADE80">Proxy 수혜</td>
+      <td><span style="color:#4ADE80;font-weight:700">적극매수</span></td>
+    </tr>
+    <tr>
+      <td><strong style="color:#FBBF24">삼성전기</strong></td>
+      <td class="mn">1,321,000</td>
+      <td class="mn" style="color:var(--tx2)">상향 추세</td>
+      <td class="mn" style="color:#FBBF24">목표가 상향</td>
+      <td class="mn" style="color:var(--tx2)">—</td>
+      <td class="mn" style="color:#4ADE80">낙수 수혜</td>
+      <td><span style="color:#FBBF24;font-weight:700">매수</span></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- 핵심 관전 포인트 -->
+<div class="risk-box fi d6">
+  <div class="risk-ttl">⚠ 현재 복합 악재 — 전문가 진단</div>
+  <div class="risk-grid">
+    <div class="ri">국채금리 상승 → 단기 밸류에이션 부담. 단, 실적 성장세가 압도하면 중장기 영향 제한적</div>
+    <div class="ri">유가 고공행진 → 한국 수입비용·인플레 우려. 에너지 자립도 낮은 한국 구조적 취약점</div>
+    <div class="ri">삼성전자 노조파업 → 현실화 시 1조원/일 손실. 글로벌 공급망 신뢰 직격 이슈</div>
+    <div class="ri">코스피 8,000→7,800 조정 → 전문가 대부분 "건강한 과열 해소" 성격으로 평가</div>
+    <div class="ri">SK하이닉스 현재가(193만) 일부 목표가(140~170만) 상회 → 단기 속도 조절 가능성</div>
+    <div class="ri">모건스탠리 코스피 연말 9,500 제시 — 낙관론 우세하나 여름철 조정 리스크도 공존</div>
+  </div>
+</div>
+
+<div class="disc fi d6">
+  <strong style="color:var(--tx2)">※ 투자 유의사항</strong> — 본 리포트는 공개된 증권사 리서치 및 금융 뉴스를 바탕으로 작성한 참고자료이며, 특정 종목 투자 권유가 아닙니다. 현재가는 제공받은 수치(2026.05.22 기준) 기준이며, 실시간 시세와 차이가 있을 수 있습니다. 주식 투자는 원금 손실의 위험이 있으며, 모든 투자 결정과 책임은 투자자 본인에게 있습니다. 반드시 공인 금융전문가 상담 후 결정하시기 바랍니다.
+</div>
+
+</body>
+</html>
