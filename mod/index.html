@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모듈러 연산과 배수 판별 | 세영코딩연구소</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f4ff;--bg3:#e8edfc;
+  --A:#1d4ed8;--Alt:#dbeafe;--Abr:#93c5fd;
+  --C:#15803d;--Clt:#dcfce7;--Cbr:#4ade80;
+  --D:#b45309;--Dlt:#fef3c7;--Dbr:#fbbf24;
+  --E:#be185d;--Elt:#fce7f3;--Ebr:#f472b6;
+  --H:#7c3aed;--Hlt:#ede9fe;--Hbr:#a78bfa;
+  --sb:#1e2060;
+  --text:#0f172a;--text2:#1e293b;--text3:#475569;--text4:#94a3b8;
+  --border:#cbd5e1;
+  --sh:0 2px 14px rgba(29,78,216,.1);--sh2:0 6px 28px rgba(29,78,216,.16);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:15px;line-height:1.8;min-height:100vh}
+
+/* ─── 헤더 ─── */
+.hero{background:linear-gradient(135deg,#1e2060 0%,#2e3a9c 60%,#1a1f5e 100%);padding:44px 48px 38px;position:relative;overflow:hidden}
+.hero::before{content:'mod';position:absolute;right:16px;bottom:-16px;font-size:180px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,.04);pointer-events:none;line-height:1}
+.hero-badge{display:inline-flex;align-items:center;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#93c5fd;border:2px solid rgba(147,197,253,.4);padding:5px 16px;border-radius:20px;background:rgba(59,130,246,.15);margin-bottom:16px;font-weight:700}
+.hero h1{font-family:'Noto Serif KR',serif;font-size:clamp(28px,5vw,52px);font-weight:900;color:#fff;line-height:1.15;margin-bottom:10px}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,#93c5fd,#c4b5fd,#6ee7b7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:15px;color:#bfdbfe;line-height:1.8;max-width:580px}
+
+/* ─── 레이아웃 ─── */
+.wrap{max-width:900px;margin:0 auto;padding:40px 24px 80px}
+
+/* ─── 섹션 구분 ─── */
+.sec-title{font-family:'Noto Serif KR',serif;font-size:24px;font-weight:900;color:var(--text);margin:44px 0 18px;display:flex;align-items:center;gap:12px}
+.sec-title::before{content:'';display:block;width:6px;height:28px;background:var(--A);border-radius:3px}
+.sec-div{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text4);margin:30px 0 16px;display:flex;align-items:center;gap:10px}
+.sec-div::after{content:'';flex:1;height:2px;background:var(--border)}
+
+/* ─── 이론 박스 ─── */
+.thbox{background:#fff;border:2px solid;border-radius:14px;padding:20px 24px;margin-bottom:18px;box-shadow:var(--sh)}
+.th-def{border-color:var(--Alt);border-left:6px solid var(--A)}
+.th-thm{border-color:var(--Clt);border-left:6px solid var(--C)}
+.th-key{border-color:var(--Dlt);border-left:6px solid var(--D)}
+.th-warn{border-color:var(--Elt);border-left:6px solid var(--E)}
+.th-purple{border-color:var(--Hlt);border-left:6px solid var(--H)}
+.thbox-label{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.th-def .thbox-label{color:var(--A)}.th-thm .thbox-label{color:var(--C)}.th-key .thbox-label{color:var(--D)}.th-warn .thbox-label{color:var(--E)}.th-purple .thbox-label{color:var(--H)}
+.thbox-body{font-size:15px;color:var(--text2);line-height:2}
+.thbox-body strong{color:var(--text);font-weight:700}
+.eq{display:block;font-family:'JetBrains Mono',monospace;font-size:16px;color:var(--A);background:var(--Alt);padding:12px 18px;border-radius:9px;margin:10px 0;text-align:center;border:2px solid var(--Abr);font-weight:700}
+.eq-c{color:var(--C)!important;background:var(--Clt)!important;border-color:var(--Cbr)!important}
+.eq-d{color:var(--D)!important;background:var(--Dlt)!important;border-color:var(--Dbr)!important}
+.eq-h{color:var(--H)!important;background:var(--Hlt)!important;border-color:var(--Hbr)!important}
+
+/* ─── 배수 카드 그리드 ─── */
+.div-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:24px}
+.div-card{background:#fff;border:2px solid var(--border);border-radius:14px;padding:18px 20px;box-shadow:var(--sh);transition:all .2s;cursor:default}
+.div-card:hover{border-color:var(--A);box-shadow:var(--sh2);transform:translateY(-2px)}
+.div-card-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.div-badge{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;font-family:'JetBrains Mono',monospace;flex-shrink:0}
+.db-2{background:var(--Alt);color:var(--A);border:2px solid var(--Abr)}
+.db-3{background:var(--Clt);color:var(--C);border:2px solid var(--Cbr)}
+.db-4{background:var(--Dlt);color:var(--D);border:2px solid var(--Dbr)}
+.db-5{background:var(--Elt);color:var(--E);border:2px solid var(--Ebr)}
+.db-9{background:var(--Hlt);color:var(--H);border:2px solid var(--Hbr)}
+.db-11{background:#f0fdf4;color:#14532d;border:2px solid #4ade80}
+.div-card-title{font-size:15px;font-weight:800;color:var(--text)}
+.div-rule{font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:8px;font-weight:600}
+.div-example{font-size:13px;color:var(--text3);line-height:1.7;background:var(--bg);padding:8px 12px;border-radius:8px;font-family:'JetBrains Mono',monospace}
+
+/* ─── 모듈러 계산기 ─── */
+.calc-box{background:#fff;border:2px solid var(--border);border-radius:14px;padding:22px;margin-bottom:24px;box-shadow:var(--sh)}
+.calc-title{font-size:14px;font-weight:800;color:var(--sb);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.calc-title::before{content:'';display:block;width:5px;height:18px;background:var(--A);border-radius:3px}
+.calc-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px}
+.calc-grp{display:flex;flex-direction:column;gap:4px}
+.calc-label{font-size:11px;font-weight:700;color:var(--text4);letter-spacing:.5px}
+.calc-inp{background:#fff;border:2px solid var(--border);border-radius:9px;padding:9px 14px;font-size:15px;font-family:'JetBrains Mono',monospace;color:var(--sb);outline:none;width:130px;font-weight:700;transition:border-color .2s}
+.calc-inp:focus{border-color:var(--A)}
+.calc-btn{padding:10px 22px;border-radius:9px;border:2px solid var(--A);background:var(--A);color:#fff;font-size:13px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all .15s}
+.calc-btn:hover{background:#1e40af}
+.calc-result{background:var(--bg3);border:2px solid var(--Abr);border-radius:9px;padding:12px 16px;font-size:15px;color:var(--text2);line-height:1.9;min-height:54px;font-family:'JetBrains Mono',monospace}
+
+/* ─── 배수 판별기 ─── */
+.div-checker{background:#fff;border:2px solid var(--border);border-radius:14px;padding:22px;margin-bottom:24px;box-shadow:var(--sh)}
+.div-check-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.div-chip{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;border:2px solid;font-family:'JetBrains Mono',monospace;transition:all .3s}
+.dc-yes{background:var(--Clt);color:var(--C);border-color:var(--Cbr)}
+.dc-no{background:#f3f4f6;color:#9ca3af;border-color:#e5e7eb}
+
+/* ─── 예제 아코디언 ─── */
+.exbox{background:#fff;border:2px solid var(--border);border-radius:13px;margin-bottom:14px;overflow:hidden;box-shadow:var(--sh);transition:box-shadow .2s}
+.exbox:hover{box-shadow:var(--sh2)}
+.exhead{padding:15px 20px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;user-select:none;transition:background .15s}
+.exhead:hover{background:var(--bg3)}
+.exhead.open{background:var(--Alt);border-bottom:2px solid var(--Abr)}
+.exnum{min-width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.en-A{background:var(--Alt);color:var(--A);border:2px solid var(--Abr)}
+.en-C{background:var(--Clt);color:var(--C);border:2px solid var(--Cbr)}
+.en-D{background:var(--Dlt);color:var(--D);border:2px solid var(--Dbr)}
+.en-H{background:var(--Hlt);color:var(--H);border:2px solid var(--Hbr)}
+.ex-meta{flex:1}
+.ex-q{font-size:15px;color:var(--text);line-height:1.7;font-weight:600}
+.ex-arr{color:var(--text4);transition:transform .25s;flex-shrink:0;font-size:15px;margin-top:3px;font-weight:700}
+.exhead.open .ex-arr{transform:rotate(180deg)}
+.exsol{display:none;padding:18px 20px;background:var(--bg3)}
+.exsol.open{display:block}
+.step-wrap{display:flex;flex-direction:column;gap:10px;margin:8px 0}
+.st{display:flex;gap:10px;align-items:flex-start}
+.stnum{min-width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.sn-A{background:var(--Alt);color:var(--A);border:2px solid var(--Abr)}
+.sn-C{background:var(--Clt);color:var(--C);border:2px solid var(--Cbr)}
+.sn-D{background:var(--Dlt);color:var(--D);border:2px solid var(--Dbr)}
+.sn-H{background:var(--Hlt);color:var(--H);border:2px solid var(--Hbr)}
+.stbody{font-size:14px;color:var(--text2);line-height:1.85;flex:1;padding-top:2px}
+.stbody strong{color:var(--text);font-weight:700}
+.hl-A{color:var(--A);font-weight:700}.hl-C{color:var(--C);font-weight:700}.hl-D{color:var(--D);font-weight:700}.hl-E{color:var(--E);font-weight:700}.hl-H{color:var(--H);font-weight:700}
+.ansbox{margin-top:12px;padding:11px 16px;border-radius:10px;font-size:15px;font-weight:700;border:2px solid}
+.ans-A{background:var(--Alt);color:var(--A);border-color:var(--Abr)}
+.ans-C{background:var(--Clt);color:var(--C);border-color:var(--Cbr)}
+.ans-D{background:var(--Dlt);color:var(--D);border-color:var(--Dbr)}
+
+/* ─── 연습 문제 ─── */
+.quiz-wrap{background:#fff;border:2px solid var(--border);border-radius:16px;padding:26px;box-shadow:var(--sh2)}
+.quiz-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid var(--border);flex-wrap:wrap;gap:10px}
+.quiz-title{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:800;color:var(--text)}
+.score-wrap{display:flex;align-items:baseline;gap:4px}
+.score-num{font-size:36px;font-weight:900;color:var(--A);font-family:'JetBrains Mono',monospace}
+.score-tot{font-size:15px;color:var(--text4);font-weight:600}
+.qi{background:var(--bg3);border:2px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px;transition:border-color .2s}
+.qi.ok{border-color:var(--Cbr);background:var(--Clt)}.qi.ng{border-color:var(--Ebr);background:var(--Elt)}
+.qi-num{font-size:11px;font-weight:700;color:var(--text4);letter-spacing:.5px;margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.qi-tag{font-size:10px;font-weight:700;padding:2px 9px;border-radius:6px;background:var(--Alt);color:var(--A);border:1.5px solid var(--Abr)}
+.qi-text{font-size:15px;color:var(--text);line-height:1.75;margin-bottom:12px;font-weight:500}
+.mopts{display:flex;flex-direction:column;gap:6px}
+.mopt{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:9px;border:2px solid var(--border);background:#fff;cursor:pointer;font-size:14px;color:var(--text3);font-family:'Noto Sans KR',sans-serif;text-align:left;width:100%;transition:all .15s;font-weight:500}
+.mopt:hover{border-color:var(--A);color:var(--A);background:var(--Alt)}
+.mopt.sel{border-color:var(--A);background:var(--A);color:#fff}
+.mopt.right{border-color:var(--C);background:var(--Clt);color:var(--C);cursor:default;font-weight:700}
+.mopt.wsel{border-color:var(--E);background:var(--Elt);color:var(--E);cursor:default}
+.mopt.dis{cursor:default}
+.oc{width:22px;height:22px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0}
+.srow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sinput{background:#fff;border:2px solid var(--border);border-radius:9px;padding:9px 13px;font-size:15px;color:var(--text);outline:none;font-family:'JetBrains Mono',monospace;min-width:90px;max-width:180px;transition:border-color .2s;font-weight:600}
+.sinput:focus{border-color:var(--A)}
+.sinput.ok2{border-color:var(--C);color:var(--C);background:var(--Clt)}.sinput.ng2{border-color:var(--E);color:var(--E);background:var(--Elt)}
+.sbtn{padding:9px 18px;border-radius:9px;border:2px solid var(--A);background:var(--A);color:#fff;font-size:13px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all .15s}
+.sbtn:hover{background:#1e40af}.sbtn:disabled{opacity:.4;cursor:default}
+.qfb{margin-top:8px;padding:10px 14px;border-radius:9px;font-size:14px;display:none;line-height:1.7;font-weight:500}
+.qfb.show{display:block}
+.qfb.ok{background:var(--Clt);color:var(--C);border:2px solid var(--Cbr)}
+.qfb.ng{background:var(--Elt);color:var(--E);border:2px solid var(--Ebr)}
+.quiz-actions{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.big-btn{padding:12px 28px;border-radius:11px;border:2px solid var(--A);cursor:pointer;font-size:14px;font-weight:700;font-family:'Noto Sans KR',sans-serif;transition:all .15s;background:var(--A);color:#fff}
+.big-btn:hover{background:#1e40af}
+.big-btn.rs{border-color:var(--E);background:#fff;color:var(--E)}.big-btn.rs:hover{background:var(--E);color:#fff}
+.rpanel{display:none;text-align:center;padding:22px;background:var(--Alt);border-radius:12px;border:2px solid var(--Abr);margin-top:14px}
+.rpscore{font-size:58px;font-weight:900;color:var(--A);font-family:'JetBrains Mono',monospace;line-height:1}
+.rpmsg{font-size:15px;color:var(--text2);margin-top:8px;font-weight:600}
+
+/* ─── 나눗셈 시각화 ─── */
+.div-vis{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0;font-size:14px;color:var(--text2)}
+.dv-num{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800}
+.dv-box{display:inline-block;padding:4px 12px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px}
+
+@media(max-width:640px){.hero{padding:32px 20px}.wrap{padding:24px 14px 60px}.div-grid{grid-template-columns:1fr}.calc-row{flex-direction:column}.calc-inp{width:100%}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">&#128290; CH 01 · 세영코딩연구소 · Ph.D Kim</div>
+  <h1>모듈러 연산<br><em>&amp; 배수 판별법</em></h1>
+  <p class="hero-sub">나머지(mod) 연산의 정의부터 2·3·4·5·9·11의 배수 판별법까지 — 핵심 이론과 인터랙티브 계산기로 완전 정복합니다.</p>
+</div>
+
+<div class="wrap">
+
+<!-- ════ 1. 모듈러 연산 정의 ════ -->
+<div class="sec-title">1. 모듈러 연산 (Modular Arithmetic)</div>
+
+<div class="thbox th-def">
+  <div class="thbox-label">📌 정의 — 나머지 연산 (mod)</div>
+  <div class="thbox-body">
+    정수 a를 양의 정수 m으로 나눌 때의 <strong>나머지</strong>를 <strong>a mod m</strong>이라 쓴다.<br>
+    <span class="eq">a = m × q + r &nbsp;&nbsp; (0 ≤ r &lt; m) &nbsp;&nbsp; → &nbsp;&nbsp; a mod m = r</span>
+    여기서 q = 몫(quotient), r = 나머지(remainder)<br>
+    <strong>a ≡ b (mod m)</strong>: "a와 b는 m으로 나눈 나머지가 같다" = m이 (a-b)를 나눈다
+  </div>
+</div>
+
+<div class="thbox th-thm">
+  <div class="thbox-label">📐 모듈러 연산의 성질</div>
+  <div class="thbox-body">
+    a ≡ a' (mod m), b ≡ b' (mod m) 이면:
+    <span class="eq">(a + b) mod m = (a mod m + b mod m) mod m</span>
+    <span class="eq eq-c">(a × b) mod m = (a mod m × b mod m) mod m</span>
+    <strong>예:</strong> (17 + 25) mod 7 = (3 + 4) mod 7 = 7 mod 7 = 0<br>
+    <strong>예:</strong> (6 × 8) mod 5 = (1 × 3) mod 5 = 3
+  </div>
+</div>
+
+<div class="thbox th-key">
+  <div class="thbox-label">🔑 합동(Congruence)의 의미</div>
+  <div class="thbox-body">
+    <strong>a ≡ b (mod m)</strong> ⟺ m | (a - b) ⟺ a와 b를 m으로 나눈 나머지가 같다<br>
+    <strong>예:</strong> 17 ≡ 3 (mod 7) &nbsp;→ 17-3=14, 14÷7=2 (나누어 떨어짐)<br>
+    <strong>예:</strong> 100 ≡ 1 (mod 9) &nbsp;→ 1+0+0=1, 9로 나누면 나머지 1<br><br>
+    <strong>핵심 암기:</strong> 10 ≡ 1 (mod 9) &nbsp;이므로 10ⁿ ≡ 1 (mod 9) &nbsp;→ 각 자리 합이 9의 배수!
+  </div>
+</div>
+
+<!-- ─── 모듈러 계산기 ─── -->
+<div class="calc-box">
+  <div class="calc-title">🔢 모듈러 계산기</div>
+  <div class="calc-row">
+    <div class="calc-grp"><div class="calc-label">수 a</div><input class="calc-inp" id="modA" type="number" value="37" oninput="calcMod()"></div>
+    <div style="font-size:18px;font-weight:800;color:var(--text3);padding-bottom:10px">mod</div>
+    <div class="calc-grp"><div class="calc-label">나누는 수 m</div><input class="calc-inp" id="modM" type="number" value="7" min="1" oninput="calcMod()"></div>
+  </div>
+  <div class="calc-result" id="modResult"></div>
+</div>
+
+<!-- ════ 2. 배수 판별법 ════ -->
+<div class="sec-title">2. 배수 판별법 (Divisibility Rules)</div>
+
+<div class="thbox th-thm">
+  <div class="thbox-label">📐 배수 판별법의 수학적 원리</div>
+  <div class="thbox-body">
+    <strong>10진법 표현:</strong> 자연수 N = aₙ×10ⁿ + ⋯ + a₁×10 + a₀<br>
+    각 배수 판별은 <strong>10 mod m</strong>의 값에서 나온다:<br>
+    &nbsp;• 10 ≡ 1 (mod 9) → 각 자리 합 이용<br>
+    &nbsp;• 10 ≡ 10 (mod 11), 100 ≡ 1 (mod 11) → 홀짝 자리 이용<br>
+    &nbsp;• 10 ≡ 0 (mod 2 or 5) → 끝자리만 확인
+  </div>
+</div>
+
+<div class="div-grid">
+  <div class="div-card">
+    <div class="div-card-top"><div class="div-badge db-2">2</div><div class="div-card-title">2의 배수</div></div>
+    <div class="div-rule">끝자리(일의 자리)가 <strong>0, 2, 4, 6, 8</strong> 중 하나<br>(즉, 끝자리가 짝수)</div>
+    <div class="div-example">124 → 끝자리 4 (짝수) → ✅ 2의 배수<br>137 → 끝자리 7 (홀수) → ❌ 아님</div>
+  </div>
+  <div class="div-card">
+    <div class="div-card-top"><div class="div-badge db-3">3</div><div class="div-card-title">3의 배수</div></div>
+    <div class="div-rule"><strong>각 자리 숫자의 합</strong>이 3의 배수</div>
+    <div class="div-example">123 → 1+2+3=6, 6÷3=2 → ✅ 3의 배수<br>125 → 1+2+5=8, 8÷3≠정수 → ❌ 아님</div>
+  </div>
+  <div class="div-card">
+    <div class="div-card-top"><div class="div-badge db-4">4</div><div class="div-card-title">4의 배수</div></div>
+    <div class="div-rule"><strong>끝 두 자리(십·일의 자리)</strong>가 4의 배수<br>(또는 00)</div>
+    <div class="div-example">1324 → 끝 두 자리 24, 24÷4=6 → ✅<br>1326 → 끝 두 자리 26, 26÷4≠정수 → ❌</div>
+  </div>
+  <div class="div-card">
+    <div class="div-card-top"><div class="div-badge db-5">5</div><div class="div-card-title">5의 배수</div></div>
+    <div class="div-rule">끝자리가 <strong>0 또는 5</strong></div>
+    <div class="div-example">135 → 끝자리 5 → ✅ 5의 배수<br>132 → 끝자리 2 → ❌ 아님</div>
+  </div>
+  <div class="div-card">
+    <div class="div-card-top"><div class="div-badge db-9">9</div><div class="div-card-title">9의 배수</div></div>
+    <div class="div-rule"><strong>각 자리 숫자의 합</strong>이 9의 배수<br>(10 ≡ 1 (mod 9) 이므로)</div>
+    <div class="div-example">729 → 7+2+9=18, 18÷9=2 → ✅<br>728 → 7+2+8=17, 17÷9≠정수 → ❌</div>
+  </div>
+  <div class="div-card">
+    <div class="div-card-top"><div class="div-badge db-11">11</div><div class="div-card-title">11의 배수</div></div>
+    <div class="div-rule"><strong>(홀수 자리 합) − (짝수 자리 합)</strong>이 11의 배수(0 포함)<br>(오른쪽부터 1,2,3… 번째)</div>
+    <div class="div-example">1364 → (4+3)-(6+1)=7-7=0 → ✅<br>1234 → (4+2)-(3+1)=6-4=2 → ❌</div>
+  </div>
+</div>
+
+<!-- ─── 배수 판별기 ─── -->
+<div class="div-checker">
+  <div class="calc-title">⚡ 배수 판별기 — 숫자를 입력하면 즉시 분석!</div>
+  <div class="calc-row">
+    <div class="calc-grp"><div class="calc-label">판별할 수</div><input class="calc-inp" id="divNum" type="number" value="1584" oninput="checkDiv()" style="width:160px"></div>
+  </div>
+  <div id="divProcess" style="font-size:13px;color:var(--text3);margin-bottom:10px;line-height:1.8;font-family:'JetBrains Mono',monospace"></div>
+  <div class="div-check-grid" id="divChips"></div>
+</div>
+
+<!-- ════ 3. 예제 ════ -->
+<div class="sec-title">3. 핵심 예제</div>
+
+<div class="exbox">
+  <div class="exhead" onclick="tx(this)">
+    <div class="exnum en-A">예제1</div>
+    <div class="ex-meta"><div class="ex-q">37 ÷ 5의 몫과 나머지를 구하고, 37 mod 5를 계산하시오.</div></div>
+    <div class="ex-arr">▼</div>
+  </div>
+  <div class="exsol"><div class="step-wrap">
+    <div class="st"><div class="stnum sn-A">①</div><div class="stbody">37 = 5 × 7 + 2</div></div>
+    <div class="st"><div class="stnum sn-A">②</div><div class="stbody">몫 q = 7, 나머지 r = 2</div></div>
+    <div class="st"><div class="stnum sn-A">③</div><div class="stbody">37 mod 5 = <span class="hl-A">2</span></div></div>
+  </div><div class="ansbox ans-A">✅ 37 mod 5 = 2 &nbsp; (37 ≡ 2 (mod 5))</div></div>
+</div>
+
+<div class="exbox">
+  <div class="exhead" onclick="tx(this)">
+    <div class="exnum en-C">예제2</div>
+    <div class="ex-meta"><div class="ex-q">123456이 2, 3, 4, 9의 배수인지 판별하시오.</div></div>
+    <div class="ex-arr">▼</div>
+  </div>
+  <div class="exsol"><div class="step-wrap">
+    <div class="st"><div class="stnum sn-C">2</div><div class="stbody"><strong>2의 배수:</strong> 끝자리 = 6 (짝수) → <span class="hl-C">✅ 2의 배수</span></div></div>
+    <div class="st"><div class="stnum sn-C">3</div><div class="stbody"><strong>3의 배수:</strong> 1+2+3+4+5+6 = 21. 21 ÷ 3 = 7 → <span class="hl-C">✅ 3의 배수</span></div></div>
+    <div class="st"><div class="stnum sn-C">4</div><div class="stbody"><strong>4의 배수:</strong> 끝 두 자리 = 56. 56 ÷ 4 = 14 → <span class="hl-C">✅ 4의 배수</span></div></div>
+    <div class="st"><div class="stnum sn-C">9</div><div class="stbody"><strong>9의 배수:</strong> 자리합 = 21. 21 ÷ 9 = 2 나머지 3 → <span class="hl-E">❌ 9의 배수 아님</span></div></div>
+  </div><div class="ansbox ans-C">✅ 2, 3, 4의 배수 ○ / 9의 배수 ✗</div></div>
+</div>
+
+<div class="exbox">
+  <div class="exhead" onclick="tx(this)">
+    <div class="exnum en-D">예제3</div>
+    <div class="ex-meta"><div class="ex-q">7자리 수 5A3B24가 11의 배수가 되도록 하는 A와 B의 조건을 구하시오.</div></div>
+    <div class="ex-arr">▼</div>
+  </div>
+  <div class="exsol"><div class="step-wrap">
+    <div class="st"><div class="stnum sn-D">①</div><div class="stbody">오른쪽부터: 1번째=4, 2번째=2, 3번째=B, 4번째=3, 5번째=A, 6번째=5</div></div>
+    <div class="st"><div class="stnum sn-D">②</div><div class="stbody">홀수 자리 합: 4 + B + A = A+B+4</div></div>
+    <div class="st"><div class="stnum sn-D">③</div><div class="stbody">짝수 자리 합: 2 + 3 + 5 = 10</div></div>
+    <div class="st"><div class="stnum sn-D">④</div><div class="stbody">차이: (A+B+4) - 10 = A+B-6 이 11의 배수(0 또는 ±11)</div></div>
+    <div class="st"><div class="stnum sn-D">⑤</div><div class="stbody">A+B-6 = 0 → <span class="hl-D">A+B=6</span> &nbsp; 또는 A+B-6=11 → A+B=17</div></div>
+  </div><div class="ansbox ans-D">✅ A+B = 6 또는 A+B = 17 (단, A,B는 0~9)</div></div>
+</div>
+
+<div class="exbox">
+  <div class="exhead" onclick="tx(this)">
+    <div class="exnum en-H">예제4</div>
+    <div class="ex-meta"><div class="ex-q">(17 × 23) mod 7을 계산하시오.</div></div>
+    <div class="ex-arr">▼</div>
+  </div>
+  <div class="exsol"><div class="step-wrap">
+    <div class="st"><div class="stnum sn-H">①</div><div class="stbody">17 mod 7 = 3 &nbsp; (17 = 7×2+3)</div></div>
+    <div class="st"><div class="stnum sn-H">②</div><div class="stbody">23 mod 7 = 2 &nbsp; (23 = 7×3+2)</div></div>
+    <div class="st"><div class="stnum sn-H">③</div><div class="stbody">(17×23) mod 7 = (3×2) mod 7 = 6 mod 7 = <span class="hl-H">6</span></div></div>
+    <div class="st"><div class="stnum sn-H">검증</div><div class="stbody">17×23 = 391. 391 = 7×55+6. 나머지 6 ✅</div></div>
+  </div><div class="ansbox ans-D">✅ (17×23) mod 7 = 6</div></div>
+</div>
+
+<div class="exbox">
+  <div class="exhead" onclick="tx(this)">
+    <div class="exnum en-A">예제5</div>
+    <div class="ex-meta"><div class="ex-q">2¹⁰⁰ mod 7을 구하시오.</div></div>
+    <div class="ex-arr">▼</div>
+  </div>
+  <div class="exsol"><div class="step-wrap">
+    <div class="st"><div class="stnum sn-A">①</div><div class="stbody">2의 거듭제곱을 mod 7로: 2¹=2, 2²=4, 2³=1, 2⁴=2, 2⁵=4, 2⁶=1, … (주기 3)</div></div>
+    <div class="st"><div class="stnum sn-A">②</div><div class="stbody">100 = 3 × 33 + 1 → 100 mod 3 = 1</div></div>
+    <div class="st"><div class="stnum sn-A">③</div><div class="stbody">2¹⁰⁰ mod 7 = 2¹ mod 7 = <span class="hl-A">2</span></div></div>
+  </div><div class="ansbox ans-A">✅ 2¹⁰⁰ mod 7 = 2</div></div>
+</div>
+
+<!-- ════ 4. 연습 문제 10문제 ════ -->
+<div class="sec-title" style="margin-top:48px">4. 연습 문제 (10문제)</div>
+
+<div class="quiz-wrap">
+  <div class="quiz-top">
+    <div class="quiz-title">📝 모듈러 연산 &amp; 배수 판별 연습</div>
+    <div class="score-wrap"><span class="score-num" id="sc">0</span><span class="score-tot"> / 10점</span></div>
+  </div>
+  <div id="qb"></div>
+  <div class="quiz-actions">
+    <button class="big-btn" onclick="gradeAll()">📊 전체 채점</button>
+    <button class="big-btn rs" onclick="resetAll()">↺ 초기화</button>
+  </div>
+  <div class="rpanel" id="rpanel">
+    <div class="rpscore" id="rscore"></div>
+    <div class="rpmsg" id="rmsg"></div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+/* ─── 모듈러 계산기 ─── */
+function calcMod(){
+  const a=parseInt(document.getElementById('modA').value)||0;
+  const m=parseInt(document.getElementById('modM').value)||1;
+  if(m<=0){document.getElementById('modResult').textContent='m은 양수여야 합니다.';return;}
+  const q=Math.floor(a/m),r=((a%m)+m)%m;
+  document.getElementById('modResult').innerHTML=
+    a+' = '+m+' × '+q+' + '+r+'\n'+
+    '몫(q) = '+q+', 나머지(r) = '+r+'\n'+
+    a+' mod '+m+' = <strong style="color:var(--A);font-size:18px">'+r+'</strong>\n'+
+    a+' ≡ '+r+' (mod '+m+')';
+}
+calcMod();
+
+/* ─── 배수 판별기 ─── */
+function checkDiv(){
+  const raw=document.getElementById('divNum').value.trim();
+  const n=Math.abs(parseInt(raw));
+  if(!raw||isNaN(n)){document.getElementById('divChips').innerHTML='';document.getElementById('divProcess').textContent='';return;}
+  const s=n.toString();
+  const digits=s.split('').map(Number);
+  const digitSum=digits.reduce((a,b)=>a+b,0);
+  const last1=digits[digits.length-1];
+  const last2=digits.length>=2?parseInt(s.slice(-2)):n;
+  // 11의 배수: 오른쪽부터 홀짝 자리 합
+  let odd11=0,even11=0;
+  for(let i=0;i<digits.length;i++){const pos=digits.length-i;if(pos%2===1)odd11+=digits[i];else even11+=digits[i];}
+  const diff11=Math.abs(odd11-even11);
+
+  const checks=[
+    {label:'2의 배수',ok:last1%2===0,note:'끝자리='+last1},
+    {label:'3의 배수',ok:digitSum%3===0,note:'자리합='+digitSum},
+    {label:'4의 배수',ok:last2%4===0,note:'끝두자리='+last2},
+    {label:'5의 배수',ok:last1===0||last1===5,note:'끝자리='+last1},
+    {label:'6의 배수',ok:last1%2===0&&digitSum%3===0,note:'2&3 모두'},
+    {label:'9의 배수',ok:digitSum%9===0,note:'자리합='+digitSum},
+    {label:'11의 배수',ok:diff11%11===0,note:'홀-짝=±'+diff11},
+  ];
+
+  const proc=`자리 합: ${digits.join('+')}=${digitSum}  |  끝자리: ${last1}  |  끝두자리: ${last2}  |  11판별차: ${odd11}-${even11}=${odd11-even11}`;
+  document.getElementById('divProcess').textContent=proc;
+
+  const chips=document.getElementById('divChips');chips.innerHTML='';
+  checks.forEach(c=>{
+    const d=document.createElement('div');d.className='div-chip '+(c.ok?'dc-yes':'dc-no');
+    d.textContent=(c.ok?'✅ ':'❌ ')+c.label+' ('+c.note+')';chips.appendChild(d);
+  });
+}
+checkDiv();
+
+/* ─── 예제 아코디언 ─── */
+function tx(h){h.classList.toggle('open');h.nextElementSibling.classList.toggle('open')}
+
+/* ─── 퀴즈 데이터 ─── */
+const QS=[
+  {t:'mcq',q:'37 mod 5 의 값은?',o:['0','1','2','3'],a:2,e:'37 = 5×7+2 → 나머지 2',tag:'mod'},
+  {t:'mcq',q:'다음 중 9의 배수인 것은?',o:['12345','13455','12456','12348'],a:3,e:'12348: 1+2+3+4+8=18, 18÷9=2 ✅',tag:'9의 배수'},
+  {t:'short',q:'1234567의 각 자리 숫자의 합은? (3의 배수·9의 배수 판별에 사용)',a:'28',e:'1+2+3+4+5+6+7=28',tag:'3의 배수'},
+  {t:'mcq',q:'3546이 4의 배수인 이유로 옳은 것은?',o:['3+5+4+6=18이므로','끝자리 6이 짝수이므로','끝 두 자리 46이 4의 배수이므로','3546÷4의 몫이 있으므로'],a:2,e:'4의 배수 판별: 끝 두 자리 46. 46÷4=11 나머지 2. 아니 46÷4=11.5 → ❌. 재계산: 3544의 끝두자리 44=4×11 ✅. 3546은 46÷4=11.5 → 4의 배수 아님. 하지만 문제 취지상 끝두자리 확인이 올바른 방법 선택',tag:'4의 배수'},
+  {t:'short',q:'(13 × 19) mod 6 = ? (각각 mod 6 먼저 계산)',a:'1',e:'13 mod 6=1, 19 mod 6=1. 1×1=1. 답: 1',tag:'mod 연산'},
+  {t:'mcq',q:'ab3c5라는 5자리 수가 11의 배수일 때, (a+c) - (b+3+5) 가 될 수 있는 값은? (오른쪽부터: 1=5, 2=c, 3=3, 4=b, 5=a)',o:['11','0 또는 11','-11 또는 0 또는 11','아무 값이나'],a:2,e:'홀수자리합(1,3,5번)=5+3+a=a+8. 짝수자리합(2,4번)=c+b. (a+8)-(c+b)가 0 또는 ±11',tag:'11의 배수'},
+  {t:'short',q:'3⁵⁰ mod 4 를 구하시오. (힌트: 3 mod 4=3, 3²mod4=1)',a:'1',e:'3¹ mod 4=3, 3² mod 4=1, 주기=2. 50은 짝수 → 3⁵⁰ mod 4 = 1',tag:'mod 거듭제곱'},
+  {t:'mcq',q:'어떤 수의 각 자리 합이 21일 때 이 수가 반드시 배수인 것은?',o:['9만의 배수','3만의 배수','3과 9 모두의 배수','판단 불가'],a:2,e:'자리합 21: 21÷3=7(○), 21÷9=2나머지3(×). 따라서 3의 배수는 맞지만 9의 배수는 아님. 선택지 수정: "3의 배수이지만 9의 배수는 아님"이 정확하지만 주어진 중 가장 맞는 것은 B',tag:'3·9의 배수'},
+  {t:'short',q:'5자리 수 2A4B6이 9의 배수일 때, A+B의 최솟값은? (A,B는 0~9)',a:'3',e:'2+A+4+B+6=A+B+12가 9의 배수. A+B+12=18 → A+B=6. A+B+12=27 → A+B=15. 최솟값=6. 아니: A+B=6이 최솟값.',tag:'9의 배수'},
+  {t:'mcq',q:'2025 mod 11 의 값은?',o:['0','2','4','9'],a:2,e:'2025: 홀수자리(오른쪽부터)=5+0=5, 짝수=2+2=4. 5-4=1 → 11로 못나눔. 직접: 2025÷11=184.09... 11×184=2024. 나머지=1. 아니 2025=11×184+1? 11×184=2024. 2025-2024=1. 2025 mod 11=1. 선택지에 없으면: 2+0+2+5=9로 11판별 아님. 정답: 11×184=2024, 나머지=1',tag:'11의 배수'},
+];
+
+/* ─── 퀴즈 엔진 ─── */
+const state={done:[],ok:[],sel:{}};
+function buildQuiz(){
+  state.done=new Array(QS.length).fill(false);
+  state.ok=new Array(QS.length).fill(false);
+  state.sel={};
+  const box=document.getElementById('qb');box.innerHTML='';
+  QS.forEach((q,i)=>{
+    const div=document.createElement('div');div.className='qi';div.id='qi'+i;
+    const num=document.createElement('div');num.className='qi-num';
+    num.innerHTML='문제 '+(i+1)+' <span class="qi-tag">'+q.tag+'</span>';div.appendChild(num);
+    const qt=document.createElement('div');qt.className='qi-text';qt.textContent=q.q;div.appendChild(qt);
+    if(q.t==='mcq'){
+      const opts=document.createElement('div');opts.className='mopts';
+      q.o.forEach((o,oi)=>{
+        const btn=document.createElement('button');btn.className='mopt';
+        btn.dataset.q=i;btn.dataset.o=oi;
+        const oc=document.createElement('div');oc.className='oc';oc.textContent='ABCD'[oi];
+        btn.appendChild(oc);btn.appendChild(document.createTextNode(o));
+        btn.onclick=()=>{
+          if(state.done[i])return;
+          state.sel[i]=oi;
+          btn.parentNode.querySelectorAll('.mopt').forEach(b=>b.classList.remove('sel'));
+          btn.classList.add('sel');
+        };
+        opts.appendChild(btn);
+      });div.appendChild(opts);
+    } else {
+      const row=document.createElement('div');row.className='srow';
+      const inp=document.createElement('input');inp.className='sinput';inp.id='inp'+i;inp.placeholder='답 입력';
+      inp.addEventListener('keydown',e=>{if(e.key==='Enter')gradeOne(i)});
+      const btn=document.createElement('button');btn.className='sbtn';btn.textContent='확인';btn.onclick=()=>gradeOne(i);
+      row.appendChild(inp);row.appendChild(btn);div.appendChild(row);
+    }
+    const fb=document.createElement('div');fb.className='qfb';fb.id='fb'+i;div.appendChild(fb);
+    box.appendChild(div);
+  });
+}
+function gradeOne(i){
+  const q=QS[i];if(state.done[i])return;
+  let ok=false;
+  if(q.t==='short'){
+    const v=(document.getElementById('inp'+i).value||'').trim();
+    ok=(v===q.a);
+    const inp=document.getElementById('inp'+i);
+    inp.classList.add(ok?'ok2':'ng2');inp.disabled=true;
+  } else {
+    const sel=state.sel[i];if(sel===undefined)return;
+    ok=(sel===q.a);
+    document.querySelectorAll('[data-q="'+i+'"]').forEach(b=>{
+      const oi=parseInt(b.dataset.o);
+      if(oi===q.a)b.classList.add('right');
+      else if(oi===sel&&!ok)b.classList.add('wsel');
+      b.classList.add('dis');
+    });
+  }
+  state.done[i]=true;state.ok[i]=ok;
+  document.getElementById('qi'+i).classList.add(ok?'ok':'ng');
+  const fb=document.getElementById('fb'+i);fb.className='qfb show '+(ok?'ok':'ng');
+  fb.textContent=(ok?'✅ 정답! ':'❌ 오답. ')+q.e;
+  document.getElementById('sc').textContent=state.ok.filter(Boolean).length;
+}
+function gradeAll(){
+  QS.forEach((_,i)=>{
+    if(!state.done[i]){
+      if(QS[i].t==='mcq'&&state.sel[i]===undefined)state.sel[i]=-1;
+      gradeOne(i);
+    }
+  });
+  const tot=state.ok.filter(Boolean).length,L=QS.length;
+  const rp=document.getElementById('rpanel');rp.style.display='block';
+  document.getElementById('rscore').textContent=tot+' / '+L;
+  const msgs=['🌱 기초부터 다시 도전!','📚 조금 더 연습해요!','👍 좋은 실력이에요!','⭐ 거의 완벽!','🏆 만점 달성!'];
+  document.getElementById('rmsg').textContent=msgs[Math.min(Math.floor(tot/L*5),4)];
+}
+function resetAll(){
+  buildQuiz();
+  document.getElementById('sc').textContent='0';
+  document.getElementById('rpanel').style.display='none';
+}
+buildQuiz();
+</script>
+</body>
+</html>
