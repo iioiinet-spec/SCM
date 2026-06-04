@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>정올 카드게임 인터렉티브 해설</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,'Noto Sans KR',sans-serif;background:linear-gradient(135deg,#fff7ed,#eef2ff);color:#1f2937;line-height:1.75}
+header{background:linear-gradient(135deg,#dc2626,#4338ca);color:white;text-align:center;padding:40px 20px}
+header h1{margin:0;font-size:34px}
+main{max-width:1150px;margin:30px auto;padding:0 20px 60px}
+section{background:white;border-radius:22px;padding:28px;margin-bottom:24px;box-shadow:0 12px 30px rgba(67,56,202,.12)}
+h2{color:#4338ca;border-left:8px solid #6366f1;padding-left:12px;margin-top:0}
+h3{color:#dc2626}
+.box{background:#eef2ff;border:2px solid #c7d2fe;border-radius:16px;padding:18px;margin:16px 0}
+.warn{background:#fff7ed;border-left:8px solid #f97316;border-radius:14px;padding:16px;margin:16px 0}
+.good{background:#f0fdf4;border:2px solid #bbf7d0;border-radius:16px;padding:18px;margin:16px 0}
+pre{background:#111827;color:#f9fafb;padding:22px;border-radius:16px;overflow-x:auto;font-size:15px;line-height:1.6}
+code{font-family:Consolas,Monaco,monospace}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0}
+.card-input{display:flex;gap:8px;align-items:center;background:#f8fafc;border:1px solid #e5e7eb;border-radius:14px;padding:12px}
+select,input{padding:9px 10px;border-radius:10px;border:2px solid #c7d2fe;font-size:16px}
+input{width:70px}
+button{border:0;border-radius:12px;padding:12px 18px;background:#4338ca;color:white;font-weight:800;cursor:pointer;font-size:15px}
+button:hover{background:#312e81}
+.card-area{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}
+.card{width:90px;height:125px;border-radius:16px;border:3px solid #111827;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:26px;font-weight:900;background:white;box-shadow:0 6px 15px rgba(0,0,0,.12)}
+.R{color:#dc2626}.B{color:#2563eb}.Y{color:#ca8a04}.G{color:#16a34a}
+.result{font-size:24px;font-weight:900;color:#dc2626;background:#fef2f2;border-radius:16px;padding:18px;margin-top:18px;text-align:center}
+table{width:100%;border-collapse:collapse;margin-top:18px;font-size:15px}
+th,td{border:1px solid #d1d5db;padding:10px;text-align:center}
+th{background:#e0e7ff;color:#312e81}
+tr:nth-child(even){background:#f9fafb}
+.rule-on{background:#dcfce7!important;font-weight:900}
+.rule-off{color:#9ca3af}
+.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#dbeafe;border:1px solid #93c5fd;margin:4px;font-weight:800}
+.quiz{background:#f0fdf4;border:2px solid #bbf7d0;border-radius:16px;padding:18px;margin:14px 0}
+.answer{display:none;background:#dcfce7;border-radius:12px;padding:12px;margin-top:10px}
+</style>
+</head>
+<body>
+<header>
+<h1>정올 카드게임</h1>
+<p>9가지 점수 규칙을 직접 확인하는 인터렉티브 강의자료</p>
+</header>
+
+<main>
+
+<section>
+<h2>1. 문제 핵심</h2>
+<p>카드 5장을 입력받아 9가지 규칙 중 가장 높은 점수가 되는 규칙을 적용합니다.</p>
+<div class="box">
+<p>1. 색깔은 R, B, Y, G 네 가지입니다.</p>
+<p>2. 숫자는 1부터 9까지입니다.</p>
+<p>3. 두 가지 이상의 규칙이 가능하면 더 높은 점수 규칙을 적용합니다.</p>
+<p>4. 그래서 900점대 규칙부터 100점대 규칙까지 순서대로 검사하면 됩니다.</p>
+</div>
+</section>
+
+<section>
+<h2>2. 인터렉티브 카드 입력</h2>
+<p>카드 5장을 입력한 뒤 점수 계산 버튼을 누르세요.</p>
+
+<div class="controls">
+<div class="card-input"><b>1번</b><select id="c0"><option>R</option><option selected>B</option><option>Y</option><option>G</option></select><input id="n0" type="number" min="1" max="9" value="3"></div>
+<div class="card-input"><b>2번</b><select id="c1"><option>R</option><option selected>B</option><option>Y</option><option>G</option></select><input id="n1" type="number" min="1" max="9" value="7"></div>
+<div class="card-input"><b>3번</b><select id="c2"><option selected>R</option><option>B</option><option>Y</option><option>G</option></select><input id="n2" type="number" min="1" max="9" value="1"></div>
+<div class="card-input"><b>4번</b><select id="c3"><option>R</option><option selected>B</option><option>Y</option><option>G</option></select><input id="n3" type="number" min="1" max="9" value="2"></div>
+<div class="card-input"><b>5번</b><select id="c4"><option>R</option><option>B</option><option selected>Y</option><option>G</option></select><input id="n4" type="number" min="1" max="9" value="7"></div>
+</div>
+
+<button onclick="calculate()">점수 계산하기</button>
+<button onclick="setExample(1)">예제 입력</button>
+<button onclick="setExample(2)">스트레이트 플러시</button>
+<button onclick="setExample(3)">풀하우스</button>
+
+<div id="cardView" class="card-area"></div>
+<div id="resultArea"></div>
+<div id="summaryArea"></div>
+</section>
+
+<section>
+<h2>3. 규칙 판정표</h2>
+<p>현재 카드가 어떤 규칙에 해당하는지 자동으로 표시됩니다.</p>
+<div id="ruleTable"></div>
+</section>
+
+<section>
+<h2>4. 코드 작성 방법</h2>
+
+<h3>1. 숫자 개수 세기</h3>
+<pre><code>int count[10] = {0};
+
+for (int i = 0; i < 5; i++) {
+    count[number[i]]++;
+}</code></pre>
+
+<h3>2. 색깔이 모두 같은지 확인</h3>
+<pre><code>int sameColor = 1;
+
+for (int i = 1; i < 5; i++) {
+    if (color[i] != color[0]) {
+        sameColor = 0;
+    }
+}</code></pre>
+
+<h3>3. 숫자가 연속인지 확인</h3>
+<pre><code>for (int start = 1; start <= 5; start++) {
+    int ok = 1;
+
+    for (int j = 0; j < 5; j++) {
+        if (count[start + j] != 1) {
+            ok = 0;
+        }
+    }
+
+    if (ok == 1) {
+        straight = 1;
+        high = start + 4;
+    }
+}</code></pre>
+
+<h3>4. 같은 숫자 개수 찾기</h3>
+<pre><code>for (int i = 1; i <= 9; i++) {
+    if (count[i] == 4) four = i;
+    else if (count[i] == 3) three = i;
+    else if (count[i] == 2) {
+        if (pair1 == 0) pair1 = i;
+        else pair2 = i;
+    }
+}</code></pre>
+</section>
+
+<section>
+<h2>5. 자주 하는 실수</h2>
+<div class="quiz">
+<h3>실수 1. 낮은 규칙부터 검사하는 경우</h3>
+<p>예를 들어 모두 같은 색이면서 연속이면 600점 규칙도 가능하지만 900점 규칙이 정답입니다.</p>
+<button onclick="toggleAnswer('q1')">설명 보기</button>
+<div id="q1" class="answer">항상 900점대부터 100점대 순서로 검사해야 가장 높은 점수가 나옵니다.</div>
+</div>
+
+<div class="quiz">
+<h3>실수 2. 연속 판정에서 중복 숫자를 허용하는 경우</h3>
+<p>연속 숫자는 5개의 서로 다른 숫자가 이어져야 합니다.</p>
+<button onclick="toggleAnswer('q2')">설명 보기</button>
+<div id="q2" class="answer">1 2 3 4 4는 숫자가 이어져 보이지만 5가 없고 4가 중복이므로 연속이 아닙니다.</div>
+</div>
+
+<div class="quiz">
+<h3>실수 3. 두 쌍 점수에서 큰 쌍과 작은 쌍을 반대로 쓰는 경우</h3>
+<p>두 쌍은 큰 숫자 × 10 + 작은 숫자를 사용합니다.</p>
+<button onclick="toggleAnswer('q3')">설명 보기</button>
+<div id="q3" class="answer">예를 들어 5 한 쌍, 4 한 쌍이면 300 + 5×10 + 4 = 354입니다.</div>
+</div>
+</section>
+
+<section>
+<h2>6. 정답 C 코드</h2>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    char color[5];
+    int number[5];
+    int count[10] = {0};
+
+    for (int i = 0; i &lt; 5; i++) {
+        scanf(" %c %d", &amp;color[i], &amp;number[i]);
+        count[number[i]]++;
+    }
+
+    int sameColor = 1;
+
+    for (int i = 1; i &lt; 5; i++) {
+        if (color[i] != color[0]) {
+            sameColor = 0;
+        }
+    }
+
+    int maxNum = 0;
+
+    for (int i = 1; i &lt;= 9; i++) {
+        if (count[i] &gt; 0) {
+            maxNum = i;
+        }
+    }
+
+    int straight = 0;
+    int high = 0;
+
+    for (int start = 1; start &lt;= 5; start++) {
+        int ok = 1;
+
+        for (int j = 0; j &lt; 5; j++) {
+            if (count[start + j] != 1) {
+                ok = 0;
+            }
+        }
+
+        if (ok == 1) {
+            straight = 1;
+            high = start + 4;
+        }
+    }
+
+    int four = 0;
+    int three = 0;
+    int pair1 = 0;
+    int pair2 = 0;
+
+    for (int i = 1; i &lt;= 9; i++) {
+        if (count[i] == 4) {
+            four = i;
+        } else if (count[i] == 3) {
+            three = i;
+        } else if (count[i] == 2) {
+            if (pair1 == 0) {
+                pair1 = i;
+            } else {
+                pair2 = i;
+            }
+        }
+    }
+
+    int score;
+
+    if (sameColor && straight) {
+        score = 900 + high;
+    } else if (four &gt; 0) {
+        score = 800 + four;
+    } else if (three &gt; 0 && pair1 &gt; 0) {
+        score = 700 + three * 10 + pair1;
+    } else if (sameColor) {
+        score = 600 + maxNum;
+    } else if (straight) {
+        score = 500 + high;
+    } else if (three &gt; 0) {
+        score = 400 + three;
+    } else if (pair1 &gt; 0 && pair2 &gt; 0) {
+        int big = pair1 &gt; pair2 ? pair1 : pair2;
+        int small = pair1 &lt; pair2 ? pair1 : pair2;
+
+        score = 300 + big * 10 + small;
+    } else if (pair1 &gt; 0) {
+        score = 200 + pair1;
+    } else {
+        score = 100 + maxNum;
+    }
+
+    printf("%d\n", score);
+
+    return 0;
+}</code></pre>
+</section>
+
+<section>
+<h2>7. 핵심 정리</h2>
+<p>1. 색깔이 모두 같은지 확인합니다.</p>
+<p>2. 숫자가 연속인지 확인합니다.</p>
+<p>3. 숫자별 개수를 셉니다.</p>
+<p>4. 4장, 3장, 2장 같은 숫자를 찾습니다.</p>
+<p>5. 높은 점수 규칙부터 검사합니다.</p>
+</section>
+
+</main>
+
+<script>
+function getCards(){
+    let colors=[], nums=[];
+    for(let i=0;i<5;i++){
+        colors.push(document.getElementById("c"+i).value);
+        nums.push(parseInt(document.getElementById("n"+i).value));
+    }
+    return {colors, nums};
+}
+function renderCards(colors, nums){
+    let html="";
+    for(let i=0;i<5;i++){
+        html += "<div class='card "+colors[i]+"'><div>"+colors[i]+"</div><div>"+nums[i]+"</div></div>";
+    }
+    document.getElementById("cardView").innerHTML=html;
+}
+function calculate(){
+    const {colors, nums}=getCards();
+    if(nums.some(v=>isNaN(v)||v<1||v>9)){
+        document.getElementById("resultArea").innerHTML="<div class='warn'>숫자는 1부터 9까지 입력하세요.</div>";
+        return;
+    }
+    renderCards(colors, nums);
+
+    let count=Array(10).fill(0);
+    nums.forEach(v=>count[v]++);
+
+    let sameColor=colors.every(c=>c===colors[0]);
+    let maxNum=0;
+    for(let i=1;i<=9;i++) if(count[i]>0) maxNum=i;
+
+    let straight=false, high=0;
+    for(let start=1;start<=5;start++){
+        let ok=true;
+        for(let j=0;j<5;j++){
+            if(count[start+j]!==1) ok=false;
+        }
+        if(ok){straight=true; high=start+4;}
+    }
+
+    let four=0, three=0, pair1=0, pair2=0;
+    for(let i=1;i<=9;i++){
+        if(count[i]===4) four=i;
+        else if(count[i]===3) three=i;
+        else if(count[i]===2){
+            if(pair1===0) pair1=i;
+            else pair2=i;
+        }
+    }
+
+    let score=0, applied="";
+    const twoPair = pair1>0 && pair2>0;
+    const bigPair = Math.max(pair1,pair2);
+    const smallPair = Math.min(pair1,pair2);
+
+    let rules=[
+        {name:"① 모두 같은 색 + 숫자 연속", ok:sameColor&&straight, score:900+high, desc:"900 + 가장 높은 숫자"},
+        {name:"② 4장의 숫자가 같음", ok:four>0, score:800+four, desc:"800 + 같은 숫자"},
+        {name:"③ 3장 같고 나머지 2장도 같음", ok:three>0&&pair1>0, score:700+three*10+pair1, desc:"700 + 세 장 숫자×10 + 두 장 숫자"},
+        {name:"④ 5장의 색깔이 모두 같음", ok:sameColor, score:600+maxNum, desc:"600 + 가장 높은 숫자"},
+        {name:"⑤ 숫자가 연속", ok:straight, score:500+high, desc:"500 + 가장 높은 숫자"},
+        {name:"⑥ 3장의 숫자가 같음", ok:three>0, score:400+three, desc:"400 + 같은 숫자"},
+        {name:"⑦ 두 쌍", ok:twoPair, score:300+bigPair*10+smallPair, desc:"300 + 큰 쌍×10 + 작은 쌍"},
+        {name:"⑧ 한 쌍", ok:pair1>0, score:200+pair1, desc:"200 + 같은 숫자"},
+        {name:"⑨ 아무 규칙도 아님", ok:true, score:100+maxNum, desc:"100 + 가장 큰 숫자"}
+    ];
+
+    for(const r of rules){
+        if(r.ok){score=r.score; applied=r.name; break;}
+    }
+
+    document.getElementById("resultArea").innerHTML="<div class='result'>적용 규칙: "+applied+"<br>최종 점수: "+score+"</div>";
+
+    let summary="";
+    summary += "<div class='box'>";
+    summary += "<span class='badge'>같은 색: "+(sameColor?"O":"X")+"</span>";
+    summary += "<span class='badge'>연속 숫자: "+(straight?"O":"X")+"</span>";
+    summary += "<span class='badge'>가장 큰 숫자: "+maxNum+"</span>";
+    if(four) summary += "<span class='badge'>4장 같은 숫자: "+four+"</span>";
+    if(three) summary += "<span class='badge'>3장 같은 숫자: "+three+"</span>";
+    if(pair1) summary += "<span class='badge'>쌍1: "+pair1+"</span>";
+    if(pair2) summary += "<span class='badge'>쌍2: "+pair2+"</span>";
+    summary += "</div>";
+    document.getElementById("summaryArea").innerHTML=summary;
+
+    let table="<table><tr><th>규칙</th><th>조건 만족?</th><th>점수 계산</th></tr>";
+    for(const r of rules){
+        let cls=(r.name===applied)?"rule-on":(r.ok?"":"rule-off");
+        table += "<tr class='"+cls+"'><td>"+r.name+"</td><td>"+(r.ok?"O":"X")+"</td><td>"+(r.ok?r.score+"점 ("+r.desc+")":"-")+"</td></tr>";
+    }
+    table += "</table>";
+    document.getElementById("ruleTable").innerHTML=table;
+}
+function setExample(type){
+    let data;
+    if(type===1) data=[["B",3],["B",7],["R",1],["B",2],["Y",7]];
+    if(type===2) data=[["Y",4],["Y",3],["Y",2],["Y",5],["Y",6]];
+    if(type===3) data=[["R",5],["Y",5],["G",7],["B",5],["Y",7]];
+    for(let i=0;i<5;i++){
+        document.getElementById("c"+i).value=data[i][0];
+        document.getElementById("n"+i).value=data[i][1];
+    }
+    calculate();
+}
+function toggleAnswer(id){
+    const el=document.getElementById(id);
+    el.style.display=el.style.display==="block"?"none":"block";
+}
+calculate();
+</script>
+</body>
+</html>

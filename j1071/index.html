@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>정올 1071 약수와 배수 인터렉티브 해설</title>
+<style>
+body{margin:0;font-family:Arial,'Noto Sans KR',sans-serif;background:linear-gradient(135deg,#f0f9ff,#fefce8);color:#1f2937;line-height:1.7}
+header{background:linear-gradient(135deg,#2563eb,#16a34a);color:white;text-align:center;padding:38px 20px}
+header h1{margin:0;font-size:34px}
+main{max-width:1050px;margin:28px auto;padding:0 20px 60px}
+section{background:white;border-radius:20px;padding:26px;margin-bottom:22px;box-shadow:0 10px 25px rgba(37,99,235,.12)}
+h2{color:#2563eb;border-left:8px solid #3b82f6;padding-left:12px}
+h3{color:#15803d}
+.box{background:#eff6ff;border:2px solid #bfdbfe;border-radius:14px;padding:16px;margin:14px 0}
+.warn{background:#fff7ed;border-left:8px solid #f97316;border-radius:12px;padding:14px;margin:14px 0}
+pre{background:#111827;color:#f9fafb;padding:20px;border-radius:14px;overflow-x:auto}
+input{padding:11px;border-radius:10px;border:2px solid #93c5fd;font-size:16px}
+button{border:0;border-radius:10px;padding:12px 18px;background:#2563eb;color:white;font-weight:800;cursor:pointer}
+button:hover{background:#1e40af}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+#numbersInput{min-width:420px;flex:1}
+#mInput{width:110px}
+.array-view{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding:14px;background:#f8fafc;border-radius:14px}
+.cell{min-width:70px;padding:10px;border-radius:12px;text-align:center;font-weight:900;background:#e5e7eb;border:2px solid #d1d5db}
+.divisor{background:#dcfce7;border-color:#22c55e;color:#14532d}
+.multiple{background:#dbeafe;border-color:#3b82f6;color:#1e3a8a}
+.both{background:#fef3c7;border-color:#f59e0b;color:#92400e}
+.result{font-size:22px;font-weight:900;color:#dc2626;background:#fef2f2;border-radius:14px;padding:16px;margin-top:16px;text-align:center}
+table{width:100%;border-collapse:collapse;margin-top:16px;font-size:15px}
+th,td{border:1px solid #d1d5db;padding:9px;text-align:center}
+th{background:#dbeafe;color:#1e3a8a}
+tr:nth-child(even){background:#f9fafb}
+.answer{display:none;background:#dcfce7;border-radius:10px;padding:12px;margin-top:10px}
+.quiz{background:#ecfdf5;border:2px solid #bbf7d0;border-radius:14px;padding:16px;margin:12px 0}
+</style>
+</head>
+<body>
+<header>
+<h1>정올 1071 약수와 배수</h1>
+<p>기준 수의 약수 합과 배수 합을 구하는 인터렉티브 강의자료</p>
+</header>
+<main>
+
+<section>
+<h2>1. 문제 핵심</h2>
+<p>여러 개의 정수가 주어지고, 마지막에 기준 정수 <b>m</b>이 주어집니다. 주어진 정수들 중에서 <b>m의 약수</b>와 <b>m의 배수</b>를 찾아 각각의 합을 구합니다.</p>
+<div class="box">
+<p>1. 어떤 수가 <b>m을 나누어떨어지게 하면</b> 그 수는 m의 약수입니다.</p>
+<p>2. 어떤 수가 <b>m으로 나누어떨어지면</b> 그 수는 m의 배수입니다.</p>
+<p>3. 약수의 합과 배수의 합을 따로 계산합니다.</p>
+</div>
+</section>
+
+<section>
+<h2>2. 핵심 조건식</h2>
+<h3>1. arr[i]가 m의 약수인지 확인</h3>
+<pre><code>if (m % arr[i] == 0)</code></pre>
+<h3>2. arr[i]가 m의 배수인지 확인</h3>
+<pre><code>if (arr[i] % m == 0)</code></pre>
+<div class="warn">약수 판정과 배수 판정은 나누는 방향이 다릅니다.</div>
+</section>
+
+<section>
+<h2>3. 인터렉티브 계산기</h2>
+<p>숫자 목록과 기준 수 m을 입력하면 약수와 배수를 자동으로 찾아줍니다.</p>
+<div class="controls">
+<label><b>숫자 목록:</b></label>
+<input id="numbersInput" value="2 3 5 12 18 24">
+<label><b>m:</b></label>
+<input id="mInput" type="number" value="12">
+<button onclick="runCheck()">계산하기</button>
+</div>
+<div id="message"></div>
+<h3>숫자 분류</h3>
+<div id="arrayView" class="array-view"></div>
+<div id="resultArea"></div>
+<div id="tableArea"></div>
+</section>
+
+<section>
+<h2>4. 예제 손풀이</h2>
+<pre><code>숫자 목록: 2 3 5 12 18 24
+기준 수 m: 12</code></pre>
+<p>약수는 12를 나누어떨어지게 하는 수입니다.</p>
+<pre><code>12 % 2 == 0  → 2는 약수
+12 % 3 == 0  → 3은 약수
+12 % 5 != 0  → 5는 약수 아님
+12 % 12 == 0 → 12는 약수</code></pre>
+<p>약수의 합은 2 + 3 + 12 = 17입니다.</p>
+<p>배수는 12로 나누어떨어지는 수입니다.</p>
+<pre><code>12 % 12 == 0 → 12는 배수
+24 % 12 == 0 → 24는 배수</code></pre>
+<p>배수의 합은 12 + 24 = 36입니다.</p>
+</section>
+
+<section>
+<h2>5. 코드 작성 방법</h2>
+<h3>1. 개수 n 입력</h3>
+<pre><code>int n;
+scanf("%d", &n);</code></pre>
+<h3>2. 배열 입력</h3>
+<pre><code>int arr[50];
+
+for (int i = 0; i < n; i++) {
+    scanf("%d", &arr[i]);
+}</code></pre>
+<h3>3. 기준 수 m 입력</h3>
+<pre><code>int m;
+scanf("%d", &m);</code></pre>
+<h3>4. 합 변수 준비</h3>
+<pre><code>int divisorSum = 0;
+int multipleSum = 0;</code></pre>
+<h3>5. 약수와 배수 검사</h3>
+<pre><code>for (int i = 0; i < n; i++) {
+    if (m % arr[i] == 0) {
+        divisorSum += arr[i];
+    }
+
+    if (arr[i] % m == 0) {
+        multipleSum += arr[i];
+    }
+}</code></pre>
+</section>
+
+<section>
+<h2>6. 자주 하는 실수</h2>
+<div class="quiz">
+<h3>실수 1. 약수 조건을 반대로 쓰는 경우</h3>
+<p>arr[i]가 m의 약수인지 볼 때는 m을 arr[i]로 나눕니다.</p>
+<button onclick="toggleAnswer('q1')">설명 보기</button>
+<div id="q1" class="answer">예를 들어 3이 12의 약수인지 보려면 12 % 3을 해야 합니다.</div>
+</div>
+<div class="quiz">
+<h3>실수 2. 배수 조건을 반대로 쓰는 경우</h3>
+<p>arr[i]가 m의 배수인지 볼 때는 arr[i]를 m으로 나눕니다.</p>
+<button onclick="toggleAnswer('q2')">설명 보기</button>
+<div id="q2" class="answer">예를 들어 24가 12의 배수인지 보려면 24 % 12를 해야 합니다.</div>
+</div>
+<div class="quiz">
+<h3>실수 3. 기준 수 m을 한쪽에만 더하는 경우</h3>
+<p>m은 자기 자신의 약수이면서 배수입니다.</p>
+<button onclick="toggleAnswer('q3')">설명 보기</button>
+<div id="q3" class="answer">m % m == 0이므로 m은 약수 합에도 들어가고 배수 합에도 들어갑니다.</div>
+</div>
+</section>
+
+<section>
+<h2>7. 정답 C 코드</h2>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main() {
+    int n;
+    int arr[50];
+    int m;
+    int divisorSum = 0;
+    int multipleSum = 0;
+
+    scanf("%d", &amp;n);
+
+    for (int i = 0; i &lt; n; i++) {
+        scanf("%d", &amp;arr[i]);
+    }
+
+    scanf("%d", &amp;m);
+
+    for (int i = 0; i &lt; n; i++) {
+        if (m % arr[i] == 0) {
+            divisorSum += arr[i];
+        }
+
+        if (arr[i] % m == 0) {
+            multipleSum += arr[i];
+        }
+    }
+
+    printf("%d
+", divisorSum);
+    printf("%d
+", multipleSum);
+
+    return 0;
+}</code></pre>
+</section>
+
+<section>
+<h2>8. 핵심 정리</h2>
+<p>1. 약수 조건은 <b>m % arr[i] == 0</b>입니다.</p>
+<p>2. 배수 조건은 <b>arr[i] % m == 0</b>입니다.</p>
+<p>3. 약수 합과 배수 합은 각각 따로 더합니다.</p>
+<p>4. 기준 수 m은 약수이면서 배수일 수 있습니다.</p>
+</section>
+
+</main>
+
+<script>
+function parseNumbers(text){
+    return text.trim().split(/\s+/).filter(x=>x.length>0).map(Number);
+}
+function runCheck(){
+    const nums=parseNumbers(document.getElementById("numbersInput").value);
+    const m=parseInt(document.getElementById("mInput").value);
+    const message=document.getElementById("message");
+    const arrayView=document.getElementById("arrayView");
+    const resultArea=document.getElementById("resultArea");
+    const tableArea=document.getElementById("tableArea");
+
+    if(!nums.length || nums.some(v=>isNaN(v)||v<=0) || isNaN(m) || m<=0){
+        message.innerHTML="<div class='warn'>양의 정수 목록과 기준 수 m을 올바르게 입력해주세요.</div>";
+        arrayView.innerHTML="";
+        resultArea.innerHTML="";
+        tableArea.innerHTML="";
+        return;
+    }
+
+    message.innerHTML="";
+    let divisorSum=0;
+    let multipleSum=0;
+    let cells="";
+    let rows="";
+
+    nums.forEach(v=>{
+        const isDivisor=(m%v===0);
+        const isMultiple=(v%m===0);
+        if(isDivisor) divisorSum+=v;
+        if(isMultiple) multipleSum+=v;
+
+        let cls="cell";
+        let label="해당 없음";
+        if(isDivisor && isMultiple){cls+=" both"; label="약수+배수";}
+        else if(isDivisor){cls+=" divisor"; label="약수";}
+        else if(isMultiple){cls+=" multiple"; label="배수";}
+
+        cells += "<div class='"+cls+"'>"+v+"<br><span style='font-size:12px'>"+label+"</span></div>";
+        rows += "<tr><td>"+v+"</td><td>"+m+" % "+v+" = "+(m%v)+"</td><td>"+(isDivisor?"O":"X")+"</td><td>"+v+" % "+m+" = "+(v%m)+"</td><td>"+(isMultiple?"O":"X")+"</td></tr>";
+    });
+
+    arrayView.innerHTML=cells;
+    resultArea.innerHTML="<div class='result'>약수의 합: "+divisorSum+"<br>배수의 합: "+multipleSum+"</div>";
+    tableArea.innerHTML="<table><tr><th>숫자</th><th>약수 판정</th><th>m의 약수?</th><th>배수 판정</th><th>m의 배수?</th></tr>"+rows+"</table>";
+}
+function toggleAnswer(id){
+    const el=document.getElementById(id);
+    el.style.display = el.style.display==="block" ? "none" : "block";
+}
+runCheck();
+</script>
+</body>
+</html>
