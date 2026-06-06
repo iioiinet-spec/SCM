@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>코스피 6/8 리포트 — 바닥이냐 함정이냐</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0b0f;
+    --surface:#14161d;
+    --surface-2:#1b1e28;
+    --line:#2a2e3a;
+    --line-soft:#22252f;
+    --ink:#ededf2;
+    --ink-dim:#969aa8;
+    --ink-faint:#626774;
+    --red:#ff4d4d;
+    --red-deep:#cf2020;
+    --amber:#ffb22e;
+    --green:#37d39b;
+    --blue:#74a6ff;
+    --gold:#ffc94d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'IBM Plex Sans KR',sans-serif;
+    font-weight:400;
+    line-height:1.7;
+    letter-spacing:-0.01em;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+    overflow-x:hidden;
+  }
+  /* atmosphere */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+    background:
+      radial-gradient(900px 600px at 88% -8%, rgba(255,77,77,.10), transparent 60%),
+      radial-gradient(700px 500px at -5% 12%, rgba(116,166,255,.06), transparent 55%),
+      radial-gradient(800px 700px at 50% 120%, rgba(255,178,46,.05), transparent 60%);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 24px 120px}
+  .num{font-family:'IBM Plex Mono',monospace;font-feature-settings:"tnum";letter-spacing:0}
+
+  /* animated entrance */
+  .rise{opacity:0;transform:translateY(18px);animation:rise .8s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+
+  /* ===== HEADER ===== */
+  header{padding:72px 0 36px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--red);display:flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--red)}
+  h1{font-family:'IBM Plex Sans KR',sans-serif;font-weight:700;font-size:clamp(34px,6vw,58px);line-height:1.05;letter-spacing:-0.04em;margin:18px 0 0}
+  h1 .down{color:var(--red)}
+  .dek{color:var(--ink-dim);font-size:clamp(15px,2.2vw,18px);max-width:620px;margin-top:18px;line-height:1.6}
+  .spark{margin-top:26px}
+
+  /* ticker strip */
+  .ticker{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:30px;border-radius:10px;overflow:hidden}
+  .ticker .cell{background:var(--surface);padding:16px 16px 15px}
+  .ticker .lab{font-size:11px;color:var(--ink-faint);letter-spacing:.06em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+  .ticker .val{font-family:'IBM Plex Mono',monospace;font-size:21px;font-weight:600;margin-top:6px;line-height:1}
+  .ticker .sub{font-size:11.5px;color:var(--ink-dim);margin-top:6px}
+  .v-red{color:var(--red)} .v-amber{color:var(--amber)} .v-ink{color:var(--ink)}
+  @media(max-width:620px){.ticker{grid-template-columns:repeat(2,1fr)}}
+
+  /* bias note */
+  .bias{margin:38px 0 8px;background:linear-gradient(180deg,rgba(255,178,46,.07),rgba(255,178,46,.02));border:1px solid rgba(255,178,46,.28);border-left:3px solid var(--amber);border-radius:10px;padding:18px 20px}
+  .bias .tag{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--amber);text-transform:uppercase}
+  .bias p{margin-top:8px;font-size:15px;color:var(--ink);line-height:1.6}
+
+  /* ===== SECTIONS ===== */
+  section{padding-top:54px}
+  .kicker{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint)}
+  h2{font-weight:700;font-size:clamp(24px,4vw,34px);letter-spacing:-0.03em;margin:10px 0 22px;line-height:1.15}
+  h2 .accent{color:var(--red)}
+  p{font-size:15.5px;color:#d6d8e0}
+  p + p{margin-top:14px}
+  .lead{font-size:16.5px;color:var(--ink);margin-bottom:18px}
+
+  /* fact list */
+  .facts{list-style:none;display:flex;flex-direction:column;gap:14px;margin-top:6px}
+  .facts li{background:var(--surface);border:1px solid var(--line-soft);border-radius:10px;padding:16px 18px;position:relative}
+  .facts li b{color:#fff;font-weight:600}
+  .facts .hl{color:var(--red);font-family:'IBM Plex Mono',monospace;font-weight:600}
+  .facts .hl-a{color:var(--amber);font-family:'IBM Plex Mono',monospace;font-weight:600}
+  .facts .head{display:block;font-weight:600;color:#fff;font-size:15px;margin-bottom:5px;letter-spacing:-0.01em}
+  .facts .head .pin{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-faint);margin-right:8px}
+
+  /* scan box */
+  .scan{margin-top:22px;border:1px dashed var(--line);border-radius:10px;padding:16px 18px;background:rgba(116,166,255,.04)}
+  .scan .t{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--blue);text-transform:uppercase;margin-bottom:10px}
+  .scan .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 22px}
+  .scan .grid div{font-size:13.5px;color:var(--ink-dim)}
+  .scan .grid b{color:var(--ink);font-family:'IBM Plex Mono',monospace;font-weight:500}
+
+  /* ===== ROUNDTABLE ===== */
+  .scene{color:var(--ink-faint);font-style:normal;font-size:14px;margin-bottom:24px;font-family:'Gowun Batang',serif}
+  .voice{background:var(--surface);border:1px solid var(--line-soft);border-radius:12px;padding:20px 22px;margin-bottom:16px;border-left:4px solid var(--line);transition:transform .25s ease,border-color .25s ease}
+  .voice:hover{transform:translateX(3px)}
+  .voice .who{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .voice .name{font-weight:700;font-size:16.5px;letter-spacing:-0.01em}
+  .voice .role{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--ink-faint);text-transform:uppercase}
+  .voice .line{font-size:15px;color:#dadce4;line-height:1.65}
+  .voice .line b{color:#fff;font-weight:600}
+  .voice .mono{font-family:'IBM Plex Mono',monospace;font-weight:600}
+  /* stance colors */
+  .v-macro{border-left-color:var(--amber)} .v-macro .name{color:var(--amber)} .v-macro .mono{color:var(--amber)}
+  .v-ant{border-left-color:var(--green)} .v-ant .name{color:var(--green)} .v-ant .mono{color:var(--green)}
+  .v-cycle{border-left-color:var(--red)} .v-cycle .name{color:var(--red)} .v-cycle .mono{color:var(--red)}
+  .v-worst{border-left-color:var(--red-deep);background:linear-gradient(180deg,rgba(207,32,32,.08),rgba(207,32,32,.02))} .v-worst .name{color:#ff6b6b} .v-worst .mono{color:#ff6b6b}
+  .v-idle{border-left-color:var(--blue)} .v-idle .name{color:var(--blue)}
+  /* rebuttal */
+  .rebut{margin:-4px 0 16px 26px;background:var(--surface-2);border:1px solid var(--line-soft);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:14px 18px}
+  .rebut .who{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--amber);text-transform:uppercase;margin-bottom:7px}
+  .rebut .who::before{content:"↳ 즉시 반박  ";opacity:.7}
+  .rebut .line{font-size:14.5px;color:#d2d4dd;line-height:1.6}
+  .rebut .line b{color:#fff}
+
+  /* ===== MERGE / PULLQUOTE ===== */
+  .pull{margin:8px 0 10px;border:1px solid var(--line);border-radius:14px;padding:30px 30px;background:linear-gradient(135deg,rgba(255,77,77,.06),rgba(116,166,255,.04));position:relative}
+  .pull .mark{font-family:'Gowun Batang',serif;font-size:70px;line-height:.5;color:var(--red);opacity:.35;height:30px;display:block}
+  .pull q{font-family:'Gowun Batang',serif;font-size:clamp(19px,3vw,25px);line-height:1.55;color:#fff;quotes:none;display:block}
+  .pull q em{font-style:normal;color:var(--red)}
+  .pull q .des{color:var(--green)} .pull q .fear{color:var(--red)} .pull q .cond{color:var(--amber)}
+
+  /* rating */
+  .rate{margin-top:26px;background:var(--surface);border:1px solid var(--line-soft);border-radius:12px;padding:20px 22px}
+  .rate .top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .rate .q{font-weight:600;font-size:16px;color:#fff}
+  .stars{font-family:'IBM Plex Mono',monospace;font-size:22px;letter-spacing:3px}
+  .stars .on{color:var(--gold)} .stars .off{color:#3a3e4a}
+  .rate ol{margin:14px 0 0 0;padding-left:0;list-style:none;counter-reset:r;display:flex;flex-direction:column;gap:8px}
+  .rate ol li{counter-increment:r;padding-left:30px;position:relative;font-size:14.5px;color:#d2d4dd}
+  .rate ol li::before{content:counter(r);position:absolute;left:0;top:1px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--bg);background:var(--red);width:19px;height:19px;border-radius:5px;display:grid;place-items:center}
+  .rate .verdict{margin-top:14px;font-size:14.5px;color:var(--ink-dim);border-top:1px solid var(--line-soft);padding-top:13px}
+  .rate .verdict b{color:var(--amber)}
+
+  /* checklist */
+  .check{margin-top:24px}
+  .check .h{font-weight:600;font-size:16px;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+  .check .h .d{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--bg);background:var(--amber);padding:3px 8px;border-radius:5px;letter-spacing:.05em}
+  .check ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .check li{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--line-soft);border-radius:9px;padding:13px 16px;font-size:14.5px;color:#d6d8e0}
+  .check li .box{flex:none;width:17px;height:17px;border:1.5px solid var(--ink-faint);border-radius:4px;margin-top:3px}
+  .check li b{color:#fff;font-weight:600}
+  .check li .mono{font-family:'IBM Plex Mono',monospace;color:var(--amber);font-weight:500}
+
+  /* QA */
+  .qa{display:flex;flex-direction:column;gap:14px;margin-top:6px}
+  .qa .item{background:var(--surface);border:1px solid var(--line-soft);border-radius:12px;padding:18px 20px}
+  .qa .q{font-weight:600;font-size:15.5px;color:#fff;margin-bottom:9px;display:flex;gap:9px;align-items:baseline}
+  .qa .q .n{font-family:'IBM Plex Mono',monospace;color:var(--red);font-size:13px;flex:none}
+  .qa .a{font-size:14.8px;color:#d6d8e0;line-height:1.65}
+  .qa .a b{color:#fff}
+  .qa .a .x{color:var(--red);font-weight:600}
+  .qa .a .ok{color:var(--green);font-weight:600}
+
+  /* conclusion */
+  .concl{margin-top:8px;border:1px solid var(--line);border-left:4px solid var(--red);border-radius:12px;padding:24px 24px;background:var(--surface)}
+  .concl p{font-size:16px;color:#fff;line-height:1.6}
+  .concl p b{color:var(--red)}
+  .disc{margin-top:18px;font-size:13px;color:var(--ink-faint);line-height:1.6;border-top:1px dashed var(--line);padding-top:16px}
+  .disc b{color:var(--ink-dim)}
+
+  /* sources + footer */
+  .src{margin-top:48px;border-top:1px solid var(--line);padding-top:24px}
+  .src h3{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:12px}
+  .src ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+  .src li{font-size:13px;color:var(--ink-dim);font-family:'IBM Plex Mono',monospace;padding-left:16px;position:relative}
+  .src li::before{content:"·";position:absolute;left:2px;color:var(--red)}
+  .skill{margin-top:28px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-faint);line-height:1.9;border:1px solid var(--line-soft);border-radius:10px;padding:16px 18px;background:rgba(0,0,0,.25)}
+  .skill .die{color:var(--amber)}
+  .skill .strange{color:var(--blue)}
+  .skill b{color:var(--ink-dim);font-weight:500}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow rise" style="animation-delay:.02s">마켓 도시에 · 2026.06.06 (토) 작성</div>
+    <h1 class="rise" style="animation-delay:.08s">코스피, 6/8 월요일<br><span class="down">바닥이냐, 함정이냐</span></h1>
+    <p class="dek rise" style="animation-delay:.16s">“국민이 외국인 순매도를 다 받아내고 있으니 8,100이 바닥”이라는 전제를, 희망이 아니라 데이터로 해부한다.</p>
+
+    <svg class="spark rise" style="animation-delay:.22s" width="100%" height="62" viewBox="0 0 880 62" preserveAspectRatio="none" aria-hidden="true">
+      <polyline points="0,46 130,40 260,30 390,18 520,12 620,16 720,34 820,52 880,56"
+        fill="none" stroke="url(#g)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="520" cy="12" r="3" fill="#ffb22e"/>
+      <circle cx="820" cy="52" r="3.5" fill="#ff4d4d"/>
+      <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#37d39b" stop-opacity=".5"/>
+        <stop offset="0.6" stop-color="#ffb22e"/>
+        <stop offset="1" stop-color="#ff4d4d"/>
+      </linearGradient></defs>
+    </svg>
+
+    <div class="ticker rise" style="animation-delay:.28s">
+      <div class="cell"><div class="lab">KOSPI 6/5 종가</div><div class="val v-red">8,160.59</div><div class="sub">▼ 478.82 (−5.54%)</div></div>
+      <div class="cell"><div class="lab">원/달러 야간</div><div class="val v-amber">1,561.50</div><div class="sub">17년 만 최고</div></div>
+      <div class="cell"><div class="lab">외국인 순매도</div><div class="val v-ink">20<span style="font-size:13px;color:var(--ink-dim)">거래일</span></div><div class="sub">2020년 이후 최장</div></div>
+      <div class="cell"><div class="lab">분수령</div><div class="val v-red">D‑2</div><div class="sub">오라클 실적 6/10</div></div>
+    </div>
+
+    <div class="bias rise" style="animation-delay:.34s">
+      <span class="tag">🎲 노이저 · 편향감지 발동</span>
+      <p>네 질문은 답을 정해놓고 묻는 ‘결론유도형’이다. 그래서 이 리포트는 듣고 싶은 말을 확인해주지 않고, <b>전제부터 흔든다.</b> 톤은 가볍게, 내용은 안 가볍게.</p>
+    </div>
+  </header>
+
+  <section class="rise" style="animation-delay:.04s">
+    <div class="kicker">01 — Reality Check</div>
+    <h2>지금 진짜 <span class="accent">상황</span></h2>
+    <p class="lead">네가 “목금 떨어졌다”고 한 거, 정확히는 수~금 <b style="color:#fff">−7%대</b> 낙폭이다.</p>
+    <ul class="facts">
+      <li><span class="head"><span class="pin">PRICE</span>이미 깬 선이다</span>
+        수(6/3) <span class="num">8,801</span> → 목(6/4) <span class="num">8,639</span> → 금(6/5) <span class="hl">8,160.59 (−5.54%)</span>. 장중엔 한때 −6.26%까지 빠져 <span class="hl">8,098</span>, 딱 8,100을 깨고 사이드카까지 맞았다가 끌어올린 거다. <b>“8,100이 최저”는 금요일 장중에 이미 한 번 깨진 선</b> — 종가가 위에서 닫혔을 뿐.</li>
+      <li><span class="head"><span class="pin">FLOW</span>받아내기는 ‘진행 중인 싸움’</span>
+        목요일 외국인이 2시간 반 만에 <span class="hl">−4.45조</span> 던졌고, 개인 <span class="num" style="color:var(--green)">+3.81조</span>·기관 <span class="num">+5,387억</span>이 받았다. 외국인은 <b>20거래일 연속 순매도</b> — 코로나(2020) 이후 6년 만의 최장. 받아낸 건 맞지만, 이게 ‘바닥의 증거’는 아니다.</li>
+      <li><span class="head"><span class="pin">FX</span>진짜 폭탄은 환율</span>
+        금요일 장 마감 후 원달러가 야간에 1,550 뚫고 새벽 2시 <span class="hl-a">1,561.50원</span> — <b>금융위기(2009년) 이후 17년 만 최고.</b> 부총리 구두개입에도 뚫렸다. 그리고 <b>외인 이탈 → 원화 약세 → 다시 외인 매도</b>의 악순환. 외국인은 주식만 파는 게 아니라 <b>환차손까지 겹쳐서</b> 파는 거라, 환율이 안 잡히면 안 멈춘다.</li>
+    </ul>
+
+    <div class="scan">
+      <div class="t">상황 스캔 · pair-axis</div>
+      <div class="grid">
+        <div>유형 — <b>MARKET</b></div>
+        <div>충돌 — <b>동학개미 vs 외국인</b></div>
+        <div>스테이크 — <b>HIGH</b></div>
+        <div>시간축 — <b>IMMEDIATE</b></div>
+        <div style="grid-column:1/-1">핵심 변수 — <b>환율 + 6/10 오라클 실적</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">02 — Roundtable</div>
+    <h2>5명이 <span class="accent">싸운다</span></h2>
+    <p class="scene">“오를까 내릴까”에 한 줄로 답하는 순간 거짓말이다. 입장이 다른 다섯을 부른다. 토요일 밤, 환율 전광판만 켜진 빈 딜링룸이라 치자.</p>
+
+    <div class="voice v-macro">
+      <div class="who"><span class="name">환(換)부터 보는 매크로쟁이</span><span class="role">FX-first · 칼처럼</span></div>
+      <div class="line">“주식 바닥? 그 질문 자체가 틀렸어. 지금 운전대 잡은 건 코스피가 아니라 <b class="mono">원달러 1,561</b>이야. 환율이 1,600 가는 동안 주식 ‘지지선’ 긋는 건 모래 위에 금 긋는 거다. 외국인 20일 연속 매도는 한국 주식이 싫어서가 아니라 <b>원화가 녹고 있어서</b> 나가는 거고. 환율 안 잡히면 8,100이고 8,000이고 의미 없어.”</div>
+    </div>
+
+    <div class="voice v-ant">
+      <div class="who"><span class="name">동학개미 대장</span><span class="role">≈ 네가 던진 가설</span></div>
+      <div class="line">“무슨 소리야. 목요일 개인이 <b class="mono">3.8조</b> 받아냈어. 20일 동안 외국인 물량 다 소화하면서 지수 버텼잖아. 삼성·하이닉스 실적 멀쩡하고 AI 수요는 그대로인데 이건 차익실현 흔들기야. 8,100? 개인이 또 받아낸다. 외국인 팔 거 거의 다 팔았어.”</div>
+    </div>
+    <div class="rebut">
+      <div class="who">매크로쟁이</div>
+      <div class="line">“‘다 팔았다’는 걸 너가 어떻게 알아? <b>2020년에도 똑같이</b> ‘동학개미가 받아낸다’ 했는데, 외국인 30일 연속 매도 끝날 때까지 지수는 <b>먼저 박살난 다음에</b> 올랐어. 받아내기가 바닥을 만든 게 아니라, 바닥을 친 다음에 받아내기가 통한 거다. 순서가 반대야.”</div>
+    </div>
+
+    <div class="voice v-cycle">
+      <div class="who"><span class="name">반도체 사이클 회의론자</span><span class="role">데이터 던지는 타입</span></div>
+      <div class="line">“애초에 이 랠리가 건강했냐? <b>상장사 60%가 올해 마이너스</b>인 착취장세야. 삼성·하이닉스 두 종목이 지수를 끌고 온 거지. 반도체는 역사적으로 경기 순환업종이고, 일시적 호황을 영구 추세로 착각하면 안 돼. 브로드컴 실적 실망이 그 신호였고.”</div>
+    </div>
+
+    <div class="voice v-worst">
+      <div class="who"><span class="name">최악의 시나리오 담당</span><span class="role">차분하게 무섭게 · idea-forge 의무소환</span></div>
+      <div class="line">“이게 실패하면 <em>이렇게</em> 실패해. 월요일 개장하면 주말 동안 멈췄던 환율 변동분을 패시브·액티브 펀드가 한꺼번에 반영하며 <b>기계적으로 던진다</b>. 미래에셋은 아예 <b class="mono">‘떨어지는 칼날을 잡지 말라’</b>며 큰 폭 하락 출발을 경고했고, 시차상 <b>월요일 당일 반등은 어렵다</b>고 봤어. 거기에 <b>스페이스X IPO</b>가 750억달러(약 115조)를 빨아들이는데 외국인이 청약 자금 빼느라 향후 일주일 더 약세 가능. 좁은 시장 + 환율 + 유동성 블랙홀 셋이 동시에 터지면 <b>8,000도 못 지킬 수 있어.</b>”</div>
+    </div>
+
+    <div class="voice v-idle">
+      <div class="who"><span class="name">무관심한 사람</span><span class="role">먼 연결용 · 자꾸 빗나감</span></div>
+      <div class="line">“…다들 ‘월요일에 회복하냐’에 매달리는데, 솔직히 그게 도박꾼 질문 아냐? 8,100이 바닥인지 <em>맞히는</em> 건 코인 던지기야. 진짜 물어볼 건 ‘나는 8,100을 지킬 <b>이유</b>를 댈 수 있냐’인데, 위에서 나온 지지 근거가 죄다 ‘개인이 받아낼 거다’라는 <b>믿음</b> 하나뿐이잖아. 환율·수급·밸류에이션은 다 반대 방향을 가리키는데. 사고 싶으면 사. 근데 ‘바닥이라서’가 아니라 ‘이 변동성을 감당할 수 있어서’여야지.”</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">03 — Merge</div>
+    <h2>시장의 진짜 <span class="accent">목소리</span></h2>
+    <p>다섯을 평균 내지 않고 긴장을 살려서 합치면, 지금 시장이 실제로 하는 말은 이거다.</p>
+    <div class="pull">
+      <span class="mark">“</span>
+      <q>1년 동안 번 거 <span class="des">지키고 싶은데</span>, 환율이 17년 만에 무너지고 외국인이 20일째 안 멈춰서 <span class="fear">무섭고</span>, 그래서 미국이 AI 수요를 확인해주고 환율이 잡혀야 비로소 <span class="cond">들어간다.</span></q>
+    </div>
+
+    <div class="rate">
+      <div class="top">
+        <div class="q">“8,100 = 최저” 평가</div>
+        <div class="stars"><span class="on">★</span><span class="off">★★★★</span></div>
+      </div>
+      <ol>
+        <li>이미 금요일 장중에 깬 선이다 (<span class="num">8,098</span>)</li>
+        <li>주말 환율이 <b style="color:#fff">더</b> 나빠졌다 (1,550→1,561)</li>
+        <li>월요일 기계적(패시브·액티브) 매도가 예고됐다</li>
+        <li>‘받아내기 = 바닥’을 보장한 역사적 사례가 없다 (2020년은 더 내려간 뒤 받아냄)</li>
+      </ol>
+      <div class="verdict">바닥일 <b>수도</b> 있다. 단, 그건 <b>“국민이 받아내서”가 아니라 환율과 오라클이 받쳐줄 때</b> 성립한다.</div>
+    </div>
+
+    <div class="check">
+      <div class="h"><span class="d">월 6/8</span> 실제로 볼 것 · work director</div>
+      <ul>
+        <li><span class="box"></span><div>개장 <b>첫 30분</b> — 사이드카 또 터지나, 하락 출발 후 <b>낙폭을 줄이나 키우나</b> (줄이면 받아내기 작동, 키우면 기계적 매도 우위)</div></li>
+        <li><span class="box"></span><div>원달러 <span class="mono">1,550~1,561</span> 위쪽 — 더 뚫리면 주식 바닥 논의 무의미 / <span class="mono">1,520</span>대 내려오면 안도</div></li>
+        <li><span class="box"></span><div>외국인 순매도 <b>21일째 끊기나</b> — 끊기면 변곡점, 이어지면 추세 지속</div></li>
+        <li><span class="box"></span><div>한국이 아니라 <b>6/10 미국 오라클 실적</b> — 이게 진짜 분수령</div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">04 — Direct Answers</div>
+    <h2>네 질문 <span class="accent">3개 직답</span></h2>
+    <div class="qa">
+      <div class="item">
+        <div class="q"><span class="n">Q1</span>목금 떨어진 거 월요일에 회복할까?</div>
+        <div class="a">가장 최신(오늘 16:27) 증권가 view는 <b>“아니, 월요일은 더 하락 출발”</b>이 우세다. 당일 회복은 어렵다고 본다. 그 뒤 반등은 가능하지만, 그건 미국/환율에 달림.</div>
+      </div>
+      <div class="item">
+        <div class="q"><span class="n">Q2</span>8,100이 최저고 올라가지 않을까?</div>
+        <div class="a">솔직히 말하면 <span class="x">그 전제는 안 선다.</span> 이미 깬 선이고, 받아내기는 바닥의 증거가 아니라 진행 중인 싸움이다. <b>8,000도 시험대 위</b>에 있다고 보는 게 맞아.</div>
+      </div>
+      <div class="item">
+        <div class="q"><span class="n">Q3</span>전세계 전문가들은 어떻게 봐?</div>
+        <div class="a">두 갈래로 쪼개져 있다. <b class="ok">구조론자</b>(와튼 제러미 시걸): 지금의 AI 랠리는 과거 투기 거품과 달리 산업혁명급 생산성 잠재력 — 즉 조정은 건강한 숨고르기. vs <b class="x">피크아웃 회의론자</b>: 브로드컴 실망이 AI 투자 정점의 신호. 이 싸움의 <b>판정은 6/10 오라클 실적</b>이 한다 — 강한 수요 확인 시 ‘건강한 숨 고르기’, 기대 미달 시 AI 공급망 전반의 밸류에이션 재조정으로 번짐.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">05 — Bottom Line</div>
+    <h2>한 줄 <span class="accent">결론</span></h2>
+    <div class="concl">
+      <p>“국민이 받아내니까 8,100이 바닥”은 <b>동학개미 신앙</b>이고, 데이터(환율·수급·집중도)는 “월요일 더 내려가고 8,000도 안전하지 않다”를 가리킨다. 진짜 방향은 <b>6/8 개장 첫 30분의 환율·외국인</b>, 그리고 <b>6/10 오라클</b>이 정한다. 어느 쪽이 맞을지 맞히는 건 나도 못 하고, 맞힌다고 하는 사람도 못 한다.</p>
+      <div class="disc"><b>※ 이건 분석이지 투자 권유가 아니다.</b> 나는 투자자문사가 아니고, 사라/팔라 같은 말은 하지 않는다. 위 재료를 보고 판단·책임은 전적으로 너에게 있다. 시장 데이터는 작성 시점(2026.6.6) 기준이며 개장 후 바뀔 수 있다.</div>
+    </div>
+
+    <div class="src">
+      <h3>출처 (모두 요지만 재서술)</h3>
+      <ul>
+        <li>아이뉴스24 — 6/8 코스피 전망·환율·스페이스X·오라클·시걸 (2026.06.06)</li>
+        <li>파이낸셜뉴스 — 6/4 외국인 4.45조 순매도 / 6/5 사이드카·6.26% 급락 (2026.06)</li>
+        <li>Investing.com (kr) — 6/5 검은 금요일 8,160선 마감·원달러 1,539</li>
+        <li>Investing.com 분석 — 상장사 60% 하락 ‘착취장세’</li>
+        <li>나무위키 ‘코스피/역사/2026’ — 5월 랠리·반도체 수혜 흐름</li>
+        <li>Valley 예측시장 — 6월 8,500 상회 확률 58% (급락 전 심리 참고치)</li>
+      </ul>
+    </div>
+
+    <div class="skill">
+      <span class="die">🎲 노이저 L3</span> · 편향감지 발동(결론유도 질문) → 전제 반박 + 매크로쟁이 첫 문장 분기 · 앵커: 사실 왜곡 0, 면책 고정 · <b>분석 도메인 상한 L3 준수</b><br>
+      🃏 <b>idea-forge</b> · 5인 즉흥(매크로 / 동학개미 / 사이클회의론 / 최악담당 / 무관심) + 필수반박 + 최악담당 의무소환<br>
+      🧭 <b>pair-axis</b> · 상황스캔 → 병합(욕망·공포·조건) → work director(월요일 체크리스트)<br>
+      <span class="strange">✦ 이 세션의 이상한 순간</span> — 주제에 관심 없는 ‘무관심한 사람’이 제일 쓸모 있었다. “네 질문이 도박꾼 질문 아니냐”는 한마디가, 환율 분석보다 더 정확하게 네 전제를 찔렀음.
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
