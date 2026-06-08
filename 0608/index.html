@@ -1,0 +1,363 @@
+
+<h2 class="sr-only">검은 월요일 6월 8일 — 코스피 서킷브레이커 발동 후 전망 리포트: SK하이닉스·삼성전자·현대차·기아·네이버 종목별 하단·상단 분석</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-size:14px;line-height:1.4}
+.wrap{padding:.75rem 0 1.5rem}
+/* Header */
+.hdr{margin-bottom:14px}
+.hdr-band{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);border-radius:12px;padding:16px 18px;margin-bottom:10px;color:#fff}
+.hdr-title{font-size:20px;font-weight:500;margin-bottom:3px}
+.hdr-sub{font-size:12px;opacity:.7}
+.badge-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.bx{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px}
+.bx-red{background:#E24B4A;color:#fff}
+.bx-amb{background:#EF9F27;color:#fff}
+.bx-grn{background:#1D9E75;color:#fff}
+.bx-blue{background:#378ADD;color:#fff}
+/* Grid */
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:10px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+/* Cards */
+.card{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:12px;padding:13px 15px;margin-bottom:10px}
+.sm{background:var(--color-background-secondary);border-radius:8px;padding:9px 12px;margin-bottom:7px}
+/* Section */
+.sec{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:9px}
+/* Stats */
+.stat-b{background:var(--color-background-secondary);border-radius:8px;padding:9px 10px;text-align:center}
+.stat-lbl{font-size:10px;color:var(--color-text-tertiary);margin-bottom:2px}
+.stat-val{font-size:16px;font-weight:500}
+.stat-sub{font-size:10px;margin-top:1px}
+/* Colors */
+.dn{color:#E24B4A}.up{color:#1D9E75}.neu{color:var(--color-text-secondary)}
+.dn-bg{background:#FCEBEB;color:#791F1F}
+.up-bg{background:#EAF3DE;color:#27500A}
+.amb-bg{background:#FAEEDA;color:#633806}
+.blue-bg{background:#E6F1FB;color:#0C447C}
+/* Quote */
+.eq{border-left:3px solid var(--color-border-secondary);padding:6px 10px;border-radius:0 8px 8px 0;margin-bottom:7px;background:var(--color-background-secondary)}
+.eq-who{font-size:10px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:2px}
+.eq-txt{font-size:12px;color:var(--color-text-primary);line-height:1.5}
+/* Alert boxes */
+.alert-red{background:#FCEBEB;border-left:3px solid #E24B4A;border-radius:0 8px 8px 0;padding:8px 12px;font-size:12px;color:#791F1F;margin-bottom:8px}
+.alert-grn{background:#EAF3DE;border-left:3px solid #1D9E75;border-radius:0 8px 8px 0;padding:8px 12px;font-size:12px;color:#27500A;margin-bottom:8px}
+.alert-amb{background:#FAEEDA;border-left:3px solid #EF9F27;border-radius:0 8px 8px 0;padding:8px 12px;font-size:12px;color:#633806;margin-bottom:8px}
+/* Tabs */
+.tabs{display:flex;border-bottom:.5px solid var(--color-border-tertiary);margin-bottom:13px;gap:0;overflow-x:auto}
+.tab{padding:7px 13px;font-size:12px;color:var(--color-text-secondary);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.tab.on{color:var(--color-text-primary);font-weight:500;border-bottom-color:var(--color-text-primary)}
+.panel{display:none}.panel.on{display:block}
+/* Range bar */
+.rng-wrap{position:relative;margin:10px 0}
+.rng-track{height:6px;background:var(--color-background-tertiary);border-radius:3px}
+.rng-fill{position:absolute;top:0;height:6px;border-radius:3px}
+.rng-now{position:absolute;top:-4px;width:14px;height:14px;border-radius:50%;border:2.5px solid var(--color-background-primary);transform:translateX(-50%)}
+.rng-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--color-text-tertiary);margin-top:4px}
+/* Chip */
+.chip{display:inline-block;font-size:11px;padding:2px 7px;border-radius:4px;margin:2px}
+.c-up{background:#EAF3DE;color:#27500A}
+.c-dn{background:#FCEBEB;color:#791F1F}
+.c-neu{background:var(--color-background-tertiary);color:var(--color-text-secondary)}
+/* Stock header */
+.sh{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.si{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.sn{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.sc{font-size:11px;color:var(--color-text-tertiary)}
+/* divider */
+hr{border:none;border-top:.5px solid var(--color-border-tertiary);margin:9px 0}
+.note{background:var(--color-background-secondary);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--color-text-tertiary);line-height:1.65;margin-top:8px}
+</style>
+
+<div class="wrap">
+
+<!-- ===== HEADER ===== -->
+<div class="hdr-band">
+  <div class="hdr-title">⚡ 검은 월요일 — 코스피 서킷브레이커 발동</div>
+  <div class="hdr-sub">2026년 6월 8일 | 프리장 삼전 -11% · 서킷브레이커 발동 (7,400선) → 본장 낙폭 축소 (7,663~7,800선)</div>
+  <div class="badge-row">
+    <span class="bx bx-red">프리장 삼전 -11.2%</span>
+    <span class="bx bx-red">SK하이닉스 -9.7%</span>
+    <span class="bx bx-red">서킷브레이커 발동</span>
+    <span class="bx bx-amb">본장 낙폭 부분 회복</span>
+    <span class="bx bx-blue">이번주 코스피 7,500~8,300 예상</span>
+  </div>
+</div>
+
+<!-- ===== 오늘 현황 ===== -->
+<div class="g4" style="margin-bottom:10px">
+  <div class="stat-b"><div class="stat-lbl">프리장 저점 (삼전)</div><div class="stat-val dn">29만 2500원</div><div class="stat-sub dn">▼ 11.2%</div></div>
+  <div class="stat-b"><div class="stat-lbl">코스피 장 초반</div><div class="stat-val dn">7,442</div><div class="stat-sub dn">서킷브레이커 발동 (-8.8%)</div></div>
+  <div class="stat-b"><div class="stat-lbl">원달러 환율 (장중)</div><div class="stat-val dn">1,560원</div><div class="stat-sub dn">1998년 1분기 이후 최고</div></div>
+  <div class="stat-b"><div class="stat-lbl">이번 주 전문가 예상 범위</div><div class="stat-val neu">7,500~8,300</div><div class="stat-sub" style="color:#854F0B">NH투자 기준</div></div>
+</div>
+
+<!-- ===== 원인 ===== -->
+<div class="card">
+  <div class="sec">검은 월요일 원인 분석</div>
+  <div class="g2">
+    <div>
+      <div class="sm"><span style="font-size:11px;font-weight:500;color:#E24B4A">①</span> <span style="font-size:12px"><strong>브로드컴 쇼크 2탄</strong> — 필라델피아 반도체지수 -10.3% (2020년 3월 이후 최대 낙폭). AI칩 피크아웃 불안 확산.</span></div>
+      <div class="sm"><span style="font-size:11px;font-weight:500;color:#E24B4A">②</span> <span style="font-size:12px"><strong>미국 고용 쇼크</strong> — 5월 고용지표 예상보다 강해 금리 인상 재우려. 10년물 국채금리 급등.</span></div>
+      <div class="sm"><span style="font-size:11px;font-weight:500;color:#E24B4A">③</span> <span style="font-size:12px"><strong>원화 1,560원 돌파</strong> — 1998년 외환위기 이후 최고치. 외국인 추가 이탈 악순환.</span></div>
+    </div>
+    <div>
+      <div class="sm"><span style="font-size:11px;font-weight:500;color:#EF9F27">④</span> <span style="font-size:12px"><strong>스페이스X IPO (6/12)</strong> — 글로벌 기관의 포트폴리오 조정. 외국인 21거래일+ 연속 순매도.</span></div>
+      <div class="sm"><span style="font-size:11px;font-weight:500;color:#EF9F27">⑤</span> <span style="font-size:12px"><strong>서킷브레이커 발동</strong> — 코스피 -8% 이상, 20분간 거래 전면 중단. 올해 3번째.</span></div>
+      <div class="alert-grn" style="margin-bottom:0">🟢 <strong>본장 반등:</strong> 서킷브레이커 발동 후 개인 저가매수 유입. 전문가들 "펀더멘털 훼손 아님, 저가매수 기회" — 낙폭 일부 회복 (약 7,663~7,800 수준).</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 전문가 전체 전망 ===== -->
+<div class="card">
+  <div class="sec">전문가 향후 전망 — 국내외</div>
+  <div class="g2">
+    <div>
+      <div class="eq"><div class="eq-who">이경민 대신증권 연구원</div><div class="eq-txt">"코스피 7000~7500선에서 밸류에이션 매력 부각. 6월 중순 이후 2분기 실적 시즌 전개 시 강한 상승추세 재개될 것." <strong>→ 반등 신호 대기.</strong></div></div>
+      <div class="eq"><div class="eq-who">서상영 미래에셋증권 연구원</div><div class="eq-txt">"5월 CPI 발표(6/10)가 분수령. 물가 안정 시 → 반도체 반등 시도. 예상 초과 시 → 금리 부담 지속."</div></div>
+      <div class="eq"><div class="eq-who">NH투자증권 이상준 연구원</div><div class="eq-txt">"이번 주 코스피 예상 범위 7,500~8,300. AI 인프라 수요 훼손 없음. 스페이스X 상장 후 자금 재유입 기대."</div></div>
+      <div class="eq"><div class="eq-who">정 연구원 (이투데이)</div><div class="eq-txt">"스페이스X 상장·FOMC·독립기념일 전후 추가 변동성 요인. 아직 관망할 시점. 추가 20% 낙폭 가능성도 배제 불가."</div></div>
+    </div>
+    <div>
+      <div class="eq"><div class="eq-who">BNP파리바 소피 후인 (해외)</div><div class="eq-txt">"D램·낸드 판가 하반기 피크아웃 후 내년 초 하락 전환 전망. 중국 창신·양쯔 공급 확대 변수. 반도체 비중 축소 지속."</div></div>
+      <div class="eq"><div class="eq-who">이스트스프링 켄 웡 (홍콩)</div><div class="eq-txt">"아시아 반도체주 과열 구간. 반도체 비중 낮추고 전자부품·소재로 집중 이동 중. AI IPO 이후 수급 재편 주목."</div></div>
+      <div class="eq"><div class="eq-who">노무라증권 (해외)</div><div class="eq-txt">"삼성전자·SK하이닉스는 전통 경기민감주 아닌 구조적 성장주로 재평가돼야. TSMC PER 20배 수준 적용 가능 — 삼전 59만원·닉스 400만원 목표 유효."</div></div>
+      <div class="alert-amb" style="margin-bottom:0"><strong>핵심 분기점:</strong> 6/10 미국 CPI + 6/12 스페이스X 상장 + 6/12 FOMC. 이 3대 이벤트가 방향을 결정.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 종목별 탭 ===== -->
+<div class="tabs">
+  <div class="tab on" onclick="S('hynix')">💾 SK하이닉스</div>
+  <div class="tab" onclick="S('sam')">📱 삼성전자</div>
+  <div class="tab" onclick="S('hmc')">🚗 현대차</div>
+  <div class="tab" onclick="S('kia')">🚙 기아</div>
+  <div class="tab" onclick="S('naver')">🟢 네이버</div>
+</div>
+
+<!-- SK하이닉스 -->
+<div id="p-hynix" class="panel on">
+  <div class="card" style="margin-bottom:0">
+    <div class="sh">
+      <div class="si" style="background:#E1F5EE;color:#085041">닉스</div>
+      <div><div class="sn">SK하이닉스 <span style="font-size:11px;background:#FCEBEB;color:#791F1F;padding:2px 6px;border-radius:4px;margin-left:4px">오늘 ▼8~10%</span></div><div class="sc">000660 · 프리장 186만 8천원 → 본장 185만 5천원</div></div>
+    </div>
+    <div class="g2" style="margin-bottom:10px">
+      <div>
+        <div class="sec">주가 하단 ~ 상단 전망 (전문가)</div>
+        <div style="padding:4px 0">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:3px"><span>하단 (최저 목표)</span><span>상단 (최고 목표)</span></div>
+          <div class="rng-wrap">
+            <div class="rng-track"></div>
+            <div class="rng-fill" style="left:0;right:0;background:linear-gradient(90deg,#E24B4A,#1D9E75);opacity:.5"></div>
+            <div class="rng-now" style="left:27%;background:#EF9F27"></div>
+          </div>
+          <div class="rng-labels"><span class="dn">103만 (최저)</span><span style="color:#EF9F27">190만 현재</span><span class="up">400만 (노무라)</span></div>
+        </div>
+        <hr>
+        <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px">📊 증권사별 목표주가</div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">SK증권 한동희</span><span style="font-size:13px;font-weight:500;color:#0F6E56">300만원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">KB증권 김동원</span><span style="font-size:13px;font-weight:500;color:#0F6E56">280만원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">노무라 (해외)</span><span style="font-size:13px;font-weight:500;color:#185fa5">400만원 ↑</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">골드만삭스 (해외)</span><span style="font-size:13px;font-weight:500">180만원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">컨센서스 평균</span><span style="font-size:13px;font-weight:500">207만 6603원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">최저 (보수)</span><span style="font-size:13px;font-weight:500;color:#E24B4A">103만원</span></div>
+      </div>
+      <div>
+        <div class="sec">전문가 핵심 의견</div>
+        <div class="eq"><div class="eq-who">노무라증권 (2026.05.15) — 목표 400만원</div><div class="eq-txt">"TSMC PER 20배 수준 적용 마땅. 구조적 성장주 재평가. 2028년 영업이익 480조원 예상. 삼성전자와 함께 한국 대표 성장주 지위 확립."</div></div>
+        <div class="eq"><div class="eq-who">KB증권 김동원 본부장</div><div class="eq-txt">"올해 7번째 목표주가 상향. 2Q26 영업이익 67조원 어닝서프라이즈 예고. 선행 PER 4.8배 — AI 본편 아직 시작 안 했다."</div></div>
+        <div class="eq"><div class="eq-who">SK증권 한동희</div><div class="eq-txt">"2027년까지 HBM 공급 부족 지속. 2026년 영업이익 262조원. 오늘 급락은 스페이스X·환율 수급 요인 — 펀더멘털 무결."</div></div>
+        <div class="alert-grn">🔑 오늘 8일 SK하이닉스와 엔비디아가 글로벌 AI 팩토리 구축을 위한 차세대 메모리 공동개발 MOU 체결 발표 — 낙폭 완화 재료.</div>
+      </div>
+    </div>
+    <div><span class="chip c-up">HBM 점유율 62%</span><span class="chip c-up">엔비디아 MOU 6/8</span><span class="chip c-up">2Q OPM 70%+ 기대</span><span class="chip c-dn">원화 강세 리스크</span><span class="chip c-dn">스페이스X 수급 교란</span><span class="chip c-dn">BNP 피크아웃 우려</span></div>
+  </div>
+</div>
+
+<!-- 삼성전자 -->
+<div id="p-sam" class="panel">
+  <div class="card" style="margin-bottom:0">
+    <div class="sh">
+      <div class="si" style="background:#E6F1FB;color:#0C447C">삼전</div>
+      <div><div class="sn">삼성전자 <span style="font-size:11px;background:#FCEBEB;color:#791F1F;padding:2px 6px;border-radius:4px;margin-left:4px">오늘 ▼9.27%</span></div><div class="sc">005930 · 프리장 29만 2,500원 → 정규장 29만 8,500원</div></div>
+    </div>
+    <div class="g2" style="margin-bottom:10px">
+      <div>
+        <div class="sec">주가 하단 ~ 상단 전망</div>
+        <div style="padding:4px 0">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:3px"><span>하단</span><span>상단</span></div>
+          <div class="rng-wrap">
+            <div class="rng-track"></div>
+            <div class="rng-fill" style="left:0;right:0;background:linear-gradient(90deg,#E24B4A,#1D9E75);opacity:.5"></div>
+            <div class="rng-now" style="left:40%;background:#378ADD"></div>
+          </div>
+          <div class="rng-labels"><span class="dn">14만 (최저)</span><span style="color:#378ADD">30만 현재</span><span class="up">59만 (노무라)</span></div>
+        </div>
+        <hr>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">노무라 (최고, 해외)</span><span style="font-size:13px;font-weight:500;color:#185fa5">590,000원 ↑↑</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">SK증권 한동희</span><span style="font-size:13px;font-weight:500;color:#0F6E56">500,000원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">키움증권 박유악</span><span style="font-size:13px;font-weight:500">330,000원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">유진투자증권</span><span style="font-size:13px;font-weight:500">210,000원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">컨센서스 평균</span><span style="font-size:13px;font-weight:500">274,603원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">최저 (보수)</span><span style="font-size:13px;font-weight:500;color:#E24B4A">140,000원</span></div>
+      </div>
+      <div>
+        <div class="sec">전문가 핵심 의견</div>
+        <div class="eq"><div class="eq-who">노무라증권 — 목표 590,000원</div><div class="eq-txt">"TSMC PER 20배 적용 시 59만원 도달 가능. D램 구조적 성장주 재평가. 선행 PER 6배는 극도 저평가."</div></div>
+        <div class="eq"><div class="eq-who">키움증권 박유악 (5/11)</div><div class="eq-txt">"2026년 영업이익 100조원 달성 전망. 범용 D램·낸드 가격 상승이 파운드리 적자 손실도 상쇄. Top Pick 유지."</div></div>
+        <div class="eq"><div class="eq-who">이경민 대신증권</div><div class="eq-txt">"오늘 급락으로 30만원 초반 진입 — 절대 저가 매수 구간 진입. 6월 중순 어닝시즌 때 재평가 계기."</div></div>
+        <div class="alert-amb">⚠ 하나증권은 8일 삼성물산 목표주가 65만원으로 상향하며 "삼성그룹주 전반 밸류에이션 여전히 저렴"이라 진단 — 삼성전자 낙폭 과도 평가.</div>
+      </div>
+    </div>
+    <div><span class="chip c-up">HBM4E 세계 최초 출하</span><span class="chip c-up">2026 영업익 338조 전망</span><span class="chip c-up">ETF 수급 지지</span><span class="chip c-dn">HBM 닉스 열위</span><span class="chip c-dn">원화 강세</span><span class="chip c-dn">필라반 -10.3%</span></div>
+  </div>
+</div>
+
+<!-- 현대차 -->
+<div id="p-hmc" class="panel">
+  <div class="card" style="margin-bottom:0">
+    <div class="sh">
+      <div class="si" style="background:#FAEEDA;color:#633806">현차</div>
+      <div><div class="sn">현대자동차 <span style="font-size:11px;background:#FCEBEB;color:#791F1F;padding:2px 6px;border-radius:4px;margin-left:4px">오늘 ▼9.86%</span></div><div class="sc">005380 · 6/5 종가 683,000원 → 오늘 약 615,000원대</div></div>
+    </div>
+    <div class="g2" style="margin-bottom:10px">
+      <div>
+        <div class="sec">주가 하단 ~ 상단 전망</div>
+        <div style="padding:4px 0">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:3px"><span>하단</span><span>상단</span></div>
+          <div class="rng-wrap">
+            <div class="rng-track"></div>
+            <div class="rng-fill" style="left:0;right:0;background:linear-gradient(90deg,#E24B4A,#1D9E75);opacity:.5"></div>
+            <div class="rng-now" style="left:47%;background:#EF9F27"></div>
+          </div>
+          <div class="rng-labels"><span class="dn">50만 (최저)</span><span style="color:#EF9F27">62만 (현재)</span><span class="up">120만 (최고)</span></div>
+        </div>
+        <hr>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">유진투자증권 (최고)</span><span style="font-size:13px;font-weight:500;color:#185fa5">1,000,000원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">Investing.com 최고</span><span style="font-size:13px;font-weight:500;color:#0F6E56">1,200,000원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">한화투자증권</span><span style="font-size:13px;font-weight:500">660,000원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">컨센서스 평균</span><span style="font-size:13px;font-weight:500">717,142원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">최저 (Inv.com)</span><span style="font-size:13px;font-weight:500;color:#E24B4A">500,000원</span></div>
+      </div>
+      <div>
+        <div class="sec">전문가 핵심 의견</div>
+        <div class="eq"><div class="eq-who">증권사 9곳 공통 의견</div><div class="eq-txt">"1분기 영업이익 부진(-30.8%)은 관세·환율 일회성. 본질 체력 훼손 없음. 목표주가 64만~100만원. 하반기 SDV·로보틱스가 재평가 촉매."</div></div>
+        <div class="eq"><div class="eq-who">한화·SK증권</div><div class="eq-txt">"보스턴다이나믹스 IPO 모멘텀 + Waymo 로보택시 공급 + 아틀라스 RMAC 8월 가동. 오늘 급락은 시장 전반 공포 반응 — 현대차 본질과 무관."</div></div>
+        <div class="eq"><div class="eq-who">신한·iM증권</div><div class="eq-txt">"2026년 하반기 SDV 페이스카 도로 테스트, 3분기 RMAC 개소가 주가 재평가 실질 확인 시점. 실행력 확인 후 밸류에이션 프리미엄 지속."</div></div>
+        <div class="alert-grn">🔑 27명 애널리스트 전원 매수 의견 유지. 오늘 낙폭(약 -10%)은 시장 공포 전이 — 현대차 내재가치 변화 없음.</div>
+      </div>
+    </div>
+    <div><span class="chip c-up">보스턴다이나믹스 IPO</span><span class="chip c-up">Waymo 공급 임박</span><span class="chip c-up">PBR 0.9배 저평가</span><span class="chip c-dn">관세 영구비용 우려</span><span class="chip c-dn">환율 리스크</span><span class="chip c-dn">EV 전환 비용</span></div>
+  </div>
+</div>
+
+<!-- 기아 -->
+<div id="p-kia" class="panel">
+  <div class="card" style="margin-bottom:0">
+    <div class="sh">
+      <div class="si" style="background:#E1F5EE;color:#085041">기아</div>
+      <div><div class="sn">기아 <span style="font-size:11px;background:#FCEBEB;color:#791F1F;padding:2px 6px;border-radius:4px;margin-left:4px">오늘 동반 급락</span></div><div class="sc">000270 · 6/4 기준 168,800원 → 오늘 약 150,000원대 추정</div></div>
+    </div>
+    <div class="g2" style="margin-bottom:10px">
+      <div>
+        <div class="sec">주가 하단 ~ 상단 전망</div>
+        <div style="padding:4px 0">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:3px"><span>하단</span><span>상단</span></div>
+          <div class="rng-wrap">
+            <div class="rng-track"></div>
+            <div class="rng-fill" style="left:0;right:0;background:linear-gradient(90deg,#E24B4A,#1D9E75);opacity:.5"></div>
+            <div class="rng-now" style="left:34%;background:#1D9E75"></div>
+          </div>
+          <div class="rng-labels"><span class="dn">88,100 (52주 최저)</span><span style="color:#1D9E75">~16.8만 (최근)</span><span class="up">30만 (최고)</span></div>
+        </div>
+        <hr>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">Investing.com 최고</span><span style="font-size:13px;font-weight:500;color:#185fa5">300,000원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">한국투자증권 (4/10)</span><span style="font-size:13px;font-weight:500;color:#0F6E56">220,000원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">컨센서스 평균 (30명)</span><span style="font-size:13px;font-weight:500">227,833원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">보수적 분석</span><span style="font-size:13px;font-weight:500">165,000원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">최저 (Inv.com)</span><span style="font-size:13px;font-weight:500;color:#E24B4A">190,000원</span></div>
+      </div>
+      <div>
+        <div class="sec">전문가 핵심 의견</div>
+        <div class="eq"><div class="eq-who">한국투자증권 (2026.04.10)</div><div class="eq-txt">"목표 22만원 유지. 관세 7,550억원을 일시적 충격으로 보고 OPM 10% 회복 가정. 2030년 EV 100만대·HEV 110만대 삼각 성장 전략 유효."</div></div>
+        <div class="eq"><div class="eq-who">컨센서스 30명 (전원 매수)</div><div class="eq-txt">"평균 목표 22만 7833원. 52주 최고가 21만 2500원 이미 돌파 후 조정 중. +38.67% 상승 여력(현재가 기준)."</div></div>
+        <div class="eq"><div class="eq-who">보수적 분석 관점</div><div class="eq-txt">"관세를 영구 비용으로 볼 경우 Base 16만 5000원 적절. 관세 해소 시 22만원+ 상승 가능. 현 구간은 양쪽 시나리오 모두의 지지선."</div></div>
+        <div class="alert-amb">⚠ 현모비스 인도 타밀나두 공장 화재 — 현대차·기아 공급망 일시 차질 변수.</div>
+      </div>
+    </div>
+    <div><span class="chip c-up">30명 전원 매수</span><span class="chip c-up">EV+HEV 믹스 전환</span><span class="chip c-up">PBV 신사업</span><span class="chip c-dn">관세 영구비용 우려</span><span class="chip c-dn">공급망 화재</span><span class="chip c-dn">중국 EV 공세</span></div>
+  </div>
+</div>
+
+<!-- 네이버 -->
+<div id="p-naver" class="panel">
+  <div class="card" style="margin-bottom:0">
+    <div class="sh">
+      <div class="si" style="background:#EAF3DE;color:#27500A">NVR</div>
+      <div><div class="sn">NAVER <span style="font-size:11px;background:#EAF3DE;color:#27500A;padding:2px 6px;border-radius:4px;margin-left:4px">상대적 방어 양호</span></div><div class="sc">035420 · 6/8 현재 244,000원 (일간 238,500~261,000)</div></div>
+    </div>
+    <div class="g2" style="margin-bottom:10px">
+      <div>
+        <div class="sec">주가 하단 ~ 상단 전망</div>
+        <div style="padding:4px 0">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:3px"><span>하단</span><span>상단</span></div>
+          <div class="rng-wrap">
+            <div class="rng-track"></div>
+            <div class="rng-fill" style="left:0;right:0;background:linear-gradient(90deg,#E24B4A,#1D9E75);opacity:.5"></div>
+            <div class="rng-now" style="left:42%;background:#1D9E75"></div>
+          </div>
+          <div class="rng-labels"><span class="dn">19만 (52주 최저)</span><span style="color:#1D9E75">24.4만 현재</span><span class="up">35만 (최고)</span></div>
+        </div>
+        <hr>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">Investing.com 최고</span><span style="font-size:13px;font-weight:500;color:#185fa5">350,000원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">하나증권</span><span style="font-size:13px;font-weight:500;color:#0F6E56">350,000원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">유진투자증권</span><span style="font-size:13px;font-weight:500">340,000원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">컨센서스 평균 (23명)</span><span style="font-size:13px;font-weight:500">292,519원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">삼성증권 (보수적)</span><span style="font-size:13px;font-weight:500">260,000원</span></div>
+        <div class="sm" style="display:flex;justify-content:space-between"><span style="font-size:12px">최저 (Inv.com)</span><span style="font-size:13px;font-weight:500;color:#E24B4A">230,000원</span></div>
+      </div>
+      <div>
+        <div class="sec">전문가 핵심 의견</div>
+        <div class="eq"><div class="eq-who">하나증권 — 목표 350,000원</div><div class="eq-txt">"2026년 영업수익 13.1조원, 영업이익 2.5조원 전망. AI 브리핑·AI탭 광고 수익화 3~4분기 확정. 현재 PER 19배는 글로벌 동종 플랫폼 대비 저평가."</div></div>
+        <div class="eq"><div class="eq-who">유진투자증권 — 목표 340,000원</div><div class="eq-txt">"상반기 AI커머스 성장 + 하반기 두나무(업비트) 연결 편입. 현 주가 24만원 대비 +40% 상승 여력. AI수익화 속도가 핵심 변수."</div></div>
+        <div class="eq"><div class="eq-who">ValueDeepDive 분석</div><div class="eq-txt">"스마트스토어 거래액 +24%, 네플스 MAU 777만명. 쿠팡 개인정보 유출 이후 이탈 고객 흡수 중. '언젠가'가 '몇 월'로 바뀐 것이 핵심."</div></div>
+        <div class="alert-grn">🟢 오늘 검은 월요일에서 네이버는 반도체주 대비 상대적 방어력 양호 — 국방AI(K-팔란티어) 진출·두나무 편입 기대가 하방 지지.</div>
+      </div>
+    </div>
+    <div><span class="chip c-up">23명 전원 매수</span><span class="chip c-up">두나무 편입 9월</span><span class="chip c-up">AI커머스 30% 성장</span><span class="chip c-up">국방AI 진출</span><span class="chip c-dn">AI수익화 속도 불확실</span><span class="chip c-dn">라인야후 분리</span></div>
+  </div>
+</div>
+
+<!-- ===== 종합 결론 ===== -->
+<div class="card" style="border:.5px solid var(--color-border-secondary)">
+  <div class="sec">📋 종합 결론 — 지금 어떻게 해야 하나?</div>
+  <div class="g2">
+    <div>
+      <div class="alert-grn"><strong>긍정적 신호:</strong> 서킷브레이커 발동 후 본장에서 낙폭 일부 회복. 전문가 다수 "펀더멘털 훼손 없음 — 수급·기술적 과매도." 이경민 대신 "7000~7500선 밸류에이션 매력 부각." 오늘 SK하이닉스-엔비디아 AI 팩토리 MOU 체결 호재.</div>
+      <div class="alert-red" style="margin-bottom:0"><strong>위험 신호:</strong> 원화 1560원 — 1998년 이후 최고. 외국인 21거래일 연속 순매도. 스페이스X(6/12)·FOMC(6/12)·CPI(6/10) 3대 변수 대기. 정 연구원 "추가 20% 낙폭 가능성 배제 불가."</div>
+    </div>
+    <div>
+      <div class="alert-amb"><strong>핵심 변수:</strong> ① 6/10 미국 CPI — 안정 시 반도체 반등, 초과 시 추가 하락. ② 6/12 스페이스X 상장 후 자금 재유입 여부. ③ 6/12 FOMC 금리 동결 확인. ④ 원달러 환율 1550원 안정화 여부. 이 4개가 이번 주를 결정한다.</div>
+      <div style="font-size:11px;color:var(--color-text-tertiary);line-height:1.6;background:var(--color-background-secondary);padding:8px 12px;border-radius:8px">전문가 다수 의견 요약: 단기 변동성은 불가피하나 중장기 AI 수요와 실적 펀더멘털은 훼손되지 않았다. 분할 저가 매수 관점에서 접근하되 환율·금리 안정을 반드시 확인할 것.</div>
+    </div>
+  </div>
+</div>
+
+<div class="note">⚠ 본 리포트는 공개 언론보도·증권사 리포트 기반 정보 제공이며 투자 권유가 아닙니다. 주가는 변동성이 크며 투자 원금 손실 위험이 있습니다. 실제 투자 결정 전 반드시 전문 재무상담사와 상의하세요.</div>
+</div>
+
+<script>
+function S(id){
+  ['hynix','sam','hmc','kia','naver'].forEach(function(x){
+    document.getElementById('p-'+x).classList.remove('on');
+  });
+  document.getElementById('p-'+id).classList.add('on');
+  var tabs=document.querySelectorAll('.tab');
+  var idx={hynix:0,sam:1,hmc:2,kia:3,naver:4}[id];
+  tabs.forEach(function(t,i){t.classList.toggle('on',i===idx);});
+}
+</script>
