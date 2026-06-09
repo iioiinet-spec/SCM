@@ -1,0 +1,607 @@
+
+<h2 class="sr-only">2026년 6월 9일 코스피 반등·고변동성 구조 분석 및 5대 종목 최저·최고 목표주가 리포트</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-size:14px}
+.wrap{padding:.75rem 0 1.5rem}
+/* layout */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+/* card */
+.card{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.inner{background:var(--color-background-secondary);border-radius:8px;padding:9px 12px;margin-bottom:7px}
+/* header */
+.hero{border-radius:14px;padding:18px 20px;margin-bottom:14px;background:linear-gradient(135deg,#0d1b2a 0%,#1b263b 50%,#2d4263 100%);color:#fff}
+.hero-kpi{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.kpi{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px}
+/* sec title */
+.sec{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:9px}
+/* stat */
+.stat-b{background:var(--color-background-secondary);border-radius:8px;padding:9px 11px;text-align:center}
+.sl{font-size:10px;color:var(--color-text-tertiary);margin-bottom:2px}
+.sv{font-size:16px;font-weight:500}
+.ss{font-size:10px;margin-top:1px}
+/* colors */
+.up{color:#1D9E75}.dn{color:#E24B4A}.neu{color:var(--color-text-secondary)}
+/* quotes */
+.eq{border-left:3px solid var(--color-border-secondary);padding:6px 10px;border-radius:0 8px 8px 0;background:var(--color-background-secondary);margin-bottom:7px}
+.ew{font-size:10px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:2px}
+.et{font-size:12px;color:var(--color-text-primary);line-height:1.5}
+/* alerts */
+.a-r{background:#FCEBEB;border-left:3px solid #E24B4A;border-radius:0 8px 8px 0;padding:8px 12px;font-size:12px;color:#791F1F;margin-bottom:8px}
+.a-g{background:#EAF3DE;border-left:3px solid #1D9E75;border-radius:0 8px 8px 0;padding:8px 12px;font-size:12px;color:#27500A;margin-bottom:8px}
+.a-o{background:#FAEEDA;border-left:3px solid #EF9F27;border-radius:0 8px 8px 0;padding:8px 12px;font-size:12px;color:#633806;margin-bottom:8px}
+.a-b{background:#E6F1FB;border-left:3px solid #378ADD;border-radius:0 8px 8px 0;padding:8px 12px;font-size:12px;color:#0C447C;margin-bottom:8px}
+/* divider */
+hr{border:none;border-top:.5px solid var(--color-border-tertiary);margin:9px 0}
+/* tabs */
+.tabs{display:flex;border-bottom:.5px solid var(--color-border-tertiary);margin-bottom:13px;overflow-x:auto}
+.tab{padding:7px 14px;font-size:12px;color:var(--color-text-secondary);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px;white-space:nowrap;flex-shrink:0}
+.tab.on{color:var(--color-text-primary);font-weight:500;border-bottom-color:var(--color-text-primary)}
+.panel{display:none}.panel.on{display:block}
+/* range viz */
+.range-box{padding:12px 0 4px}
+.range-track{position:relative;height:10px;background:linear-gradient(90deg,#E24B4A 0%,#EF9F27 40%,#1D9E75 100%);border-radius:5px;margin:6px 0 4px}
+.range-now{position:absolute;top:-5px;width:20px;height:20px;border-radius:50%;border:3px solid var(--color-background-primary);box-shadow:0 1px 4px rgba(0,0,0,.25);transform:translateX(-50%)}
+.range-labels{display:flex;justify-content:space-between;font-size:10px;margin-top:2px}
+/* chip */
+.chip{display:inline-block;font-size:11px;padding:2px 7px;border-radius:4px;margin:2px}
+.cu{background:#EAF3DE;color:#27500A}
+.cd{background:#FCEBEB;color:#791F1F}
+.cn{background:var(--color-background-tertiary);color:var(--color-text-secondary)}
+/* stock card header */
+.sh{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.si{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+/* number highlight */
+.num-high{font-size:20px;font-weight:500}
+.note{background:var(--color-background-secondary);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--color-text-tertiary);line-height:1.65;margin-top:8px}
+/* volatility cause items */
+.cause{display:flex;gap:10px;padding:8px 0;border-bottom:.5px solid var(--color-border-tertiary)}
+.cause:last-child{border-bottom:none}
+.cause-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;margin-top:1px}
+.cause-txt{font-size:12px;color:var(--color-text-primary);line-height:1.5}
+.cause-lbl{font-size:10px;font-weight:500;color:var(--color-text-tertiary);margin-bottom:2px}
+</style>
+
+<div class="wrap">
+
+<!-- HERO -->
+<div class="hero">
+  <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;margin-bottom:4px">Market Report · 2026.06.09</div>
+  <div style="font-size:20px;font-weight:500;margin-bottom:3px">환율 구두개입 → 코스피 반등 +2.85%</div>
+  <div style="font-size:12px;opacity:.7">그런데 왜 이렇게 유동성이 심할까? + 5대 종목 최저·최고 전망</div>
+  <div class="hero-kpi">
+    <span class="kpi" style="background:#1D9E75">6/9 코스피 +2.85% (7,697)</span>
+    <span class="kpi" style="background:#EF9F27;color:#000">원달러 1,526원대 안정</span>
+    <span class="kpi" style="background:#E24B4A">6/8 종가 7,484 (▼8.3%)</span>
+    <span class="kpi" style="background:rgba(255,255,255,.2)">SK증권 연말 목표 9,900pt</span>
+  </div>
+</div>
+
+<!-- TODAY STAT -->
+<div class="g4" style="margin-bottom:10px">
+  <div class="stat-b"><div class="sl">6/9 개장가</div><div class="sv up">7,697</div><div class="ss up">▲ +2.85% 반등 성공</div></div>
+  <div class="stat-b"><div class="sl">원달러 현재</div><div class="sv" style="color:#EF9F27">1,526원</div><div class="ss" style="color:#633806">구두개입 효과 (1,562 → 1,526)</div></div>
+  <div class="stat-b"><div class="sl">6/8 서킷브레이커</div><div class="sv dn">7,442</div><div class="ss dn">올해 3번째 발동</div></div>
+  <div class="stat-b"><div class="sl">SK증권 코스피 연말</div><div class="sv up">9,900</div><div class="ss" style="color:var(--color-text-secondary)">하반기 밴드 6,500~11,000</div></div>
+</div>
+
+<!-- WHY VOLATILE -->
+<div class="card">
+  <div class="sec">왜 이렇게 변동성이 심한가? — 구조적 원인 7가지 분석</div>
+  <div class="g2">
+    <div>
+      <div class="cause">
+        <div class="cause-num" style="background:#FCEBEB;color:#791F1F">①</div>
+        <div>
+          <div class="cause-lbl">삼전·닉스 시총 집중도 50% 초과</div>
+          <div class="cause-txt">삼성전자·SK하이닉스 2종목이 코스피 시총의 절반 차지. 두 종목이 흔들리면 지수 전체가 흔들리는 구조. <strong>"종목 분산효과 사실상 소멸"</strong> (SK증권 강·조 연구원)</div>
+        </div>
+      </div>
+      <div class="cause">
+        <div class="cause-num" style="background:#FCEBEB;color:#791F1F">②</div>
+        <div>
+          <div class="cause-lbl">단일종목 레버리지 ETF 5/27 상장 — 일간 리밸런싱</div>
+          <div class="cause-txt">삼전·닉스 ±2배 ETF 첫날 10조원 이상 몰림. 매일 장 마감 무렵 2배 배율 유지를 위해 강제 리밸런싱 → <strong>종가 변동성 구조적 확대.</strong> 홍콩 하이닉스 2x 상품 리밸런싱이 국내 거래량의 최대 60%까지 점유한 사례 있음.</div>
+        </div>
+      </div>
+      <div class="cause">
+        <div class="cause-num" style="background:#FAEEDA;color:#633806">③</div>
+        <div>
+          <div class="cause-lbl">ETF 시장 1년 만에 200조→500조 폭발 성장</div>
+          <div class="cause-txt">2025년 6월 200조 → 2026년 5월 500조원(1년 만에 2.5배). 레버리지·인버스 ETF AUM 비중이 미국의 1.5~3배 수준. <strong>"가격이 가격을 만드는 장세"</strong> 형성.</div>
+        </div>
+      </div>
+      <div class="cause">
+        <div class="cause-num" style="background:#FAEEDA;color:#633806">④</div>
+        <div>
+          <div class="cause-lbl">상승장인데 변동성은 높아지는 역설</div>
+          <div class="cause-txt">예상변동성(IV)·실현변동성(RV) 동시 상승. 변동성 위험 프리미엄(VRP) 표준편차 확대. SK증권: <strong>"과거 '오르면 변동성 낮아지는 공식' 더 이상 작동 안 함."</strong></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="cause">
+        <div class="cause-num" style="background:#E6F1FB;color:#0C447C">⑤</div>
+        <div>
+          <div class="cause-lbl">외국인 기계적 비중 조정 — 코스피 급등의 역설</div>
+          <div class="cause-txt">코스피 90% 급등 → 외국인 포트폴리오 內 한국 비중 자동 과다 → <strong>글로벌 쿼트 리밸런싱 프로그램에 의한 기계적 매도.</strong> 스페이스X·알파벳 IPO 자금 마련 겹침.</div>
+        </div>
+      </div>
+      <div class="cause">
+        <div class="cause-num" style="background:#E6F1FB;color:#0C447C">⑥</div>
+        <div>
+          <div class="cause-lbl">환율 연동 악순환</div>
+          <div class="cause-txt">외국인 매도 → 원화 약세 → 추가 외국인 이탈 → 원화 추가 약세. 어제 장중 원/달러 1,562원으로 1998년 이후 최고치. 오늘 구두개입으로 1,526원 회복 — <strong>환율 안정이 증시 안정의 선결 조건.</strong></div>
+        </div>
+      </div>
+      <div class="cause">
+        <div class="cause-num" style="background:#EEEDFE;color:#3C3489">⑦</div>
+        <div>
+          <div class="cause-lbl">AI·반도체 피크아웃 공포 vs 구조적 성장 논쟁</div>
+          <div class="cause-txt">브로드컴 가이던스 실망 때마다 "AI 투자 정점 통과?" 공포 재점화. 그러나 <strong>UBS·노무라: "메모리 사이클 장기화 → 구조적 성장주 재평가."</strong> 논쟁 자체가 변동성 증폭기.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="a-o" style="margin-top:6px;margin-bottom:0"><strong>SK증권 결론:</strong> "강세장·약세장 모두 고변동성 고착화. 박스권 진입만이 변동성 진정의 유일 경로. 하반기에도 방향성과 무관한 고변동성 장세 지속." 코스피 연말 타겟 9,900, 하반기 밴드 6,500~11,000pt.</div>
+</div>
+
+<!-- STOCK TABS -->
+<div class="tabs">
+  <div class="tab on" onclick="T('hynix')">💾 SK하이닉스</div>
+  <div class="tab" onclick="T('sam')">📱 삼성전자</div>
+  <div class="tab" onclick="T('hmc')">🚗 현대차</div>
+  <div class="tab" onclick="T('kia')">🚙 기아</div>
+  <div class="tab" onclick="T('naver')">🟢 네이버</div>
+</div>
+
+<!-- ===== SK하이닉스 ===== -->
+<div id="p-hynix" class="panel on">
+<div class="card">
+  <div class="sh">
+    <div class="si" style="background:#E1F5EE;color:#085041">닉스</div>
+    <div>
+      <div style="font-size:14px;font-weight:500">SK하이닉스 <span style="font-size:11px;background:#EAF3DE;color:#27500A;padding:2px 7px;border-radius:4px;margin-left:4px">6/9 반등 +4%↑ 예상</span></div>
+      <div style="font-size:11px;color:var(--color-text-tertiary)">000660 · 6/8 종가 1,904,000원 · 52주 범위 227,500~2,407,000</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div>
+      <div class="sec">전문가 최저~최고 목표주가 스펙트럼</div>
+
+      <div class="range-box">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:4px">
+          <span class="dn">최저 103만</span><span style="color:#EF9F27">현재 ~190만</span><span class="up">최고 400만</span>
+        </div>
+        <div class="range-track">
+          <div class="range-now" style="left:35%;background:#EF9F27"></div>
+        </div>
+        <div class="range-labels">
+          <span class="dn">보수</span><span>컨센서스 207만</span><span class="up">노무라</span>
+        </div>
+      </div>
+      <hr>
+
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">🌍 노무라 (해외 최고)</span>
+          <span class="num-high" style="color:#0F6E56">4,000,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">SK증권 한동희</span>
+          <span style="font-size:16px;font-weight:500;color:#1D9E75">3,000,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">KB증권 김동원</span>
+          <span style="font-size:16px;font-weight:500;color:#1D9E75">2,800,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">🌍 골드만삭스 (해외)</span>
+          <span style="font-size:16px;font-weight:500">1,800,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner" style="background:#EAF3DE">
+          <span style="font-size:12px">📊 38인 컨센서스 평균</span>
+          <span style="font-size:16px;font-weight:500;color:#378ADD">2,076,603원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">최저 (보수 하단)</span>
+          <span style="font-size:16px;font-weight:500;color:#E24B4A">1,030,000원</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sec">핵심 전문가 의견</div>
+      <div class="eq">
+        <div class="ew">노무라증권 (5/15) — 목표 400만원 (최초)</div>
+        <div class="et">"TSMC PER 20배 수준 적용 마땅. 더 이상 전통 경기민감주가 아니라 구조적 성장주. 2028년 영업이익 480조원 전망. 삼성·하이닉스 업종 역사상 최초로 TSMC급 밸류에이션 부여 가능."</div>
+      </div>
+      <div class="eq">
+        <div class="ew">KB증권 김동원 (5/12) — 목표 280만원</div>
+        <div class="et">"올해 7번째 목표주가 상향. 2Q26 영업이익 67조원 어닝서프라이즈 예고. 선행 PER 4.8배. 'AI 본편은 아직 시작조차 하지 않았다.' — 6월 조정은 저가 매수 기회."</div>
+      </div>
+      <div class="eq">
+        <div class="ew">6/8 엔비디아 MOU — 호재</div>
+        <div class="et">SK하이닉스·엔비디아 글로벌 AI 팩토리 구축을 위한 차세대 메모리 공동 개발 MOU 체결. 어제 급락 속 호재 발표 → 오늘 반등 촉매.</div>
+      </div>
+      <div class="a-g" style="margin-bottom:0">📌 <strong>상승 시나리오:</strong> 2Q 실적(6월 말) 어닝서프라이즈 확인 → 300만원 수렴. FOMC 금리 동결 + CPI 안정 시 연내 외국인 재유입 가능.</div>
+    </div>
+  </div>
+  <div style="margin-top:6px">
+    <span class="chip cu">HBM 점유율 62%</span><span class="chip cu">엔비디아 MOU</span><span class="chip cu">OPM 72% 역대최고</span><span class="chip cu">38명 전원 매수</span>
+    <span class="chip cd">원화강세 리스크</span><span class="chip cd">BNP 피크아웃 경고</span><span class="chip cd">레버리지 변동성</span>
+  </div>
+</div>
+</div>
+
+<!-- ===== 삼성전자 ===== -->
+<div id="p-sam" class="panel">
+<div class="card">
+  <div class="sh">
+    <div class="si" style="background:#E6F1FB;color:#0C447C">삼전</div>
+    <div>
+      <div style="font-size:14px;font-weight:500">삼성전자 <span style="font-size:11px;background:#EAF3DE;color:#27500A;padding:2px 7px;border-radius:4px;margin-left:4px">6/9 반등 중</span></div>
+      <div style="font-size:11px;color:var(--color-text-tertiary)">005930 · 6/8 저점 292,500원 · 52주 범위 53,700~340,000</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div>
+      <div class="sec">전문가 최저~최고 목표주가 스펙트럼</div>
+      <div class="range-box">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:4px">
+          <span class="dn">최저 14만</span><span style="color:#EF9F27">현재 ~32만</span><span class="up">최고 59만</span>
+        </div>
+        <div class="range-track">
+          <div class="range-now" style="left:40%;background:#378ADD"></div>
+        </div>
+        <div class="range-labels"><span class="dn">하나증권</span><span>컨센서스 27.5만</span><span class="up">노무라</span></div>
+      </div>
+      <hr>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">🌍 노무라 (5/15, 해외 최고)</span>
+          <span class="num-high" style="color:#0F6E56">590,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">SK증권 한동희 (5/7)</span>
+          <span style="font-size:16px;font-weight:500;color:#1D9E75">500,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">키움 박유악 (5/11)</span>
+          <span style="font-size:16px;font-weight:500">330,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">📊 37인 컨센서스 평균</span>
+          <span style="font-size:16px;font-weight:500;color:#378ADD">274,603원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">유진투자증권</span>
+          <span style="font-size:16px;font-weight:500">210,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">최저 (하나 12월)</span>
+          <span style="font-size:16px;font-weight:500;color:#E24B4A">140,000원</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="sec">핵심 전문가 의견</div>
+      <div class="eq">
+        <div class="ew">노무라 (5/15) — 목표 590,000원</div>
+        <div class="et">"삼성·하이닉스를 TSMC와 동일 밸류에이션 기준으로 재평가. 현재 선행 PER 6배는 극도 저평가. D램이 구조적 성장산업으로 전환 확인됨."</div>
+      </div>
+      <div class="eq">
+        <div class="ew">SK증권 한동희 (5/7) — 목표 500,000원</div>
+        <div class="et">"2026년 영업이익 338조원, 2027년 494조원 전망. HBM4E 세계 최초 샘플 출하 확인. LTA 체결로 실적 안정성 구조적 개선."</div>
+      </div>
+      <div class="eq">
+        <div class="ew">대신증권 이경민</div>
+        <div class="et">"오늘(6/8) 급락으로 29~30만원대 진입 — 절대적 저가 매수 구간. 6월 중순 어닝시즌 돌입 시 강한 반등 재개될 것."</div>
+      </div>
+      <div class="a-o" style="margin-bottom:0">⚡ <strong>주목:</strong> 6/9 개장 시 30만원 초반 복귀 여부가 단기 심리 전환점. 컨센서스(27만) 이미 하회 → 분할매수 유효 구간 진입.</div>
+    </div>
+  </div>
+  <div style="margin-top:6px">
+    <span class="chip cu">HBM4E 세계최초 출하</span><span class="chip cu">2026 영업익 338조</span><span class="chip cu">36명 매수 / 1명 매도</span>
+    <span class="chip cd">HBM 닉스 열위</span><span class="chip cd">레버리지 변동성 과대</span>
+  </div>
+</div>
+</div>
+
+<!-- ===== 현대차 ===== -->
+<div id="p-hmc" class="panel">
+<div class="card">
+  <div class="sh">
+    <div class="si" style="background:#FAEEDA;color:#633806">현차</div>
+    <div>
+      <div style="font-size:14px;font-weight:500">현대자동차 <span style="font-size:11px;background:#FAEEDA;color:#633806;padding:2px 7px;border-radius:4px;margin-left:4px">컨센서스 대비 저평가</span></div>
+      <div style="font-size:11px;color:var(--color-text-tertiary)">005380 · 6/5 종가 683,000 · 52주 범위 192,300~783,000</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div>
+      <div class="sec">전문가 최저~최고 목표주가</div>
+      <div class="range-box">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:4px">
+          <span class="dn">최저 50만</span><span style="color:#EF9F27">현재 ~62만</span><span class="up">최고 120만</span>
+        </div>
+        <div class="range-track">
+          <div class="range-now" style="left:50%;background:#EF9F27"></div>
+        </div>
+        <div class="range-labels"><span class="dn">하단</span><span>컨센 71.7만</span><span class="up">Inv.최고</span></div>
+      </div>
+      <hr>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">🌍 Investing.com 최고</span>
+          <span class="num-high" style="color:#0F6E56">1,200,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">유진투자증권 (최고)</span>
+          <span style="font-size:16px;font-weight:500;color:#1D9E75">1,000,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">한화투자증권 (4/7)</span>
+          <span style="font-size:16px;font-weight:500">660,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">📊 27인 컨센서스 평균</span>
+          <span style="font-size:16px;font-weight:500;color:#378ADD">717,142원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">SK증권 (4/3)</span>
+          <span style="font-size:16px;font-weight:500">630,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">최저 (Inv.com 하단)</span>
+          <span style="font-size:16px;font-weight:500;color:#E24B4A">500,000원</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="sec">핵심 전문가 의견</div>
+      <div class="eq">
+        <div class="ew">증권사 9곳 공통 (5월~6월)</div>
+        <div class="et">"1분기 영업이익 -30.8%는 관세·환율 일회성. 현대차 본질 체력 훼손 없음. 하반기 SDV 페이스카·RMAC 가동·아틀라스 양산이 주가 재평가 실질 촉매."</div>
+      </div>
+      <div class="eq">
+        <div class="ew">한화투자증권 · 목표 660,000원</div>
+        <div class="et">"보스턴다이나믹스 지분가치 주당 196,468원 별도 반영. IPO 시 현대차 27.9% 지분가치 145조원. Waymo 로보택시 공급 임박."</div>
+      </div>
+      <div class="eq">
+        <div class="ew">신한·iM증권</div>
+        <div class="et">"3분기 RMAC 개소, 보스턴다이나믹스 아틀라스 양산 준비 확인 시 밸류에이션 프리미엄 지속 가능. 실행력 확인 필요."</div>
+      </div>
+      <div class="a-g" style="margin-bottom:0">📌 현재 주가 ~62만원은 컨센서스(71.7만) 대비 약 -13% 할인. 오늘 반등 시 단기 지지 구간(65~70만원) 복귀 가능.</div>
+    </div>
+  </div>
+  <div style="margin-top:6px">
+    <span class="chip cu">27명 전원 매수</span><span class="chip cu">BD IPO 모멘텀</span><span class="chip cu">PBR 0.9배 저평가</span>
+    <span class="chip cd">관세 리스크</span><span class="chip cd">EV 전환 비용</span>
+  </div>
+</div>
+</div>
+
+<!-- ===== 기아 ===== -->
+<div id="p-kia" class="panel">
+<div class="card">
+  <div class="sh">
+    <div class="si" style="background:#E1F5EE;color:#085041">기아</div>
+    <div>
+      <div style="font-size:14px;font-weight:500">기아 <span style="font-size:11px;background:#EAF3DE;color:#27500A;padding:2px 7px;border-radius:4px;margin-left:4px">30명 전원 매수</span></div>
+      <div style="font-size:11px;color:var(--color-text-tertiary)">000270 · 6/4 기준 168,800원 · 52주 범위 88,100~212,500</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div>
+      <div class="sec">전문가 최저~최고 목표주가</div>
+      <div class="range-box">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:4px">
+          <span class="dn">최저 19만</span><span style="color:#EF9F27">현재 ~15만대</span><span class="up">최고 30만</span>
+        </div>
+        <div class="range-track">
+          <div class="range-now" style="left:33%;background:#1D9E75"></div>
+        </div>
+        <div class="range-labels"><span class="dn">하단</span><span>컨센 22.8만</span><span class="up">상단</span></div>
+      </div>
+      <hr>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">🌍 Investing.com 최고</span>
+          <span class="num-high" style="color:#0F6E56">300,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">한국투자증권 (4/10)</span>
+          <span style="font-size:16px;font-weight:500;color:#1D9E75">220,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">📊 30인 컨센서스 평균</span>
+          <span style="font-size:16px;font-weight:500;color:#378ADD">227,833원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">보수적 분석 (관세 영구비용)</span>
+          <span style="font-size:16px;font-weight:500">165,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">최저 (Inv.com)</span>
+          <span style="font-size:16px;font-weight:500;color:#E24B4A">190,000원</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="sec">핵심 전문가 의견</div>
+      <div class="eq">
+        <div class="ew">한국투자증권 (4/10) — 목표 22만원</div>
+        <div class="et">"관세 7,550억원은 일시적 충격으로 판단. OPM 10% 회복 가정. 2030년 EV 100만대·HEV 110만대·PBV 23만대 삼각 성장 전략 유효."</div>
+      </div>
+      <div class="eq">
+        <div class="ew">보수적 시각 (자체 분석)</div>
+        <div class="et">"관세를 영구비용으로 볼 경우 OPM 7~8% 박스권 → Base 16만 5천원. 관세 해소 확인 시점까지 22만원 Full 반영 어렵다."</div>
+      </div>
+      <div class="eq">
+        <div class="ew">컨센서스 30명 전원 매수</div>
+        <div class="et">"+38.67% 상승 여력(6/4 기준). 현재 주가 급락 구간은 EV+HEV 전환 기대 대비 과도한 조정. 분할매수 유효."</div>
+      </div>
+      <div class="a-b" style="margin-bottom:0">📌 현재 6/8 이후 주가 ~15만원대 추정 시 컨센서스(22.8만) 대비 약 -34% 할인 — 가장 큰 상승 여력 보유 구간.</div>
+    </div>
+  </div>
+  <div style="margin-top:6px">
+    <span class="chip cu">30명 전원 매수</span><span class="chip cu">EV+HEV 성장</span><span class="chip cu">PBV 신사업</span>
+    <span class="chip cd">관세 영구비용 논쟁</span><span class="chip cd">중국 EV 공세</span>
+  </div>
+</div>
+</div>
+
+<!-- ===== 네이버 ===== -->
+<div id="p-naver" class="panel">
+<div class="card">
+  <div class="sh">
+    <div class="si" style="background:#EAF3DE;color:#27500A">NVR</div>
+    <div>
+      <div style="font-size:14px;font-weight:500">NAVER <span style="font-size:11px;background:#EAF3DE;color:#27500A;padding:2px 7px;border-radius:4px;margin-left:4px">반도체 대비 방어력 양호</span></div>
+      <div style="font-size:11px;color:var(--color-text-tertiary)">035420 · 6/8 244,000원 · 52주 범위 190,800~304,000</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div>
+      <div class="sec">전문가 최저~최고 목표주가</div>
+      <div class="range-box">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:4px">
+          <span class="dn">최저 23만</span><span style="color:#1D9E75">현재 24.4만</span><span class="up">최고 35만</span>
+        </div>
+        <div class="range-track">
+          <div class="range-now" style="left:42%;background:#1D9E75"></div>
+        </div>
+        <div class="range-labels"><span class="dn">Inv.최저</span><span>컨센 29.3만</span><span class="up">하나·Inv.최고</span></div>
+      </div>
+      <hr>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">🌍 Inv.com / 하나증권 최고</span>
+          <span class="num-high" style="color:#0F6E56">350,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">유진투자증권</span>
+          <span style="font-size:16px;font-weight:500;color:#1D9E75">340,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">📊 23인 컨센서스 평균</span>
+          <span style="font-size:16px;font-weight:500;color:#378ADD">292,519원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">삼성증권 (보수적)</span>
+          <span style="font-size:16px;font-weight:500">260,000원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center" class="inner">
+          <span style="font-size:12px">최저 (Inv.com 하단)</span>
+          <span style="font-size:16px;font-weight:500;color:#E24B4A">230,000원</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="sec">핵심 전문가 의견</div>
+      <div class="eq">
+        <div class="ew">하나증권 — 목표 350,000원</div>
+        <div class="et">"2026년 영업이익 2조 5천억원 전망. AI 브리핑·AI탭 광고 수익화 3~4분기 확정. 두나무(업비트) 연결 편입 9월 가시권. 현재 PER 19배는 글로벌 동종 대비 저평가."</div>
+      </div>
+      <div class="eq">
+        <div class="ew">유진투자증권 — 목표 340,000원</div>
+        <div class="et">"AI커머스 20~30% 성장 영역. 쿠팡 개인정보 유출 이후 이탈 고객 흡수 중. 네플스 MAU 777만명. '언젠가'가 '몇 월'로 바뀐 것이 핵심 모멘텀."</div>
+      </div>
+      <div class="eq">
+        <div class="ew">차영주 소장 (YTN 방송)</div>
+        <div class="et">"코스피 '1만스피' 충분히 가능. 시간의 문제. 네이버는 AI 기업으로 재평가 시작 시 PER 리레이팅 최대 수혜 — 올 연말~내년 상반기 구간 주목."</div>
+      </div>
+      <div class="a-g" style="margin-bottom:0">📌 6/8 검은 월요일에도 238,500~261,000원 방어. 반도체 공포 이탈 자금의 AI 플랫폼 재배치 수요 주목. 현재가 컨센서스(29.3만) 대비 -17% 할인.</div>
+    </div>
+  </div>
+  <div style="margin-top:6px">
+    <span class="chip cu">23명 전원 매수</span><span class="chip cu">두나무 편입 9월</span><span class="chip cu">AI커머스 성장</span><span class="chip cu">국방AI 진출</span>
+    <span class="chip cd">AI수익화 속도 불확실</span><span class="chip cd">라인야후 분리</span>
+  </div>
+</div>
+</div>
+
+<!-- SUMMARY TABLE -->
+<div class="card">
+  <div class="sec">5대 종목 목표주가 한눈에 비교</div>
+  <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="border-bottom:.5px solid var(--color-border-tertiary)">
+          <th style="text-align:left;padding:6px 8px;color:var(--color-text-tertiary);font-weight:500">종목</th>
+          <th style="text-align:right;padding:6px 8px;color:#E24B4A;font-weight:500">최저 목표</th>
+          <th style="text-align:right;padding:6px 8px;color:#378ADD;font-weight:500">컨센서스</th>
+          <th style="text-align:right;padding:6px 8px;color:#1D9E75;font-weight:500">최고 목표</th>
+          <th style="text-align:center;padding:6px 8px;color:var(--color-text-tertiary);font-weight:500">의견</th>
+          <th style="text-align:right;padding:6px 8px;color:var(--color-text-tertiary);font-weight:500">현재가 대비</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:.5px solid var(--color-border-tertiary)">
+          <td style="padding:8px;font-weight:500">SK하이닉스</td>
+          <td style="padding:8px;text-align:right;color:#E24B4A">103만</td>
+          <td style="padding:8px;text-align:right;font-weight:500;color:#378ADD">207.7만</td>
+          <td style="padding:8px;text-align:right;font-weight:500;color:#1D9E75">400만(노무라)</td>
+          <td style="padding:8px;text-align:center"><span class="chip cu" style="margin:0">38명 매수</span></td>
+          <td style="padding:8px;text-align:right;color:#1D9E75">+9% 여력</td>
+        </tr>
+        <tr style="border-bottom:.5px solid var(--color-border-tertiary)">
+          <td style="padding:8px;font-weight:500">삼성전자</td>
+          <td style="padding:8px;text-align:right;color:#E24B4A">14만</td>
+          <td style="padding:8px;text-align:right;font-weight:500;color:#378ADD">27.5만</td>
+          <td style="padding:8px;text-align:right;font-weight:500;color:#1D9E75">59만(노무라)</td>
+          <td style="padding:8px;text-align:center"><span class="chip cu" style="margin:0">36매수1매도</span></td>
+          <td style="padding:8px;text-align:right;color:#1D9E75">컨센 이미 하회</td>
+        </tr>
+        <tr style="border-bottom:.5px solid var(--color-border-tertiary)">
+          <td style="padding:8px;font-weight:500">현대차</td>
+          <td style="padding:8px;text-align:right;color:#E24B4A">50만</td>
+          <td style="padding:8px;text-align:right;font-weight:500;color:#378ADD">71.7만</td>
+          <td style="padding:8px;text-align:right;font-weight:500;color:#1D9E75">120만</td>
+          <td style="padding:8px;text-align:center"><span class="chip cu" style="margin:0">27명 매수</span></td>
+          <td style="padding:8px;text-align:right;color:#1D9E75">-13% 할인</td>
+        </tr>
+        <tr style="border-bottom:.5px solid var(--color-border-tertiary)">
+          <td style="padding:8px;font-weight:500">기아</td>
+          <td style="padding:8px;text-align:right;color:#E24B4A">19만</td>
+          <td style="padding:8px;text-align:right;font-weight:500;color:#378ADD">22.8만</td>
+          <td style="padding:8px;text-align:right;font-weight:500;color:#1D9E75">30만</td>
+          <td style="padding:8px;text-align:center"><span class="chip cu" style="margin:0">30명 매수</span></td>
+          <td style="padding:8px;text-align:right;color:#1D9E75">-34% 할인(최대)</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;font-weight:500">NAVER</td>
+          <td style="padding:8px;text-align:right;color:#E24B4A">23만</td>
+          <td style="padding:8px;text-align:right;font-weight:500;color:#378ADD">29.3만</td>
+          <td style="padding:8px;text-align:right;font-weight:500;color:#1D9E75">35만</td>
+          <td style="padding:8px;text-align:center"><span class="chip cu" style="margin:0">23명 매수</span></td>
+          <td style="padding:8px;text-align:right;color:#1D9E75">-17% 할인</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="note">⚠ 본 리포트는 공개 언론보도·증권사 리포트 기반 정보 제공 목적이며 투자 권유가 아닙니다. 주가는 변동성이 크며 투자 원금 손실 위험이 있습니다. 실제 투자 결정 전 전문 재무상담사와 반드시 상의하세요.</div>
+</div>
+
+<script>
+function T(id){
+  ['hynix','sam','hmc','kia','naver'].forEach(function(x){
+    document.getElementById('p-'+x).classList.remove('on');
+  });
+  document.getElementById('p-'+id).classList.add('on');
+  var tabs=document.querySelectorAll('.tab');
+  var map={hynix:0,sam:1,hmc:2,kia:3,naver:4};
+  tabs.forEach(function(t,i){t.classList.toggle('on',i===map[id]);});
+}
+</script>
