@@ -1,0 +1,259 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.report{padding:1.5rem 0}
+.report-header{border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:1.25rem;margin-bottom:1.5rem}
+.report-date{font-size:12px;color:var(--color-text-tertiary);margin-bottom:4px}
+.report-title{font-size:22px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px}
+.report-sub{font-size:14px;color:var(--color-text-secondary)}
+.section-label{font-size:11px;font-weight:500;color:var(--color-text-tertiary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;margin-top:1.5rem}
+.macro-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem}
+.macro-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px}
+.macro-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
+.macro-val{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.macro-change{font-size:12px;margin-top:2px}
+.up{color:#1D9E75}.down{color:#E24B4A}.neutral{color:var(--color-text-secondary)}
+.stock-table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:1.5rem}
+.stock-table th{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-align:left;padding:6px 10px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
+.stock-table td{padding:10px 10px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)}
+.stock-table tr:hover td{background:var(--color-background-secondary)}
+.badge{font-size:11px;padding:3px 8px;border-radius:4px;font-weight:500}
+.badge-buy{background:#EAF3DE;color:#3B6D11}
+.badge-hold{background:#FAEEDA;color:#854F0B}
+.upside-bar{display:flex;align-items:center;gap:8px}
+.bar-track{flex:1;height:5px;background:var(--color-border-tertiary);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
+.expert-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+.expert-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px}
+.expert-name{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.expert-org{font-size:11px;color:var(--color-text-tertiary);margin-bottom:8px}
+.expert-quote{font-size:12px;color:var(--color-text-secondary);line-height:1.6;border-left:2px solid var(--color-border-secondary);padding-left:8px}
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+.risk-card{border-radius:var(--border-radius-md);padding:12px 14px}
+.risk-bull{background:#EAF3DE;border:0.5px solid #C0DD97}
+.risk-bear{background:#FCEBEB;border:0.5px solid #F7C1C1}
+.risk-title{font-size:12px;font-weight:500;margin-bottom:6px}
+.risk-bull .risk-title{color:#3B6D11}
+.risk-bear .risk-title{color:#A32D2D}
+.risk-item{font-size:12px;margin-bottom:4px;display:flex;gap:6px}
+.risk-bull .risk-item{color:#27500A}
+.risk-bear .risk-item{color:#791F1F}
+.disclaimer{font-size:11px;color:var(--color-text-tertiary);border-top:0.5px solid var(--color-border-tertiary);padding-top:12px;line-height:1.6;margin-top:1.5rem}
+.fomc-banner{background:#E6F1FB;border:0.5px solid #B5D4F4;border-radius:var(--border-radius-md);padding:10px 14px;margin-bottom:1.5rem;display:flex;align-items:center;gap:10px}
+.fomc-icon{font-size:20px;color:#185FA5}
+.fomc-text{font-size:13px;color:#0C447C;line-height:1.5}
+.fomc-label{font-weight:500;font-size:12px;color:#185FA5;margin-bottom:2px}
+.chart-wrap{position:relative;width:100%;height:280px;margin-bottom:1.5rem}
+</style>
+
+<div class="report">
+  <div class="report-header">
+    <div class="report-date">2026년 6월 16일 (화) · 주간 시장 전망 리포트</div>
+    <div class="report-title">KOSPI 주간 투자전략 & 핵심 종목 분석</div>
+    <div class="report-sub">SK하이닉스 · 삼성전자 · 현대차 · 기아 · NAVER — 현재가 및 목표주가 종합</div>
+  </div>
+
+  <div class="fomc-banner">
+    <i class="ti ti-alert-circle fomc-icon" aria-hidden="true"></i>
+    <div>
+      <div class="fomc-label">이번 주 핵심 이벤트 — FOMC 6/16~17</div>
+      <div class="fomc-text">신임 Kevin Warsh 연준 의장의 첫 정례회의. 시장은 현 3.50~3.75% <b>동결</b>을 유력 시나리오로 보며, 점도표(SEP) 발표에 따른 변동성 주의. 미국 쿼드러플 위칭(6/18)과 Juneteenth 휴장(6/19) 일정도 겹침.</div>
+    </div>
+  </div>
+
+  <div class="section-label">KOSPI 지수 — 이번 주 전망</div>
+  <div class="macro-grid">
+    <div class="macro-card">
+      <div class="macro-label">KOSPI 현재 (6/15 종가)</div>
+      <div class="macro-val">8,545</div>
+      <div class="macro-change up">▲ 8,500선 탈환 (+5%↑ 지정학 완화)</div>
+    </div>
+    <div class="macro-card">
+      <div class="macro-label">이번 주 예상 범위</div>
+      <div class="macro-val">7,938~9,134</div>
+      <div class="macro-change neutral">6/16 기준 예측값 8,536p</div>
+    </div>
+    <div class="macro-card">
+      <div class="macro-label">6월 말 전망 (평균)</div>
+      <div class="macro-val">8,244</div>
+      <div class="macro-change neutral">최고 9,157 / 최저 7,051</div>
+    </div>
+    <div class="macro-card">
+      <div class="macro-label">KB자산운용 하반기 목표</div>
+      <div class="macro-val">9,500</div>
+      <div class="macro-change up">AI·반도체 쏠림 지속 전망</div>
+    </div>
+  </div>
+
+  <div class="section-label">5대 핵심 종목 — 현재가 & 목표주가</div>
+  <table class="stock-table">
+    <thead>
+      <tr>
+        <th>종목</th>
+        <th>현재가</th>
+        <th>컨센서스 목표가</th>
+        <th>상승여력</th>
+        <th style="min-width:120px">여력 시각화</th>
+        <th>투자의견</th>
+        <th>애널리스트 수</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>SK하이닉스</strong><br><span style="font-size:11px;color:var(--color-text-tertiary)">000660</span></td>
+        <td><strong>2,288,000</strong></td>
+        <td>2,690,121<br><span style="font-size:11px;color:var(--color-text-tertiary)">최고 4,000,000</span></td>
+        <td class="up"><strong>+17.6%</strong></td>
+        <td><div class="upside-bar"><div class="bar-track"><div class="bar-fill" style="width:52%;background:#1D9E75"></div></div></div></td>
+        <td><span class="badge badge-buy">적극 매수</span></td>
+        <td style="color:var(--color-text-secondary)">매수 36 / 매도 0</td>
+      </tr>
+      <tr>
+        <td><strong>삼성전자</strong><br><span style="font-size:11px;color:var(--color-text-tertiary)">005930</span></td>
+        <td><strong>337,000</strong></td>
+        <td>426,452<br><span style="font-size:11px;color:var(--color-text-tertiary)">최고 850,000</span></td>
+        <td class="up"><strong>+26.5%</strong></td>
+        <td><div class="upside-bar"><div class="bar-track"><div class="bar-fill" style="width:62%;background:#1D9E75"></div></div></div></td>
+        <td><span class="badge badge-buy">적극 매수</span></td>
+        <td style="color:var(--color-text-secondary)">매수 36 / 매도 1</td>
+      </tr>
+      <tr>
+        <td><strong>현대차</strong><br><span style="font-size:11px;color:var(--color-text-tertiary)">005380</span></td>
+        <td><strong>634,000</strong></td>
+        <td>729,723<br><span style="font-size:11px;color:var(--color-text-tertiary)">최고 1,200,000</span></td>
+        <td class="up"><strong>+15.1%</strong></td>
+        <td><div class="upside-bar"><div class="bar-track"><div class="bar-fill" style="width:45%;background:#1D9E75"></div></div></div></td>
+        <td><span class="badge badge-buy">매수</span></td>
+        <td style="color:var(--color-text-secondary)">매수 27 / 매도 0</td>
+      </tr>
+      <tr>
+        <td><strong>기아</strong><br><span style="font-size:11px;color:var(--color-text-tertiary)">000270</span></td>
+        <td><strong>164,300</strong></td>
+        <td>227,833<br><span style="font-size:11px;color:var(--color-text-tertiary)">최고 300,000</span></td>
+        <td class="up"><strong>+38.7%</strong></td>
+        <td><div class="upside-bar"><div class="bar-track"><div class="bar-fill" style="width:78%;background:#1D9E75"></div></div></div></td>
+        <td><span class="badge badge-buy">적극 매수</span></td>
+        <td style="color:var(--color-text-secondary)">매수 30 / 매도 0</td>
+      </tr>
+      <tr>
+        <td><strong>NAVER</strong><br><span style="font-size:11px;color:var(--color-text-tertiary)">035420</span></td>
+        <td><strong>251,000</strong></td>
+        <td>302,192<br><span style="font-size:11px;color:var(--color-text-tertiary)">최고 400,000</span></td>
+        <td class="up"><strong>+20.4%</strong></td>
+        <td><div class="upside-bar"><div class="bar-track"><div class="bar-fill" style="width:56%;background:#1D9E75"></div></div></div></td>
+        <td><span class="badge badge-buy">매수</span></td>
+        <td style="color:var(--color-text-secondary)">매수 21 / 매도 0</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-label">목표주가 상승여력 비교 차트</div>
+  <div class="chart-wrap">
+    <canvas id="upsideChart" role="img" aria-label="5개 종목 목표주가 상승여력 비교: 기아 38.7%, 삼성전자 26.5%, NAVER 20.4%, SK하이닉스 17.6%, 현대차 15.1%">기아 38.7%, 삼성전자 26.5%, NAVER 20.4%, SK하이닉스 17.6%, 현대차 15.1%</canvas>
+  </div>
+
+  <div class="section-label">글로벌 전문가 & 증권사 의견</div>
+  <div class="expert-grid">
+    <div class="expert-card">
+      <div class="expert-name">미래에셋증권</div>
+      <div class="expert-org">국내 대형 증권사</div>
+      <div class="expert-quote">삼성전자 2026년 영업이익 395조 원, 2027년 529조 원으로 대폭 상향. 목표주가 55만 원 유지, 현재가 대비 상승여력 86%. SK하이닉스는 빅테크 LTA 계약 본격화로 2026년 영업이익 71조 원, 목표주가 380만 원.</div>
+    </div>
+    <div class="expert-card">
+      <div class="expert-name">KB자산운용</div>
+      <div class="expert-org">국내 자산운용사</div>
+      <div class="expert-quote">2026년 하반기 KOSPI 9,500 목표. AI·반도체로의 쏠림이 그 어느 때보다 뚜렷. 외국인 국채 자금 유입 기대되나, 유가 안정 전까지 채권은 신중 접근.</div>
+    </div>
+    <div class="expert-card">
+      <div class="expert-name">씨티(Citi)</div>
+      <div class="expert-org">글로벌 투자은행</div>
+      <div class="expert-quote">한국은행 2026년 7월, 10월, 2027년 1월, 4월 순차 금리 인하 전망. 금리 매력 상승으로 외국인 채권 자금 유입 기대. MSCI 선진시장 편입 가능성도 긍정 평가.</div>
+    </div>
+    <div class="expert-card">
+      <div class="expert-name">신한투자증권 / iM증권</div>
+      <div class="expert-org">국내 증권사</div>
+      <div class="expert-quote">현대차 SDV·로보틱스 모멘텀은 2026년 하반기에 주가 반영 시작 전망. 6월 SDV 페이스카 도로 테스트, Q3 RMAC 개소, 보스턴다이내믹스 아틀라스 양산 준비가 핵심 이벤트.</div>
+    </div>
+    <div class="expert-card">
+      <div class="expert-name">한화투자증권</div>
+      <div class="expert-org">국내 증권사</div>
+      <div class="expert-quote">기아 목표주가 245,000원으로 상향, 강한 매수 의견 유지. 2분기부터 스포티지 HEV 현지 생산으로 관세 부담 축소. 2026년 영업이익 10.2조 원(+14% YoY) 전망.</div>
+    </div>
+    <div class="expert-card">
+      <div class="expert-name">월가 컨센서스</div>
+      <div class="expert-org">Bloomberg / S&P 500 전략가</div>
+      <div class="expert-quote">S&P 500 연말 8,000 목표 유지. 마이크론 1985년 이래 최대 월간 상승, AI 수요 의심 거의 없음. 단기 리스크는 AI 자본지출 과잉 여부와 FOMC 매파 전환 가능성.</div>
+    </div>
+  </div>
+
+  <div class="section-label">이번 주 강세 vs 약세 요인</div>
+  <div class="risk-grid">
+    <div class="risk-card risk-bull">
+      <div class="risk-title">📈 강세 요인 (Bullish)</div>
+      <div class="risk-item">✓ 중동 지정학 리스크 완화 → KOSPI 5% 급등</div>
+      <div class="risk-item">✓ HBM 수요 폭증 · 빅테크 LTA 계약 본격화</div>
+      <div class="risk-item">✓ 삼성·SK하이닉스 분기 최대 영업이익 경신</div>
+      <div class="risk-item">✓ 기아 스포티지 HEV 현지생산 → 관세 회피</div>
+      <div class="risk-item">✓ NAVER × 엔비디아 글로벌 AI 팩토리 협업</div>
+      <div class="risk-item">✓ 외국인 8,500 탈환 후 순매수 재개 기대</div>
+    </div>
+    <div class="risk-card risk-bear">
+      <div class="risk-title">📉 약세 요인 (Bearish)</div>
+      <div class="risk-item">✗ FOMC 매파 전환 시 금리 인상 우려 재부각</div>
+      <div class="risk-item">✗ 외국인 삼성·하이닉스 20조 순매도 차익실현</div>
+      <div class="risk-item">✗ 미국 쿼드러플 위칭(6/18) 변동성 확대</div>
+      <div class="risk-item">✗ 현대차·기아 미국 관세 구조 지속 리스크</div>
+      <div class="risk-item">✗ SpaceX IPO 유동성 이탈 우려 (6월 중 데뷔)</div>
+      <div class="risk-item">✗ 6월 말 이후 KOSPI 7,000대 조정 시나리오</div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    ※ 본 리포트는 공개된 증권사 리서치 및 Investing.com 데이터를 기반으로 작성된 참고용 정보입니다. 현재가는 2026년 6월 15일 종가 기준이며, 목표주가는 애널리스트 컨센서스 12개월 평균입니다. 투자 결정의 최종 책임은 투자자 본인에게 있으며, 본 내용은 투자 권유가 아닙니다.
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+const textColor = isDark ? '#B4B2A9' : '#5F5E5A';
+const gridColor = isDark ? 'rgba(180,178,169,0.15)' : 'rgba(95,94,90,0.12)';
+
+new Chart(document.getElementById('upsideChart'), {
+  type: 'bar',
+  data: {
+    labels: ['기아\n000270', '삼성전자\n005930', 'NAVER\n035420', 'SK하이닉스\n000660', '현대차\n005380'],
+    datasets: [{
+      label: '상승여력 (%)',
+      data: [38.7, 26.5, 20.4, 17.6, 15.1],
+      backgroundColor: ['#1D9E75','#378ADD','#534AB7','#0F6E56','#BA7517'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ' 상승여력 +' + ctx.parsed.x.toFixed(1) + '%'
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: textColor, callback: v => '+' + v + '%' },
+        grid: { color: gridColor },
+        max: 50
+      },
+      y: {
+        ticks: { color: textColor, font: { size: 12 } },
+        grid: { display: false }
+      }
+    }
+  }
+});
+</script>
