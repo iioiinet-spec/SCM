@@ -1,0 +1,347 @@
+
+<h2 class="sr-only">2026년 6월 18일 KOSPI 사상 최초 9,000 돌파 특별 리포트 — SK하이닉스 269만 신고가, 5대 종목 목표주가 최신 현황 종합</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.rp{padding:1.5rem 0;font-family:var(--font-sans)}
+.rp-badge{display:inline-flex;align-items:center;gap:6px;background:#EAF3DE;color:#3B6D11;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;margin-bottom:8px}
+.rp-title{font-size:22px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.rp-sub{font-size:13px;color:var(--color-text-secondary);margin-bottom:1.25rem}
+.milestone-banner{background:linear-gradient(135deg, #EAF3DE 0%, #E6F1FB 100%);border:0.5px solid #C0DD97;border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:1.25rem;display:flex;gap:14px;align-items:center}
+.milestone-num{font-size:36px;font-weight:500;color:#3B6D11;line-height:1;white-space:nowrap}
+.milestone-text{font-size:13px;color:#27500A;line-height:1.6}
+.milestone-label{font-size:11px;font-weight:500;color:#0F6E56;margin-bottom:3px}
+.sec-lbl{font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--color-text-tertiary);margin:1.25rem 0 10px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:1.25rem}
+.kpi{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.kpi-l{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
+.kpi-v{font-size:19px;font-weight:500;color:var(--color-text-primary)}
+.kpi-c{font-size:11px;margin-top:2px}
+.up{color:#3B6D11}.dn{color:#A32D2D}.nt{color:var(--color-text-secondary)}
+.stocks-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:1.25rem}
+.stock-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px}
+.sc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.sc-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.sc-code{font-size:11px;color:var(--color-text-tertiary)}
+.sc-price{text-align:right}
+.sc-cur{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.sc-chg{font-size:12px;margin-top:1px}
+.sc-body{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sc-row{display:flex;flex-direction:column;gap:2px}
+.sc-rl{font-size:11px;color:var(--color-text-tertiary)}
+.sc-rv{font-size:13px;color:var(--color-text-primary)}
+.sc-target-bar{margin-top:8px}
+.sc-bar-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}
+.sc-track{height:5px;background:var(--color-border-tertiary);border-radius:3px;overflow:hidden}
+.sc-fill{height:100%;border-radius:3px;transition:width 0.5s ease}
+.badge-sm{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500}
+.badge-buy{background:#EAF3DE;color:#3B6D11}
+.badge-hold{background:#FAEEDA;color:#854F0B}
+.badge-alert{background:#E6F1FB;color:#185FA5}
+.new-tag{font-size:10px;background:#FCEBEB;color:#A32D2D;padding:2px 6px;border-radius:3px;font-weight:500;margin-left:6px}
+.chart-wrap{position:relative;width:100%;height:300px;margin-bottom:1.25rem}
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.exp-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px}
+.exp-who{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:1px}
+.exp-org{font-size:11px;color:var(--color-text-tertiary);margin-bottom:7px}
+.exp-q{font-size:12px;color:var(--color-text-secondary);line-height:1.6;border-left:2px solid var(--color-border-secondary);padding-left:8px}
+.risk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.risk-card{border-radius:var(--border-radius-md);padding:12px 14px}
+.risk-bull{background:#EAF3DE;border:0.5px solid #C0DD97}
+.risk-bear{background:#FCEBEB;border:0.5px solid #F7C1C1}
+.rtitle{font-size:12px;font-weight:500;margin-bottom:6px}
+.risk-bull .rtitle{color:#3B6D11}
+.risk-bear .rtitle{color:#A32D2D}
+.ritem{font-size:12px;margin-bottom:4px}
+.risk-bull .ritem{color:#27500A}
+.risk-bear .ritem{color:#791F1F}
+.disc{font-size:11px;color:var(--color-text-tertiary);border-top:0.5px solid var(--color-border-tertiary);padding-top:10px;margin-top:1rem;line-height:1.6}
+.lg-row{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:8px;font-size:12px;color:var(--color-text-secondary)}
+.lg-item{display:flex;align-items:center;gap:5px}
+.lg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.flow-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.flow-badge{font-size:12px;padding:4px 10px;border-radius:var(--border-radius-md);font-weight:500}
+.flow-buy{background:#EAF3DE;color:#3B6D11}
+.flow-sell{background:#FCEBEB;color:#A32D2D}
+.week-path{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:1.25rem}
+.wp-day{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px;text-align:center}
+.wp-date{font-size:10px;color:var(--color-text-tertiary);margin-bottom:3px}
+.wp-val{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.wp-chg{font-size:11px;margin-top:1px}
+.wp-today{background:#EAF3DE;border:0.5px solid #C0DD97}
+.wp-today .wp-date{color:#0F6E56}
+.wp-today .wp-val{color:#3B6D11}
+</style>
+
+<div class="rp">
+  <div class="rp-badge"><i class="ti ti-trophy" aria-hidden="true"></i> 사상 최초 돌파 · 2026.06.18</div>
+  <div class="rp-title">KOSPI 9,000 · SK하이닉스 269만원 — 역사적 신고가 특별 리포트</div>
+  <div class="rp-sub">5대 종목 최신 목표주가 · 증권사 컨센서스 전면 업데이트 · 전문가 의견 종합</div>
+
+  <div class="milestone-banner">
+    <div class="milestone-num">9,000</div>
+    <div>
+      <div class="milestone-label">코스피 사상 첫 9,000 돌파 — 오후 12:52 기준</div>
+      <div class="milestone-text">지난달 8,000 돌파 이후 <b>약 한 달 만</b>. 장중 9,000.68p 터치. FOMC 매파 신호에도 개인 순매수와 SK하이닉스 HBM4E 12단 샘플 공급 발표가 지수를 밀어 올렸다. 삼성전자는 보합, MLCC·전자장비주가 강세 공조.</div>
+    </div>
+  </div>
+
+  <div class="sec-lbl">금일 지수 및 수급 현황</div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-l">KOSPI (장중)</div><div class="kpi-v">9,000</div><div class="kpi-c up">▲ 사상 첫 9000 돌파</div></div>
+    <div class="kpi"><div class="kpi-l">전일 종가</div><div class="kpi-v">8,864</div><div class="kpi-c nt">전일 +1.58% 신고가</div></div>
+    <div class="kpi"><div class="kpi-l">달러/원 환율</div><div class="kpi-v">1,525</div><div class="kpi-c dn">전일比 +11.6원</div></div>
+    <div class="kpi"><div class="kpi-l">KOSDAQ</div><div class="kpi-v">1,003</div><div class="kpi-c dn">▼ -2.77% (코스피 역행)</div></div>
+  </div>
+
+  <div class="flow-row">
+    <span class="flow-badge flow-buy">개인 +7,800억 순매수</span>
+    <span class="flow-badge flow-sell">외국인 순매도 지속</span>
+    <span class="flow-badge flow-sell">기관 동반 순매도</span>
+  </div>
+
+  <div class="sec-lbl">이번 주 KOSPI 주간 흐름</div>
+  <div class="week-path">
+    <div class="wp-day"><div class="wp-date">6/16 월</div><div class="wp-val">8,546</div><div class="wp-chg up">+1.88%</div></div>
+    <div class="wp-day"><div class="wp-date">6/17 화</div><div class="wp-val">8,864</div><div class="wp-chg up">+1.58%</div></div>
+    <div class="wp-day wp-today"><div class="wp-date">6/18 수 ★</div><div class="wp-val" style="color:#3B6D11">9,000+</div><div class="wp-chg" style="color:#3B6D11">사상 최고</div></div>
+    <div class="wp-day"><div class="wp-date">6/19 목</div><div class="wp-val" style="color:var(--color-text-tertiary)">미국 휴장</div><div class="wp-chg nt">Juneteenth</div></div>
+    <div class="wp-day"><div class="wp-date">6/20 금</div><div class="wp-val" style="color:var(--color-text-tertiary)">미정</div><div class="wp-chg nt">—</div></div>
+  </div>
+
+  <div class="sec-lbl">5대 종목 — 현재가 & 최신 목표주가 (6월 18일 기준)</div>
+
+  <div class="stocks-wrap">
+
+    <div class="stock-card" style="border-left:3px solid #3B6D11">
+      <div class="sc-head">
+        <div><div class="sc-name">SK하이닉스 <span class="new-tag">신고가 갱신</span></div><div class="sc-code">000660</div></div>
+        <div class="sc-price"><div class="sc-cur">2,690,000</div><div class="sc-chg up">▲ 장중 최고 2,690,000원</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-row"><div class="sc-rl">컨센서스 목표가</div><div class="sc-rv" style="color:#3B6D11;font-weight:500">2,690,121원</div></div>
+        <div class="sc-row"><div class="sc-rl">최고 목표가 (노무라)</div><div class="sc-rv" style="color:#3B6D11;font-weight:500">4,000,000원 <span class="new-tag">최신</span></div></div>
+        <div class="sc-row"><div class="sc-rl">최저 목표가</div><div class="sc-rv">1,030,000원</div></div>
+        <div class="sc-row"><div class="sc-rl">미래에셋 목표가</div><div class="sc-rv" style="font-weight:500">3,800,000원</div></div>
+      </div>
+      <div class="sc-target-bar">
+        <div class="sc-bar-meta"><span>현재가 2,690,000</span><span>컨센 목표 2,690,121</span><span>노무라 최고 4,000,000</span></div>
+        <div class="sc-track"><div class="sc-fill" style="width:67%;background:#3B6D11"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span style="font-size:11px;color:var(--color-text-secondary)">상승여력: 컨센 ≈0% / 노무라 +49%</span>
+          <span class="badge-sm badge-buy">적극 매수 (36명)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stock-card">
+      <div class="sc-head">
+        <div><div class="sc-name">삼성전자</div><div class="sc-code">005930</div></div>
+        <div class="sc-price"><div class="sc-cur">348,500원</div><div class="sc-chg up">▲ +0.58% (18일 개장 기준)</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-row"><div class="sc-rl">컨센서스 목표가</div><div class="sc-rv" style="color:#3B6D11;font-weight:500">426,452원</div></div>
+        <div class="sc-row"><div class="sc-rl">최고 목표가 (노무라)</div><div class="sc-rv" style="color:#3B6D11;font-weight:500">590,000원 <span class="new-tag">최신</span></div></div>
+        <div class="sc-row"><div class="sc-rl">한국투자증권 목표가</div><div class="sc-rv" style="font-weight:500">570,000원 <span class="new-tag">상향</span></div></div>
+        <div class="sc-row"><div class="sc-rl">미래에셋 목표가</div><div class="sc-rv" style="font-weight:500">550,000원</div></div>
+      </div>
+      <div class="sc-target-bar">
+        <div class="sc-bar-meta"><span>현재가 348,500</span><span>컨센 목표 426,452</span><span>노무라 590,000</span></div>
+        <div class="sc-track"><div class="sc-fill" style="width:59%;background:#378ADD"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span style="font-size:11px;color:var(--color-text-secondary)">상승여력: 컨센 +22% / 노무라 +69%</span>
+          <span class="badge-sm badge-buy">적극 매수 (36명)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stock-card">
+      <div class="sc-head">
+        <div><div class="sc-name">현대차</div><div class="sc-code">005380</div></div>
+        <div class="sc-price"><div class="sc-cur">~620,000원</div><div class="sc-chg dn">▼ -3.44% (17일 종가 기준)</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-row"><div class="sc-rl">컨센서스 목표가</div><div class="sc-rv" style="color:#3B6D11;font-weight:500">729,723원</div></div>
+        <div class="sc-row"><div class="sc-rl">최고 목표가 (유진투자)</div><div class="sc-rv" style="color:#3B6D11;font-weight:500">1,000,000원</div></div>
+        <div class="sc-row"><div class="sc-rl">DS투자증권</div><div class="sc-rv">740,000원</div></div>
+        <div class="sc-row"><div class="sc-rl">하반기 촉매</div><div class="sc-rv" style="font-size:11px">SDV 도로 테스트 · RMAC 개소</div></div>
+      </div>
+      <div class="sc-target-bar">
+        <div class="sc-bar-meta"><span>현재가 ~620,000</span><span>컨센 729,723</span><span>유진 최고 1,000,000</span></div>
+        <div class="sc-track"><div class="sc-fill" style="width:62%;background:#534AB7"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span style="font-size:11px;color:var(--color-text-secondary)">상승여력: 컨센 +18% / 유진 +61%</span>
+          <span class="badge-sm badge-buy">매수 (27명)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stock-card">
+      <div class="sc-head">
+        <div><div class="sc-name">기아</div><div class="sc-code">000270</div></div>
+        <div class="sc-price"><div class="sc-cur">~158,000원</div><div class="sc-chg dn">▼ -5.5% (17일 기준)</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-row"><div class="sc-rl">컨센서스 목표가</div><div class="sc-rv" style="color:#3B6D11;font-weight:500">227,833원</div></div>
+        <div class="sc-row"><div class="sc-rl">최고 목표가</div><div class="sc-rv" style="color:#3B6D11;font-weight:500">300,000원</div></div>
+        <div class="sc-row"><div class="sc-rl">한화투자 목표가 <span class="new-tag">상향</span></div><div class="sc-rv" style="font-weight:500">245,000원</div></div>
+        <div class="sc-row"><div class="sc-rl">2026 영업이익 전망</div><div class="sc-rv">10.2조원 (+14%)</div></div>
+      </div>
+      <div class="sc-target-bar">
+        <div class="sc-bar-meta"><span>현재가 158,000</span><span>컨센 227,833</span><span>최고 300,000</span></div>
+        <div class="sc-track"><div class="sc-fill" style="width:53%;background:#D85A30"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span style="font-size:11px;color:var(--color-text-secondary)">상승여력: 컨센 +44% / 최고 +90%</span>
+          <span class="badge-sm badge-buy">적극 매수 (30명)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stock-card">
+      <div class="sc-head">
+        <div><div class="sc-name">NAVER</div><div class="sc-code">035420</div></div>
+        <div class="sc-price"><div class="sc-cur">~251,000원</div><div class="sc-chg nt">보합권 유지</div></div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-row"><div class="sc-rl">컨센서스 목표가</div><div class="sc-rv" style="color:#3B6D11;font-weight:500">302,192원</div></div>
+        <div class="sc-row"><div class="sc-rl">DS투자증권 <span class="new-tag">신규 상향</span></div><div class="sc-rv" style="color:#3B6D11;font-weight:500">450,000원</div></div>
+        <div class="sc-row"><div class="sc-rl">기존 목표가</div><div class="sc-rv">400,000원</div></div>
+        <div class="sc-row"><div class="sc-rl">핵심 모멘텀</div><div class="sc-rv" style="font-size:11px">엔비디아 1GW AI 팩토리</div></div>
+      </div>
+      <div class="sc-target-bar">
+        <div class="sc-bar-meta"><span>현재가 251,000</span><span>컨센 302,192</span><span>DS 450,000</span></div>
+        <div class="sc-track"><div class="sc-fill" style="width:56%;background:#BA7517"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span style="font-size:11px;color:var(--color-text-secondary)">상승여력: 컨센 +20% / DS +79%</span>
+          <span class="badge-sm badge-buy">매수 (21명)</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sec-lbl">5대 종목 최고 목표주가 상승여력 비교</div>
+  <div class="lg-row">
+    <span class="lg-item"><span class="lg-dot" style="background:#3B6D11"></span>SK하이닉스</span>
+    <span class="lg-item"><span class="lg-dot" style="background:#378ADD"></span>삼성전자</span>
+    <span class="lg-item"><span class="lg-dot" style="background:#D85A30"></span>기아</span>
+    <span class="lg-item"><span class="lg-dot" style="background:#BA7517"></span>NAVER</span>
+    <span class="lg-item"><span class="lg-dot" style="background:#534AB7"></span>현대차</span>
+  </div>
+  <div class="chart-wrap">
+    <canvas id="upChart" role="img" aria-label="5대 종목 최고 목표주가 대비 상승여력: SK하이닉스 +49%, 삼성전자 +69%, 기아 +90%, NAVER +79%, 현대차 +61%">상승여력 비교: 기아 +90%, NAVER +79%, 현대차 +61%, 삼성전자 +69%, SK하이닉스 +49%</canvas>
+  </div>
+
+  <div class="sec-lbl">전문가 & 증권사 의견 — 6월 18일 기준 최신</div>
+  <div class="exp-grid">
+    <div class="exp-card">
+      <div class="exp-who">노무라증권 (글로벌)</div>
+      <div class="exp-org">코스피 목표 10,000~11,000 상향</div>
+      <div class="exp-q">SK하이닉스 목표주가 400만 원, 삼성전자 59만 원으로 국내외 최고 목표가 제시. 범용 메모리와 HBM 모두 슈퍼사이클에 진입했으며 2026~2027년 코스피 실적·ROE 주도 성장의 핵심 동력으로 분석.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-who">한국투자증권 채민숙 연구원</div>
+      <div class="exp-org">삼성전자 목표가 57만 원 상향</div>
+      <div class="exp-q">메모리 공급 부족은 구조적 변화. LTA 비고객사까지 초과 할당을 요청하는 상황. 범용 D램·낸드 Capa 우위로 삼성전자가 가장 공격적 가격 협상 중. 특별배당 2027년 지급 가능성도 주목.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-who">미래에셋증권</div>
+      <div class="exp-org">SK하이닉스 목표가 380만 원 유지</div>
+      <div class="exp-q">HBM4E 12단 샘플 공급 개시로 차세대 기술 리더십 확인. ADR 상장 신청이 SEC에 접수됐으며, 필라델피아 반도체 지수 편입 시 글로벌 기관 자금 추가 유입 기대. 2026년 최대 100조 원 주주환원 추진.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-who">유진투자증권 손인준 연구원</div>
+      <div class="exp-org">현대차 목표가 100만 원</div>
+      <div class="exp-q">SK하이닉스 ADR 상장 이후 PER 밸류에이션 눈높이 상승 전망. 현대차는 SDV 페이스카 도로 테스트·RMAC 개소 등 하반기 실행 이벤트가 밸류에이션 재평가의 기폭제가 될 것. HEV 판매 믹스 개선 추세.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-who">DS투자증권</div>
+      <div class="exp-org">NAVER 목표가 45만 원 (신규 상향)</div>
+      <div class="exp-q">NAVER를 아시아 유일의 IaaS-PaaS-SaaS-AI 풀스택 클라우드 플레이어로 평가. 엔비디아와 최대 1GW AI 팩토리 협업으로 기업가치 재산정. 보수적 추정으로도 현재가 대비 79% 상승 여력 존재.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-who">강진혁 신한투자증권 연구원</div>
+      <div class="exp-org">시장 전략</div>
+      <div class="exp-q">FOMC와 선물옵션 만기일 경계감에도 SK하이닉스 등 산업재 중심 수급 유입으로 낙폭 만회. 코스피 9000 돌파 이후 순환매 기대. 코스닥은 대형 반도체 쏠림의 역작용으로 단기 약세 우려.</div>
+    </div>
+  </div>
+
+  <div class="sec-lbl">오늘의 강세 vs 약세 요인</div>
+  <div class="risk-grid">
+    <div class="risk-card risk-bull">
+      <div class="rtitle">📈 강세 요인</div>
+      <div class="ritem">✓ SK하이닉스 HBM4E 12단 샘플 공급 개시</div>
+      <div class="ritem">✓ KOSPI 사상 최초 9,000 돌파 — 심리 전환점</div>
+      <div class="ritem">✓ MLCC 관련 테마 +10.58% 급등 공조</div>
+      <div class="ritem">✓ 삼성전자·SK하이닉스 거래대금 9.6조 집중</div>
+      <div class="ritem">✓ 노무라 코스피 목표 10,000~11,000 유지</div>
+      <div class="ritem">✓ SK하이닉스 ADR 상장·주주환원 100조 모멘텀</div>
+    </div>
+    <div class="risk-card risk-bear">
+      <div class="rtitle">📉 약세 요인</div>
+      <div class="ritem">✗ 코스닥 -2.77% 대형주 쏠림 역작용</div>
+      <div class="ritem">✗ FOMC 매파 신호 — 12월 금리 인상 확률 유지</div>
+      <div class="ritem">✗ 현대차·기아 오늘도 -3~5% 약세 지속</div>
+      <div class="ritem">✗ 달러/원 1,525원 — 환율 고점 부담</div>
+      <div class="ritem">✗ 미국 Juneteenth 6/19 휴장 유동성 감소</div>
+      <div class="ritem">✗ 반도체 집중→여타 섹터 소외 양극화</div>
+    </div>
+  </div>
+
+  <div class="disc">※ 본 리포트는 6월 18일 장중 공개 보도 및 증권사 리서치 자료를 기반으로 한 참고용 정보입니다. 현재가·지수는 실시간 데이터와 차이가 있을 수 있습니다. 투자의 최종 책임은 투자자 본인에게 있으며 투자 권유가 아닙니다.</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+const tc = isDark ? '#B4B2A9' : '#5F5E5A';
+const gc = isDark ? 'rgba(180,178,169,0.12)' : 'rgba(95,94,90,0.10)';
+
+new Chart(document.getElementById('upChart'), {
+  type: 'bar',
+  data: {
+    labels: ['SK하이닉스\n(노무라 400만)', '삼성전자\n(노무라 59만)', '기아\n(최고 30만)', 'NAVER\n(DS 45만)', '현대차\n(유진 100만)'],
+    datasets: [
+      {
+        label: '컨센서스 상승여력',
+        data: [0, 22, 44, 20, 18],
+        backgroundColor: isDark ? '#2A5520' : '#C0DD97',
+        borderRadius: 4,
+        stack: 's1'
+      },
+      {
+        label: '최고 목표가 추가 업사이드',
+        data: [49, 47, 46, 59, 43],
+        backgroundColor: ['#3B6D11','#378ADD','#D85A30','#BA7517','#534AB7'],
+        borderRadius: 4,
+        stack: 's1'
+      }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ' ' + ctx.dataset.label + ': +' + ctx.parsed.x.toFixed(0) + '%'
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: tc, callback: v => '+' + v + '%' },
+        grid: { color: gc },
+        stacked: true,
+        max: 110
+      },
+      y: {
+        ticks: { color: tc, font: { size: 11 } },
+        grid: { display: false },
+        stacked: true
+      }
+    }
+  }
+});
+</script>
