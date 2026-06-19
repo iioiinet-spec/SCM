@@ -1,0 +1,355 @@
+
+<h2 class="sr-only">2026년 6월 19일 고변동성 장세 심층 분석 — SK하이닉스와 삼성전자 격차의 본질, 5대 종목 전망 및 전문가 의견 종합</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.rp{padding:1.5rem 0;font-family:var(--font-sans)}
+.rp-eyebrow{font-size:11px;color:var(--color-text-tertiary);letter-spacing:.07em;margin-bottom:5px}
+.rp-title{font-size:21px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.rp-sub{font-size:13px;color:var(--color-text-secondary);margin-bottom:1.25rem}
+.alert-banner{border-radius:var(--border-radius-md);padding:11px 14px;margin-bottom:1.25rem;border:0.5px solid}
+.alert-warn{background:#FAEEDA;border-color:#EF9F27}
+.alert-warn-t{font-size:12px;font-weight:500;color:#633806;margin-bottom:3px}
+.alert-warn-b{font-size:12px;color:#854F0B;line-height:1.55}
+.sec-lbl{font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--color-text-tertiary);margin:1.25rem 0 10px;text-transform:uppercase}
+.gap-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:1.25rem}
+.gap-head{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.gap-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gap-side{padding:10px 12px;border-radius:var(--border-radius-md)}
+.gap-bull{background:#EAF3DE}
+.gap-bear{background:#FCEBEB}
+.gap-side-title{font-size:12px;font-weight:500;margin-bottom:6px}
+.gap-bull .gap-side-title{color:#27500A}
+.gap-bear .gap-side-title{color:#791F1F}
+.gap-item{font-size:12px;margin-bottom:4px;line-height:1.5}
+.gap-bull .gap-item{color:#3B6D11}
+.gap-bear .gap-item{color:#A32D2D}
+.stock-deep{display:flex;flex-direction:column;gap:12px;margin-bottom:1.25rem}
+.sd-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:13px 15px}
+.sd-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.sd-left{}
+.sd-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.sd-code{font-size:11px;color:var(--color-text-tertiary);margin-top:1px}
+.sd-right{text-align:right}
+.sd-price{font-size:17px;font-weight:500;color:var(--color-text-primary)}
+.sd-chg{font-size:12px;margin-top:1px}
+.up{color:#3B6D11}.dn{color:#A32D2D}.nt{color:var(--color-text-secondary)}
+.sd-body{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.sd-stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:7px 9px}
+.sd-stat-l{font-size:10px;color:var(--color-text-tertiary);margin-bottom:2px}
+.sd-stat-v{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.sd-verdict{border-top:0.5px solid var(--color-border-tertiary);padding-top:9px}
+.sd-verdict-label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:3px}
+.sd-verdict-text{font-size:12px;color:var(--color-text-secondary);line-height:1.55}
+.sd-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.tag{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
+.tag-up{background:#EAF3DE;color:#27500A}
+.tag-dn{background:#FCEBEB;color:#791F1F}
+.tag-nt{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.tag-alert{background:#FAEEDA;color:#633806}
+.chart-h{position:relative;width:100%;margin-bottom:1.25rem}
+.lg-row{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:8px;font-size:12px;color:var(--color-text-secondary)}
+.lg-item{display:flex;align-items:center;gap:5px}
+.lg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.expert-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.exp-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:11px 13px}
+.exp-who{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:1px}
+.exp-org{font-size:11px;color:var(--color-text-tertiary);margin-bottom:7px}
+.exp-q{font-size:12px;color:var(--color-text-secondary);line-height:1.6;border-left:2px solid var(--color-border-secondary);padding-left:8px}
+.scenario-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+.sc-box{border-radius:var(--border-radius-md);padding:11px 12px}
+.sc-bull{background:#EAF3DE;border:0.5px solid #C0DD97}
+.sc-base{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary)}
+.sc-bear{background:#FCEBEB;border:0.5px solid #F7C1C1}
+.sc-title{font-size:12px;font-weight:500;margin-bottom:6px}
+.sc-bull .sc-title{color:#27500A}
+.sc-base .sc-title{color:var(--color-text-secondary)}
+.sc-bear .sc-title{color:#791F1F}
+.sc-item{font-size:11px;margin-bottom:3px;line-height:1.4}
+.sc-bull .sc-item{color:#3B6D11}
+.sc-base .sc-item{color:var(--color-text-secondary)}
+.sc-bear .sc-item{color:#A32D2D}
+.disc{font-size:11px;color:var(--color-text-tertiary);border-top:0.5px solid var(--color-border-tertiary);padding-top:10px;margin-top:0.5rem;line-height:1.6}
+.badge-sm{font-size:11px;padding:2px 7px;border-radius:4px;font-weight:500}
+.badge-buy{background:#EAF3DE;color:#3B6D11}
+.badge-hold{background:#FAEEDA;color:#854F0B}
+</style>
+
+<div class="rp">
+  <div class="rp-eyebrow">2026년 6월 19일 (목) · 심층 투자 전망 리포트</div>
+  <div class="rp-title">고변동성 장세 속 5대 종목 심층 분석</div>
+  <div class="rp-sub">하이닉스 vs 삼성 격차의 본질 · 현대차 · 기아 · NAVER 전문가 의견 종합</div>
+
+  <div class="alert-banner alert-warn">
+    <div class="alert-warn-t">변동성 경고 — 코스피 일평균 변동률 3.9% (3월 전쟁 발발 당시 3.7% 상회)</div>
+    <div class="alert-warn-b">삼성전자+SK하이닉스 합산 시총 비중이 코스피의 50.7%를 넘어서면서 두 종목 등락이 사실상 지수를 좌우. 외국인 22거래일 연속 순매도 지속 중. 개인 매수세만으로 9,000선을 지키는 구조.</div>
+  </div>
+
+  <div class="sec-lbl">하이닉스 독주 vs 삼성전자 부진 — 격차의 본질 4가지</div>
+  <div class="gap-card">
+    <div class="gap-head"><i class="ti ti-zoom-question" aria-hidden="true" style="font-size:18px;color:var(--color-text-secondary)"></i>왜 같은 반도체인데 주가가 다르게 움직이나?</div>
+    <div class="gap-grid">
+      <div class="gap-side gap-bull">
+        <div class="gap-side-title">SK하이닉스가 앞선 이유</div>
+        <div class="gap-item">✓ HBM 시장 점유율 62% — 엔비디아 독점 공급</div>
+        <div class="gap-item">✓ 2026년 HBM 물량 완판, LTA 계약 구조 전환</div>
+        <div class="gap-item">✓ HBM4E 12단 샘플 공급 선발 발표 (6/18)</div>
+        <div class="gap-item">✓ ADR 상장 추진 → 글로벌 기관 수급 기대</div>
+        <div class="gap-item">✓ 최대 100조 주주환원 정책 모멘텀</div>
+        <div class="gap-item">✓ 파업 리스크 없어 수급 쏠림 수혜</div>
+      </div>
+      <div class="gap-side gap-bear">
+        <div class="gap-side-title">삼성전자가 밀리는 이유</div>
+        <div class="gap-item">✗ 노사갈등 + 노노갈등 이중 파업 리스크</div>
+        <div class="gap-item">✗ DS 부문 파운드리 2나노 수율 20% 수준 (TSMC 90% 대비 열세)</div>
+        <div class="gap-item">✗ HBM4 엔비디아 인증 지연 — 점유율 30% 수준</div>
+        <div class="gap-item">✗ 레버리지 ETF 과열 후 수급 식는 과정</div>
+        <div class="gap-item">✗ 외국인 순매도 집중 (삼성전자 외인 지분율 최저)</div>
+        <div class="gap-item">✗ 파업 이슈 해소 전까지 경쟁사 대비 주가 할인</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-lbl">5대 종목 현황 및 전문가 전망</div>
+  <div class="stock-deep">
+
+    <div class="sd-card" style="border-left:3px solid #3B6D11">
+      <div class="sd-top">
+        <div class="sd-left"><div class="sd-name">SK하이닉스</div><div class="sd-code">000660 · 적극 매수 36/36명</div></div>
+        <div class="sd-right"><div class="sd-price">2,688,000원</div><div class="sd-chg up">▲ 52주 최고 2,701,000원 터치</div></div>
+      </div>
+      <div class="sd-body">
+        <div class="sd-stat"><div class="sd-stat-l">컨센 목표가</div><div class="sd-stat-v" style="color:#3B6D11">2,712,489원</div></div>
+        <div class="sd-stat"><div class="sd-stat-l">노무라 최고가</div><div class="sd-stat-v" style="color:#3B6D11">4,000,000원</div></div>
+        <div class="sd-stat"><div class="sd-stat-l">6월 말 AI예측</div><div class="sd-stat-v">3,388,594원</div></div>
+      </div>
+      <div class="sd-verdict">
+        <div class="sd-verdict-label">핵심 전망</div>
+        <div class="sd-verdict-text">HBM4E 12단 샘플 업계 2위로 공급 개시. 엔비디아 Rubin 플랫폼에서도 점유율 70% 유지 전망(UBS). ADR 상장 성사 시 PER 밸류에이션 눈높이 대폭 상승. 단기 과열 우려 있으나 구조적 업황이 뒷받침.</div>
+        <div class="sd-tags">
+          <span class="tag tag-up">HBM4E 선두</span>
+          <span class="tag tag-up">ADR 상장 추진</span>
+          <span class="tag tag-up">100조 주주환원</span>
+          <span class="tag tag-alert">단기 과열 주의</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sd-card" style="border-left:3px solid #378ADD">
+      <div class="sd-top">
+        <div class="sd-left"><div class="sd-name">삼성전자</div><div class="sd-code">005930 · 적극 매수 36/37명</div></div>
+        <div class="sd-right"><div class="sd-price">345,000원</div><div class="sd-chg dn">▼ 하이닉스 대비 상대적 약세</div></div>
+      </div>
+      <div class="sd-body">
+        <div class="sd-stat"><div class="sd-stat-l">컨센 목표가</div><div class="sd-stat-v" style="color:#3B6D11">426,452원</div></div>
+        <div class="sd-stat"><div class="sd-stat-l">노무라 최고가</div><div class="sd-stat-v" style="color:#3B6D11">590,000원</div></div>
+        <div class="sd-stat"><div class="sd-stat-l">한투증권 목표</div><div class="sd-stat-v">570,000원</div></div>
+      </div>
+      <div class="sd-verdict">
+        <div class="sd-verdict-label">핵심 전망</div>
+        <div class="sd-verdict-text">파업 리스크가 해소되면 하이닉스보다 오히려 상승 탄력이 강할 것(한국투자증권). AMD HBM4 주공급사 지명으로 엔비디아 의존도 높은 하이닉스와 차별화. 범용 D램·낸드 Capa 우위로 2분기 영업이익 서프라이즈 가능. 파업 해소 전까지 단기 디스카운트 지속.</div>
+        <div class="sd-tags">
+          <span class="tag tag-dn">파업 리스크</span>
+          <span class="tag tag-up">AMD 주공급사</span>
+          <span class="tag tag-up">D램 가격 강세</span>
+          <span class="tag tag-alert">파업 해소 후 반등 기대</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sd-card" style="border-left:3px solid #534AB7">
+      <div class="sd-top">
+        <div class="sd-left"><div class="sd-name">현대차</div><div class="sd-code">005380 · 매수 9/9명</div></div>
+        <div class="sd-right"><div class="sd-price">~615,000원</div><div class="sd-chg dn">▼ 반도체 쏠림 역작용 약세</div></div>
+      </div>
+      <div class="sd-body">
+        <div class="sd-stat"><div class="sd-stat-l">컨센 목표가</div><div class="sd-stat-v" style="color:#3B6D11">729,723원</div></div>
+        <div class="sd-stat"><div class="sd-stat-l">유진 최고가</div><div class="sd-stat-v" style="color:#3B6D11">1,000,000원</div></div>
+        <div class="sd-stat"><div class="sd-stat-l">6월 말 예측</div><div class="sd-stat-v">561,501원</div></div>
+      </div>
+      <div class="sd-verdict">
+        <div class="sd-verdict-label">핵심 전망</div>
+        <div class="sd-verdict-text">1분기 영업이익 -30.8% YoY는 관세 8,600억·환율 2,700억 일회성 쇼크. 구조적 체력 훼손 아님(9개 증권사 매수). 하반기 SDV 페이스카 도로 테스트·8월 RMAC 개소·아틀라스 양산이 밸류에이션 재평가 촉매. 현재가는 역사적 저PBR 구간.</div>
+        <div class="sd-tags">
+          <span class="tag tag-dn">관세 리스크</span>
+          <span class="tag tag-up">SDV 도로 테스트</span>
+          <span class="tag tag-up">RMAC 8월 개소</span>
+          <span class="tag tag-alert">하반기 촉매 대기</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sd-card" style="border-left:3px solid #D85A30">
+      <div class="sd-top">
+        <div class="sd-left"><div class="sd-name">기아</div><div class="sd-code">000270 · 적극 매수 30/30명</div></div>
+        <div class="sd-right"><div class="sd-price">~155,000원</div><div class="sd-chg dn">▼ 현대차와 동반 약세</div></div>
+      </div>
+      <div class="sd-body">
+        <div class="sd-stat"><div class="sd-stat-l">컨센 목표가</div><div class="sd-stat-v" style="color:#3B6D11">227,833원</div></div>
+        <div class="sd-stat"><div class="sd-stat-l">한화투자 목표</div><div class="sd-stat-v" style="color:#3B6D11">245,000원</div></div>
+        <div class="sd-stat"><div class="sd-stat-l">최고 목표가</div><div class="sd-stat-v">300,000원</div></div>
+      </div>
+      <div class="sd-verdict">
+        <div class="sd-verdict-label">핵심 전망</div>
+        <div class="sd-verdict-text">5대 종목 중 컨센서스 대비 상승여력 최대(+44~90%). 스포티지 HEV 미국 현지 생산 전환으로 관세 회피. 2026년 영업이익 10.2조(+14% YoY) 전망. EV/EBITDA 기준 현재가는 저평가 구간. BYD 30% 점유율 확대가 장기 리스크.</div>
+        <div class="sd-tags">
+          <span class="tag tag-up">HEV 현지 생산</span>
+          <span class="tag tag-up">상승여력 최대</span>
+          <span class="tag tag-dn">BYD 경쟁 심화</span>
+          <span class="tag tag-nt">역대급 배당 기대</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sd-card" style="border-left:3px solid #BA7517">
+      <div class="sd-top">
+        <div class="sd-left"><div class="sd-name">NAVER</div><div class="sd-code">035420 · 매수 21/27명</div></div>
+        <div class="sd-right"><div class="sd-price">~246,000원</div><div class="sd-chg nt">젠슨 황 방한 후 차익 실현 구간</div></div>
+      </div>
+      <div class="sd-body">
+        <div class="sd-stat"><div class="sd-stat-l">컨센 목표가</div><div class="sd-stat-v" style="color:#3B6D11">302,111원</div></div>
+        <div class="sd-stat"><div class="sd-stat-l">DS 최고 목표</div><div class="sd-stat-v" style="color:#3B6D11">450,000원</div></div>
+        <div class="sd-stat"><div class="sd-stat-l">52주 최고가</div><div class="sd-stat-v">304,000원</div></div>
+      </div>
+      <div class="sd-verdict">
+        <div class="sd-verdict-label">핵심 전망</div>
+        <div class="sd-verdict-text">젠슨 황 방한(6/5~9) 이후 수급 차익 실현 중. 엔비디아와 1GW 글로벌 AI 팩토리 공동 구축 발표 후 7개 증권사 목표가 상향. DS투자증권 45만 원(+79%) 가장 공격적. 단 외국인 20연속 순매도 66조 규모가 부담. '플랫폼 기업→풀스택 클라우드 플레이어' 재평가가 핵심 모멘텀.</div>
+        <div class="sd-tags">
+          <span class="tag tag-up">엔비디아 AI 팩토리</span>
+          <span class="tag tag-up">IaaS-PaaS-SaaS 전환</span>
+          <span class="tag tag-dn">외국인 연속 매도</span>
+          <span class="tag tag-alert">차익 실현 후 재매수 기회?</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sec-lbl">목표주가 컨센서스 vs 최고가 비교</div>
+  <div class="lg-row">
+    <span class="lg-item"><span class="lg-dot" style="background:#9FE1CB"></span>현재가 대비 컨센서스 상승여력</span>
+    <span class="lg-item"><span class="lg-dot" style="background:#3B6D11"></span>최고 목표가 추가 업사이드</span>
+  </div>
+  <div class="chart-h" style="height:260px">
+    <canvas id="cChart" role="img" aria-label="5대 종목 목표주가 상승여력 비교: 기아 컨센 44%+최고 46%, NAVER 컨센 23%+최고 56%, 현대차 컨센 19%+최고 43%, 삼성전자 컨센 24%+최고 45%, SK하이닉스 컨센 1%+최고 49%">5대 종목 상승여력 비교 차트</canvas>
+  </div>
+
+  <div class="sec-lbl">전문가 의견 — 변동성 장세 대응 전략</div>
+  <div class="expert-grid">
+    <div class="exp-card">
+      <div class="exp-who">염승환 LS증권 이사</div>
+      <div class="exp-org">유튜브 찐코노미 · 부꾸미</div>
+      <div class="exp-q">최근 조정은 삼성전자 내부 문제나 반도체 사이클 훼손이 아닌 수급 쏠림과 레버리지 ETF 과열이 식는 과정. 지금 구간에서 삼전·닉스를 쫓아 매수하는 건 좋지 않다. 반도체 주도주가 빠진다면 반도체 소부장을 매수하는 전략이 유효하다.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-who">한국투자증권 채민숙 연구원</div>
+      <div class="exp-org">삼성전자 리서치</div>
+      <div class="exp-q">파업 이슈를 제외하면 업황 펀더멘털은 견고하게 공급자 우위 시장을 지지하고 있다. 파업 리스크로 경쟁사 대비 주가가 눌려 있는 점을 감안하면 리스크 해소 시 삼성전자의 상승 탄력이 경쟁사보다 오히려 클 것이다. 목표주가 57만 원.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-who">키움증권 한지영 연구원</div>
+      <div class="exp-org">주간 시장 전략</div>
+      <div class="exp-q">FOMC 매파 여파와 5거래일 연속 급등에 따른 속도 부담이 상존하나, 시장이 우려했던 최악의 시나리오는 아니었다. 반도체 주도주를 중심으로 하방 지지력을 보이면서 장중 낙폭을 만회하는 패턴이 반복될 것. 금리 한두 번의 변화로 빅테크 AI 투자 계획은 흔들리지 않는다.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-who">이경민 대신증권 연구원</div>
+      <div class="exp-org">코스피 9000 전략</div>
+      <div class="exp-q">미·이란 종전 협상 타결로 국제 유가가 크게 하락하면서 에너지발 인플레이션 압력이 완화됐다. 이는 AI 확산 기반 생산성 증대를 이유로 금리 인하 가능성을 주장하던 워시 연준 의장에게 힘이 될 것. 유가 안정이 코스피 9,000 돌파의 숨겨진 조력자.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-who">노무라증권</div>
+      <div class="exp-org">글로벌 IB</div>
+      <div class="exp-q">코스피 목표 10,000~11,000으로 상향. 범용 메모리와 HBM은 슈퍼사이클에 진입해 있으며 이는 2026~2027년 코스피 실적 성장과 ROE를 견인할 핵심. SK하이닉스 400만 원, 삼성전자 59만 원으로 국내외 최고 목표가를 제시 중.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-who">DS투자증권</div>
+      <div class="exp-org">NAVER 리서치</div>
+      <div class="exp-q">NAVER는 아시아 유일의 IaaS-PaaS-SaaS-AI 풀스택 클라우드 플레이어로 재평가받아야 한다. 엔비디아와 최대 1GW AI 팩토리 협업은 단순 포털 기업의 프레임을 벗어나는 계기. 보수적 추정으로도 현재가 대비 79% 상승 여력 존재. 목표가 45만 원.</div>
+    </div>
+  </div>
+
+  <div class="sec-lbl">하반기 3가지 시나리오</div>
+  <div class="scenario-row">
+    <div class="sc-box sc-bull">
+      <div class="sc-title">낙관 시나리오 (30%)</div>
+      <div class="sc-item">코스피 10,000~11,000</div>
+      <div class="sc-item">하이닉스 400만 / 삼전 59만</div>
+      <div class="sc-item">연준 9월 금리 인하 재개</div>
+      <div class="sc-item">삼성 파업 조기 해소</div>
+      <div class="sc-item">현대차·기아 관세 완화</div>
+    </div>
+    <div class="sc-box sc-base">
+      <div class="sc-title">기본 시나리오 (50%)</div>
+      <div class="sc-item">코스피 9,000~9,500 유지</div>
+      <div class="sc-item">하이닉스 300만 / 삼전 45만</div>
+      <div class="sc-item">연준 동결 → 12월 인상 논의</div>
+      <div class="sc-item">삼성 파업 장기화 부분 해소</div>
+      <div class="sc-item">현대차 하반기 SDV 반등</div>
+    </div>
+    <div class="sc-box sc-bear">
+      <div class="sc-title">비관 시나리오 (20%)</div>
+      <div class="sc-item">코스피 7,000~8,000 조정</div>
+      <div class="sc-item">하이닉스 180만 / 삼전 30만</div>
+      <div class="sc-item">연준 12월 금리 인상 단행</div>
+      <div class="sc-item">HBM 가격 급락·공급 과잉</div>
+      <div class="sc-item">스페이스X IPO 유동성 이탈</div>
+    </div>
+  </div>
+
+  <div class="disc">※ 본 리포트는 공개 보도 및 증권사 리서치를 종합한 참고용 정보입니다. AI 예측 주가(wonforecast.com)는 통계 모델 기반이며 실제 결과와 다를 수 있습니다. 투자의 최종 책임은 투자자 본인에게 있으며 투자 권유가 아닙니다.</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+const tc = isDark ? '#B4B2A9' : '#5F5E5A';
+const gc = isDark ? 'rgba(180,178,169,0.10)' : 'rgba(95,94,90,0.08)';
+
+new Chart(document.getElementById('cChart'), {
+  type: 'bar',
+  data: {
+    labels: ['기아','NAVER','삼성전자','현대차','SK하이닉스'],
+    datasets: [
+      {
+        label: '컨센서스 상승여력',
+        data: [44, 23, 24, 19, 1],
+        backgroundColor: '#9FE1CB',
+        borderRadius: 4,
+        stack: 'a'
+      },
+      {
+        label: '최고가 추가 업사이드',
+        data: [46, 56, 45, 43, 49],
+        backgroundColor: ['#D85A30','#BA7517','#378ADD','#534AB7','#3B6D11'],
+        borderRadius: 4,
+        stack: 'a'
+      }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ' ' + ctx.dataset.label + ': +' + Math.round(ctx.parsed.x) + '%'
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: tc, callback: v => '+' + v + '%' },
+        grid: { color: gc },
+        stacked: true,
+        max: 105
+      },
+      y: {
+        ticks: { color: tc, font: { size: 12 } },
+        grid: { display: false },
+        stacked: true
+      }
+    }
+  }
+});
+</script>
