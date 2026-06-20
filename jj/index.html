@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>정보 과목 정기시험대비 학습지 - 풀이노트</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+
+  :root{
+    --bg:#0d1117;
+    --bg2:#11161d;
+    --panel:#161c25;
+    --panel2:#1c2330;
+    --border:#2a3342;
+    --accent:#5ee7c9;
+    --accent2:#7aa2ff;
+    --accent3:#ffb86b;
+    --accent4:#ff7ab8;
+    --text:#e8edf4;
+    --sub:#93a1b5;
+    --good:#5ee7c9;
+    --warn:#ffd166;
+    --bad:#ff6b6b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(900px 500px at 90% -10%, rgba(122,162,255,0.10), transparent 60%),
+      radial-gradient(800px 500px at -10% 110%, rgba(94,231,201,0.08), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Noto Sans KR', sans-serif;
+    line-height:1.6;
+    min-height:100vh;
+  }
+  .mono{font-family:'JetBrains Mono', monospace;}
+
+  /* ---------- Layout ---------- */
+  .shell{display:flex; min-height:100vh;}
+  .sidebar{
+    width:240px; flex-shrink:0;
+    background:var(--bg2);
+    border-right:1px solid var(--border);
+    position:sticky; top:0; height:100vh; overflow-y:auto;
+    padding:20px 14px 40px;
+  }
+  .brand{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:800; font-size:13px; letter-spacing:0.5px;
+    color:var(--accent);
+    padding:6px 10px 18px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:14px;
+  }
+  .brand small{display:block; color:var(--sub); font-weight:500; margin-top:4px; font-size:11px;}
+  .navgroup{margin-bottom:6px;}
+  .navgroup-title{
+    font-size:11px; color:var(--sub); text-transform:uppercase;
+    letter-spacing:1px; padding:10px 10px 6px; font-weight:700;
+  }
+  .navbtn{
+    display:flex; align-items:center; gap:8px;
+    width:100%; text-align:left; background:none; border:none;
+    color:var(--sub); padding:9px 10px; border-radius:8px;
+    font-size:13.5px; cursor:pointer; font-family:inherit;
+    transition:background .15s, color .15s;
+  }
+  .navbtn:hover{background:var(--panel2); color:var(--text);}
+  .navbtn.active{background:rgba(94,231,201,0.12); color:var(--accent); font-weight:700;}
+  .navbtn .dot{width:6px;height:6px;border-radius:50%;background:var(--border); flex-shrink:0;}
+  .navbtn.active .dot{background:var(--accent);}
+
+  .main{flex:1; min-width:0; padding:34px 38px 100px; max-width:980px;}
+  @media (max-width:880px){
+    .sidebar{position:fixed; left:-260px; z-index:50; transition:left .2s; box-shadow:8px 0 30px rgba(0,0,0,0.4);}
+    .sidebar.open{left:0;}
+    .main{padding:70px 18px 80px;}
+    .menubtn{display:flex !important;}
+  }
+  .menubtn{
+    display:none; position:fixed; top:14px; left:14px; z-index:60;
+    background:var(--panel2); border:1px solid var(--border); color:var(--text);
+    width:40px; height:40px; border-radius:10px; align-items:center; justify-content:center;
+    cursor:pointer; font-size:18px;
+  }
+
+  .page{display:none; animation:fadeIn .25s ease;}
+  .page.active{display:block;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  .page-head{margin-bottom:24px;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent2);
+    letter-spacing:1px; font-weight:700; margin-bottom:6px;
+  }
+  h1.title{font-size:26px; font-weight:900; margin:0 0 8px; letter-spacing:-0.3px;}
+  .desc{color:var(--sub); font-size:14.5px; margin:0;}
+
+  .card{
+    background:var(--panel); border:1px solid var(--border); border-radius:14px;
+    padding:20px 22px; margin-bottom:18px;
+  }
+  .card h2{font-size:17px; margin:0 0 12px; display:flex; align-items:center; gap:8px;}
+  .card h3{font-size:14.5px; margin:18px 0 8px; color:var(--accent2);}
+  .badge{
+    display:inline-block; font-size:11px; font-family:'JetBrains Mono',monospace;
+    padding:2px 8px; border-radius:6px; font-weight:700; letter-spacing:.3px;
+  }
+  .badge.q{background:rgba(122,162,255,0.15); color:var(--accent2);}
+  .badge.a{background:rgba(94,231,201,0.15); color:var(--accent);}
+  .badge.warn{background:rgba(255,209,102,0.15); color:var(--warn);}
+
+  p{margin:8px 0; color:var(--text); font-size:14.5px;}
+  .sub-text{color:var(--sub); font-size:13.5px;}
+  ul,ol{margin:8px 0; padding-left:22px; font-size:14.5px;}
+  li{margin:4px 0;}
+  code, .code-inline{
+    font-family:'JetBrains Mono',monospace; background:var(--panel2);
+    padding:1px 6px; border-radius:5px; font-size:13px; color:var(--accent3);
+  }
+
+  /* toggle answer */
+  .reveal{
+    margin-top:10px; border:1px dashed var(--border); border-radius:10px; overflow:hidden;
+  }
+  .reveal-btn{
+    width:100%; background:var(--panel2); border:none; color:var(--accent2);
+    padding:10px 14px; text-align:left; cursor:pointer; font-family:'JetBrains Mono',monospace;
+    font-size:12.5px; font-weight:700; display:flex; justify-content:space-between; align-items:center;
+  }
+  .reveal-btn:hover{background:#222c3c;}
+  .reveal-body{
+    max-height:0; overflow:hidden; transition:max-height .3s ease;
+    background:rgba(94,231,201,0.04);
+  }
+  .reveal-body-inner{padding:14px 16px;}
+  .reveal.open .reveal-body{max-height:2000px;}
+  .reveal.open .chev{transform:rotate(180deg);}
+  .chev{transition:transform .2s;}
+
+  /* code block */
+  pre.codeblock{
+    background:#0a0e14; border:1px solid var(--border); border-radius:10px;
+    padding:14px 16px; overflow-x:auto; font-family:'JetBrains Mono',monospace;
+    font-size:13px; line-height:1.7; margin:10px 0;
+  }
+  pre.codeblock .c1{color:#5c6773;}
+  pre.codeblock .num{color:#ffb86b;}
+  pre.codeblock .kw{color:#7aa2ff;}
+  pre.codeblock .fn{color:#5ee7c9;}
+  pre.codeblock .out{color:#93a1b5;}
+
+  table.kv{border-collapse:collapse; width:100%; font-size:13.5px; margin:8px 0;}
+  table.kv th, table.kv td{border:1px solid var(--border); padding:8px 10px; text-align:center;}
+  table.kv th{background:var(--panel2); color:var(--accent2); font-size:12px;}
+  table.kv td.mono{font-family:'JetBrains Mono',monospace;}
+
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media(max-width:700px){.grid2{grid-template-columns:1fr;}}
+
+  /* quiz fill-in */
+  .fillrow{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:8px 0;}
+  input.blank{
+    width:64px; background:var(--bg2); border:1px solid var(--border); border-radius:6px;
+    color:var(--text); padding:6px 8px; font-family:'JetBrains Mono',monospace; text-align:center;
+    font-size:13px;
+  }
+  input.blank:focus{outline:none; border-color:var(--accent2);}
+  input.blank.correct{border-color:var(--good); background:rgba(94,231,201,0.1); color:var(--good);}
+  input.blank.wrong{border-color:var(--bad); background:rgba(255,107,107,0.1); color:var(--bad);}
+  .checkbtn{
+    background:var(--accent2); color:#0d1117; border:none; border-radius:8px;
+    padding:8px 16px; font-weight:800; font-size:13px; cursor:pointer; font-family:'Noto Sans KR',sans-serif;
+  }
+  .checkbtn:hover{filter:brightness(1.08);}
+  .resultmsg{font-size:13px; font-weight:700; margin-left:6px;}
+
+  /* huffman canvas */
+  .canvas-wrap{
+    background:#0a0e14; border:1px solid var(--border); border-radius:10px; padding:10px;
+    overflow-x:auto;
+  }
+  canvas{display:block; margin:0 auto;}
+
+  /* simulator buttons */
+  .sim-controls{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0;}
+  .sim-btn{
+    background:var(--panel2); border:1px solid var(--border); color:var(--text);
+    padding:8px 14px; border-radius:8px; cursor:pointer; font-size:13px;
+    font-family:'JetBrains Mono',monospace; font-weight:700; transition:.15s;
+  }
+  .sim-btn:hover{border-color:var(--accent2); color:var(--accent2);}
+  .sim-btn:disabled{opacity:0.35; cursor:not-allowed;}
+  .sim-btn.primary{background:var(--accent2); color:#0d1117; border-color:var(--accent2);}
+  .sim-btn.primary:hover{filter:brightness(1.1);}
+
+  .array-vis{display:flex; gap:8px; margin:16px 0; flex-wrap:wrap; min-height:64px; align-items:flex-end;}
+  .arr-box{
+    width:52px; height:52px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-weight:800; font-size:18px;
+    background:var(--panel2); border:2px solid var(--border); transition:all .35s ease; position:relative;
+  }
+  .arr-box.compare{border-color:var(--accent3); background:rgba(255,184,107,0.15); transform:translateY(-6px);}
+  .arr-box.swap{border-color:var(--accent4); background:rgba(255,122,184,0.2); transform:translateY(-10px) scale(1.06);}
+  .arr-box.sorted{border-color:var(--good); background:rgba(94,231,201,0.15);}
+  .arr-box.pivot{border-color:var(--accent2); box-shadow:0 0 0 2px rgba(122,162,255,0.4);}
+  .arr-box .idx{position:absolute; bottom:-20px; font-size:10px; color:var(--sub); font-weight:400;}
+
+  .stat-row{display:flex; gap:18px; margin:10px 0; font-family:'JetBrains Mono',monospace; font-size:13px;}
+  .stat-row .stat b{color:var(--accent3); font-size:16px; display:block;}
+  .stat{background:var(--panel2); border:1px solid var(--border); padding:8px 14px; border-radius:8px; flex:1; text-align:center;}
+  .log-box{
+    background:#0a0e14; border:1px solid var(--border); border-radius:10px; padding:10px 14px;
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--sub);
+    max-height:120px; overflow-y:auto; margin-top:10px;
+  }
+  .log-box .entry{padding:2px 0;}
+  .log-box .entry.swap-log{color:var(--accent4);}
+  .log-box .entry.cmp-log{color:var(--accent3);}
+
+  /* keyword card flip */
+  .kw-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:12px; margin-top:10px;}
+  .kw-card{
+    perspective:1000px; height:108px; cursor:pointer;
+  }
+  .kw-inner{
+    position:relative; width:100%; height:100%; transition:transform .5s;
+    transform-style:preserve-3d;
+  }
+  .kw-card.flipped .kw-inner{transform:rotateY(180deg);}
+  .kw-face{
+    position:absolute; inset:0; backface-visibility:hidden; border-radius:12px;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    padding:10px; font-size:13px; font-weight:700; border:1px solid var(--border);
+  }
+  .kw-front{background:var(--panel2); color:var(--text);}
+  .kw-back{background:rgba(122,162,255,0.12); color:var(--accent2); transform:rotateY(180deg); font-weight:500; font-size:12px;}
+
+  /* python output simulator */
+  .pyline{display:flex; gap:10px; align-items:center; padding:6px 0; border-bottom:1px dashed var(--border);}
+  .pyline:last-child{border-bottom:none;}
+  .pyline code{flex:0 0 auto; min-width:260px;}
+  .pyans{
+    font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--sub);
+    cursor:pointer; padding:3px 10px; border-radius:6px; background:var(--bg2); border:1px solid var(--border);
+  }
+  .pyans.shown{color:var(--good); border-color:var(--good); background:rgba(94,231,201,.08);}
+
+  .footer-note{
+    margin-top:40px; padding-top:18px; border-top:1px solid var(--border);
+    color:var(--sub); font-size:12.5px; text-align:center;
+  }
+
+  .toc-chip{
+    display:inline-flex; align-items:center; gap:6px; background:var(--panel2);
+    border:1px solid var(--border); border-radius:20px; padding:5px 12px; font-size:12px;
+    color:var(--sub); margin:3px 4px 3px 0;
+  }
+  .scope-box{
+    background:linear-gradient(135deg, rgba(122,162,255,0.1), rgba(94,231,201,0.06));
+    border:1px solid rgba(122,162,255,0.25); border-radius:12px; padding:16px 18px; margin-bottom:20px;
+  }
+  .scope-box .range{font-family:'JetBrains Mono',monospace; color:var(--accent2); font-weight:700;}
+
+  .progress-pill{
+    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--sub);
+    background:var(--panel2); padding:3px 9px; border-radius:20px; border:1px solid var(--border);
+  }
+
+  ::-webkit-scrollbar{width:10px; height:10px;}
+  ::-webkit-scrollbar-track{background:var(--bg);}
+  ::-webkit-scrollbar-thumb{background:#2a3342; border-radius:6px;}
+</style>
+</head>
+<body>
+
+<button class="menubtn" id="menuBtn">☰</button>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="brand">정보과목 시험대비<small>인터랙티브 풀이노트 · 김나현</small></div>
+
+    <div class="navgroup">
+      <div class="navgroup-title">개요</div>
+      <button class="navbtn active" data-page="home"><span class="dot"></span>학습 범위 & 안내</button>
+    </div>
+
+    <div class="navgroup">
+      <div class="navgroup-title">1. 데이터 압축 · 암호화 · 모델링</div>
+      <button class="navbtn" data-page="compress-theory"><span class="dot"></span>압축 이론 (손실/무손실)</button>
+      <button class="navbtn" data-page="runlength"><span class="dot"></span>런렝스 압축 문제풀이</button>
+      <button class="navbtn" data-page="huffman"><span class="dot"></span>허프만 트리 시뮬레이터</button>
+      <button class="navbtn" data-page="encrypt"><span class="dot"></span>데이터 암호화</button>
+      <button class="navbtn" data-page="modeling"><span class="dot"></span>데이터 모델링</button>
+    </div>
+
+    <div class="navgroup">
+      <div class="navgroup-title">2. 정렬 알고리즘</div>
+      <button class="navbtn" data-page="bubble"><span class="dot"></span>버블 정렬 시뮬레이터</button>
+      <button class="navbtn" data-page="selection"><span class="dot"></span>선택 정렬 시뮬레이터</button>
+      <button class="navbtn" data-page="quick"><span class="dot"></span>퀵 정렬 시뮬레이터</button>
+    </div>
+
+    <div class="navgroup">
+      <div class="navgroup-title">3. 파이썬 프로그래밍</div>
+      <button class="navbtn" data-page="varname"><span class="dot"></span>변수명 작성 규칙</button>
+      <button class="navbtn" data-page="operators"><span class="dot"></span>연산자 출력 예측 퀴즈</button>
+      <button class="navbtn" data-page="programs"><span class="dot"></span>프로그램 결과 풀이</button>
+    </div>
+
+    <div class="navgroup">
+      <div class="navgroup-title">4. 인공지능</div>
+      <button class="navbtn" data-page="agent"><span class="dot"></span>지능 에이전트</button>
+      <button class="navbtn" data-page="agent-cycle"><span class="dot"></span>동작 원리와 순서</button>
+      <button class="navbtn" data-page="ml"><span class="dot"></span>기계학습 정의 & 종류</button>
+      <button class="navbtn" data-page="ml-quiz"><span class="dot"></span>개념 키워드 카드</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- HOME -->
+    <section class="page active" id="page-home">
+      <div class="page-head">
+        <div class="eyebrow">정보 과목 · 정기시험대비 학습지</div>
+        <h1 class="title">학습 범위 & 사용 안내</h1>
+        <p class="desc">제출한 3장의 학습지(데이터 압축/암호화/모델링, 정렬·파이썬, 인공지능)를 토대로 빈칸의 정답과 이론을 정리한 인터랙티브 자료입니다.</p>
+      </div>
+
+      <div class="scope-box">
+        <h2 style="margin-top:0;">📋 전체 시험범위</h2>
+        <p>교과서 <span class="range">38–59, 78–133, 158–181, 190–215, 231–237</span> 쪽</p>
+        <p class="sub-text">⭐ 특히 많이 봐두어야 하는 부분: <b>각 단원의 대단원 마무리 문제 중 선택형 문제</b></p>
+      </div>
+
+      <div class="card">
+        <h2>🗂️ 이 자료에 포함된 내용</h2>
+        <div class="toc-chip">① 손실/무손실 압축</div>
+        <div class="toc-chip">② 런렝스 압축 (HELLO, GOOOOGLE)</div>
+        <div class="toc-chip">③ 허프만 트리 (canada, murmured)</div>
+        <div class="toc-chip">④ 데이터 암호화</div>
+        <div class="toc-chip">⑤ 데이터 모델링 (표/그래프/트리)</div>
+        <div class="toc-chip">⑥ 버블/선택/퀵 정렬</div>
+        <div class="toc-chip">⑦ 파이썬 변수명 규칙</div>
+        <div class="toc-chip">⑧ 연산자 활용 퀴즈</div>
+        <div class="toc-chip">⑨ random / for문 프로그램</div>
+        <div class="toc-chip">⑩ 지능 에이전트</div>
+        <div class="toc-chip">⑪ 기계학습 종류 3가지</div>
+        <p class="sub-text" style="margin-top:14px;">왼쪽 메뉴에서 단원을 선택하세요. 정답은 <b style="color:var(--accent2)">"정답 보기"</b> 버튼을 눌러야 펼쳐지므로, 먼저 직접 풀어본 뒤 확인하는 방식으로 사용하는 걸 추천해요.</p>
+      </div>
+    </section>
+
+    <!-- ===================== 1. 압축 이론 ===================== -->
+    <section class="page" id="page-compress-theory">
+      <div class="page-head">
+        <div class="eyebrow">2. 데이터 압축</div>
+        <h1 class="title">손실 압축 vs 무손실 압축</h1>
+        <p class="desc">학습지 1) 손실압축과 무손실 압축의 특징</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q</span> 손실압축과 무손실 압축의 특징을 비교 설명하시오</h2>
+        <div class="reveal">
+          <button class="reveal-btn">정답 / 이론 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <div class="grid2">
+              <div>
+                <h3 style="color:var(--accent3)">🔻 손실 압축 (Lossy)</h3>
+                <ul>
+                  <li>압축 과정에서 데이터 일부를 <b>버려서</b> 복원 시 원본과 완전히 같지 않음</li>
+                  <li>대신 압축률이 매우 높음 (용량을 크게 줄일 수 있음)</li>
+                  <li>사람이 잘 인식하지 못하는 정보(고주파 음역, 미세한 색상차 등)를 제거</li>
+                  <li>예: JPEG(이미지), MP3(음악), MPEG(동영상)</li>
+                </ul>
+              </div>
+              <div>
+                <h3 style="color:var(--accent)">🔺 무손실 압축 (Lossless)</h3>
+                <ul>
+                  <li>압축해도 데이터 손실이 전혀 없어 원본을 <b>완벽히 복원</b> 가능</li>
+                  <li>압축률은 손실 압축보다 낮음</li>
+                  <li>반복되는 패턴·중복 데이터를 효율적으로 표현하는 방식 사용</li>
+                  <li>예: ZIP, PNG, 런렝스 압축, 허프만 코딩</li>
+                </ul>
+              </div>
+            </div>
+            <p class="sub-text" style="margin-top:10px;">💡 핵심 비교 포인트: <b>복원 가능 여부</b>와 <b>압축률</b>은 서로 트레이드오프 관계입니다. 시험에서는 "문서·실행파일처럼 정확해야 하는 데이터엔 무손실, 이미지·음악처럼 약간의 손실이 허용되는 데이터엔 손실 압축을 사용한다"는 활용 맥락도 함께 출제될 수 있어요.</p>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 런렝스 ===================== -->
+    <section class="page" id="page-runlength">
+      <div class="page-head">
+        <div class="eyebrow">2. 데이터 압축</div>
+        <h1 class="title">런렝스(Run-Length) 압축 문제풀이</h1>
+        <p class="desc">학습지 2) 다음 데이터를 런렝스 압축하시오</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q1</span> HELLO 를 런렝스 압축하면?</h2>
+        <p>원본: <code>H E L L O</code> → 압축 전 byte 수, 압축 후 byte 수를 모두 구하세요.</p>
+        <div class="reveal">
+          <button class="reveal-btn">정답 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <table class="kv">
+              <tr><th>문자</th><td class="mono">H</td><td class="mono">E</td><td class="mono">L</td><td class="mono">O</td></tr>
+              <tr><th>반복횟수</th><td class="mono">1</td><td class="mono">1</td><td class="mono">2</td><td class="mono">1</td></tr>
+            </table>
+            <p>➡️ 압축 결과: <code style="color:var(--good)">H1E1L2O1</code></p>
+            <p><b>압축 전:</b> <code>HELLO</code> = <span style="color:var(--accent3)">5 byte</span> (문자 1개 = 1byte 가정)</p>
+            <p><b>압축 후:</b> <code>H1E1L2O1</code> = <span style="color:var(--good)">8 byte</span> (문자+숫자 쌍 4개 × 2byte)</p>
+            <p class="sub-text">⚠️ 주의: HELLO처럼 같은 문자가 적게 반복되면, 런렝스 압축이 오히려 <b>원본보다 용량이 커질 수 있습니다</b>. 이게 이 문제의 핵심 포인트예요 — 런렝스 압축은 "같은 값이 길게 연속될 때"만 효과적입니다.</p>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q2</span> GOOOOGLE 를 런렝스 압축하면?</h2>
+        <p>원본: <code>G O O O O G L E</code> (O가 4번 연속)</p>
+        <div class="reveal">
+          <button class="reveal-btn">정답 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <table class="kv">
+              <tr><th>문자</th><td class="mono">G</td><td class="mono">O</td><td class="mono">G</td><td class="mono">L</td><td class="mono">E</td></tr>
+              <tr><th>반복횟수</th><td class="mono">1</td><td class="mono">4</td><td class="mono">1</td><td class="mono">1</td><td class="mono">1</td></tr>
+            </table>
+            <p>➡️ 압축 결과: <code style="color:var(--good)">G1O4G1L1E1</code></p>
+            <p><b>압축 전:</b> <code>GOOOOGLE</code> = <span style="color:var(--accent3)">8 byte</span></p>
+            <p><b>압축 후:</b> <code>G1O4G1L1E1</code> = <span style="color:var(--good)">10 byte</span> (5쌍 × 2byte)</p>
+            <p class="sub-text">이 경우도 글자 종류가 많아(G가 두 번 끊어져 등장) 압축 효율이 낮습니다. 만약 GGGGOOOO처럼 큰 덩어리로 반복되면 압축 효과가 커집니다. 시험에서 "런렝스 압축이 효과적인 경우"를 물으면 → <b>동일한 데이터가 연속해서 많이 나올 때</b>라고 답하세요.</p>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 허프만 ===================== -->
+    <section class="page" id="page-huffman">
+      <div class="page-head">
+        <div class="eyebrow">2. 데이터 압축</div>
+        <h1 class="title">허프만 트리(Huffman Tree) 시뮬레이터</h1>
+        <p class="desc">학습지 3) canada / murmured 를 허프만 트리로 압축하기 — 빈도수 계산 → 트리 구성 → 문자별 코드 → 전체 코드</p>
+      </div>
+
+      <div class="card">
+        <h2>🌳 허프만 코딩이란?</h2>
+        <p>문자의 <b>등장 빈도수</b>를 기준으로 이진 트리를 만들어, <b>자주 나오는 문자는 짧은 코드</b>, <b>드물게 나오는 문자는 긴 코드</b>를 부여하는 무손실 압축 방식입니다.</p>
+        <ol>
+          <li>각 문자의 빈도수를 센다</li>
+          <li>빈도수가 가장 작은 두 노드를 골라 합쳐 새로운 부모 노드(빈도수 합)를 만든다</li>
+          <li>노드가 하나만 남을 때까지 반복한다 → 이것이 허프만 트리</li>
+          <li>루트에서 왼쪽=0, 오른쪽=1로 따라가며 각 문자의 코드를 읽는다</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q1</span> "canada" 허프만 트리</h2>
+        <p>문자 구성: <code>c a n a d a</code> → a가 3번, 나머지는 1번씩</p>
+        <button class="sim-btn primary" onclick="buildHuffman('canada')">canada 트리 생성하기 ▶</button>
+        <div class="canvas-wrap" style="margin-top:12px;">
+          <canvas id="huffCanvas1" width="900" height="380"></canvas>
+        </div>
+        <div class="reveal">
+          <button class="reveal-btn">빈도수 · 코드표 · 전체 압축 결과 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner" id="huffAnswer1">
+            <p>트리를 먼저 생성해보세요. (위 버튼 클릭)</p>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q2</span> "murmured" 허프만 트리</h2>
+        <p>문자 구성: <code>m u r m u r e d</code> → m 2번, u 2번, r 2번, e 1번, d 1번</p>
+        <button class="sim-btn primary" onclick="buildHuffman('murmured')">murmured 트리 생성하기 ▶</button>
+        <div class="canvas-wrap" style="margin-top:12px;">
+          <canvas id="huffCanvas2" width="900" height="420"></canvas>
+        </div>
+        <div class="reveal">
+          <button class="reveal-btn">빈도수 · 코드표 · 전체 압축 결과 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner" id="huffAnswer2">
+            <p>트리를 먼저 생성해보세요. (위 버튼 클릭)</p>
+          </div></div>
+        </div>
+        <p class="sub-text" style="margin-top:10px;">⚠️ 허프만 트리는 빈도수가 같은 노드가 여러 개일 때 <b>묶는 순서에 따라 코드가 달라질 수 있습니다</b>. 시험에서는 보통 "코드 길이의 총합" 또는 "압축 후 전체 비트 수"가 맞으면 정답으로 인정되는 경우가 많으니, 선생님이 제시한 풀이 순서를 함께 확인하세요.</p>
+      </div>
+    </section>
+
+    <!-- ===================== 암호화 ===================== -->
+    <section class="page" id="page-encrypt">
+      <div class="page-head">
+        <div class="eyebrow">3. 데이터 암호화</div>
+        <h1 class="title">데이터 암호화의 정의와 방식</h1>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q</span> 데이터 암호화의 정의와 방식을 설명하시오</h2>
+        <div class="reveal">
+          <button class="reveal-btn">정답 / 이론 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <h3>📌 정의</h3>
+            <p>데이터 암호화란 평문(원본 데이터)을 <b>특정 규칙(키)</b>을 이용해 제3자가 알아볼 수 없는 형태인 <b>암호문</b>으로 바꾸는 것입니다. 정당한 사용자는 <b>복호화(decryption)</b>를 통해 다시 원래 데이터로 되돌릴 수 있습니다.</p>
+            <h3>🔑 암호화 방식</h3>
+            <div class="grid2">
+              <div>
+                <p><b style="color:var(--accent2)">① 대칭키 암호화 (비밀키 방식)</b></p>
+                <ul>
+                  <li>암호화할 때와 복호화할 때 <b>같은 키</b>를 사용</li>
+                  <li>속도가 빠름</li>
+                  <li>키가 유출되면 보안이 무너짐 → 키 전달이 문제</li>
+                </ul>
+              </div>
+              <div>
+                <p><b style="color:var(--accent)">② 비대칭키 암호화 (공개키 방식)</b></p>
+                <ul>
+                  <li><b>공개키</b>(암호화)와 <b>개인키</b>(복호화)가 서로 다름</li>
+                  <li>공개키는 누구나 알아도 되지만, 개인키는 본인만 보관</li>
+                  <li>속도는 느리지만 키 분배 문제를 해결</li>
+                </ul>
+              </div>
+            </div>
+            <p class="sub-text" style="margin-top:10px;">💡 시험 포인트: "공개키로 암호화하면 → 그 쌍이 되는 개인키로만 복호화 가능"이라는 원리, 그리고 두 방식의 <b>속도/보안성 차이</b>를 비교하는 문제가 잘 나옵니다.</p>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 모델링 ===================== -->
+    <section class="page" id="page-modeling">
+      <div class="page-head">
+        <div class="eyebrow">4. 데이터 모델링</div>
+        <h1 class="title">데이터 모델링 정의와 구조 (표/그래프/트리)</h1>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q1</span> 데이터 모델링의 정의</h2>
+        <div class="reveal">
+          <button class="reveal-btn">정답 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <p>데이터 모델링이란 현실 세계의 데이터를 <b>일정한 형식과 구조</b>로 표현하여, 컴퓨터가 처리하고 사람이 분석하기 쉽도록 정리하는 과정입니다. 데이터 간의 <b>관계와 속성</b>을 명확히 나타내는 것이 핵심입니다.</p>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q2</span> 데이터 모델링 구조 3가지: 표 / 그래프 / 트리</h2>
+        <div class="reveal">
+          <button class="reveal-btn">정답 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <div class="grid2">
+              <div>
+                <h3 style="color:var(--accent3)">📊 표 (Table)</h3>
+                <p class="sub-text">행과 열로 구성되어 데이터를 <b>2차원 격자</b> 형태로 정리. 항목 간 비교가 쉽고, 엑셀·관계형 데이터베이스(RDB)에서 주로 사용.</p>
+              </div>
+              <div>
+                <h3 style="color:var(--accent2)">🔗 그래프 (Graph)</h3>
+                <p class="sub-text">노드(정점)와 간선(엣지)으로 데이터 간의 <b>복잡한 연결 관계</b>를 표현. SNS 친구관계, 지도 네트워크 등에 사용. 순환(cycle) 구조도 가능.</p>
+              </div>
+              <div>
+                <h3 style="color:var(--good)">🌳 트리 (Tree)</h3>
+                <p class="sub-text">하나의 루트에서 가지치기 형태로 뻗어나가는 <b>계층 구조</b>. 순환이 없음(비순환). 폴더 구조, 조직도, 허프만 트리 등이 대표적 예시.</p>
+              </div>
+            </div>
+            <p class="sub-text" style="margin-top:10px;">💡 비교 포인트: 트리는 그래프의 한 종류(순환이 없는 그래프)라는 점, 표는 관계가 단순할 때, 그래프/트리는 관계가 복잡하거나 계층적일 때 사용한다는 점을 기억하세요.</p>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 정렬: 버블 ===================== -->
+    <section class="page" id="page-bubble">
+      <div class="page-head">
+        <div class="eyebrow">5. 정렬 알고리즘</div>
+        <h1 class="title">① 버블 정렬 — 4 2 5 1 3 오름차순 정렬</h1>
+        <p class="desc">서로 인접한 값을 계속 비교하며 교환. 아래 버튼으로 한 단계씩 직접 진행해보세요.</p>
+      </div>
+      <div class="card">
+        <div class="sim-controls">
+          <button class="sim-btn primary" id="bubbleStep">다음 비교 ▶</button>
+          <button class="sim-btn" id="bubbleReset">초기화 ↺</button>
+          <button class="sim-btn" id="bubbleAuto">자동 실행 ⏩</button>
+        </div>
+        <div class="array-vis" id="bubbleArr"></div>
+        <div class="stat-row">
+          <div class="stat">전체 비교횟수<b id="bubbleCmp">0</b></div>
+          <div class="stat">교환횟수<b id="bubbleSwap">0</b></div>
+          <div class="stat">현재 단계<b id="bubblePass">-</b></div>
+        </div>
+        <div class="log-box" id="bubbleLog"></div>
+      </div>
+      <div class="card">
+        <h2><span class="badge a">정답</span> 최종 비교/교환 횟수</h2>
+        <div class="reveal">
+          <button class="reveal-btn">정답 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <p><b>4 2 5 1 3</b>을 버블 정렬로 오름차순 정렬할 때:</p>
+            <p>전체 비교횟수 = <code style="color:var(--accent3)">10</code> 회 (4+3+2+1, n=5일 때 최대 비교횟수)</p>
+            <p>교환횟수 = <code style="color:var(--accent4)">6</code> 회</p>
+            <p class="sub-text">버블 정렬은 항상 인접한 두 값을 비교하므로, 정렬이 빨리 끝나도 모든 패스를 다 비교하면 비교횟수는 n(n-1)/2로 동일합니다 (단, 중간에 교환이 없으면 조기 종료하는 최적화 버전도 있어요). 위 시뮬레이터로 직접 비교/교환 횟수를 세어 확인해보세요!</p>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 정렬: 선택 ===================== -->
+    <section class="page" id="page-selection">
+      <div class="page-head">
+        <div class="eyebrow">5. 정렬 알고리즘</div>
+        <h1 class="title">② 선택 정렬 — 4 2 5 1 3 오름차순 정렬</h1>
+        <p class="desc">정렬되지 않은 값 중 가장 작은 값을 찾아 기준이 되는 값과 교환합니다.</p>
+      </div>
+      <div class="card">
+        <div class="sim-controls">
+          <button class="sim-btn primary" id="selStep">다음 단계 ▶</button>
+          <button class="sim-btn" id="selReset">초기화 ↺</button>
+          <button class="sim-btn" id="selAuto">자동 실행 ⏩</button>
+        </div>
+        <div class="array-vis" id="selArr"></div>
+        <div class="stat-row">
+          <div class="stat">전체 비교횟수<b id="selCmp">0</b></div>
+          <div class="stat">교환횟수<b id="selSwap">0</b></div>
+          <div class="stat">현재 라운드<b id="selPass">-</b></div>
+        </div>
+        <div class="log-box" id="selLog"></div>
+      </div>
+      <div class="card">
+        <h2><span class="badge a">정답</span> 최종 비교/교환 횟수</h2>
+        <div class="reveal">
+          <button class="reveal-btn">정답 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <p><b>4 2 5 1 3</b>을 선택 정렬로 오름차순 정렬할 때:</p>
+            <p>전체 비교횟수 = <code style="color:var(--accent3)">10</code> 회 (4+3+2+1)</p>
+            <p>교환횟수 = <code style="color:var(--accent4)">3</code> 회</p>
+            <p class="sub-text">선택 정렬은 라운드마다 "최솟값을 찾는 비교"는 매번 일어나지만, "교환"은 이미 제자리에 있으면 생략할 수 있어 버블 정렬보다 교환 횟수가 적은 경우가 많습니다.</p>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 정렬: 퀵 ===================== -->
+    <section class="page" id="page-quick">
+      <div class="page-head">
+        <div class="eyebrow">5. 정렬 알고리즘</div>
+        <h1 class="title">③ 퀵 정렬 — 분할 정복(Divide and Conquer)</h1>
+        <p class="desc">하나의 문제를 두 개로 나누어 각각 해결하면 원래 문제가 해결되는 분할 정복 알고리즘. 기준값(피봇)을 정해 피봇보다 작은 값/큰 값으로 분류합니다.</p>
+      </div>
+
+      <div class="card">
+        <h2>🧩 개념 정리</h2>
+        <ol>
+          <li>배열에서 <b>피봇(pivot)</b>을 하나 정한다 (보통 첫 값, 마지막 값, 또는 중간값)</li>
+          <li>피봇보다 작은 값은 왼쪽 그룹, 큰 값은 오른쪽 그룹으로 분류한다</li>
+          <li>왼쪽 그룹과 오른쪽 그룹에 대해 각각 같은 과정을 <b>재귀적으로</b> 반복한다</li>
+          <li>더 이상 나눌 수 없을 때(원소가 0~1개)까지 반복하면 전체가 정렬된다</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q</span> 4 2 5 1 3 을 퀵 정렬로 오름차순 정렬 (피봇 = 마지막 값 기준)</h2>
+        <button class="sim-btn primary" onclick="runQuickDemo()">단계별로 분할 과정 보기 ▶</button>
+        <div id="quickSteps" style="margin-top:14px;"></div>
+        <div class="reveal">
+          <button class="reveal-btn">최종 정렬단계 요약 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <p><b>1단계</b> 피봇=3 → [2,1] / 3 / [4,5]</p>
+            <p><b>2단계</b> 왼쪽 [2,1]에서 피봇=1 → [] / 1 / [2]  ⟶  1,2</p>
+            <p><b>3단계</b> 오른쪽 [4,5]에서 피봇=5 → [4] / 5 / []  ⟶  4,5</p>
+            <p><b>최종 결과:</b> <code style="color:var(--good)">1 2 3 4 5</code></p>
+            <p class="sub-text">퀵 정렬은 피봇을 어떻게 정하느냐에 따라 분할 과정이 달라질 수 있습니다. 위 풀이는 "각 그룹의 마지막 값을 피봇으로" 정한 한 가지 예시입니다.</p>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 파이썬: 변수명 ===================== -->
+    <section class="page" id="page-varname">
+      <div class="page-head">
+        <div class="eyebrow">6. 파이썬 프로그래밍</div>
+        <h1 class="title">① 변수명 작성 규칙</h1>
+      </div>
+      <div class="card">
+        <h2>📐 파이썬 변수명 규칙</h2>
+        <ul>
+          <li>영문자(a~z, A~Z), 숫자(0~9), 밑줄(_)만 사용 가능</li>
+          <li><b>숫자로 시작할 수 없음</b> (예: <code>1score</code> ❌)</li>
+          <li>공백(띄어쓰기) 사용 불가</li>
+          <li>특수문자(@,!,# 등) 사용 불가</li>
+          <li>파이썬 예약어(키워드)는 변수명으로 사용 불가 — 예: <code>if</code>, <code>for</code>, <code>True</code>, <code>class</code> 등</li>
+          <li>대소문자를 구분함 (<code>Score</code>와 <code>score</code>는 다른 변수)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2><span class="badge q">Q</span> 다음 중 올바른 변수명을 모두 골라보세요</h2>
+        <div id="varnameQuiz"></div>
+        <div class="reveal">
+          <button class="reveal-btn">정답 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <table class="kv">
+              <tr><th>변수명</th><th>가능 여부</th><th>이유</th></tr>
+              <tr><td class="mono">score1</td><td style="color:var(--good)">✅ 가능</td><td>영문자로 시작 + 숫자 포함</td></tr>
+              <tr><td class="mono">1score</td><td style="color:var(--bad)">❌ 불가능</td><td>숫자로 시작</td></tr>
+              <tr><td class="mono">my score</td><td style="color:var(--bad)">❌ 불가능</td><td>공백 포함</td></tr>
+              <tr><td class="mono">my_score</td><td style="color:var(--good)">✅ 가능</td><td>밑줄 사용은 허용</td></tr>
+              <tr><td class="mono">for</td><td style="color:var(--bad)">❌ 불가능</td><td>예약어(키워드)</td></tr>
+              <tr><td class="mono">total$</td><td style="color:var(--bad)">❌ 불가능</td><td>특수문자 포함</td></tr>
+            </table>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 파이썬: 연산자 ===================== -->
+    <section class="page" id="page-operators">
+      <div class="page-head">
+        <div class="eyebrow">6. 파이썬 프로그래밍</div>
+        <h1 class="title">② 연산자의 활용 — 프로그램 결과는?</h1>
+        <p class="desc">각 줄을 직접 예측해보고 클릭해서 정답을 확인하세요.</p>
+      </div>
+
+      <div class="card">
+        <h3 style="color:var(--accent3); margin-top:0;"># 산술 연산자</h3>
+        <div class="pyline"><code>print(100 + 200 / 50)</code><span class="pyans" data-ans="104.0">정답 보기</span></div>
+        <div class="pyline"><code>print((100 + 200) / 50)</code><span class="pyans" data-ans="6.0">정답 보기</span></div>
+        <div class="pyline"><code>print((100 + 200) // 50)</code><span class="pyans" data-ans="6">정답 보기</span></div>
+        <div class="pyline"><code>print((100 + 200) % 50)</code><span class="pyans" data-ans="0">정답 보기</span></div>
+
+        <h3 style="color:var(--accent2)"># 비교 연산자</h3>
+        <div class="pyline"><code>print(10 > 3)</code><span class="pyans" data-ans="True">정답 보기</span></div>
+        <div class="pyline"><code>print(10 == 3)</code><span class="pyans" data-ans="False">정답 보기</span></div>
+        <div class="pyline"><code>print(10 != 3)</code><span class="pyans" data-ans="True">정답 보기</span></div>
+
+        <h3 style="color:var(--good)"># 논리 연산자</h3>
+        <div class="pyline"><code>print((30 == 30) and (10 > 20))</code><span class="pyans" data-ans="False">정답 보기</span></div>
+        <div class="pyline"><code>print((10 > 5) or ((3 ** 2) == 9))</code><span class="pyans" data-ans="True">정답 보기</span></div>
+        <div class="pyline"><code>print(not (10 == 10))</code><span class="pyans" data-ans="False">정답 보기</span></div>
+      </div>
+
+      <div class="card">
+        <h2>💡 핵심 포인트 풀이</h2>
+        <ul>
+          <li><code>/</code> 는 결과가 항상 <b>실수(float)</b> → <code>100+200/50</code> 은 곱셈/나눗셈이 덧셈보다 우선이라 <code>200/50=4.0</code>, <code>100+4.0=104.0</code></li>
+          <li><code>//</code> 는 <b>몫</b>만 정수로 반환 (소수점 버림), <code>%</code> 는 <b>나머지</b> 반환</li>
+          <li><code>and</code> 는 둘 다 참이어야 True, <code>or</code> 는 하나만 참이어도 True</li>
+          <li><code>3 ** 2</code> 는 거듭제곱(3²=9) → <code>9==9</code> 는 True → <code>or</code> 전체 결과 True</li>
+          <li><code>not</code> 은 True/False를 뒤집음</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== 파이썬: 프로그램 결과 ===================== -->
+    <section class="page" id="page-programs">
+      <div class="page-head">
+        <div class="eyebrow">6. 파이썬 프로그래밍</div>
+        <h1 class="title">③④ 다음 프로그램의 결과는?</h1>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q3</span> random.randint 프로그램</h2>
+        <pre class="codeblock"><span class="kw">import</span> random
+num<span class="out">=</span>random.randint(1,10)
+print(num)</pre>
+        <div class="reveal">
+          <button class="reveal-btn">정답 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <p><code>random.randint(1, 10)</code>은 <b>1부터 10까지(양 끝 포함)</b> 정수 중 하나를 <b>무작위로</b> 반환합니다.</p>
+            <p>➡️ 정답: <b>실행할 때마다 1~10 사이의 정수 중 하나가 출력됨</b> (값이 매번 달라질 수 있음 — 정해진 고정값이 아님)</p>
+            <p class="sub-text">시험에서 "결과는?"이라고 물으면 특정 숫자 하나가 아니라 "1이상 10이하의 정수 중 하나"라고 답해야 합니다. 직접 실행해서 느낌을 확인해보세요 👇</p>
+            <button class="sim-btn primary" onclick="document.getElementById('randResult').innerText = Math.floor(Math.random()*10)+1">랜덤 실행해보기</button>
+            <span class="mono" style="margin-left:10px; font-size:18px; color:var(--good)" id="randResult">-</span>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q4</span> for문 합계 프로그램</h2>
+        <pre class="codeblock">sum<span class="out">=</span><span class="num">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>,<span class="num">11</span>):
+    sum<span class="out">=</span>sum+i
+print(sum)</pre>
+        <div class="reveal">
+          <button class="reveal-btn">정답 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <p><code>range(1, 11)</code>은 <b>1부터 10까지</b>를 의미합니다 (11은 포함 안 됨).</p>
+            <p>sum = 1+2+3+4+5+6+7+8+9+10</p>
+            <p>➡️ 정답: <code style="color:var(--good)">55</code></p>
+            <p class="sub-text">공식으로는 n(n+1)/2 = 10×11/2 = 55 로도 검산할 수 있어요.</p>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="sub-text">📖 그 외의 프로그램들은 교과서 <b>231–232, 235–237쪽</b>을 참고하세요.</p>
+      </div>
+    </section>
+
+    <!-- ===================== AI: 에이전트 ===================== -->
+    <section class="page" id="page-agent">
+      <div class="page-head">
+        <div class="eyebrow">6. 인공지능</div>
+        <h1 class="title">1) 지능 에이전트 (Intelligent Agent)</h1>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q</span> 지능 에이전트의 정의</h2>
+        <div class="reveal">
+          <button class="reveal-btn">정답 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <p>지능 에이전트란 <b>센서(환경 인식)</b>를 통해 주변 환경을 감지하고, <b>액추에이터(행동 수행)</b>를 통해 그 환경에 작용하는 자율적인 개체(시스템)를 말합니다. 즉, 스스로 상황을 판단하고 목표를 달성하기 위해 행동하는 인공지능 시스템입니다.</p>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q</span> 지능 에이전트의 4가지 특성</h2>
+        <div class="reveal">
+          <button class="reveal-btn">정답 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <div class="grid2">
+              <div class="card" style="margin-bottom:0; background:var(--panel2);">
+                <h3 style="margin-top:0; color:var(--accent3)">⚡ 반응성 (Reactivity)</h3>
+                <p class="sub-text">환경의 변화를 감지하고 그에 맞게 <b>즉각적으로 반응</b>하는 능력</p>
+              </div>
+              <div class="card" style="margin-bottom:0; background:var(--panel2);">
+                <h3 style="margin-top:0; color:var(--accent2)">🧭 자율성 (Autonomy)</h3>
+                <p class="sub-text">사람의 직접적인 개입 없이 <b>스스로 판단하고 행동</b>하는 능력</p>
+              </div>
+              <div class="card" style="margin-bottom:0; background:var(--panel2);">
+                <h3 style="margin-top:0; color:var(--good)">🎯 목표지향성 / 능동성 (Pro-activeness)</h3>
+                <p class="sub-text">단순히 반응만 하는 게 아니라, <b>목표 달성을 위해 스스로 행동을 계획·주도</b>하는 능력</p>
+              </div>
+              <div class="card" style="margin-bottom:0; background:var(--panel2);">
+                <h3 style="margin-top:0; color:var(--accent4)">🤝 사회성 (Social ability)</h3>
+                <p class="sub-text">다른 에이전트나 사람과 <b>상호작용하고 협력</b>할 수 있는 능력</p>
+              </div>
+            </div>
+            <p class="sub-text" style="margin-top:12px;">💡 암기 팁: "반·자·목·사" (반응성-자율성-목표지향성-사회성)로 외우면 편해요. 학습지에는 목표지향성 항목이 비어있을 수 있는데, 교과서 기준 4대 특성 중 하나로 꼭 함께 챙기세요.</p>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== AI: 동작원리 ===================== -->
+    <section class="page" id="page-agent-cycle">
+      <div class="page-head">
+        <div class="eyebrow">6. 인공지능</div>
+        <h1 class="title">2) 지능 에이전트의 동작원리와 순서</h1>
+      </div>
+      <div class="card">
+        <h2><span class="badge q">Q</span> 지능 에이전트는 어떤 순서로 동작하는가?</h2>
+        <div class="reveal">
+          <button class="reveal-btn">정답 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:14px 0;">
+              <div class="card" style="margin:0; background:var(--panel2); flex:1; min-width:140px; text-align:center;">
+                <b style="color:var(--accent3)">① 인식 (Perceive)</b>
+                <p class="sub-text" style="margin:6px 0 0;">센서로 환경 정보를 수집</p>
+              </div>
+              <div style="color:var(--sub); font-size:20px;">→</div>
+              <div class="card" style="margin:0; background:var(--panel2); flex:1; min-width:140px; text-align:center;">
+                <b style="color:var(--accent2)">② 판단 (Think/Decide)</b>
+                <p class="sub-text" style="margin:6px 0 0;">수집한 정보를 분석하고 행동을 결정</p>
+              </div>
+              <div style="color:var(--sub); font-size:20px;">→</div>
+              <div class="card" style="margin:0; background:var(--panel2); flex:1; min-width:140px; text-align:center;">
+                <b style="color:var(--good)">③ 행동 (Act)</b>
+                <p class="sub-text" style="margin:6px 0 0;">액추에이터로 환경에 실제 작용</p>
+              </div>
+            </div>
+            <p>이 <b>인식 → 판단 → 행동</b> 과정이 한 사이클로 끝나는 것이 아니라, 변화된 환경을 다시 인식하면서 <b>반복(순환)</b>됩니다. 이것이 지능 에이전트가 지속적으로 환경에 적응하는 방식입니다.</p>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== AI: 기계학습 ===================== -->
+    <section class="page" id="page-ml">
+      <div class="page-head">
+        <div class="eyebrow">6. 인공지능</div>
+        <h1 class="title">3) 기계학습 — 정의, 일반 SW와의 차이, 종류 3가지</h1>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q</span> 기계학습의 정의</h2>
+        <div class="reveal">
+          <button class="reveal-btn">정답 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <p>기계학습(Machine Learning)이란 컴퓨터가 <b>명시적으로 프로그래밍되지 않아도</b>, 주어진 <b>데이터로부터 스스로 규칙(패턴)을 학습</b>하여 새로운 데이터에 대한 예측이나 판단을 수행하는 기술입니다.</p>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q</span> 일반 소프트웨어와 기계학습의 차이</h2>
+        <div class="reveal">
+          <button class="reveal-btn">정답 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <table class="kv">
+              <tr><th></th><th>일반 소프트웨어</th><th>기계학습</th></tr>
+              <tr><td>규칙</td><td>사람이 직접 모든 규칙(조건문)을 작성</td><td>데이터로부터 규칙을 스스로 학습</td></tr>
+              <tr><td>입력</td><td>입력 + 규칙 → 출력</td><td>입력 + 출력(정답) → 규칙(모델)을 도출</td></tr>
+              <tr><td>새로운 상황</td><td>규칙에 없으면 처리 불가</td><td>학습된 패턴으로 추론·일반화 가능</td></tr>
+            </table>
+            <p class="sub-text" style="margin-top:8px;">💡 핵심: 일반 SW는 "규칙 → 결과"를 사람이 짜지만, 기계학습은 "데이터(입력+결과) → 규칙"을 컴퓨터가 스스로 찾아낸다는 점이 가장 큰 차이입니다.</p>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="badge q">Q</span> 기계학습의 종류 3가지</h2>
+        <div class="reveal">
+          <button class="reveal-btn">정답 보기 <span class="chev">▾</span></button>
+          <div class="reveal-body"><div class="reveal-body-inner">
+            <h3 style="color:var(--accent2); margin-top:0;">① 지도학습 (Supervised Learning)</h3>
+            <p><b>입력 데이터와 정답(레이블)이 함께</b> 주어진 상태에서 학습하여, 새로운 입력에 대한 정답을 예측하는 방식입니다.</p>
+            <p class="sub-text">예: 고양이/개 사진(입력)+ 정답 라벨 → 분류 모델 학습 / 스팸 메일 분류, 집값 예측 등</p>
+
+            <h3 style="color:var(--accent3)">② 비지도학습 (Unsupervised Learning)</h3>
+            <p><b>정답(레이블) 없이</b> 입력 데이터만 주어진 상태에서, 데이터 안의 <b>숨겨진 구조나 패턴, 군집</b>을 스스로 찾아내는 방식입니다.</p>
+            <p class="sub-text">예: 고객 데이터를 비슷한 특성끼리 그룹으로 묶는 군집화(clustering)</p>
+
+            <h3 style="color:var(--good)">③ 강화학습 (Reinforcement Learning)</h3>
+            <p>에이전트가 환경과 상호작용하며 행동에 대한 <b>보상(reward)</b>을 받고, 보상을 <b>최대화</b>하는 방향으로 행동 전략을 스스로 학습하는 방식입니다.</p>
+            <p class="sub-text">예: 알파고처럼 게임에서 이기는 행동에는 보상을, 지는 행동에는 패널티를 주며 학습</p>
+
+            <p class="sub-text" style="margin-top:12px;">💡 구분 기준 한 줄 요약: <b>정답이 있다</b>→지도학습 / <b>정답 없이 패턴만 찾는다</b>→비지도학습 / <b>보상을 통해 행동을 학습</b>→강화학습</p>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== AI: 키워드 카드 ===================== -->
+    <section class="page" id="page-ml-quiz">
+      <div class="page-head">
+        <div class="eyebrow">6. 인공지능</div>
+        <h1 class="title">개념 키워드 카드 — 클릭해서 뒤집어보기</h1>
+        <p class="desc">카드를 클릭하면 뒷면의 설명이 나타납니다. 암기 점검용으로 활용하세요.</p>
+      </div>
+      <div class="card">
+        <div class="kw-grid" id="kwGrid"></div>
+      </div>
+    </section>
+
+    <div class="footer-note">정보 과목 정기시험대비 학습지 기반 인터랙티브 노트 · 직접 풀어본 뒤 정답을 확인하는 방식으로 활용해보세요 🍀</div>
+  </div>
+</div>
+
+<script>
+/* ============ NAVIGATION ============ */
+const navBtns = document.querySelectorAll('.navbtn');
+const pages = document.querySelectorAll('.page');
+navBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    navBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const target = btn.dataset.page;
+    pages.forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+target).classList.add('active');
+    document.querySelector('.main').scrollTo(0,0);
+    window.scrollTo(0,0);
+    if(window.innerWidth<=880){ document.getElementById('sidebar').classList.remove('open'); }
+  });
+});
+document.getElementById('menuBtn').addEventListener('click', ()=>{
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+/* ============ REVEAL TOGGLES ============ */
+document.querySelectorAll('.reveal-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    btn.parentElement.classList.toggle('open');
+  });
+});
+
+/* ============ PYTHON ANSWER REVEAL ============ */
+document.querySelectorAll('.pyans').forEach(el=>{
+  el.addEventListener('click', ()=>{
+    if(el.classList.contains('shown')){
+      el.innerText = '정답 보기';
+      el.classList.remove('shown');
+    } else {
+      el.innerText = '→ ' + el.dataset.ans;
+      el.classList.add('shown');
+    }
+  });
+});
+
+/* ============ VARNAME QUIZ ============ */
+const varnameItems = [
+  {name:'score1', valid:true},
+  {name:'1score', valid:false},
+  {name:'my score', valid:false},
+  {name:'my_score', valid:true},
+  {name:'for', valid:false},
+  {name:'total$', valid:false},
+];
+const vq = document.getElementById('varnameQuiz');
+varnameItems.forEach((item,i)=>{
+  const row = document.createElement('div');
+  row.className='fillrow';
+  row.innerHTML = `<code style="min-width:110px; display:inline-block;">${item.name}</code>
+    <button class="sim-btn" data-i="${i}" data-valid="${item.valid}">가능?</button>
+    <span class="resultmsg" id="vres${i}"></span>`;
+  vq.appendChild(row);
+});
+vq.addEventListener('click', e=>{
+  if(e.target.tagName==='BUTTON'){
+    const i = e.target.dataset.i;
+    const valid = e.target.dataset.valid === 'true';
+    const res = document.getElementById('vres'+i);
+    res.innerText = valid ? '✅ 가능' : '❌ 불가능';
+    res.style.color = valid ? 'var(--good)' : 'var(--bad)';
+  }
+});
+
+/* ============ HUFFMAN TREE BUILDER ============ */
+function getFreq(str){
+  const freq = {};
+  for(const ch of str){ freq[ch] = (freq[ch]||0)+1; }
+  return freq;
+}
+
+function buildHuffmanTree(freq){
+  let nodes = Object.entries(freq).map(([ch,f])=>({char:ch, freq:f, left:null, right:null, id:Math.random()}));
+  let nodeIdCounter = 0;
+  while(nodes.length > 1){
+    nodes.sort((a,b)=> a.freq - b.freq);
+    const left = nodes.shift();
+    const right = nodes.shift();
+    const parent = {char:null, freq:left.freq+right.freq, left, right, id:'p'+(nodeIdCounter++)};
+    nodes.push(parent);
+  }
+  return nodes[0];
+}
+
+function getCodes(node, prefix='', codes={}){
+  if(!node) return codes;
+  if(node.char !== null){
+    codes[node.char] = prefix || '0';
+    return codes;
+  }
+  getCodes(node.left, prefix+'0', codes);
+  getCodes(node.right, prefix+'1', codes);
+  return codes;
+}
+
+function computeLayout(node, depth, xRange, positions){
+  if(!node) return;
+  const x = (xRange[0]+xRange[1])/2;
+  const y = 50 + depth*70;
+  positions.set(node, {x,y});
+  if(node.left) computeLayout(node.left, depth+1, [xRange[0], x], positions);
+  if(node.right) computeLayout(node.right, depth+1, [x, xRange[1]], positions);
+}
+
+function drawTree(canvas, root){
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const positions = new Map();
+  computeLayout(root, 0, [30, canvas.width-30], positions);
+
+  function drawEdges(node){
+    if(!node) return;
+    const p = positions.get(node);
+    if(node.left){
+      const lp = positions.get(node.left);
+      ctx.strokeStyle = '#2a3342';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(lp.x,lp.y); ctx.stroke();
+      ctx.fillStyle = '#7aa2ff';
+      ctx.font = 'bold 12px JetBrains Mono';
+      ctx.fillText('0', (p.x+lp.x)/2 - 10, (p.y+lp.y)/2);
+      drawEdges(node.left);
+    }
+    if(node.right){
+      const rp = positions.get(node.right);
+      ctx.strokeStyle = '#2a3342';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(rp.x,rp.y); ctx.stroke();
+      ctx.fillStyle = '#ff7ab8';
+      ctx.font = 'bold 12px JetBrains Mono';
+      ctx.fillText('1', (p.x+rp.x)/2 + 4, (p.y+rp.y)/2);
+      drawEdges(node.right);
+    }
+  }
+  drawEdges(root);
+
+  function drawNodes(node){
+    if(!node) return;
+    const p = positions.get(node);
+    const isLeaf = node.char !== null;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, isLeaf?22:18, 0, Math.PI*2);
+    ctx.fillStyle = isLeaf ? '#5ee7c91a' : '#7aa2ff1a';
+    ctx.fill();
+    ctx.strokeStyle = isLeaf ? '#5ee7c9' : '#7aa2ff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = isLeaf ? '#5ee7c9' : '#e8edf4';
+    ctx.font = isLeaf ? 'bold 14px JetBrains Mono' : 'bold 12px JetBrains Mono';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const label = isLeaf ? node.char : node.freq;
+    ctx.fillText(label, p.x, p.y);
+    if(isLeaf){
+      ctx.fillStyle = '#93a1b5';
+      ctx.font = '10px JetBrains Mono';
+      ctx.fillText('f='+node.freq, p.x, p.y+34);
+    }
+    drawNodes(node.left);
+    drawNodes(node.right);
+  }
+  drawNodes(root);
+}
+
+function buildHuffman(word){
+  const freq = getFreq(word);
+  const tree = buildHuffmanTree(freq);
+  const codes = getCodes(tree);
+
+  const canvasId = word==='canada' ? 'huffCanvas1' : 'huffCanvas2';
+  const answerId = word==='canada' ? 'huffAnswer1' : 'huffAnswer2';
+  const canvas = document.getElementById(canvasId);
+  drawTree(canvas, tree);
+
+  // build answer html
+  const chars = Object.keys(freq).sort();
+  let freqRow = '<table class="kv"><tr><th>문자</th>' + chars.map(c=>`<td class="mono">${c}</td>`).join('') + '</tr>';
+  freqRow += '<tr><th>빈도수</th>' + chars.map(c=>`<td class="mono">${freq[c]}</td>`).join('') + '</tr></table>';
+
+  let codeRow = '<table class="kv"><tr><th>문자</th>' + chars.map(c=>`<td class="mono">${c}</td>`).join('') + '</tr>';
+  codeRow += '<tr><th>허프만 코드</th>' + chars.map(c=>`<td class="mono" style="color:var(--good)">${codes[c]}</td>`).join('') + '</tr></table>';
+
+  let totalBits = 0;
+  for(const ch of word){ totalBits += codes[ch].length; }
+  const originalBits = word.length * 8;
+
+  const fullCode = [...word].map(ch=>codes[ch]).join(' ');
+
+  document.getElementById(answerId).innerHTML = `
+    <h3 style="margin-top:0;">* 각 문자의 빈도수</h3>
+    ${freqRow}
+    <h3>* 허프만 트리</h3>
+    <p class="sub-text">위 캔버스에 표시된 트리를 참고하세요 (파란 노드=내부노드/빈도합, 초록 노드=리프/문자). 같은 빈도수의 노드는 묶는 순서에 따라 결과가 달라질 수 있습니다.</p>
+    <h3>* 각 문자별 코드</h3>
+    ${codeRow}
+    <h3>* 전체 코드</h3>
+    <p class="mono" style="color:var(--accent2); word-break:break-all;">${fullCode}</p>
+    <p class="sub-text">압축 전: ${word.length}자 × 8bit = <b>${originalBits} bit</b> &nbsp;|&nbsp; 압축 후: <b style="color:var(--good)">${totalBits} bit</b> (절감률 ${(100-(totalBits/originalBits*100)).toFixed(1)}%)</p>
+  `;
+}
+
+/* ============ SORTING SIMULATORS ============ */
+function makeSortSim(opts){
+  const {arrId, cmpId, swapId, passId, logId, stepBtnId, resetBtnId, autoBtnId, initial, mode} = opts;
+  let arr = [...initial];
+  let state = {};
+  let autoTimer = null;
+
+  function render(highlightIdx=[], swapIdx=[], sortedIdx=[], pivotIdx=-1){
+    const wrap = document.getElementById(arrId);
+    wrap.innerHTML = '';
+    arr.forEach((v,i)=>{
+      const box = document.createElement('div');
+      box.className = 'arr-box';
+      if(sortedIdx.includes(i)) box.classList.add('sorted');
+      if(highlightIdx.includes(i)) box.classList.add('compare');
+      if(swapIdx.includes(i)) box.classList.add('swap');
+      if(i===pivotIdx) box.classList.add('pivot');
+      box.innerHTML = `${v}<span class="idx">${i}</span>`;
+      wrap.appendChild(box);
+    });
+  }
+
+  function log(msg, cls=''){
+    const lb = document.getElementById(logId);
+    const e = document.createElement('div');
+    e.className = 'entry ' + cls;
+    e.innerText = msg;
+    lb.appendChild(e);
+    lb.scrollTop = lb.scrollHeight;
+  }
+
+  function updateStats(){
+    document.getElementById(cmpId).innerText = state.cmp;
+    document.getElementById(swapId).innerText = state.swap;
+    document.getElementById(passId).innerText = state.passLabel || '-';
+  }
+
+  function reset(){
+    arr = [...initial];
+    state = {cmp:0, swap:0, i:0, j:0, passLabel:'시작 전', done:false, sortedIdx:[]};
+    document.getElementById(logId).innerHTML = '';
+    if(autoTimer){ clearInterval(autoTimer); autoTimer=null; document.getElementById(autoBtnId).innerText='자동 실행 ⏩'; }
+    if(mode==='bubble'){ state.i=0; state.j=0; }
+    if(mode==='selection'){ state.i=0; state.j=1; state.minIdx=0; }
+    render();
+    updateStats();
+  }
+
+  function bubbleStep(){
+    if(state.done) return;
+    const n = arr.length;
+    if(state.i >= n-1){ state.done=true; state.passLabel='완료!'; render([], [], arr.map((_,k)=>k)); updateStats(); log('🎉 정렬 완료: '+arr.join(' ')); return; }
+    if(state.j < n-1-state.i){
+      state.cmp++;
+      state.passLabel = `${state.i+1}번째 패스`;
+      log(`비교: arr[${state.j}]=${arr[state.j]} vs arr[${state.j+1}]=${arr[state.j+1]}`, 'cmp-log');
+      if(arr[state.j] > arr[state.j+1]){
+        [arr[state.j], arr[state.j+1]] = [arr[state.j+1], arr[state.j]];
+        state.swap++;
+        log(`  ↳ 교환! → ${arr.join(' ')}`, 'swap-log');
+        render([state.j, state.j+1], [state.j, state.j+1], sortedSoFar());
+      } else {
+        render([state.j, state.j+1], [], sortedSoFar());
+      }
+      state.j++;
+    } else {
+      state.j = 0;
+      state.i++;
+      if(state.i >= n-1){ state.done=true; state.passLabel='완료!'; render([],[],arr.map((_,k)=>k)); log('🎉 정렬 완료: '+arr.join(' ')); }
+    }
+    updateStats();
+  }
+  function sortedSoFar(){
+    const n=arr.length;
+    const res=[];
+    for(let k=n-state.i;k<n;k++) res.push(k);
+    return res;
+  }
+
+  function selectionStep(){
+    if(state.done) return;
+    const n = arr.length;
+    if(state.i >= n-1){ state.done=true; state.passLabel='완료!'; render([],[],arr.map((_,k)=>k)); log('🎉 정렬 완료: '+arr.join(' ')); updateStats(); return; }
+    if(state.j < n){
+      state.cmp++;
+      log(`비교: arr[${state.j}]=${arr[state.j]} vs 현재최소 arr[${state.minIdx}]=${arr[state.minIdx]}`, 'cmp-log');
+      if(arr[state.j] < arr[state.minIdx]){ state.minIdx = state.j; }
+      render([state.j, state.minIdx], [], sortedIdxSel(), -1);
+      state.j++;
+      state.passLabel = `${state.i+1}번째 라운드: 최소값 탐색 중`;
+    } else {
+      if(state.minIdx !== state.i){
+        [arr[state.i], arr[state.minIdx]] = [arr[state.minIdx], arr[state.i]];
+        state.swap++;
+        log(`  ↳ 최솟값 ${arr[state.i]} 을 위치 ${state.i}로 교환! → ${arr.join(' ')}`, 'swap-log');
+      } else {
+        log(`  ↳ 이미 제자리: 교환 생략`);
+      }
+      render([], [state.i], sortedIdxSel());
+      state.i++;
+      state.j = state.i+1;
+      state.minIdx = state.i;
+    }
+    updateStats();
+  }
+  function sortedIdxSel(){
+    const res=[];
+    for(let k=0;k<state.i;k++) res.push(k);
+    return res;
+  }
+
+  document.getElementById(stepBtnId).addEventListener('click', ()=>{
+    if(mode==='bubble') bubbleStep(); else selectionStep();
+  });
+  document.getElementById(resetBtnId).addEventListener('click', reset);
+  document.getElementById(autoBtnId).addEventListener('click', (e)=>{
+    if(autoTimer){
+      clearInterval(autoTimer); autoTimer=null; e.target.innerText='자동 실행 ⏩';
+    } else {
+      e.target.innerText='정지 ⏸';
+      autoTimer = setInterval(()=>{
+        if(mode==='bubble') bubbleStep(); else selectionStep();
+        if(state.done){ clearInterval(autoTimer); autoTimer=null; e.target.innerText='자동 실행 ⏩'; }
+      }, 650);
+    }
+  });
+
+  reset();
+}
+
+makeSortSim({arrId:'bubbleArr', cmpId:'bubbleCmp', swapId:'bubbleSwap', passId:'bubblePass', logId:'bubbleLog',
+  stepBtnId:'bubbleStep', resetBtnId:'bubbleReset', autoBtnId:'bubbleAuto', initial:[4,2,5,1,3], mode:'bubble'});
+
+makeSortSim({arrId:'selArr', cmpId:'selCmp', swapId:'selSwap', passId:'selPass', logId:'selLog',
+  stepBtnId:'selStep', resetBtnId:'selReset', autoBtnId:'selAuto', initial:[4,2,5,1,3], mode:'selection'});
+
+/* ============ QUICK SORT DEMO ============ */
+function runQuickDemo(){
+  const container = document.getElementById('quickSteps');
+  container.innerHTML = '';
+  const steps = [];
+
+  function quicksort(arr, label){
+    if(arr.length <= 1){
+      steps.push({arr:[...arr], label, pivot:null, leftG:[], rightG:[], leaf:true});
+      return arr;
+    }
+    const pivot = arr[arr.length-1];
+    const left = arr.slice(0,-1).filter(x=>x<pivot);
+    const right = arr.slice(0,-1).filter(x=>x>=pivot);
+    steps.push({arr:[...arr], label, pivot, leftG:left, rightG:right, leaf:false});
+    const sortedLeft = quicksort(left, label+'L');
+    const sortedRight = quicksort(right, label+'R');
+    return [...sortedLeft, pivot, ...sortedRight];
+  }
+
+  const result = quicksort([4,2,5,1,3], '루트');
+
+  steps.forEach((s, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.style.margin = '10px 0';
+    div.style.background = 'var(--panel2)';
+    if(s.leaf){
+      div.innerHTML = `<p class="sub-text mono">[${s.label}] 원소 ${s.arr.length}개 이하 → 그대로: <b style="color:var(--good)">[${s.arr.join(', ')}]</b></p>`;
+    } else {
+      div.innerHTML = `
+        <p class="sub-text mono">[${s.label}] 배열: [${s.arr.join(', ')}] &nbsp; 피봇(마지막값) = <b style="color:var(--accent2)">${s.pivot}</b></p>
+        <p class="mono">→ 작은값 그룹: <span style="color:var(--accent3)">[${s.leftG.join(', ') || '없음'}]</span> &nbsp;|&nbsp; 큰값 그룹: <span style="color:var(--accent4)">[${s.rightG.join(', ') || '없음'}]</span></p>
+      `;
+    }
+    container.appendChild(div);
+  });
+
+  const finalDiv = document.createElement('div');
+  finalDiv.className = 'card';
+  finalDiv.style.cssText = 'margin-top:10px; background:rgba(94,231,201,0.08); border-color:var(--good);';
+  finalDiv.innerHTML = `<p style="margin:0;"><b>✅ 최종 정렬 결과:</b> <span class="mono" style="color:var(--good); font-size:16px;">[${result.join(', ')}]</span></p>`;
+  container.appendChild(finalDiv);
+}
+
+/* ============ KEYWORD CARDS ============ */
+const kwData = [
+  {front:'지능 에이전트', back:'센서로 환경을 인식, 액추에이터로 행동하는 자율적 개체'},
+  {front:'반응성', back:'환경 변화에 즉각 반응하는 능력'},
+  {front:'자율성', back:'사람 개입 없이 스스로 판단·행동'},
+  {front:'사회성', back:'다른 에이전트/사람과 상호작용·협력'},
+  {front:'기계학습', back:'데이터로부터 스스로 규칙(패턴)을 학습하는 기술'},
+  {front:'지도학습', back:'정답(레이블)이 있는 데이터로 학습'},
+  {front:'비지도학습', back:'정답 없이 패턴/군집을 스스로 발견'},
+  {front:'강화학습', back:'보상을 최대화하는 방향으로 행동 학습'},
+  {front:'런렝스 압축', back:'반복되는 데이터를 (문자+반복횟수)로 표현'},
+  {front:'허프만 코딩', back:'빈도수 기반, 자주 나오는 문자에 짧은 코드 부여'},
+  {front:'대칭키 암호화', back:'암호화·복호화에 같은 키 사용'},
+  {front:'비대칭키 암호화', back:'공개키로 암호화, 개인키로 복호화'},
+];
+const kwGrid = document.getElementById('kwGrid');
+kwData.forEach(item=>{
+  const card = document.createElement('div');
+  card.className = 'kw-card';
+  card.innerHTML = `<div class="kw-inner">
+    <div class="kw-face kw-front">${item.front}</div>
+    <div class="kw-face kw-back">${item.back}</div>
+  </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flipped'));
+  kwGrid.appendChild(card);
+});
+</script>
+</body>
+</html>
