@@ -322,7 +322,7 @@ function renderStep(){
 
 function checkDecode(){
   const v = document.getElementById('decodeAnswer').value.trim().toUpperCase();
-  document.getElementById('decodeResult').innerHTML = v==='ABCCA' ? '<span class="ok">정답입니다! 0=A, 10=B, 11=C로 읽으면 ABCCA입니다.</span>' : '<span class="no">다시 생각해보세요. 앞에서부터 0, 10, 11 단위로 끊어 읽어야 합니다.</span>';
+  document.getElementById('decodeResult').innerHTML = v==='ABCA' ? '<span class="ok">정답입니다! 0=A, 10=B, 11=C로 읽으면 ABCA입니다.</span>' : '<span class="no">다시 생각해보세요. 앞에서부터 0, 10, 11 단위로 끊어 읽어야 합니다.</span>';
 }
 
 function checkQuiz(n, ans){
