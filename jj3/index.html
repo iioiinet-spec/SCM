@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>인터렉티브 허프만 압축 강의자료</title>
+<style>
+  :root{
+    --bg:#f6f8fb; --card:#ffffff; --ink:#172033; --muted:#526070;
+    --primary:#2563eb; --primary2:#1d4ed8; --soft:#eaf1ff;
+    --good:#15803d; --bad:#dc2626; --warn:#b45309;
+    --line:#d8e0ec; --code:#101827;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,'Noto Sans KR',sans-serif;line-height:1.7;font-size:18px}
+  header{background:linear-gradient(135deg,#1d4ed8,#60a5fa);color:white;padding:36px 18px;text-align:center}
+  header h1{margin:0;font-size:34px;letter-spacing:-1px}
+  header p{margin:10px auto 0;max-width:900px;font-size:19px;opacity:.95}
+  .wrap{max-width:1100px;margin:0 auto;padding:22px 16px 60px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;margin:18px 0;box-shadow:0 10px 25px rgba(15,23,42,.06)}
+  h2{font-size:28px;margin:0 0 16px;border-left:9px solid var(--primary);padding-left:13px;letter-spacing:-.5px}
+  h3{font-size:23px;margin:22px 0 10px;color:#1e3a8a}
+  .big{font-size:21px;font-weight:700}
+  .note{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;border-radius:16px;padding:15px;margin:12px 0}
+  .tip{background:#ecfdf5;border:1px solid #bbf7d0;color:#14532d;border-radius:16px;padding:15px;margin:12px 0}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  @media(max-width:780px){.grid{grid-template-columns:1fr} body{font-size:17px} header h1{font-size:28px}}
+  code,pre{font-family:Consolas,Monaco,monospace}
+  pre{background:var(--code);color:#e5e7eb;padding:16px;border-radius:16px;overflow:auto;font-size:16px;line-height:1.55}
+  table{width:100%;border-collapse:collapse;margin:12px 0;background:white}
+  th,td{border:1px solid var(--line);padding:10px;text-align:center;color:#111827}
+  th{background:#eef4ff;color:#172033}
+  .btn{border:0;background:var(--primary);color:white;border-radius:12px;padding:11px 15px;font-size:16px;font-weight:700;cursor:pointer;margin:4px}
+  .btn:hover{background:var(--primary2)}
+  .btn.gray{background:#475569}.btn.gray:hover{background:#334155}
+  .btn.green{background:#16a34a}.btn.green:hover{background:#15803d}
+  .btn.red{background:#dc2626}.btn.red:hover{background:#b91c1c}
+  input,textarea,select{width:100%;border:2px solid #cbd5e1;border-radius:13px;padding:12px;font-size:17px;background:white;color:#111827}
+  textarea{min-height:90px;resize:vertical}
+  label{font-weight:800;display:block;margin:10px 0 6px}
+  .result{background:#f8fafc;border:1px dashed #94a3b8;border-radius:16px;padding:15px;margin-top:12px;white-space:pre-wrap}
+  .pill{display:inline-block;background:var(--soft);color:#1e40af;border:1px solid #bfdbfe;border-radius:999px;padding:4px 10px;margin:3px;font-weight:700}
+  .steps{counter-reset:step}.step{position:relative;margin:12px 0;padding:13px 13px 13px 52px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px}.step:before{counter-increment:step;content:counter(step);position:absolute;left:14px;top:14px;width:28px;height:28px;border-radius:50%;background:#2563eb;color:white;text-align:center;line-height:28px;font-weight:800}
+  .treeBox{min-height:220px;background:#f8fafc;border:1px solid #dbe4f0;border-radius:18px;padding:12px;overflow:auto}
+  svg{max-width:100%;height:auto;display:block;margin:auto}
+  .quiz{border:1px solid #dbeafe;background:#f8fbff;border-radius:18px;padding:18px;margin:14px 0}
+  .hidden{display:none}
+  .ok{color:var(--good);font-weight:800}.no{color:var(--bad);font-weight:800}.warn{color:var(--warn);font-weight:800}
+  .progress{height:18px;background:#e2e8f0;border-radius:999px;overflow:hidden}.bar{height:100%;background:#2563eb;width:0%;transition:.3s}
+  .small{font-size:15px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <h1>허프만 압축 인터렉티브 강의자료</h1>
+  <p>빈도표 → 최소 빈도 2개 합치기 → 허프만 트리 → 코드 생성 → 압축과 복원까지 직접 실습합니다.</p>
+</header>
+
+<div class="wrap">
+  <section class="card">
+    <h2>1. 허프만 압축이란?</h2>
+    <p><b>허프만 압축</b>은 자주 등장하는 문자에는 <b>짧은 비트</b>를, 적게 등장하는 문자에는 <b>긴 비트</b>를 부여하는 <b>무손실 압축 알고리즘</b>입니다.</p>
+    <div class="grid">
+      <div class="tip"><b>핵심 원리</b><br>빈도가 높은 문자 → 짧은 코드<br>빈도가 낮은 문자 → 긴 코드</div>
+      <div class="note"><b>시험 포인트</b><br>가장 작은 빈도 2개를 계속 합쳐서 이진 트리를 만듭니다.</div>
+    </div>
+    <pre>예: AAAAABBC
+A: 5번, B: 2번, C: 1번
+A를 짧게, C를 길게 표현하면 전체 비트 수가 줄어든다.</pre>
+  </section>
+
+  <section class="card">
+    <h2>2. 단계별 원리</h2>
+    <div class="steps">
+      <div class="step">문자열을 읽고 각 문자의 등장 횟수, 즉 빈도를 계산합니다.</div>
+      <div class="step">빈도가 가장 작은 두 노드를 고릅니다.</div>
+      <div class="step">두 노드를 합쳐 새로운 부모 노드를 만듭니다.</div>
+      <div class="step">노드가 하나 남을 때까지 반복합니다.</div>
+      <div class="step">왼쪽 간선은 0, 오른쪽 간선은 1로 하여 각 문자의 코드를 구합니다.</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3. 직접 압축해보기</h2>
+    <label>압축할 문자열 입력</label>
+    <textarea id="textInput">AAAAABBC</textarea>
+    <button class="btn" onclick="runHuffman()">허프만 압축 실행</button>
+    <button class="btn gray" onclick="loadSample('BANANA')">BANANA 예제</button>
+    <button class="btn gray" onclick="loadSample('MISSISSIPPI')">MISSISSIPPI 예제</button>
+    <button class="btn gray" onclick="loadSample('ABACA')">ABACA 예제</button>
+
+    <div id="freqArea" class="result">입력 후 실행 버튼을 누르세요.</div>
+    <h3>허프만 트리</h3>
+    <div class="treeBox" id="treeArea"></div>
+    <h3>생성된 코드표</h3>
+    <div id="codeArea" class="result"></div>
+    <h3>압축 결과</h3>
+    <div id="compressArea" class="result"></div>
+  </section>
+
+  <section class="card">
+    <h2>4. 단계별 트리 만들기 시뮬레이터</h2>
+    <p>아래 예제 빈도표를 사용해서 허프만 트리가 만들어지는 과정을 한 단계씩 확인합니다.</p>
+    <pre>A:5, B:9, C:12, D:13, E:16, F:45</pre>
+    <button class="btn" onclick="startStepSim()">시뮬레이션 시작</button>
+    <button class="btn green" onclick="nextStep()">다음 단계</button>
+    <button class="btn gray" onclick="resetStepSim()">초기화</button>
+    <div id="stepArea" class="result">시뮬레이션 시작 버튼을 누르세요.</div>
+  </section>
+
+  <section class="card">
+    <h2>5. 복원 연습</h2>
+    <p>다음 코드표를 이용해 압축 데이터를 복원해보세요.</p>
+    <pre>A = 0
+B = 10
+C = 11
+압축 데이터 = 010110</pre>
+    <label>복원된 문자열 입력</label>
+    <input id="decodeAnswer" placeholder="예: ABC" />
+    <button class="btn" onclick="checkDecode()">정답 확인</button>
+    <div id="decodeResult" class="result"></div>
+  </section>
+
+  <section class="card">
+    <h2>6. 연습문제 5개</h2>
+    <p>문제를 모두 풀면 전체 정답과 해설을 볼 수 있습니다.</p>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <p class="small" id="progressText">0 / 5 완료</p>
+
+    <div class="quiz">
+      <h3>문제 1</h3>
+      <p>문자열 <b>BANANA</b>에서 A의 등장 횟수는?</p>
+      <input id="q1" />
+      <button class="btn" onclick="checkQuiz(1,'3')">확인</button>
+      <div id="r1"></div>
+    </div>
+
+    <div class="quiz">
+      <h3>문제 2</h3>
+      <p>빈도표 A:7, B:2, C:3, D:8 에서 첫 번째로 합쳐지는 두 문자는?</p>
+      <input id="q2" placeholder="예: A,B" />
+      <button class="btn" onclick="checkPairQuiz()">확인</button>
+      <div id="r2"></div>
+    </div>
+
+    <div class="quiz">
+      <h3>문제 3</h3>
+      <p>A=0, B=10, C=11일 때 010110을 복원하면?</p>
+      <input id="q3" />
+      <button class="btn" onclick="checkQuiz(3,'ABCCA')">확인</button>
+      <div id="r3"></div>
+    </div>
+
+    <div class="quiz">
+      <h3>문제 4</h3>
+      <p>문자열 <b>MISSISSIPPI</b>에서 I의 등장 횟수는?</p>
+      <input id="q4" />
+      <button class="btn" onclick="checkQuiz(4,'4')">확인</button>
+      <div id="r4"></div>
+    </div>
+
+    <div class="quiz">
+      <h3>문제 5</h3>
+      <p>허프만 압축에서 가장 먼저 하는 일은 무엇인가?</p>
+      <select id="q5">
+        <option value="">선택하세요</option>
+        <option value="tree">트리를 임의로 만든다</option>
+        <option value="freq">문자의 빈도를 계산한다</option>
+        <option value="ascii">모든 문자를 ASCII로 바꾼다</option>
+      </select>
+      <button class="btn" onclick="checkQuiz(5,'freq')">확인</button>
+      <div id="r5"></div>
+    </div>
+
+    <div id="answerBox" class="result hidden">
+      <b>전체 정답과 해설</b>
+
+      1. BANANA에서 A는 3번 등장합니다.
+      2. 가장 작은 빈도는 B(2), C(3)이므로 두 문자를 먼저 합칩니다.
+      3. 010110은 0/A, 10/B, 11/C, 11/C, 0/A 이므로 ABCCA입니다.
+      4. MISSISSIPPI에서 I는 4번 등장합니다.
+      5. 허프만 압축은 먼저 문자 빈도표를 만든 뒤, 작은 빈도 2개씩 합칩니다.
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>7. C언어 구현 핵심 코드</h2>
+    <p>실제 구현에서는 <b>최소 힙</b>을 이용해 가장 작은 빈도 노드 2개를 빠르게 꺼냅니다.</p>
+    <pre>while (heapSize > 1) {
+    Node *left = popMin();
+    Node *right = popMin();
+
+    Node *parent = makeNode('#', left->freq + right->freq);
+    parent->left = left;
+    parent->right = right;
+
+    push(parent);
+}</pre>
+  </section>
+</div>
+
+<script>
+let lastCodes = {}, quizDone = new Set();
+
+function makeNode(ch, freq, left=null, right=null){ return {ch, freq, left, right, id: Math.random().toString(36).slice(2)}; }
+function loadSample(s){ document.getElementById('textInput').value = s; runHuffman(); }
+
+function buildHuffman(text){
+  const freq = {};
+  for(const ch of text) freq[ch] = (freq[ch]||0)+1;
+  let nodes = Object.entries(freq).map(([ch,f])=>makeNode(ch,f));
+  if(nodes.length===1){
+    const only = nodes[0];
+    return {freq, root: makeNode('*', only.freq, only, null)};
+  }
+  while(nodes.length>1){
+    nodes.sort((a,b)=>a.freq-b.freq || String(a.ch).localeCompare(String(b.ch)));
+    const a = nodes.shift();
+    const b = nodes.shift();
+    nodes.push(makeNode('*', a.freq+b.freq, a, b));
+  }
+  return {freq, root:nodes[0]};
+}
+
+function getCodes(node, path='', codes={}){
+  if(!node) return codes;
+  if(!node.left && !node.right){ codes[node.ch] = path || '0'; return codes; }
+  getCodes(node.left, path+'0', codes);
+  getCodes(node.right, path+'1', codes);
+  return codes;
+}
+
+function runHuffman(){
+  const text = document.getElementById('textInput').value.trim();
+  if(!text){ alert('문자열을 입력하세요.'); return; }
+  const {freq, root} = buildHuffman(text);
+  const codes = getCodes(root); lastCodes = codes;
+
+  let html = '<table><tr><th>문자</th><th>빈도</th></tr>';
+  Object.keys(freq).sort().forEach(ch=> html += `<tr><td>${escapeHtml(ch)}</td><td>${freq[ch]}</td></tr>`);
+  html += '</table>';
+  document.getElementById('freqArea').innerHTML = html;
+
+  document.getElementById('treeArea').innerHTML = treeSVG(root);
+
+  let codeText = '';
+  Object.keys(codes).sort().forEach(ch=> codeText += `${ch} = ${codes[ch]}\n`);
+  document.getElementById('codeArea').textContent = codeText;
+
+  let compressed = '';
+  for(const ch of text) compressed += codes[ch];
+  const originalBits = text.length * 8;
+  const compressedBits = compressed.length;
+  const rate = ((1 - compressedBits/originalBits) * 100).toFixed(1);
+  document.getElementById('compressArea').textContent =
+`원문: ${text}
+압축 비트열: ${compressed}
+기존 ASCII 저장: ${originalBits}비트
+허프만 저장: ${compressedBits}비트
+압축률: 약 ${rate}% 감소
+
+주의: 실제 파일 압축에서는 코드표/트리 정보도 함께 저장해야 합니다.`;
+}
+
+function escapeHtml(s){return String(s).replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
+
+function treeSVG(root){
+  let positions=[]; let leafIndex=0;
+  function layout(node, depth){
+    if(!node) return null;
+    let left = layout(node.left, depth+1);
+    let right = layout(node.right, depth+1);
+    let x;
+    if(!left && !right) x = leafIndex++ * 90 + 55;
+    else if(left && right) x = (left.x + right.x)/2;
+    else x = (left||right).x;
+    const y = depth * 85 + 45;
+    node._x=x; node._y=y; positions.push(node);
+    return {x,y};
+  }
+  layout(root,0);
+  const width = Math.max(520, leafIndex*90+80);
+  const height = Math.max(...positions.map(n=>n._y))+70;
+  let lines='', circles='';
+  for(const n of positions){
+    for(const [child,label] of [[n.left,'0'],[n.right,'1']]){
+      if(child){
+        lines += `<line x1="${n._x}" y1="${n._y}" x2="${child._x}" y2="${child._y}" stroke="#64748b" stroke-width="2"/>`;
+        lines += `<text x="${(n._x+child._x)/2}" y="${(n._y+child._y)/2-6}" fill="#1d4ed8" font-size="16" font-weight="bold">${label}</text>`;
+      }
+    }
+  }
+  for(const n of positions){
+    const label = (!n.left && !n.right) ? `${escapeHtml(n.ch)}:${n.freq}` : `${n.freq}`;
+    circles += `<circle cx="${n._x}" cy="${n._y}" r="26" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>`;
+    circles += `<text x="${n._x}" y="${n._y+6}" text-anchor="middle" fill="#111827" font-size="15" font-weight="bold">${label}</text>`;
+  }
+  return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">${lines}${circles}</svg>`;
+}
+
+let simNodes=[], simLog=[];
+function startStepSim(){
+  simNodes = [makeNode('A',5),makeNode('B',9),makeNode('C',12),makeNode('D',13),makeNode('E',16),makeNode('F',45)];
+  simLog = ['초기 상태: A(5), B(9), C(12), D(13), E(16), F(45)'];
+  renderStep();
+}
+function nextStep(){
+  if(simNodes.length===0) startStepSim();
+  if(simNodes.length<=1){ simLog.push('완성: 루트 노드 하나만 남았습니다.'); renderStep(); return; }
+  simNodes.sort((a,b)=>a.freq-b.freq || String(a.ch).localeCompare(String(b.ch)));
+  const a=simNodes.shift(), b=simNodes.shift();
+  const p=makeNode('*',a.freq+b.freq,a,b);
+  simNodes.push(p);
+  simLog.push(`${a.ch==='*'?'노드':a.ch}(${a.freq}) + ${b.ch==='*'?'노드':b.ch}(${b.freq}) = 새 노드(${p.freq})`);
+  renderStep();
+}
+function resetStepSim(){simNodes=[];simLog=[];document.getElementById('stepArea').textContent='시뮬레이션 시작 버튼을 누르세요.';}
+function renderStep(){
+  const list = simNodes.slice().sort((a,b)=>a.freq-b.freq).map(n=>`${n.ch==='*'?'노드':n.ch}(${n.freq})`).join(', ');
+  document.getElementById('stepArea').textContent = simLog.join('\n') + '\n\n현재 남은 노드: ' + list;
+}
+
+function checkDecode(){
+  const v = document.getElementById('decodeAnswer').value.trim().toUpperCase();
+  document.getElementById('decodeResult').innerHTML = v==='ABCCA' ? '<span class="ok">정답입니다! 0=A, 10=B, 11=C로 읽으면 ABCCA입니다.</span>' : '<span class="no">다시 생각해보세요. 앞에서부터 0, 10, 11 단위로 끊어 읽어야 합니다.</span>';
+}
+
+function checkQuiz(n, ans){
+  const el = document.getElementById('q'+n);
+  const val = (el.value||'').trim().toUpperCase();
+  const ok = val === ans.toUpperCase();
+  document.getElementById('r'+n).innerHTML = ok ? '<span class="ok">정답입니다.</span>' : '<span class="no">오답입니다. 다시 풀어보세요.</span>';
+  if(ok) quizDone.add(n); updateProgress();
+}
+function checkPairQuiz(){
+  const raw = document.getElementById('q2').value.toUpperCase().replace(/\s/g,'');
+  const ok = raw==='B,C' || raw==='C,B' || raw==='BC' || raw==='CB';
+  document.getElementById('r2').innerHTML = ok ? '<span class="ok">정답입니다. B(2), C(3)이 가장 작습니다.</span>' : '<span class="no">가장 작은 빈도 2개를 찾아보세요.</span>';
+  if(ok) quizDone.add(2); updateProgress();
+}
+function updateProgress(){
+  const pct = quizDone.size/5*100;
+  document.getElementById('bar').style.width = pct+'%';
+  document.getElementById('progressText').textContent = `${quizDone.size} / 5 완료`;
+  if(quizDone.size===5) document.getElementById('answerBox').classList.remove('hidden');
+}
+
+runHuffman();
+</script>
+</body>
+</html>
