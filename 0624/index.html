@@ -1,0 +1,365 @@
+
+<h2 class="sr-only">2026년 6월 24일 코스피 검은 화요일 폭락 원인 분석 및 5대 종목 회복 전망 리포트</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.rp{padding:1.5rem 0;font-family:var(--font-sans)}
+.eyebrow{font-size:11px;color:var(--color-text-tertiary);letter-spacing:.07em;margin-bottom:5px}
+.title{font-size:21px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.sub{font-size:13px;color:var(--color-text-secondary);margin-bottom:1.25rem}
+.sec{font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--color-text-tertiary);margin:1.25rem 0 10px;text-transform:uppercase}
+
+/* 검은 화요일 배너 */
+.crash-banner{background:#FCEBEB;border:0.5px solid #F7C1C1;border-radius:var(--border-radius-lg);padding:14px 18px;margin-bottom:1.25rem;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.crash-num{font-size:52px;font-weight:500;color:#A32D2D;line-height:1;white-space:nowrap}
+.crash-right{}
+.crash-label{font-size:12px;font-weight:500;color:#791F1F;margin-bottom:4px}
+.crash-body{font-size:13px;color:#A32D2D;line-height:1.6}
+
+/* 반등 배너 */
+.rebound-banner{background:#EAF3DE;border:0.5px solid #C0DD97;border-radius:var(--border-radius-md);padding:11px 14px;margin-bottom:1.25rem;font-size:13px;color:#27500A;display:flex;align-items:center;gap:10px}
+.rebound-label{font-size:11px;font-weight:500;color:#0F6E56;margin-right:4px}
+
+/* 원인 카드 */
+.cause-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.cause-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px}
+.cause-num{font-size:28px;font-weight:500;color:var(--color-border-tertiary);margin-bottom:4px;line-height:1}
+.cause-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:5px}
+.cause-body{font-size:12px;color:var(--color-text-secondary);line-height:1.55}
+.cause-tag{display:inline-flex;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;margin-top:5px}
+.tag-fund{background:#EAF3DE;color:#27500A}
+.tag-tech{background:#E6F1FB;color:#185FA5}
+.tag-psych{background:#FAEEDA;color:#633806}
+.tag-struct{background:#F3E8FB;color:#5B1B7A}
+
+/* 솔직 박스 */
+.honest-box{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:1.25rem;border-left:3px solid #3B6D11}
+.honest-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:7px}
+.honest-body{font-size:13px;color:var(--color-text-secondary);line-height:1.7}
+.honest-body strong{color:var(--color-text-primary)}
+
+/* 종목 카드 */
+.stocks-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:1.25rem}
+.sc{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px}
+.sc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.sc-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.sc-code{font-size:11px;color:var(--color-text-tertiary);margin-top:1px}
+.sc-right{text-align:right}
+.sc-price{font-size:17px;font-weight:500;color:var(--color-text-primary)}
+.sc-chg{font-size:11px;margin-top:1px}
+.up{color:#3B6D11}.dn{color:#A32D2D}.nt{color:var(--color-text-secondary)}
+.sc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+.sc-g{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:7px 9px}
+.sc-gl{font-size:10px;color:var(--color-text-tertiary);margin-bottom:2px}
+.sc-gv{font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.sc-footer{border-top:0.5px solid var(--color-border-tertiary);padding-top:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.sc-verdict{font-size:12px;color:var(--color-text-secondary);line-height:1.5;flex:1}
+.sc-badge{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;white-space:nowrap;align-self:flex-start}
+.b-buy{background:#EAF3DE;color:#3B6D11}
+.b-hold{background:#FAEEDA;color:#854F0B}
+.b-wait{background:#FCEBEB;color:#791F1F}
+.drop-tag{font-size:10px;background:#FCEBEB;color:#791F1F;padding:2px 6px;border-radius:3px;margin-left:5px}
+.rec-tag{font-size:10px;background:#E6F1FB;color:#185FA5;padding:2px 6px;border-radius:3px;margin-left:5px}
+
+/* 회복 차트 */
+.chart-h{position:relative;width:100%;margin-bottom:1.25rem}
+
+/* 전문가 */
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.exp-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:11px 13px}
+.exp-who{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:1px}
+.exp-org{font-size:11px;color:var(--color-text-tertiary);margin-bottom:7px}
+.exp-q{font-size:12px;color:var(--color-text-secondary);line-height:1.6;border-left:2px solid var(--color-border-secondary);padding-left:8px}
+
+/* 회복 시나리오 */
+.sc-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+.sbox{border-radius:var(--border-radius-md);padding:11px 12px}
+.sb-bull{background:#EAF3DE;border:0.5px solid #C0DD97}
+.sb-base{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary)}
+.sb-bear{background:#FCEBEB;border:0.5px solid #F7C1C1}
+.sb-prob{font-size:11px;font-weight:500;border-radius:4px;padding:2px 7px;display:inline-block;margin-bottom:5px}
+.sb-bull .sb-prob{background:#C0DD97;color:#173404}
+.sb-base .sb-prob{background:var(--color-border-tertiary);color:var(--color-text-secondary)}
+.sb-bear .sb-prob{background:#F7C1C1;color:#501313}
+.sb-title{font-size:12px;font-weight:500;margin-bottom:4px}
+.sb-bull .sb-title{color:#27500A}
+.sb-base .sb-title{color:var(--color-text-secondary)}
+.sb-bear .sb-title{color:#791F1F}
+.sb-val{font-size:16px;font-weight:500;margin-bottom:4px}
+.sb-bull .sb-val{color:#3B6D11}
+.sb-base .sb-val{color:var(--color-text-primary)}
+.sb-bear .sb-val{color:#A32D2D}
+.sb-item{font-size:11px;margin-bottom:3px;line-height:1.4}
+.sb-bull .sb-item{color:#3B6D11}
+.sb-base .sb-item{color:var(--color-text-secondary)}
+.sb-bear .sb-item{color:#A32D2D}
+
+.disc{font-size:11px;color:var(--color-text-tertiary);border-top:0.5px solid var(--color-border-tertiary);padding-top:10px;margin-top:.5rem;line-height:1.6}
+</style>
+
+<div class="rp">
+  <div class="eyebrow">2026년 6월 24일 (수) · 검은 화요일 완전 해부 & 회복 전망</div>
+  <div class="title">코스피 -9.99% 폭락 — 이유 있는 기술적 붕괴, 펀더멘털은 멀쩡</div>
+  <div class="sub">4가지 폭락 원인 해부 · 5대 종목 현재가 & 최저/최고 회복 전망 · 전문가 의견 종합</div>
+
+  <div class="crash-banner">
+    <div class="crash-num">-9.99%</div>
+    <div class="crash-right">
+      <div class="crash-label">6월 23일 (화) — 코스피 역대 최대 낙폭 · 사상 첫 910포인트 하락</div>
+      <div class="crash-body">
+        9,114 → 8,203 · 역대 5번째 하락률 · 사상 최대 하락 포인트<br>
+        사이드카 발동(오전) + 서킷브레이커 발동(오후 2:33) · 코스닥도 -7.94%<br>
+        삼성전자 -12% · SK하이닉스 -12% · 외국인·기관 <strong>8.6조원</strong> 동반 순매도
+      </div>
+    </div>
+  </div>
+
+  <div class="rebound-banner">
+    <span class="rebound-label">오늘(6/24) 현재</span>
+    코스피 +0.59% 반등 중 · 개인 순매수 재개 · 골드만삭스 "조정 시 매수 기회, 코스피 목표 12,000" 유지
+  </div>
+
+  <div class="sec">폭락 원인 완전 해부 — 4가지가 동시에 터졌다</div>
+  <div class="cause-grid">
+    <div class="cause-card">
+      <div class="cause-num">01</div>
+      <div class="cause-title">숏감마(Short Gamma) 폭탄 — 레버리지 ETF의 역습</div>
+      <div class="cause-body">단일종목 레버리지 ETF(2배·3배)가 폭발적으로 성장하면서 시장조성자들이 숏감마 포지션에 쌓임. 주가가 조금만 떨어지면 시장조성자들이 "더 팔아야" 하는 구조가 형성돼, 초기 낙폭이 기계적으로 증폭됨. 삼성전자·하이닉스 -12%는 펀더멘털이 아닌 파생상품 구조의 문제.</div>
+      <span class="cause-tag tag-tech">기술적 요인</span>
+    </div>
+    <div class="cause-card">
+      <div class="cause-num">02</div>
+      <div class="cause-title">MSCI 선진국지수 편입 또 불발 — 외국인 이탈 신호탄</div>
+      <div class="cause-body">MSCI가 2026년 연례 심사에서 한국을 관찰대상국(워치리스트)에도 올리지 않음. 이유: 원화 역외 거래 제한, 야간 외환 유동성 부족, 공매도 컴플라이언스 부담 등 5개 항목 미흡. 기대감이 실망감으로 전환 → 외국인 즉각 대규모 매도 트리거.</div>
+      <span class="cause-tag tag-struct">구조적 요인</span>
+    </div>
+    <div class="cause-card">
+      <div class="cause-num">03</div>
+      <div class="cause-title">미실현 이익 과세론 — 정치권 악재</div>
+      <div class="cause-body">정치권에서 주식·부동산 미실현 이익(평가이익)까지 과세 대상에 포함하는 방안을 토론회에서 공론화. 올해 삼성전자·하이닉스 주가가 각각 490%, 1,030% 올라 평가이익이 수십~수백조에 달하는 투자자들에게 직격. 심리적 공황 매도를 유발.</div>
+      <span class="cause-tag tag-psych">심리적 요인</span>
+    </div>
+    <div class="cause-card">
+      <div class="cause-num">04</div>
+      <div class="cause-title">마이크론 실적 경계 + 차익실현 매물</div>
+      <div class="cause-body">마이크론 2분기 실적 발표(6/25 예정)를 앞두고 반도체 단기 과열 경계심리 확산. 하이닉스 시총이 삼성전자를 제치는 순간 "이게 고점 신호"라는 일부 보고서가 재소환되며 차익실현 매물 쇄도. 국민연금 리밸런싱 부담까지 겹침.</div>
+      <span class="cause-tag tag-psych">심리·수급 요인</span>
+    </div>
+  </div>
+
+  <div class="honest-box">
+    <div class="honest-title">✅ 결론 — 펀더멘털 이상 없음, 맞습니다. 그래서 더 위험하다</div>
+    <div class="honest-body">
+      <strong>미래에셋증권 김석환 연구원</strong>은 "펀더멘털에 대한 문제가 아니라 기술적 조정 압력이 커진 것"이라고 단언했습니다. 골드만삭스도 "조정 시 매수 기회"라며 코스피 목표 12,000을 유지했습니다.<br><br>
+      단 "펀더멘털 문제가 없다"는 말은 "빠르게 회복한다"는 뜻이 아닙니다. <strong>숏감마 구조는 반등 시에도 작동</strong>합니다 — 올라갈 때는 더 사야 하는 구조이므로 단기 반등은 강할 수 있습니다. 문제는 미실현 이익 과세 논의가 실제 입법으로 이어지는지, MSCI 불발이 외국인 수급 이탈로 장기화하는지 여부입니다.
+    </div>
+  </div>
+
+  <div class="sec">5대 종목 — 현재가·최저/최고 전망·회복 시점 분석</div>
+  <div class="stocks-wrap">
+
+    <div class="sc" style="border-left:3px solid #3B6D11">
+      <div class="sc-top">
+        <div><div class="sc-name">SK하이닉스 <span class="drop-tag">어제 -12%</span></div><div class="sc-code">000660</div></div>
+        <div class="sc-right"><div class="sc-price">251만원</div><div class="sc-chg nt">어제 종가 (고점 295만에서 -14.9%)</div></div>
+      </div>
+      <div class="sc-grid">
+        <div class="sc-g"><div class="sc-gl">컨센서스 목표가</div><div class="sc-gv" style="color:#3B6D11">271만원</div></div>
+        <div class="sc-g"><div class="sc-gl">최고 목표가 (노무라)</div><div class="sc-gv" style="color:#3B6D11">500만원</div></div>
+        <div class="sc-g"><div class="sc-gl">한화투자 목표</div><div class="sc-gv">430만원</div></div>
+        <div class="sc-g"><div class="sc-gl">AI 예측 이번주</div><div class="sc-gv">296~346만원</div></div>
+      </div>
+      <div class="sc-footer">
+        <div class="sc-verdict">컨센서스 목표가 대비 현재가 이미 -7.4% 저평가 구간. 숏감마 해소 시 빠른 반등 예상. 마이크론 실적이 6/25 발표되며 방향 결정. 골드만삭스 목표가 350만. FY26 영업이익 261조 추정 유효 — 펀더멘털 훼손 없음.</div>
+        <span class="sc-badge b-buy">저점 매수 검토</span>
+      </div>
+    </div>
+
+    <div class="sc" style="border-left:3px solid #378ADD">
+      <div class="sc-top">
+        <div><div class="sc-name">삼성전자 <span class="drop-tag">어제 -12%</span></div><div class="sc-code">005930</div></div>
+        <div class="sc-right"><div class="sc-price">32만4천원</div><div class="sc-chg nt">어제 종가 (고점 대비 -38%)</div></div>
+      </div>
+      <div class="sc-grid">
+        <div class="sc-g"><div class="sc-gl">컨센서스 목표가</div><div class="sc-gv" style="color:#3B6D11">42.8만원</div></div>
+        <div class="sc-g"><div class="sc-gl">최고 목표가</div><div class="sc-gv" style="color:#3B6D11">85만원</div></div>
+        <div class="sc-g"><div class="sc-gl">골드만삭스</div><div class="sc-gv">48만원</div></div>
+        <div class="sc-g"><div class="sc-gl">상승여력 (컨센)</div><div class="sc-gv up">+32%</div></div>
+      </div>
+      <div class="sc-footer">
+        <div class="sc-verdict">1분기 영업이익 57.2조 (+756% YoY), DS부문 53.7조. 기초체력 최강인데 파업+폭락 이중 할인 적용 중. 컨센서스 32% 저평가로 5대 종목 중 최대 낙폭 과대 구간. 삼성전자우(20만8천) 배당 메리트 부각.</div>
+        <span class="sc-badge b-buy">중장기 매수</span>
+      </div>
+    </div>
+
+    <div class="sc" style="border-left:3px solid #534AB7">
+      <div class="sc-top">
+        <div><div class="sc-name">삼성전자우 <span class="rec-tag">배당 메리트</span></div><div class="sc-code">005935</div></div>
+        <div class="sc-right"><div class="sc-price">20만8천원</div><div class="sc-chg nt">보통주 대비 35.8% 할인</div></div>
+      </div>
+      <div class="sc-grid">
+        <div class="sc-g"><div class="sc-gl">보통주 대비 괴리</div><div class="sc-gv dn">-35.8%</div></div>
+        <div class="sc-g"><div class="sc-gl">역사적 평균 괴리</div><div class="sc-gv">-15~20%</div></div>
+        <div class="sc-g"><div class="sc-gl">예상 배당수익률</div><div class="sc-gv up">~4~6%</div></div>
+        <div class="sc-g"><div class="sc-gl">특별배당 가능성</div><div class="sc-gv">2027년</div></div>
+      </div>
+      <div class="sc-footer">
+        <div class="sc-verdict">보통주 대비 할인율 35.8%는 역사적 이상치. 통상 15~20%인 것을 감안하면 우선주가 더 저평가된 상황. 보통주보다 유리한 배당 수익률 + 특별배당 2027년 기대. 변동성 장세에서 방어적 대안.</div>
+        <span class="sc-badge b-buy">배당형 매수</span>
+      </div>
+    </div>
+
+    <div class="sc" style="border-left:3px solid #D85A30">
+      <div class="sc-top">
+        <div><div class="sc-name">현대차 <span class="drop-tag">폭락 여파</span></div><div class="sc-code">005380</div></div>
+        <div class="sc-right"><div class="sc-price">50만4천원</div><div class="sc-chg nt">고점(63만) 대비 -20%</div></div>
+      </div>
+      <div class="sc-grid">
+        <div class="sc-g"><div class="sc-gl">컨센서스 목표가</div><div class="sc-gv" style="color:#3B6D11">72.9만원</div></div>
+        <div class="sc-g"><div class="sc-gl">최고 목표가 (유진)</div><div class="sc-gv" style="color:#3B6D11">100만원</div></div>
+        <div class="sc-g"><div class="sc-gl">상승여력 (컨센)</div><div class="sc-gv up">+44%</div></div>
+        <div class="sc-g"><div class="sc-gl">회복 촉매</div><div class="sc-gv">하반기 SDV</div></div>
+      </div>
+      <div class="sc-footer">
+        <div class="sc-verdict">컨센서스 대비 상승여력 +44%로 5종목 중 최대. 폭락 여파로 실적과 무관하게 동반 하락. 하반기 SDV 도로 테스트·RMAC 8월 개소가 반등 촉매. 유가 안정 시 물류비 부담도 완화. 중장기 저점 매수 구간으로 분석됨.</div>
+        <span class="sc-badge b-buy">중장기 저점 매수</span>
+      </div>
+    </div>
+
+    <div class="sc" style="border-left:3px solid #BA7517">
+      <div class="sc-top">
+        <div><div class="sc-name">기아 <span class="drop-tag">동반 급락</span></div><div class="sc-code">000270</div></div>
+        <div class="sc-right"><div class="sc-price">13만8천원</div><div class="sc-chg nt">고점(16.4만) 대비 -15.8%</div></div>
+      </div>
+      <div class="sc-grid">
+        <div class="sc-g"><div class="sc-gl">컨센서스 목표가</div><div class="sc-gv" style="color:#3B6D11">22.8만원</div></div>
+        <div class="sc-g"><div class="sc-gl">최고 목표가</div><div class="sc-gv" style="color:#3B6D11">30만원</div></div>
+        <div class="sc-g"><div class="sc-gl">한화투자 목표</div><div class="sc-gv">29만원</div></div>
+        <div class="sc-g"><div class="sc-gl">상승여력 (컨센)</div><div class="sc-gv up">+65%</div></div>
+      </div>
+      <div class="sc-footer">
+        <div class="sc-verdict">컨센서스 대비 상승여력 +65%로 6종목 중 압도적 1위. xEV 판매 +40% YoY, 스포티지 HEV 현지생산으로 관세·유가 이중 회피. 폭락은 펀더멘털과 무관한 수급 충격. 중장기 보유 시 가장 강력한 회복 탄력 예상.</div>
+        <span class="sc-badge b-buy">강력 저점 매수</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sec">6종목 컨센서스 대비 현재 저평가율</div>
+  <div class="chart-h" style="height:250px">
+    <canvas id="underChart" role="img" aria-label="종목별 컨센서스 목표가 대비 현재 저평가율: 기아 +65%, 현대차 +44%, 삼성전자 +32%, 삼성전자우 +배당, SK하이닉스 +8%">저평가율 비교 차트</canvas>
+  </div>
+
+  <div class="sec">전문가 의견 종합 — "펀더멘털 이상 없다, 회복한다"</div>
+  <div class="exp-grid">
+    <div class="exp-card">
+      <div class="exp-who">김석환 미래에셋증권 연구원</div>
+      <div class="exp-org">국내 1위 증권사</div>
+      <div class="exp-q">펀더멘털에 대한 문제가 아니라 기술적 조정 압력이 커진 것이다. 특히 단일종목 레버리지 ETF 확대에 따른 '숏 감마'가 레버리지 효과를 부추긴 것이 핵심이다. 미실현 이익 과세 논의가 투자심리 위축을 가중시켰다.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-who">골드만삭스</div>
+      <div class="exp-org">글로벌 IB · 코스피 목표 12,000</div>
+      <div class="exp-q">"조정 와도 매수 기회." 코스피 목표를 12,000으로 상향 유지. 삼성·SK하이닉스 2028년 합산 영업이익 1,000조 전망. 메모리 업황은 피크아웃이 아닌 초장기 슈퍼사이클 국면 진입. 이번 폭락은 구조적 성장 훼손이 아니다.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-who">노동길 신한투자증권 연구원</div>
+      <div class="exp-org">국내 증권사</div>
+      <div class="exp-q">SK하이닉스의 ROE가 높게 유지될 것이라는 시장의 믿음은 여전히 견고하다. 단기 변동성은 수급·파생 구조의 문제이며, 하이닉스 ADR 상장 확정 시 외국인 수급 이탈 해소의 전환점이 될 것이다.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-who">이상헌 iM증권 부장</div>
+      <div class="exp-org">SK하이닉스 목표가 350만</div>
+      <div class="exp-q">하이닉스 시총이 삼성전자를 제치는 것이 단순히 고점 신호라고 보기 어렵다. 실적 발표와 물가지수 발표, 달러 강세 여부에 따라 반도체 주가가 흔들릴 수는 있지만 구조적 업황 훼손은 아니다. FY26 영업이익 261조 전망 유지.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-who">파이낸셜뉴스 · 증권가 종합</div>
+      <div class="exp-org">국내 미디어 리서치 종합</div>
+      <div class="exp-q">증시 기초체력(펀더멘털) 이상 없다는 분석이 우세하다. 개인 투자자들은 이날 역대 최대인 11조원 순매수로 대응. 상승 추세 자체가 훼손된 것으로 보기 어렵다는 공통된 판단이 증권가에서 나오고 있다.</div>
+    </div>
+    <div class="exp-card">
+      <div class="exp-who">모건스탠리 · KB증권</div>
+      <div class="exp-org">글로벌 IB / 국내 대형 증권사</div>
+      <div class="exp-q">모건스탠리 코스피 강세 시나리오 연말 10,000, 기본 9,500. KB증권은 10,500 최고 전망. 삼성+하이닉스 합산 시총 3,150조가 코스피 전체의 30%. 양사 실적이 '코스피 1만 시대' 향방을 결정한다.</div>
+    </div>
+  </div>
+
+  <div class="sec">언제 회복할까 — 코스피 회복 시나리오</div>
+  <div class="sc-row">
+    <div class="sbox sb-bull">
+      <div class="sb-prob">빠른 회복 35%</div>
+      <div class="sb-title">1~2주 내 반등</div>
+      <div class="sb-val">8,800~9,200</div>
+      <div class="sb-item">마이크론 실적 서프라이즈(6/25)</div>
+      <div class="sb-item">숏감마 해소 → 반등 가속</div>
+      <div class="sb-item">미실현 과세 입법 불발</div>
+      <div class="sb-item">개인 11조 순매수 지지</div>
+      <div class="sb-item">하이닉스 ADR 상장 발표</div>
+    </div>
+    <div class="sbox sb-base">
+      <div class="sb-prob">완만 회복 45%</div>
+      <div class="sb-title">1~2개월 등락</div>
+      <div class="sb-val">8,400~8,900</div>
+      <div class="sb-item">마이크론 컨센 수준 실적</div>
+      <div class="sb-item">MSCI 불발 충격 서서히 흡수</div>
+      <div class="sb-item">7월 삼성전자 2Q 실적 확인</div>
+      <div class="sb-item">하반기 현대차 SDV 촉매 대기</div>
+      <div class="sb-item">외국인 수급 점진적 복귀</div>
+    </div>
+    <div class="sbox sb-bear">
+      <div class="sb-prob">장기 조정 20%</div>
+      <div class="sb-title">3개월+ 하락 지속</div>
+      <div class="sb-val">7,500~8,200</div>
+      <div class="sb-item">마이크론 실망 → 반도체 패닉</div>
+      <div class="sb-item">미실현 이익 과세 법안 발의</div>
+      <div class="sb-item">연준 12월 금리 인상 단행</div>
+      <div class="sb-item">빅테크 AI 투자 사이클 꺾임</div>
+      <div class="sb-item">MSCI 불발로 외국인 장기 이탈</div>
+    </div>
+  </div>
+
+  <div class="disc">※ 본 리포트는 6월 24일 기준 공개된 증권사 리서치·뉴스 보도를 종합한 참고용 정보입니다. 현재가는 6월 23일 종가 기준이며 오늘 장중 변동이 있습니다. 마이크론 실적(6/25)이 단기 방향의 핵심 변수입니다. 미실현 이익 과세 논의는 토론회 수준으로 즉각 입법 가능성은 낮습니다. 투자의 최종 책임은 투자자 본인에게 있으며 투자 권유가 아닙니다.</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+const tc = isDark ? '#B4B2A9' : '#5F5E5A';
+const gc = isDark ? 'rgba(180,178,169,0.10)' : 'rgba(95,94,90,0.08)';
+
+new Chart(document.getElementById('underChart'), {
+  type: 'bar',
+  data: {
+    labels: ['기아\n138,000','현대차\n504,000','삼성전자\n324,000','삼성전자우\n208,000','SK하이닉스\n2,510,000'],
+    datasets: [{
+      label: '컨센 목표 대비 상승여력',
+      data: [65, 44, 32, 28, 8],
+      backgroundColor: ['#D85A30','#534AB7','#378ADD','#7B52AD','#3B6D11'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ' 저평가: +' + ctx.parsed.x + '%'
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: tc, callback: v => '+' + v + '%' },
+        grid: { color: gc },
+        max: 80
+      },
+      y: {
+        ticks: { color: tc, font: { size: 11 } },
+        grid: { display: false }
+      }
+    }
+  }
+});
+</script>
