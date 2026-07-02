@@ -1,0 +1,466 @@
+
+<h2 class="sr-only">2026년 7월 2일 코스피 8000 붕괴 — 전세계 매크로 분석과 삼성전자 SK하이닉스 현대차 기아 최저·최고 주가 전망 리포트</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.rp{padding:1.5rem 0;font-family:var(--font-sans)}
+.eyebrow{font-size:11px;color:var(--color-text-tertiary);letter-spacing:.07em;margin-bottom:5px}
+.title{font-size:21px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.sub{font-size:13px;color:var(--color-text-secondary);margin-bottom:1.25rem}
+.sec{font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--color-text-tertiary);margin:1.25rem 0 10px;text-transform:uppercase}
+.up{color:#3B6D11}.dn{color:#A32D2D}.nt{color:var(--color-text-secondary)}
+
+/* 8천 붕괴 배너 */
+.crash-hero{background:#FCEBEB;border:0.5px solid #F7C1C1;border-radius:var(--border-radius-lg);padding:14px 18px;margin-bottom:1.25rem;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.ch-num{font-size:48px;font-weight:500;color:#A32D2D;line-height:1;white-space:nowrap}
+.ch-right{}
+.ch-label{font-size:12px;font-weight:500;color:#791F1F;margin-bottom:4px}
+.ch-body{font-size:13px;color:#A32D2D;line-height:1.6}
+
+/* 전문가 핵심 판정 */
+.verdict-box{border-radius:var(--border-radius-lg);padding:13px 16px;margin-bottom:1.25rem;border:0.5px solid}
+.vb-green{background:#EAF3DE;border-color:#C0DD97}
+.vb-title{font-size:13px;font-weight:500;color:#27500A;margin-bottom:5px}
+.vb-body{font-size:13px;color:#3B6D11;line-height:1.7}
+.vb-body strong{color:#173404}
+
+/* KPI 그리드 */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:1.25rem}
+.kpi{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.kpi-l{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
+.kpi-v{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.kpi-c{font-size:11px;margin-top:2px}
+
+/* 매크로 타임라인 */
+.macro-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1.25rem}
+.macro-item{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 13px;display:grid;grid-template-columns:80px 1fr auto;gap:0 12px;align-items:start}
+.m-region{font-size:11px;font-weight:500;padding-top:1px}
+.m-us{color:#185FA5}
+.m-kr{color:#A32D2D}
+.m-eu{color:#3B6D11}
+.m-jp{color:#854F0B}
+.m-cn{color:#633806}
+.m-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.m-body{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.m-impact{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;white-space:nowrap;align-self:start;margin-top:2px}
+.imp-dn{background:#FCEBEB;color:#791F1F}
+.imp-up{background:#EAF3DE;color:#27500A}
+.imp-nt{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.imp-w{background:#FAEEDA;color:#633806}
+
+/* 전문가 조정론 카드 */
+.expert-verdict{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:13px 15px;margin-bottom:1.25rem;border-left:3px solid #3B6D11}
+.ev-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px}
+.ev-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ev-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px}
+.ev-who{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:1px}
+.ev-org{font-size:10px;color:var(--color-text-tertiary);margin-bottom:6px}
+.ev-q{font-size:12px;color:var(--color-text-secondary);line-height:1.55;border-left:2px solid var(--color-border-secondary);padding-left:7px}
+
+/* 종목 카드 */
+.stock-cards{display:flex;flex-direction:column;gap:12px;margin-bottom:1.25rem}
+.sc{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.sc-top{padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start}
+.sc-name{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.sc-code{font-size:11px;color:var(--color-text-tertiary)}
+.sc-right{text-align:right}
+.sc-price{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+.sc-chg{font-size:12px;margin-top:2px}
+
+/* 레인지 바 */
+.range-wrap{padding:0 14px 10px;display:flex;flex-direction:column;gap:6px}
+.r-row{display:grid;grid-template-columns:68px 1fr 78px;gap:0 8px;align-items:center}
+.r-lbl{font-size:10px;color:var(--color-text-tertiary);text-align:right}
+.r-bar{height:7px;background:var(--color-border-tertiary);border-radius:4px;position:relative}
+.r-fill{position:absolute;left:0;top:0;height:100%;border-radius:4px}
+.r-cur{position:absolute;top:-3px;width:3px;height:13px;border-radius:2px;background:#E24B4A}
+.r-val{font-size:12px;font-weight:500}
+
+/* 스탯 그리드 */
+.sc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:0 14px 10px}
+.ss{background:var(--color-background-secondary);border-radius:4px;padding:6px 8px}
+.ss-l{font-size:10px;color:var(--color-text-tertiary);margin-bottom:2px}
+.ss-v{font-size:12px;font-weight:500;color:var(--color-text-primary)}
+
+/* 아웃룩 */
+.sc-outlook{border-top:0.5px solid var(--color-border-tertiary);padding:10px 14px;display:flex;gap:8px;align-items:flex-start}
+.sc-outlook-body{font-size:12px;color:var(--color-text-secondary);line-height:1.55;flex:1}
+.sc-outlook-body strong{color:var(--color-text-primary)}
+.badge{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;white-space:nowrap;flex-shrink:0}
+.b-buy{background:#EAF3DE;color:#3B6D11}
+
+/* 차트 */
+.chart-h{position:relative;width:100%;margin-bottom:1.25rem}
+
+/* 시나리오 */
+.sc-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+.sbox{border-radius:var(--border-radius-md);padding:11px 12px;border:0.5px solid}
+.sb-bull{background:#EAF3DE;border-color:#C0DD97}
+.sb-base{background:var(--color-background-secondary);border-color:var(--color-border-tertiary)}
+.sb-bear{background:#FCEBEB;border-color:#F7C1C1}
+.sb-prob{font-size:11px;font-weight:500;border-radius:4px;padding:2px 7px;display:inline-block;margin-bottom:5px}
+.sb-bull .sb-prob{background:#C0DD97;color:#173404}
+.sb-base .sb-prob{background:var(--color-border-tertiary);color:var(--color-text-secondary)}
+.sb-bear .sb-prob{background:#F7C1C1;color:#501313}
+.sb-title{font-size:12px;font-weight:500;margin-bottom:4px}
+.sb-bull .sb-title{color:#27500A}
+.sb-base .sb-title{color:var(--color-text-secondary)}
+.sb-bear .sb-title{color:#791F1F}
+.sb-val{font-size:17px;font-weight:500;margin-bottom:4px}
+.sb-bull .sb-val{color:#3B6D11}
+.sb-base .sb-val{color:var(--color-text-primary)}
+.sb-bear .sb-val{color:#A32D2D}
+.sb-item{font-size:11px;margin-bottom:3px;line-height:1.4}
+.sb-bull .sb-item{color:#3B6D11}
+.sb-base .sb-item{color:var(--color-text-secondary)}
+.sb-bear .sb-item{color:#A32D2D}
+
+.disc{font-size:11px;color:var(--color-text-tertiary);border-top:0.5px solid var(--color-border-tertiary);padding-top:10px;margin-top:.5rem;line-height:1.6}
+</style>
+
+<div class="rp">
+  <div class="eyebrow">2026년 7월 2일 (목) · 글로벌 매크로 & 4대 종목 최저/최고 전망</div>
+  <div class="title">코스피 8,000 붕괴 — "조정"이 맞다, 그런데 이게 끝인가?</div>
+  <div class="sub">전세계 매크로 5대 악재 해부 · 전문가 "조정 국면" vs "구조 이상" 논쟁 · 삼성전자·하이닉스·현대차·기아 최신 최저/최고 전망</div>
+
+  <div class="crash-hero">
+    <div class="ch-num">7,868</div>
+    <div class="ch-right">
+      <div class="ch-label">코스피 7월 2일 장중 · 8,000선 붕괴 확인</div>
+      <div class="ch-body">
+        전일 종가 8,303 → 오늘 장중 7,810 · <strong>▼ -5.9%</strong> 급락<br>
+        삼성전자 298,250원(-5.2%) · SK하이닉스 2,571,000원(-3.0%)<br>
+        <strong>6월 소비자물가 3.2% — 2년 6개월 만에 최대폭</strong> · 사이드카 재발동<br>
+        외국인 순매도 1.1조 · 개인 순매수로 방어 중
+      </div>
+    </div>
+  </div>
+
+  <div class="verdict-box vb-green">
+    <div class="vb-title">✅ 전문가 다수 판정 — "조정 맞다, 약세장 전환은 아니다"</div>
+    <div class="vb-body">
+      <strong>신한투자증권 신승진 팀장:</strong> "오늘 아시아 시장에서 한국 증시가 가장 많이 빠졌는데, 매크로 변수로 빠진 거라기보다는 지수 상승 속도의 문제가 가장 크다. 반도체·자동차 2개 업종 쏠림이 극심하다 보니 시장이 속도 조절에 들어간 것." <strong>AI 산업 성장 가능성은 건재하며, 시장이 약세로 돌아선 건 아니다</strong>는 의견이 전문가 다수. 코스피 8,000선 지지 여부가 중단기 분수령.
+    </div>
+  </div>
+
+  <div class="sec">오늘 지수 현황</div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-l">코스피 (장중)</div><div class="kpi-v" style="color:#A32D2D">7,868</div><div class="kpi-c dn">▼ -5.9% · 8000 붕괴</div></div>
+    <div class="kpi"><div class="kpi-l">삼성전자</div><div class="kpi-v">298,250원</div><div class="kpi-c dn">▼ -5.2% (7/2 장중)</div></div>
+    <div class="kpi"><div class="kpi-l">SK하이닉스</div><div class="kpi-v">2,571,000원</div><div class="kpi-c dn">▼ -3.0% (7/1 종가)</div></div>
+    <div class="kpi"><div class="kpi-l">6월 CPI</div><div class="kpi-v" style="color:#A32D2D">3.2%</div><div class="kpi-c dn">30개월 만에 최대폭</div></div>
+    <div class="kpi"><div class="kpi-l">달러/원</div><div class="kpi-v">1,548</div><div class="kpi-c dn">전일比 상승 지속</div></div>
+    <div class="kpi"><div class="kpi-l">외국인 순매도</div><div class="kpi-v">74조+</div><div class="kpi-c dn">23거래일+ 연속</div></div>
+  </div>
+
+  <div class="sec">전세계 매크로 — 5대 악재가 동시에 누르고 있다</div>
+  <div class="macro-list">
+    <div class="macro-item">
+      <div class="m-region m-kr">🇰🇷 한국</div>
+      <div>
+        <div class="m-title">6월 소비자물가 3.2% — 30개월 만에 최대폭 상승</div>
+        <div class="m-body">중동 전쟁 영향으로 석유류 물가 급등. 국가데이터처 발표 기준 2024년 1월 이후 가장 큰 상승폭. 한국은행 금리 인하 기대 후퇴. 내수 소비 위축 우려까지 복합 작용.</div>
+      </div>
+      <div class="m-impact imp-dn">코스피 직격</div>
+    </div>
+    <div class="macro-item">
+      <div class="m-region m-us">🇺🇸 미국</div>
+      <div>
+        <div class="m-title">연준 금리 인상 재점화 — 12월 인상 확률 77% 유지</div>
+        <div class="m-body">FOMC 점도표에서 18명 중 9명이 연내 금리 인상 지지. BNP파리바 12월부터 3회 연속 인상 전망 유지. 미국 비농업 고용 예상치 초과로 연준 완화 기대 소멸. 빅테크 AI 설비투자 과잉 우려 재부각.</div>
+      </div>
+      <div class="m-impact imp-dn">기술주 밸류 압박</div>
+    </div>
+    <div class="macro-item">
+      <div class="m-region m-jp">🇯🇵 일본</div>
+      <div>
+        <div class="m-title">일본 PPI 6.3% 서프라이즈 — 금리 1% 시대 임박</div>
+        <div class="m-body">일본 5월 생산자물가지수 6.3%로 예상 대폭 초과. 일본은행 31년 만에 최고 금리 인상 임박. 엔화 강세 → 일본 수출주 약세 → 글로벌 위험자산 회피 심리 연쇄 반응. 한국 채권·주식 동반 하락.</div>
+      </div>
+      <div class="m-impact imp-dn">글로벌 금리 상승</div>
+    </div>
+    <div class="macro-item">
+      <div class="m-region m-kr">🇮🇷 중동</div>
+      <div>
+        <div class="m-title">미·이란 협상 불안 재부각 + 트럼프 경고</div>
+        <div class="m-body">트럼프 대통령이 이란에 추가 경고 발언. 호르무즈 해협 재봉쇄 우려 지속. 이스라엘 레바논 추가 공습으로 MOU 1조 위반 논란. 국제유가 변동성 재확대 → 에너지 수입국 한국 직격.</div>
+      </div>
+      <div class="m-impact imp-dn">유가 불확실</div>
+    </div>
+    <div class="macro-item">
+      <div class="m-region m-kr">📊 구조</div>
+      <div>
+        <div class="m-title">외국인 23거래일+ 74조 순매도 · MSCI 편입 불발 · 국민연금 리밸런싱</div>
+        <div class="m-body">외국인이 반도체 대형주 중심으로 74조원 이상 순매도. 단순 차익실현을 넘어 한국 시장 신뢰 자체가 흔들리는 신호 가능성. MSCI 선진국 편입 불발 + 국민연금 리밸런싱 압박이 상단을 지속 누름.</div>
+      </div>
+      <div class="m-impact imp-w">구조적 리스크</div>
+    </div>
+  </div>
+
+  <div class="sec">전문가들이 "조정"이라고 말하는 근거 — 3가지</div>
+  <div class="expert-verdict">
+    <div class="ev-title">📺 방송·증권가 핵심 발언 종합</div>
+    <div class="ev-grid">
+      <div class="ev-card">
+        <div class="ev-who">신승진 삼성증권 투자정보팀장</div>
+        <div class="ev-org">MBC 뉴스데스크 출연</div>
+        <div class="ev-q"><cite index="26-1">"오늘 아시아 시장에서 보면 한국 증시가 가장 많이 빠졌거든요. 매크로 변수로 빠진 거는 아니라고 보는 게 맞고요. 지수 상승 속도의 문제가 가장 크다." AI 산업 성장 가능성은 건재한 만큼, 시장이 약세로 돌아선 건 아니라는 의견.</cite></div>
+      </div>
+      <div class="ev-card">
+        <div class="ev-who">강진혁 신한투자증권 선임연구원</div>
+        <div class="ev-org">시사저널e</div>
+        <div class="ev-q"><cite index="18-1">"반도체주가 쉬어감에 따라 하락세로 전환했다. 트럼프의 이란 경고, 일본 생산자 물가 서프라이즈에 따른 금리 상승, 미중 협력에 따른 공급망 분절 수혜 기대 축소가 대형주 투매를 자극한 것." 조정 여부를 주시해야 하는 시점.</cite></div>
+      </div>
+      <div class="ev-card">
+        <div class="ev-who">이재만 하나증권 연구원</div>
+        <div class="ev-org">머니투데이</div>
+        <div class="ev-q"><cite index="22-1">"코스피 상승 속 쏠림 현상은 이익 측면에서 당연한 결과다. 삼성전자와 SK하이닉스의 코스피 내 순이익 비중은 72%다. 이익이 집중된 곳에 시총이 쏠리는 건 자연스러운 현상."</cite> 약세장 전환보다 속도 조절 해석이 다수.</div>
+      </div>
+      <div class="ev-card">
+        <div class="ev-who">한화자산운용 리서치</div>
+        <div class="ev-org">PLUS ETF 리포트</div>
+        <div class="ev-q"><cite index="28-1">"외국인이 23거래일 연속 순매도로 74조원 이상 이탈했는데, 이는 단순한 차익 실현이 아니라 한국 시장에 대한 신뢰 자체가 흔들리고 있다는 신호일 가능성이 있다"고 경고. 8,000 붕괴 시 심리적 공황 투매 가능성 언급.</cite></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">4대 종목 — 7월 2일 기준 현재가 · 최저/최고 전망</div>
+  <div class="stock-cards">
+
+    <!-- 삼성전자 -->
+    <div class="sc" style="border-left:4px solid #378ADD">
+      <div class="sc-top">
+        <div>
+          <div class="sc-name">삼성전자</div>
+          <div class="sc-code">005930 · 적극 매수 36/37명 · 내 매수가 325,000원</div>
+        </div>
+        <div class="sc-right">
+          <div class="sc-price">298,250원</div>
+          <div class="sc-chg dn">▼ -5.2% 오늘 장중 · 내 매수比 -8.2%</div>
+        </div>
+      </div>
+      <div class="range-wrap">
+        <div class="r-row">
+          <div class="r-lbl">최저 목표가</div>
+          <div class="r-bar"><div class="r-fill" style="width:24.1%;background:#F7C1C1"></div><div class="r-cur" style="left:35.1%"></div></div>
+          <div class="r-val dn">205,000원</div>
+        </div>
+        <div class="r-row">
+          <div class="r-lbl">컨센서스</div>
+          <div class="r-bar"><div class="r-fill" style="width:53.9%;background:#C0DD97"></div><div class="r-cur" style="left:35.1%"></div></div>
+          <div class="r-val up">458,214원</div>
+        </div>
+        <div class="r-row">
+          <div class="r-lbl">최고 목표가</div>
+          <div class="r-bar"><div class="r-fill" style="width:100%;background:#378ADD"></div><div class="r-cur" style="left:35.1%"></div></div>
+          <div class="r-val up">850,000원 ★</div>
+        </div>
+      </div>
+      <div class="sc-stats">
+        <div class="ss"><div class="ss-l">52주 최저</div><div class="ss-v dn">60,200원</div></div>
+        <div class="ss"><div class="ss-l">52주 최고</div><div class="ss-v">374,500원</div></div>
+        <div class="ss"><div class="ss-l">컨센 상승여력</div><div class="ss-v up">+53.6%</div></div>
+        <div class="ss"><div class="ss-l">최고가 상승여력</div><div class="ss-v up">+185%</div></div>
+      </div>
+      <div class="sc-outlook">
+        <div class="sc-outlook-body"><strong>내 매수가 325,000원 → 현재 298,250원 → -8.2%.</strong> 아픈 구간이지만 컨센서스 목표가 458,214원 대비 이미 +53.6% 저평가. 7월 초 2Q 잠정 실적(영업이익 92조 예상)이 반등 트리거. 삼성전자가 충청권에 140조원 투자·HBM·OLED·배터리·AI기판 클러스터 구축 발표 — 장기 성장 의지 재확인. <strong>분할 추가 매수 검토 구간.</strong></div>
+        <span class="badge b-buy">분할 매수</span>
+      </div>
+    </div>
+
+    <!-- SK하이닉스 -->
+    <div class="sc" style="border-left:4px solid #3B6D11">
+      <div class="sc-top">
+        <div>
+          <div class="sc-name">SK하이닉스</div>
+          <div class="sc-code">000660 · 적극 매수 35/37명 · 매도 1명</div>
+        </div>
+        <div class="sc-right">
+          <div class="sc-price">2,571,000원</div>
+          <div class="sc-chg dn">▼ 7/1 종가 (고점 295만 대비 -12.8%)</div>
+        </div>
+      </div>
+      <div class="range-wrap">
+        <div class="r-row">
+          <div class="r-lbl">최저 목표가</div>
+          <div class="r-bar"><div class="r-fill" style="width:21.9%;background:#F7C1C1"></div><div class="r-cur" style="left:54.7%"></div></div>
+          <div class="r-val dn">1,030,000원</div>
+        </div>
+        <div class="r-row">
+          <div class="r-lbl">컨센서스</div>
+          <div class="r-bar"><div class="r-fill" style="width:65.8%;background:#C0DD97"></div><div class="r-cur" style="left:54.7%"></div></div>
+          <div class="r-val up">3,094,448원</div>
+        </div>
+        <div class="r-row">
+          <div class="r-lbl">최고 목표가</div>
+          <div class="r-bar"><div class="r-fill" style="width:100%;background:#3B6D11"></div><div class="r-cur" style="left:54.7%"></div></div>
+          <div class="r-val up">4,700,000원 ★</div>
+        </div>
+      </div>
+      <div class="sc-stats">
+        <div class="ss"><div class="ss-l">52주 최저</div><div class="ss-v dn">245,000원</div></div>
+        <div class="ss"><div class="ss-l">52주 최고</div><div class="ss-v">2,987,000원</div></div>
+        <div class="ss"><div class="ss-l">컨센 상승여력</div><div class="ss-v up">+20.4%</div></div>
+        <div class="ss"><div class="ss-l">7월 말 AI 예측</div><div class="ss-v up">310.7만원</div></div>
+      </div>
+      <div class="sc-outlook">
+        <div class="sc-outlook-body"><strong>7/29 2Q 실적 발표(영업이익 63.7조 예상)가 가장 강력한 반등 촉매.</strong> 컨센서스 309.4만원 → 상승여력 +20.4%. 최고 목표가 470만원(한화투자). AI 예측 기준 7월 말 310.7만·8월 말 357.3만원. HBM4E 단독 공급 유지·ADR 나스닥 상장 준비 — 구조적 업황 훼손 없음. 단기 조정 과대한 구간.</div>
+        <span class="badge b-buy">홀드·조정 매수</span>
+      </div>
+    </div>
+
+    <!-- 현대차 -->
+    <div class="sc" style="border-left:4px solid #534AB7">
+      <div class="sc-top">
+        <div>
+          <div class="sc-name">현대차</div>
+          <div class="sc-code">005380 · 매수 26/26명 · 매도 0명</div>
+        </div>
+        <div class="sc-right">
+          <div class="sc-price">~450,000원</div>
+          <div class="sc-chg dn">▼ 52주 최고 783,000원 대비 -42.5%</div>
+        </div>
+      </div>
+      <div class="range-wrap">
+        <div class="r-row">
+          <div class="r-lbl">최저 목표가</div>
+          <div class="r-bar"><div class="r-fill" style="width:42.5%;background:#F7C1C1"></div><div class="r-cur" style="left:37.5%"></div></div>
+          <div class="r-val dn">509,415원</div>
+        </div>
+        <div class="r-row">
+          <div class="r-lbl">컨센서스</div>
+          <div class="r-bar"><div class="r-fill" style="width:62.5%;background:#C0DD97"></div><div class="r-cur" style="left:37.5%"></div></div>
+          <div class="r-val up">748,755원</div>
+        </div>
+        <div class="r-row">
+          <div class="r-lbl">최고 목표가</div>
+          <div class="r-bar"><div class="r-fill" style="width:100%;background:#534AB7"></div><div class="r-cur" style="left:37.5%"></div></div>
+          <div class="r-val up">1,200,000원 ★</div>
+        </div>
+      </div>
+      <div class="sc-stats">
+        <div class="ss"><div class="ss-l">52주 최저</div><div class="ss-v dn">203,000원</div></div>
+        <div class="ss"><div class="ss-l">52주 최고</div><div class="ss-v">783,000원</div></div>
+        <div class="ss"><div class="ss-l">컨센 상승여력</div><div class="ss-v up">+66.4%</div></div>
+        <div class="ss"><div class="ss-l">최저가 比 현재</div><div class="ss-v dn">현재 < 최저목표</div></div>
+      </div>
+      <div class="sc-outlook">
+        <div class="sc-outlook-body"><strong>현재가 45만원이 최저 목표가 50.9만원보다 낮은 이론적 저평가 극단 구간.</strong> 26명 전원 매수, 매도 0. 컨센 상승여력 +66.4%. 8월 RMAC 개소가 'Physical AI 기업' 재평가 핵심 이벤트. AI 예측 기준 2027년 106만원. 유가 안정 시 물류비 즉시 회복. 장기보유 논리 최강.</div>
+        <span class="badge b-buy">장기 매수 최강</span>
+      </div>
+    </div>
+
+    <!-- 기아 -->
+    <div class="sc" style="border-left:4px solid #D85A30">
+      <div class="sc-top">
+        <div>
+          <div class="sc-name">기아</div>
+          <div class="sc-code">000270 · 적극 매수 30/30명 · 매도 0명</div>
+        </div>
+        <div class="sc-right">
+          <div class="sc-price">~130,000원</div>
+          <div class="sc-chg dn">▼ 52주 최고 212,500원 대비 -38.8%</div>
+        </div>
+      </div>
+      <div class="range-wrap">
+        <div class="r-row">
+          <div class="r-lbl">최저 목표가</div>
+          <div class="r-bar"><div class="r-fill" style="width:65.5%;background:#F7C1C1"></div><div class="r-cur" style="left:44.8%"></div></div>
+          <div class="r-val dn">190,000원</div>
+        </div>
+        <div class="r-row">
+          <div class="r-lbl">컨센서스</div>
+          <div class="r-bar"><div class="r-fill" style="width:78.6%;background:#C0DD97"></div><div class="r-cur" style="left:44.8%"></div></div>
+          <div class="r-val up">227,833원</div>
+        </div>
+        <div class="r-row">
+          <div class="r-lbl">최고 목표가</div>
+          <div class="r-bar"><div class="r-fill" style="width:100%;background:#D85A30"></div><div class="r-cur" style="left:44.8%"></div></div>
+          <div class="r-val up">290,000원 ★</div>
+        </div>
+      </div>
+      <div class="sc-stats">
+        <div class="ss"><div class="ss-l">52주 최저</div><div class="ss-v dn">88,100원</div></div>
+        <div class="ss"><div class="ss-l">52주 최고</div><div class="ss-v">212,500원</div></div>
+        <div class="ss"><div class="ss-l">컨센 상승여력</div><div class="ss-v up">+75.3%</div></div>
+        <div class="ss"><div class="ss-l">2026 영업이익</div><div class="ss-v">10.2조원(E)</div></div>
+      </div>
+      <div class="sc-outlook">
+        <div class="sc-outlook-body"><strong>4종목 중 컨센서스 상승여력 최대 +75.3%.</strong> xEV 판매 +40% YoY 예상, 스포티지 HEV 미국 현지 생산 전환 완료. 30명 전원 적극 매수. 최저 목표가 19만원 대비 현재 13만원 — 이론적 추가 하락 여력 제한. 7월 실적 발표 시 재평가 필연적.</div>
+        <span class="badge b-buy">최대 상승여력</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sec">코스피 상승여력 비교 (현재가 vs 컨센서스 목표가)</div>
+  <div class="chart-h" style="height:220px">
+    <canvas id="upChart" role="img" aria-label="4종목 현재가 대비 컨센서스 및 최고가 상승여력 비교">상승여력 차트</canvas>
+  </div>
+
+  <div class="sec">코스피 하반기 시나리오</div>
+  <div class="sc-row">
+    <div class="sbox sb-bull">
+      <div class="sb-prob">낙관 35%</div>
+      <div class="sb-title">7월 반등 성공</div>
+      <div class="sb-val">8,500~9,000</div>
+      <div class="sb-item">삼성전자 2Q 92조 서프라이즈</div>
+      <div class="sb-item">SK하이닉스 7/29 실적 어닝 쇼크</div>
+      <div class="sb-item">이란 협상 재타결</div>
+      <div class="sb-item">외국인 수급 복귀 신호</div>
+      <div class="sb-item">8월 RMAC 성공 개소</div>
+    </div>
+    <div class="sbox sb-base">
+      <div class="sb-prob">기본 45%</div>
+      <div class="sb-title">등락 반복 횡보</div>
+      <div class="sb-val">7,500~8,500</div>
+      <div class="sb-item">8,000선 공방 지속</div>
+      <div class="sb-item">실적 확인 후 방향 결정</div>
+      <div class="sb-item">물가 3.2% 한국銀 동결 유지</div>
+      <div class="sb-item">개인 매수 vs 외국인 매도</div>
+      <div class="sb-item">반도체 점차 반등, 자동차 소외</div>
+    </div>
+    <div class="sbox sb-bear">
+      <div class="sb-prob">비관 20%</div>
+      <div class="sb-title">7,000선 추가 하락</div>
+      <div class="sb-val">6,500~7,500</div>
+      <div class="sb-item">이란 완전 봉쇄 재개</div>
+      <div class="sb-item">연준 긴급 금리 인상 논의</div>
+      <div class="sb-item">AI 투자 사이클 피크아웃 신호</div>
+      <div class="sb-item">외국인 신뢰 장기 이탈</div>
+      <div class="sb-item">삼성 파업 장기화 실적 타격</div>
+    </div>
+  </div>
+
+  <div class="disc">※ 현재가는 7월 2일 Investing.com 장중 데이터 기준. 삼성전자 298,250원·SK하이닉스 2,571,000원(7/1 종가). 현대차·기아는 추정치. 목표주가는 12개월 선행 애널리스트 컨센서스. 외국인 누적 순매도 74조원은 한화자산운용 PLUS ETF 리포트 기준. AI 예측은 wonforecast.com 통계 모델 참고용. 투자의 최종 책임은 투자자 본인에게 있으며 투자 권유가 아닙니다.</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+const tc = isDark ? '#B4B2A9' : '#5F5E5A';
+const gc = isDark ? 'rgba(180,178,169,0.10)' : 'rgba(95,94,90,0.08)';
+
+new Chart(document.getElementById('upChart'), {
+  type: 'bar',
+  data: {
+    labels: ['기아\n13만원','현대차\n45만원','삼성전자\n29.8만원','SK하이닉스\n257만원'],
+    datasets: [
+      { label: '컨센서스 상승여력', data: [75.3, 66.4, 53.6, 20.4], backgroundColor: '#C0DD97', borderRadius: 4, stack: 'a' },
+      { label: '최고가 추가 업사이드', data: [48.1, 60.4, 131.4, 82.8], backgroundColor: ['#D85A30','#534AB7','#378ADD','#3B6D11'], borderRadius: 4, stack: 'a' }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true, position: 'bottom', labels: { color: tc, font: { size: 11 }, boxWidth: 12, padding: 10 } },
+      tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + ': +' + ctx.parsed.x.toFixed(1) + '%' } }
+    },
+    scales: {
+      x: { ticks: { color: tc, callback: v => '+' + v + '%' }, grid: { color: gc }, stacked: true, max: 200 },
+      y: { ticks: { color: tc, font: { size: 12 } }, grid: { display: false }, stacked: true }
+    }
+  }
+});
+</script>
