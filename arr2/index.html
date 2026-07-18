@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C 언어 for 문 및 배열 시각화 실습실 Pro</title>
+<style>
+:root{
+  --bg: #0b132b; 
+  --panel: #1c2541; 
+  --panel2: #111a36; 
+  --line: #3a506b;
+  --teal: #4cc9f0; 
+  --teal-dim: #4361ee; 
+  --amber: #f77f00; 
+  --red: #d62828;
+  --text: #edf2f4; 
+  --muted: #8d99ae; 
+  --code-bg: #0b0c10;
+  --accent: #5bc0be;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;min-height:100vh;}
+.wrap{max-width:1400px;margin:0 auto;padding:20px 24px 48px;}
+header{padding:24px 10px 20px;border-bottom:2px solid var(--line);margin-bottom:24px;display:flex;flex-wrap:wrap;align-items:baseline;gap:16px;}
+header h1{font-size:1.7rem;letter-spacing:-0.5px;font-weight: 700;}
+header h1 span{color:var(--teal);}
+.badge{background:rgba(76,201,240,0.15);border:1px solid var(--teal);color:var(--teal);font-size:0.8rem;padding:4px 12px;border-radius:999px;font-weight: bold;}
+.sub{color:var(--muted);font-size:0.92rem;width:100%;margin-top: 6px;line-height: 1.5;}
+.sub b {color: var(--accent);}
+.grid{display:grid;grid-template-columns:45% 1fr;gap:24px;align-items:start;}
+@media(max-width:1024px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow: 0 8px 24px rgba(0,0,0,0.2);}
+.card h2{font-size:0.98rem;padding:14px 18px;border-bottom:1px solid var(--line);color:var(--teal);display:flex;align-items:center;gap:10px;font-weight:600;background: rgba(0,0,0,0.15);}
+.card h2 .dot{width:10px;height:10px;border-radius:50%;background:var(--teal);display:inline-block;box-shadow: 0 0 8px var(--teal);}
+.card .body{padding:18px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--panel2);}
+.chips button{background:rgba(255,255,255,0.03);border:1px solid var(--line);color:var(--muted);font-size:0.82rem;padding:6px 14px;border-radius:999px;cursor:pointer;transition:all .2s;font-family:inherit;}
+.chips button:hover{border-color:var(--teal);color:var(--teal);background: rgba(76,201,240,0.05);}
+.chips button.active{border-color:var(--teal);color:var(--teal);background: rgba(76,201,240,0.12);font-weight: 600;}
+.editor{display:flex;background:var(--code-bg);height:420px;border-bottom: 1px solid var(--line);}
+.gutter{width:48px;background:#07080d;color:#4a5568;text-align:right;padding:14px 10px 14px 0;font:13.5px/1.6 Consolas,'D2Coding',monospace;user-select:none;overflow:hidden;white-space:pre;border-right: 1px solid rgba(255,255,255,0.05);}
+textarea#code{flex:1;background:transparent;border:none;outline:none;resize:none;color:var(--text);font:13.5px/1.6 Consolas,'D2Coding',monospace;padding:14px 16px;white-space:pre;overflow:auto;tab-size:4;caret-color: var(--teal);}
+.viewer{display:none;background:var(--code-bg);height:420px;overflow:auto;padding:14px 0;font:13.5px/1.6 Consolas,'D2Coding',monospace;border-bottom: 1px solid var(--line);}
+.viewer .cline{display:flex;padding:0 0;align-items: center;min-height: 22.4px;}
+.viewer .ln{width:48px;flex:none;text-align:right;padding-right:14px;color:#4a5568;user-select:none;border-right: 1px solid rgba(255,255,255,0.05);margin-right: 16px;}
+.viewer .txt{white-space:pre;flex:1;padding-right:16px;color: #cbd5e1;}
+.viewer .cline.cur{background:rgba(76,201,240,0.16);box-shadow:inset 4px 0 0 var(--teal);}
+.viewer .cline.cur .txt{color:#fff;font-weight: 600;}
+.controls{display:flex;flex-wrap:wrap;gap:10px;padding:14px 18px;border-top:1px solid var(--line);background:var(--panel2);align-items:center;}
+.controls button{background:#223152;border:1px solid var(--line);color:var(--text);font-size:0.85rem;padding:8px 16px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .15s;display: inline-flex;align-items: center;gap:6px;}
+.controls button:hover:not(:disabled){border-color:var(--teal);color:var(--teal);background: #2a3c63;}
+.controls button:disabled{opacity:0.3;cursor:default;}
+.controls button.primary{background:var(--teal-dim);border-color:var(--teal-dim);color:#fff;font-weight:700;}
+.controls button.primary:hover{background: #4f46e5;border-color: #4f46e5;}
+.controls select{background:#223152;border:1px solid var(--line);color:var(--text);font-size:0.85rem;padding:8px 10px;border-radius:8px;font-family:inherit;outline: none;cursor: pointer;}
+.controls select:hover{border-color: var(--teal);}
+.stepbar{padding:14px 18px;border-top:1px solid var(--line);font-size:0.9rem;min-height:50px;display:flex;gap:12px;align-items:center;background: rgba(0,0,0,0.1);}
+.stepbar .cnt{flex:none;background:rgba(76,201,240,0.15);color:var(--teal);border-radius:6px;padding:3px 10px;font-size:0.82rem;font-family:Consolas,monospace;font-weight: bold;border: 1px solid rgba(76,201,240,0.3);}
+.stepbar .desc{color:var(--text);line-height: 1.4;}
+.arr-block{margin-bottom:20px;background: rgba(0,0,0,0.12);padding: 14px;border-radius: 10px;border: 1px solid rgba(255,255,255,0.03);}
+.arr-name{font:600 0.9rem Consolas,'D2Coding',monospace;color:var(--accent);margin-bottom:10px;display: flex;align-items: center;gap:8px;}
+.arr-name::before{content: ''; width: 6px; height: 12px; background: var(--accent); border-radius: 2px;}
+.cells{display:flex;gap:6px;flex-wrap:wrap;}
+.cell{width:58px;flex:none;text-align:center;position: relative;}
+.cell .val{height:52px;background:var(--code-bg);border:1.5px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;font:600 16px Consolas,'D2Coding',monospace;color:var(--text);transition:all .2s;position: relative;}
+.cell .val.empty{color:#3a506b;font-style:italic;}
+.cell .idx{font:11px Consolas,monospace;color:var(--muted);margin-top:6px;font-weight: 500;}
+.cell.hit .val{border-color:var(--amber);color:var(--amber);background:rgba(247,127,0,0.15);box-shadow: 0 0 12px rgba(247,127,0,0.3);animation:pulse .4s ease;}
+.cell.ptr .idx{color: var(--teal); font-weight: bold;}
+.cell.ptr::after{
+  content: '▲';
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: var(--teal);
+  animation: bounce 0.6s infinite alternate;
+}
+@keyframes pulse{0%{transform:scale(1);}40%{transform:scale(1.1);}100%{transform:scale(1);}}
+@keyframes bounce{0%{top: -14px;}100%{top: -18px;}}
+.placeholder{color:var(--muted);font-size:0.88rem;padding:10px 0;font-style: italic;}
+.varchips{display:flex;flex-wrap:wrap;gap:10px;}
+.varchip{background:var(--code-bg);border:1.5px solid var(--line);border-radius:8px;padding:9px 14px;font:600 14px Consolas,'D2Coding',monospace;transition:all .2s;display: flex;align-items: center;gap: 6px;}
+.varchip span.vname{color: var(--muted);}
+.varchip span.vval{color: var(--text);}
+.varchip.hit{border-color:var(--amber);background:rgba(247,127,0,0.15);box-shadow: 0 0 10px rgba(247,127,0,0.2);animation:pulse .4s ease;}
+.varchip.hit span.vval{color: var(--amber);}
+pre#outputBox{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;min-height:76px;padding:12px 16px;font:13.5px/1.55 Consolas,'D2Coding',monospace;white-space:pre-wrap;color:#a7f3ea;box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);}
+#errorBox{display:none;background:rgba(214,40,40,0.12);border:1px solid var(--red);color:#ffccd5;border-radius:10px;padding:14px 16px;font-size:0.9rem;margin-bottom:20px;line-height:1.55;font-weight: 500;}
+.tips{font-size:0.88rem;color:var(--muted);line-height:1.75;}
+.tips ol{padding-left: 20px;}
+.tips li{margin-bottom: 8px;}
+.tips b{color:var(--teal);}
+.tips code{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:2px 6px;font:12.5px Consolas,monospace;color:var(--amber);margin: 0 2px;}
+.rightcol{display:flex;flex-direction:column;gap:20px;}
+@media(prefers-reduced-motion:reduce){.cell.hit .val,.varchip.hit{animation:none;}.cell.ptr::after{animation: none;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1><span>C 언어</span> Loop & Array 시각화 실습실</h1>
+  <span class="badge">Engine v2.0</span>
+  <p class="sub">코드를 직접 수정하거나 상단 예제를 선택한 뒤 <b>▶ 실행</b>을 누르세요. <b>[다음]</b> 버튼이나 <b>[자동 재생]</b>을 통해 반복 제어문과 메모리(변수, 배열)의 변화를 실시간 분석할 수 있습니다.</p>
+</header>
+
+<div class="grid">
+  <section class="card">
+    <h2><span class="dot"></span>C 소스코드 에디터</h2>
+    <div class="chips" id="presetChips"></div>
+    <div class="editor" id="editorWrap">
+      <div class="gutter" id="gutter">1</div>
+      <textarea id="code" spellcheck="false" aria-label="C code editor"></textarea>
+    </div>
+    <div class="viewer" id="viewerWrap"></div>
+    <div class="controls">
+      <button id="runBtn" class="primary">▶ 실행 (컴파일)</button>
+      <button id="editBtn" style="display:none">✏️ 코드 수정</button>
+      <span style="flex:1"></span>
+      <button id="homeBtn" disabled>⏮ 처음</button>
+      <button id="prevBtn" disabled>◀ 이전</button>
+      <button id="nextBtn" disabled>다음 ▶</button>
+      <button id="endBtn" disabled>끝 ⏭</button>
+      <button id="playBtn" disabled>자동 재생</button>
+      <select id="speedSel" aria-label="재생 속도">
+        <option value="1500">&nbsp;느리게 (1.5s)</option>
+        <option value="800" selected>보통 (0.8s)</option>
+        <option value="350">빠르게 (0.35s)</option>
+      </select>
+    </div>
+    <div class="stepbar">
+      <span class="cnt" id="stepCnt">- / -</span>
+      <span class="desc" id="stepDesc">소스코드를 세팅하고 실행 버튼을 눌러 시뮬레이션을 생성하세요.</span>
+    </div>
+  </section>
+
+  <div class="rightcol">
+    <div id="errorBox"></div>
+    <section class="card">
+      <h2><span class="dot"></span>배열 메모리 공간 (Array Elements)</h2>
+      <div class="body" id="arraysBox"><p class="placeholder">배열이 아직 선언되지 않았습니다.</p></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>단일 변수 레지스터 (Variables)</h2>
+      <div class="body"><div class="varchips" id="varsBox"><p class="placeholder">추적 중인 로컬 변수가 없습니다.</p></div></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>표준 출력 (Standard Output)</h2>
+      <div class="body"><pre id="outputBox"></pre></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>핵심 학습 포인트 (Learning Guide)</h2>
+      <div class="body tips">
+        <ol>
+          <li><b>루프 인덱스 포인터 (▲)</b>: 배열 요소 접근 시 제어 변수의 값에 따라 배열 칸 밑에 화살표 지시선이 실시간으로 동기화됩니다.</li>
+          <li><b>값 참조 트래킹 (Amber)</b>: 배열에서 특정 값을 가져오거나 대입할 때 대상 칸이 밝게 하이라이트됩니다.</li>
+        </ol>
+      </div>
+    </section>
+  </div>
+</div>
+</div>
+
+<script>
+var KEYWORDS = ['int','for','while','if','else','printf'];
+var TWO_OPS = ['++','--','+=','-=','*=','/=','%=','==','!=','<=','>=','&&','||'];
+var ONE_OPS = '+-*/%<>=!;,(){}[]';
+
+function tokenize(src){
+  var toks = [], i = 0, line = 1, n = src.length;
+  function push(t, v){ toks.push({type:t, value:v, line:line}); }
+  while(i < n){
+    var c = src[i];
+    if(c === '\n'){ line++; i++; continue; }
+    if(c === ' ' || c === '\t' || c === '\r'){ i++; continue; }
+    if(c === '/' && src[i+1] === '/'){ while(i < n && src[i] !== '\n') i++; continue; }
+    if(c === '/' && src[i+1] === '*'){
+      i += 2;
+      while(i < n && !(src[i] === '*' && src[i+1] === '/')){ if(src[i] === '\n') line++; i++; }
+      i += 2; continue;
+    }
+    if(c >= '0' && c <= '9'){
+      var s = i;
+      while(i < n && src[i] >= '0' && src[i] <= '9') i++;
+      push('num', parseInt(src.slice(s, i), 10)); continue;
+    }
+    if(/[A-Za-z_]/.test(c)){
+      var s2 = i;
+      while(i < n && /[A-Za-z0-9_]/.test(src[i])) i++;
+      var w = src.slice(s2, i);
+      push(KEYWORDS.indexOf(w) >= 0 ? 'kw' : 'ident', w); continue;
+    }
+    if(c === '"'){
+      i++; var buf = '';
+      while(i < n && src[i] !== '"'){
+        if(src[i] === '\\'){
+          var e = src[i+1];
+          if(e === 'n') buf += '\n';
+          else if(e === 't') buf += '\t';
+          else buf += e;
+          i += 2;
+        } else { buf += src[i]; i++; }
+      }
+      i++; push('str', buf); continue;
+    }
+    var two = src.substr(i, 2);
+    if(TWO_OPS.indexOf(two) >= 0){ push('op', two); i += 2; continue; }
+    if(ONE_OPS.indexOf(c) >= 0){ push('op', c); i++; continue; }
+    throw {line:line, msg:'알 수 없는 유효하지 않은 문자: ' + c};
+  }
+  push('eof', ''); return toks;
+}
+
+function parse(toks){
+  var p = 0;
+  function peek(){ return toks[p]; }
+  function at(type, val){ var t = toks[p]; return t.type === type && (val === undefined || t.value === val); }
+  function eat(type, val){
+    if(!at(type, val)){ var t = toks[p]; throw {line:t.line, msg:'문법 오류: "' + (val || type) + '" 예상 (현재: "' + t.value + '")'}; }
+    return toks[p++];
+  }
+  function opt(type, val){ if(at(type, val)){ p++; return true; } return false; }
+  function parseProgram(){ var body = []; while(!at('eof')) body.push(parseStmt()); return body; }
+  function parseStmt(){
+    var t = peek();
+    if(at('kw','int')){ var d = parseDeclCore(); eat('op',';'); return d; }
+    if(at('kw','for')) return parseFor();
+    if(at('kw','while')) return parseWhile();
+    if(at('kw','if')) return parseIf();
+    if(at('kw','printf')) return parsePrintf();
+    if(at('op','{')){
+      eat('op','{'); var body = [];
+      while(!at('op','}') && !at('eof')) body.push(parseStmt());
+      eat('op','}'); return {type:'block', body:body, line:t.line};
+    }
+    if(at('op',';')){ p++; return {type:'empty', line:t.line}; }
+    var st = parseSimpleCore(); eat('op',';'); return st;
+  }
+  function parseDeclCore(){
+    var line = peek().line; eat('kw','int'); var decls = [];
+    do {
+      var name = eat('ident').value;
+      if(opt('op','[')){
+        var sizeTok = eat('num'); eat('op',']');
+        decls.push({kind:'array', name:name, size:sizeTok.value});
+      } else {
+        var init = null; if(opt('op','=')) init = parseExpr();
+        decls.push({kind:'var', name:name, init:init});
+      }
+    } while(opt('op',','));
+    return {type:'decl', decls:decls, line:line};
+  }
+  function parseTarget(){
+    var t = eat('ident');
+    if(opt('op','[')){ var idx = parseExpr(); eat('op',']'); return {kind:'index', name:t.value, index:idx, line:t.line}; }
+    return {kind:'var', name:t.value, line:t.line};
+  }
+  function parseSimpleCore(){
+    var t = peek();
+    if(at('op','++') || at('op','--')){ var op = eat('op').value; return {type:'update', op:op, target:parseTarget(), line:t.line}; }
+    if(at('ident')){
+      var tgt2 = parseTarget();
+      if(at('op','++') || at('op','--')){ var op2 = eat('op').value; return {type:'update', op:op2, target:tgt2, line:t.line}; }
+      var opTok = eat('op'); var e = parseExpr();
+      return {type:'assign', op:opTok.value, target:tgt2, value:e, line:t.line};
+    }
+    throw {line:t.line, msg:'이해할 수 없는 식입니다.'};
+  }
+  function parseFor(){
+    var line = peek().line; eat('kw','for'); eat('op','(');
+    var init = null; if(!at('op',';')) init = at('kw','int') ? parseDeclCore() : parseSimpleCore();
+    eat('op',';'); var cond = null; if(!at('op',';')) cond = parseExpr();
+    eat('op',';'); var update = null; if(!at('op',')')) update = parseSimpleCore();
+    eat('op',')'); return {type:'for', init:init, cond:cond, update:update, body:parseStmt(), line:line};
+  }
+  function parseWhile(){ var line = peek().line; eat('kw','while'); eat('op','('); var cond = parseExpr(); eat('op',')'); return {type:'while', cond:cond, body:parseStmt(), line:line}; }
+  function parseIf(){ var line = peek().line; eat('kw','if'); eat('op','('); var cond = parseExpr(); eat('op',')'); var thenS = parseStmt(); var elseS = null; if(at('kw','else')){ p++; elseS = parseStmt(); } return {type:'if', cond:cond, then:thenS, els:elseS, line:line}; }
+  function parsePrintf(){ var line = peek().line; eat('kw','printf'); eat('op','('); var fmt = eat('str').value; var args = []; while(opt('op',',')) args.push(parseExpr()); eat('op',')'); eat('op',';'); return {type:'printf', fmt:fmt, args:args, line:line}; }
+  function parseExpr(){ return parseOr(); }
+  function parseOr(){ var l = parseAnd(); while(at('op','||')){ p++; l = {type:'bin', op:'||', l:l, r:parseAnd()}; } return l; }
+  function parseAnd(){ var l = parseEq(); while(at('op','&&')){ p++; l = {type:'bin', op:'&&', l:l, r:parseEq()}; } return l; }
+  function parseEq(){ var l = parseRel(); while(at('op','==') || at('op','!=')){ var o = eat('op').value; l = {type:'bin', op:o, l:l, r:parseRel()}; } return l; }
+  function parseRel(){ var l = parseAdd(); while(at('op','<') || at('op','>') || at('op','<=') || at('op','>=')){ var o = eat('op').value; l = {type:'bin', op:o, l:l, r:parseAdd()}; } return l; }
+  function parseAdd(){ var l = parseMul(); while(at('op','+') || at('op','-')){ var o = eat('op').value; l = {type:'bin', op:o, l:l, r:parseMul()}; } return l; }
+  function parseMul(){ var l = parseUnary(); while(at('op','*') || at('op','/') || at('op','%')){ var o = eat('op').value; l = {type:'bin', op:o, l:l, r:parseUnary()}; } return l; }
+  function parseUnary(){ if(at('op','-') || at('op','!')){ var o = eat('op').value; return {type:'unary', op:o, e:parseUnary()}; } return parsePrimary(); }
+  function parsePrimary(){
+    if(at('num')) return {type:'num', value:eat('num').value};
+    if(at('ident')){
+      var name = eat('ident').value;
+      if(opt('op','[')){ var idx = parseExpr(); eat('op',']'); return {type:'index', name:name, index:idx}; }
+      return {type:'var', name:name};
+    }
+    if(at('op','(')){ p++; var e = parseExpr(); eat('op',')'); return e; }
+    throw {line:peek().line, msg:'값 식별 오류'};
+  }
+  return parseProgram();
+}
+
+function exprToStr(e){
+  if(!e) return '';
+  switch(e.type){
+    case 'num': return String(e.value);
+    case 'var': return e.name;
+    case 'index': return e.name + '[' + exprToStr(e.index) + ']';
+    case 'bin': return exprToStr(e.l) + ' ' + e.op + ' ' + exprToStr(e.r);
+    case 'unary': return e.op + exprToStr(e.e);
+  }
+  return '';
+}
+
+function runProgram(src){
+  var toks = tokenize(src); var ast = parse(toks);
+  var I = {vars:{}, arrays:{}, steps:[], output:'', count:0};
+  function tick(line){ I.count++; if(I.count > 10000) throw {line:line, msg:'무한루프가 감지되었습니다.'}; }
+  function snapArrays(){ var o = {}; for(var k in I.arrays) o[k] = {size:I.arrays[k].size, values:I.arrays[k].values.slice()}; return o; }
+  function record(line, desc, changed){
+    if(I.steps.length >= 500) throw {line:line, msg:'시뮬레이션 범위 제한 초과(최대 500단계)'};
+    I.steps.push({ line:line, desc:desc, arrays:snapArrays(), vars:Object.assign({}, I.vars), output:I.output, changed:changed || null });
+  }
+  function getVar(name, line){ if(!(name in I.vars)) throw {line:line, msg:'미선언 변수: ' + name}; return I.vars[name]; }
+  function getArr(name, line){ if(!(name in I.arrays)) throw {line:line, msg:'미선언 배열: ' + name}; return I.arrays[name]; }
+  function checkIdx(arr, name, idx, line){ if(idx < 0 || idx >= arr.size) throw {line:line, msg:'배열 인덱스 초과: ' + name + '[' + idx + ']'}; }
+  function applyOp(op, cur, rhs){
+    if(op==='+=') return cur+rhs; if(op==='-=') return cur-rhs; if(op==='*=') return cur*rhs; if(op==='/=') return Math.trunc(cur/rhs); return rhs;
+  }
+  function evalE(e, line){
+    tick(line);
+    switch(e.type){
+      case 'num': return e.value;
+      case 'var': return getVar(e.name, line);
+      case 'index':
+        var a = getArr(e.name, line); var idx = evalE(e.index, line); checkIdx(a, e.name, idx, line);
+        if(a.values[idx] === null) throw {line:line, msg:'초기화되지 않은 공간 접근'};
+        return a.values[idx];
+      case 'unary': var v = evalE(e.e, line); return e.op === '-' ? -v : (v === 0 ? 1 : 0);
+      case 'bin':
+        if(e.op === '&&') return (evalE(e.l, line) !== 0 && evalE(e.r, line) !== 0) ? 1 : 0;
+        if(e.op === '||') return (evalE(e.l, line) !== 0 || evalE(e.r, line) !== 0) ? 1 : 0;
+        var x = evalE(e.l, line), y = evalE(e.r, line);
+        switch(e.op){
+          case '+': return x + y; case '-': return x - y; case '*': return x * y;
+          case '/': return Math.trunc(x / y); case '%': return x % y;
+          case '==': return x === y ? 1 : 0; case '!=': return x !== y ? 1 : 0;
+          case '<': return x < y ? 1 : 0; case '>': return x > y ? 1 : 0;
+          case '<=': return x <= y ? 1 : 0; case '>=': return x >= y ? 1 : 0;
+        }
+    }
+  }
+  function execStmt(st){
+    switch(st.type){
+      case 'decl':
+        st.decls.forEach(d => {
+          if(d.kind === 'array'){ I.arrays[d.name] = {size:d.size, values:new Array(d.size).fill(null)}; record(st.line, '배열 선언: int ' + d.name + '[' + d.size + ']', {kind:'arrayAll', name:d.name}); }
+          else { var v = d.init ? evalE(d.init, st.line) : null; I.vars[d.name] = v; record(st.line, '변수 선언: ' + d.name + ' = ' + (v===null?'?':v), {kind:'var', name:d.name}); }
+        }); break;
+      case 'assign':
+        var rhs = evalE(st.value, st.line); var activeIdx = (st.value.type === 'index') ? evalE(st.value.index, st.line) : null;
+        if(st.target.kind === 'var'){
+          var name = st.target.name; I.vars[name] = applyOp(st.op, I.vars[name], rhs);
+          var ch = {kind:'var', name:name}; if(st.value.type === 'index'){ ch.readArray = st.value.name; ch.readIndex = activeIdx; }
+          record(st.line, name + ' = ' + I.vars[name], ch);
+        } else {
+          var a = getArr(st.target.name, st.line); var idx = evalE(st.target.index, st.line); checkIdx(a, st.target.name, idx, st.line);
+          a.values[idx] = applyOp(st.op, a.values[idx], rhs);
+          var ch2 = {kind:'array', name:st.target.name, index:idx}; if(st.value.type==='index'){ ch2.readArray = st.value.name; ch2.readIndex = activeIdx; }
+          record(st.line, st.target.name + '[' + idx + '] = ' + a.values[idx], ch2);
+        } break;
+      case 'update':
+        var delta = st.op==='++'?1:-1;
+        if(st.target.kind === 'var'){ I.vars[st.target.name] += delta; record(st.line, st.target.name + st.op, {kind:'var', name:st.target.name}); }
+        else {
+          var a = getArr(st.target.name, st.line); var idx = evalE(st.target.index, st.line); checkIdx(a, st.target.name, idx, st.line);
+          a.values[idx] += delta; record(st.line, st.target.name + '[' + idx + ']' + st.op, {kind:'array', name:st.target.name, index:idx});
+        } break;
+      case 'printf':
+        var text = '', ai = 0;
+        for(var i=0; i<st.fmt.length; i++){
+          if(st.fmt[i]==='%' && st.fmt[i+1]==='d'){ text += evalE(st.args[ai++], st.line); i++; }
+          else text += st.fmt[i];
+        }
+        I.output += text; record(st.line, 'printf 콘솔 출력', null); break;
+      case 'for':
+        if(st.init) { if(st.init.type==='decl') execStmt(st.init); else { evalE(st.init, st.line); record(st.line, 'for문 초기식 실행', null); } }
+        while(true){
+          var c = st.cond ? (evalE(st.cond, st.line) !== 0) : true;
+          record(st.line, 'for문 조건 검사: ' + (c?'참':'거짓'), null); if(!c) break;
+          execStmt(st.body);
+          if(st.update) { 
+            if(st.update.type === 'update' || st.update.type === 'assign') execStmt(st.update);
+            else evalE(st.update, st.line); 
+          }
+        } break;
+      case 'while':
+        while(true){
+          var c = evalE(st.cond, st.line) !== 0; record(st.line, 'while 조건 검사: ' + (c?'참':'거짓'), null); if(!c) break;
+          execStmt(st.body);
+        } break;
+      case 'if':
+        var c = evalE(st.cond, st.line) !== 0; record(st.line, 'if 조건 분기: ' + (c?'참':'거짓'), null);
+        if(c) execStmt(st.then); else if(st.els) execStmt(st.els); break;
+      case 'block': st.body.forEach(s => execStmt(s)); break;
+    }
+  }
+  record(0, '시뮬레이션 로드 완료', null);
+  ast.forEach(s => execStmt(s)); record(-1, '프로그램 종료', null); return I;
+}
+
+var els = {};
+['gutter','code','editorWrap','viewerWrap','runBtn','editBtn','homeBtn','prevBtn','nextBtn','endBtn','playBtn','speedSel','stepCnt','stepDesc','arraysBox','varsBox','outputBox','errorBox','presetChips'].forEach(id => els[id] = document.getElementById(id));
+
+var PRESETS = [
+  {name:'🎨 1. 순차 채우기', code:'int arr[10];\nint i;\nfor (i = 0; i < 10; i++) {\n    arr[i] = i * 3;\n}'},
+  {name:'📊 2. 피보나치', code:'int fib[10];\nfib[0] = 1;\nfib[1] = 1;\nfor (int i = 2; i < 10; i++) {\n    fib[i] = fib[i-1] + fib[i-2];\n}'},
+  {name:'🔄 3. 값 스왑(Swap)', code:'int target[6];\nint temp;\nfor (int i = 0; i < 6; i++) {\n    target[i] = i * 5;\n}\ntemp = target[1];\ntarget[1] = target[4];\ntarget[4] = temp;'}
+];
+
+var trace = null, cur = 0, timer = null;
+
+function refreshGutter(){
+  var lines = els.code.value.split('\n').length; var buf = [];
+  for(var i=1; i<=lines; i++) buf.push(i); els.gutter.textContent = buf.join('\n');
+}
+els.code.addEventListener('input', refreshGutter);
+
+PRESETS.forEach((ps, idx) => {
+  var b = document.createElement('button'); b.textContent = ps.name; if(idx===0) b.className='active';
+  b.addEventListener('click', () => {
+    stopTimer(); document.querySelectorAll('#presetChips button').forEach(btn => btn.classList.remove('active'));
+    b.classList.add('active'); els.code.value = ps.code; refreshGutter(); setMode(true); clearError(); resetPanels();
+  });
+  els.presetChips.appendChild(b);
+});
+
+function setMode(edit){
+  els.editorWrap.style.display = edit ? 'flex' : 'none'; els.viewerWrap.style.display = edit ? 'none' : 'block';
+  els.editBtn.style.display = edit ? 'none' : 'inline-block'; els.runBtn.style.display = edit ? 'inline-block' : 'none';
+  var on = !edit && trace !== null;
+  ['homeBtn','prevBtn','nextBtn','endBtn','playBtn'].forEach(k => els[k].disabled = !on);
+}
+
+function buildViewer(src){
+  while(els.viewerWrap.firstChild) els.viewerWrap.removeChild(els.viewerWrap.firstChild);
+  src.split('\n').forEach((line, i) => {
+    var row = document.createElement('div'); row.className = 'cline';
+    var ln = document.createElement('span'); ln.className = 'ln'; ln.textContent = String(i + 1);
+    var tx = document.createElement('span'); tx.className = 'txt'; tx.textContent = line===''?' ':line;
+    row.appendChild(ln); row.appendChild(tx); els.viewerWrap.appendChild(row);
+  });
+}
+
+function showError(err){ els.errorBox.textContent = '❌ 에러: ' + (err.msg || String(err)); els.errorBox.style.display = 'block'; }
+function clearError(){ els.errorBox.style.display = 'none'; }
+function resetPanels(){ els.arraysBox.innerHTML = ''; els.varsBox.innerHTML = ''; els.outputBox.textContent = ''; }
+
+function renderArrays(st){
+  els.arraysBox.innerHTML = ''; var names = Object.keys(st.arrays);
+  if(names.length === 0){ els.arraysBox.innerHTML = '<p class="placeholder">선언된 배열이 없습니다.</p>'; return; }
+  names.forEach(name => {
+    var arr = st.arrays[name]; var block = document.createElement('div'); block.className = 'arr-block';
+    var title = document.createElement('div'); title.className = 'arr-name'; title.textContent = 'int ' + name + '[' + arr.size + ']'; block.appendChild(title);
+    var cells = document.createElement('div'); cells.className = 'cells';
+    for(var i=0; i<arr.size; i++){
+      var cell = document.createElement('div'); cell.className = 'cell';
+      var ch = st.changed;
+      if(ch && ((ch.kind==='array' && ch.name===name && ch.index===i) || (ch.kind==='arrayAll' && ch.name===name) || (ch.readArray===name && ch.readIndex===i))) cell.className += ' hit';
+      if(st.vars['i'] === i || st.vars['k'] === i || (ch && ch.kind==='array' && ch.index===i)) cell.className += ' ptr';
+      var val = document.createElement('div'); val.className = arr.values[i]===null ? 'val empty' : 'val'; val.textContent = arr.values[i]===null ? '?' : arr.values[i];
+      var idx = document.createElement('div'); idx.className = 'idx'; idx.textContent = '['+i+']';
+      cell.appendChild(val); cell.appendChild(idx); cells.appendChild(cell);
+    }
+    block.appendChild(cells); els.arraysBox.appendChild(block);
+  });
+}
+
+function renderVars(st){
+  els.varsBox.innerHTML = ''; var names = Object.keys(st.vars);
+  if(names.length === 0){ els.varsBox.innerHTML = '<p class="placeholder">선언된 변수가 없습니다.</p>'; return; }
+  names.forEach(name => {
+    var chip = document.createElement('div'); chip.className = (st.changed && st.changed.kind==='var' && st.changed.name===name) ? 'varchip hit' : 'varchip';
+    chip.innerHTML = '<span class="vname">'+name+' =</span> <span class="vval">'+(st.vars[name]===null?'?':st.vars[name])+'</span>';
+    els.varsBox.appendChild(chip);
+  });
+}
+
+function renderStep(){
+  if(!trace) return; var st = trace.steps[cur];
+  var rows = els.viewerWrap.children; for(var i=0; i<rows.length; i++) rows[i].classList.remove('cur');
+  if(st.line >= 1 && st.line <= rows.length) rows[st.line-1].classList.add('cur');
+  els.stepCnt.textContent = (cur+1) + ' / ' + trace.steps.length; els.stepDesc.textContent = st.desc;
+  renderArrays(st); renderVars(st); els.outputBox.textContent = st.output;
+  els.homeBtn.disabled = (cur===0); els.prevBtn.disabled = (cur===0);
+  els.nextBtn.disabled = (cur>=trace.steps.length-1); els.endBtn.disabled = (cur>=trace.steps.length-1);
+}
+
+function stopTimer(){ if(timer){ clearInterval(timer); timer = null; } els.playBtn.innerHTML = '⏱️ 자동 재생'; }
+function startTimer(){
+  stopTimer(); els.playBtn.innerHTML = '⏸️ 정지';
+  timer = setInterval(() => { if(cur < trace.steps.length-1){ cur++; renderStep(); } else stopTimer(); }, parseInt(els.speedSel.value, 10));
+}
+
+els.runBtn.addEventListener('click', () => {
+  clearError(); try { trace = runProgram(els.code.value); } catch(e){ showError(e); return; }
+  buildViewer(els.code.value); setMode(false); cur = 0; renderStep();
+});
+els.editBtn.addEventListener('click', () => { stopTimer(); setMode(true); });
+els.homeBtn.addEventListener('click', () => { cur = 0; renderStep(); });
+els.prevBtn.addEventListener('click', () => { if(cur>0) cur--; renderStep(); });
+els.nextBtn.addEventListener('click', () => { if(cur<trace.steps.length-1) cur++; renderStep(); });
+els.endBtn.addEventListener('click', () => { cur = trace.steps.length-1; renderStep(); });
+els.playBtn.addEventListener('click', () => { if(timer) stopTimer(); else startTimer(); });
+
+els.code.value = PRESETS[0].code; refreshGutter(); setMode(true);
+</script>
+</body>
+</html>
