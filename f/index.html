@@ -62,6 +62,16 @@ header h1 span{color:var(--teal);}
 .vbox.ptr .vvalue{color:var(--amber);font-size:13.5px;}
 .vbox .vaddr{font:10px Consolas,monospace;color:#4e6a8f;}
 .vbox.hit{border-color:var(--amber);background:rgba(251,191,36,0.09);animation:pulse .5s ease;}
+/* array inside a frame */
+.awrap{width:100%;}
+.aname{font:600 12px Consolas,'D2Coding',monospace;color:var(--amber);margin-bottom:7px;}
+.acells{display:flex;gap:6px;flex-wrap:wrap;}
+.acell{width:62px;text-align:center;background:var(--panel);border:1.5px solid var(--line);border-radius:8px;padding:6px 4px 5px;transition:border-color .2s,background .2s;}
+.acell .aval{font:700 15px Consolas,'D2Coding',monospace;}
+.acell .aval.empty{color:#42597c;font-style:italic;font-weight:400;}
+.acell .aidx{font:10px Consolas,monospace;color:var(--muted);margin-top:2px;}
+.acell .aaddr{font:9px Consolas,monospace;color:#4e6a8f;}
+.acell.hit{border-color:var(--amber);background:rgba(251,191,36,0.09);animation:pulse .5s ease;}
 @keyframes pulse{0%{transform:scale(1);}40%{transform:scale(1.12);}100%{transform:scale(1);}}
 @keyframes frameIn{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:none;}}
 #arrowSvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6;overflow:visible;}
@@ -125,6 +135,9 @@ pre#outputBox{background:var(--code-bg);border:1px solid var(--line);border-radi
               <marker id="arrowHead" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
                 <path d="M0,0 L9,4.5 L0,9 z" fill="#fbbf24"></path>
               </marker>
+              <marker id="arrowHeadTeal" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+                <path d="M0,0 L9,4.5 L0,9 z" fill="#2dd4bf"></path>
+              </marker>
             </defs>
           </svg>
           <div id="framesBox"></div>
@@ -141,7 +154,10 @@ pre#outputBox{background:var(--code-bg);border:1px solid var(--line);border-radi
         <b>1. 값 전달 (call by value)</b> — 인자의 <b>값을 복사</b>해 매개변수에 넣습니다. 함수 안에서 매개변수를 바꿔도 <b>원본은 절대 변하지 않습니다</b>. 그래서 시나리오 1의 swap은 실패합니다.<br>
         <b>2. 참조 전달 (call by reference)</b> — C에는 진짜 참조가 없어서, 대신 <b>주소(&amp;x)를 복사</b>해 넘깁니다. 포인터 매개변수가 원본이 사는 곳을 가리키므로 <code>*a = ...</code>로 <b>원본을 직접 수정</b>할 수 있습니다.<br>
         <b>3. 사실 C는 모든 전달이 복사</b> — 포인터를 넘길 때도 "주소값"이 복사됩니다. 복사되는 것이 <span class="vs">데이터냐, 주소냐</span>의 차이일 뿐입니다.<br>
-        <b>4. 선택 기준</b> — 읽기만 하면 값 전달 + <code>return</code>(시나리오 3)이 깔끔하고, 원본을 바꾸거나 결과를 2개 이상 돌려줘야 하면 포인터를 씁니다.
+        <b>4. 선택 기준</b> — 읽기만 하면 값 전달 + <code>return</code>(시나리오 3)이 깔끔하고, 원본을 바꾸거나 결과를 2개 이상 돌려줘야 하면 포인터를 씁니다.<br>
+        <b>5. 배열은 특별하다</b> — 배열 이름은 전달 순간 <b>첫 원소의 주소로 바뀝니다(decay)</b>. <code>int arr[]</code> 매개변수는 사실 <code>int *arr</code>과 같으므로, 함수 안의 수정이 <b>항상 원본에 반영</b>됩니다. 크기는 함께 전달되지 않아 <code>n</code>을 따로 넘기고, 원본 보호가 필요하면 <code>const</code>를 붙입니다.<br>
+        <b>6. 포인터 연산</b> — <code>p + i</code>는 i바이트가 아니라 <b>i \u00d7 sizeof(자료형)</b>만큼 이동합니다 (int면 4바이트씩). 그리고 <code>arr[i]</code>는 <code>*(arr + i)</code>와 완전히 같은 표현 — 배열 인덱싱의 정체는 포인터 연산입니다.<br>
+        <b>7. 2차원 배열</b> — 메모리에는 <b>행 우선(row-major)으로 연속</b> 저장됩니다. 전달 시 <code>int (*m)[열]</code> 포인터로 decay되며, <code>m[i][j]</code>의 위치를 시작 + (i\u00d7열개수 + j)\u00d74로 계산해야 하므로 <b>열 개수는 생략 불가</b>입니다.
       </div>
     </section>
   </div>
@@ -254,6 +270,137 @@ function buildS3(){
   return steps;
 }
 
+function buildS4(){
+  var steps = [], frames = [], out = '', arrows = [];
+  function snap(line, desc, changed, fly){
+    steps.push({line:line, desc:desc, frames:clone(frames), output:out, changed:changed||[], fly:fly||null, arrows:clone(arrows)});
+  }
+  function allCells(){ return ['main.data.0','main.data.1','main.data.2','main.data.3','main.data.4']; }
+  var main = {id:'main', title:'main()', vars:[]};
+  snap(0, '실행 준비 완료 — [다음 \u25b6] 버튼으로 한 단계씩 진행하세요');
+  frames.push(main);
+  snap(9, 'main() 실행 시작 — 스택에 main 프레임이 만들어집니다');
+  var data = {id:'main.data', name:'data', isArray:true, size:5, values:[null,null,null,null,null], addrs:['0x1000','0x1004','0x1008','0x100c','0x1010']};
+  main.vars.push(data);
+  snap(10, 'int data[5] — 배열 선언, 모든 칸은 쓰레기값. 배열 이름 data는 그 자체로 첫 칸 data[0]의 주소(0x1000)를 의미합니다', allCells());
+  snap(12, 'fill(data, 5) 호출 — 배열은 절대 통째로 복사되지 않습니다! 배열 이름이 첫 원소의 주소(0x1000)로 바뀌어(decay) 전달됩니다');
+  var fl = {id:'fill', title:'fill(int arr[], int n)', vars:[]};
+  frames.unshift(fl);
+  fl.vars.push({id:'fill.arr', name:'arr', value:'0x1000', addr:'0x2000', ptr:true});
+  arrows.push({from:'fill.arr', to:'main.data.0'});
+  snap(3, '매개변수 int arr[]는 겉모습만 배열이고 사실 포인터입니다 — data의 시작 주소 0x1000만 복사받아, 원본 배열을 가리킵니다 (화살표!)', ['fill.arr'], {from:'main.data.0', to:'fill.arr', label:'주소 0x1000 복사'});
+  fl.vars.push({id:'fill.n', name:'n', value:5, addr:'0x2004'});
+  snap(3, '크기 정보는 함께 전달되지 않으므로, n = 5를 값 전달로 따로 넘깁니다', ['fill.n'], {from:'main.data.0', to:'fill.n', label:'값 5 복사'});
+  fl.vars.push({id:'fill.i', name:'i', value:0, addr:'0x2008'});
+  snap(4, 'int i = 0 — 반복 시작. i \u003c n(5) \u2192 참', ['fill.i']);
+  data.values[0] = 0;
+  snap(5, 'arr[0] = 0 * 10 — 화살표를 따라가 main의 원본 data[0]에 0을 직접 씁니다! (arr[i]는 "시작 주소 + i칸" 위치)', ['main.data.0'], {from:'fill.arr', to:'main.data.0', label:'0 쓰기'});
+  fl.vars[2].value = 1;
+  snap(4, 'i++ \u2192 i = 1, 조건 i \u003c 5 \u2192 참', ['fill.i']);
+  data.values[1] = 10;
+  snap(5, 'arr[1] = 1 * 10 \u2192 원본 data[1]에 10 저장 (주소 0x1004)', ['main.data.1'], {from:'fill.arr', to:'main.data.1', label:'10 쓰기'});
+  fl.vars[2].value = 2;
+  snap(4, 'i++ \u2192 i = 2, 조건 참', ['fill.i']);
+  data.values[2] = 20;
+  snap(5, 'arr[2] = 2 * 10 \u2192 원본 data[2]에 20 저장', ['main.data.2'], {from:'fill.arr', to:'main.data.2', label:'20 쓰기'});
+  data.values[3] = 30;
+  data.values[4] = 40;
+  fl.vars[2].value = 5;
+  snap(5, '같은 과정 반복 — arr[3] = 30, arr[4] = 40까지 채우고 i = 5가 됩니다', ['main.data.3','main.data.4','fill.i']);
+  snap(4, '조건 검사: i(5) \u003c n(5) \u2192 거짓, 반복 종료');
+  frames.shift();
+  arrows = [];
+  snap(7, 'fill 종료 — 포인터 arr, n, i는 프레임과 함께 사라지지만, main의 data에는 채워진 값이 그대로 남습니다!', allCells());
+  out = '0 40\n';
+  snap(14, 'printf 실행 \u2192 "0 40" 출력 — 함수가 원본 배열을 채웠습니다');
+  snap(-1, '결론: 배열 전달 = 시작 주소 전달. 그래서 함수 안에서 배열을 수정하면 항상 원본이 바뀝니다 (자동으로 call by reference처럼 동작). 원본 보호가 필요하면 const int arr[]를 씁니다');
+  return steps;
+}
+
+function buildS5(){
+  var steps = [], frames = [], out = '', arrows = [];
+  function snap(line, desc, changed, fly){
+    steps.push({line:line, desc:desc, frames:clone(frames), output:out, changed:changed||[], fly:fly||null, arrows:clone(arrows)});
+  }
+  var main = {id:'main', title:'main()', vars:[]};
+  snap(0, '실행 준비 완료 — [다음 \u25b6] 버튼으로 한 단계씩 진행하세요');
+  frames.push(main);
+  snap(3, 'main() 실행 시작');
+  var arr = {id:'main.arr', name:'arr', isArray:true, size:5, values:[10,20,30,40,50], addrs:['0x1000','0x1004','0x1008','0x100c','0x1010']};
+  main.vars.push(arr);
+  snap(4, 'int arr[5] = {10, 20, 30, 40, 50} — 초기값과 함께 선언. int는 4바이트이므로 주소가 4씩 증가하는 것을 확인하세요', ['main.arr.0','main.arr.1','main.arr.2','main.arr.3','main.arr.4']);
+  main.vars.push({id:'main.p', name:'p', value:null, addr:'0x1020', ptr:true});
+  snap(5, 'int *p — 포인터 변수 선언 (아직 쓰레기값)', ['main.p']);
+  main.vars[1].value = '0x1000';
+  arrows.push({from:'main.p', to:'main.arr.0'});
+  snap(7, 'p = arr — 배열 이름 arr는 첫 원소의 주소 0x1000 \u2192 p가 arr[0]을 가리킵니다', ['main.p'], {from:'main.arr.0', to:'main.p', label:'주소 0x1000'});
+  out = '10\n';
+  snap(9, '*p — 화살표를 따라가 arr[0]의 값 10을 읽습니다 \u2192 "10" 출력', ['main.arr.0']);
+  arrows.push({from:'main.p', to:'main.arr.2', color:'#2dd4bf'});
+  out = '10\n30\n';
+  snap(10, '*(p + 2) — 포인터 연산! p + 2는 "2바이트"가 아니라 "int 2칸": 0x1000 + 2\u00d74 = 0x1008. 그 위치 arr[2]의 30을 읽습니다 (틸색 화살표). p 자신은 여전히 0x1000 그대로!', ['main.arr.2']);
+  arrows.pop();
+  main.vars[1].value = '0x100c';
+  arrows[0] = {from:'main.p', to:'main.arr.3'};
+  snap(12, 'p = p + 3 — 이번엔 p 자체를 이동시킵니다: 0x1000 + 3\u00d74 = 0x100c. 화살표가 arr[3]으로 옮겨갑니다', ['main.p'], {from:'main.arr.0', to:'main.arr.3', label:'3칸(12바이트) 이동'});
+  out = '10\n30\n40\n';
+  snap(13, '*p — 이제 p가 가리키는 arr[3]의 40을 읽습니다 \u2192 "40" 출력', ['main.arr.3']);
+  snap(-1, '결론: p + i는 i \u00d7 sizeof(int) 바이트 이동입니다. 그리고 arr[i]는 *(arr + i)의 다른 표기일 뿐 — 배열 인덱싱의 정체가 바로 포인터 연산입니다');
+  return steps;
+}
+
+function buildS6(){
+  var steps = [], frames = [], out = '', arrows = [];
+  function snap(line, desc, changed, fly){
+    steps.push({line:line, desc:desc, frames:clone(frames), output:out, changed:changed||[], fly:fly||null, arrows:clone(arrows)});
+  }
+  function cells2d(){ return ['main.mat.0.0','main.mat.0.1','main.mat.0.2','main.mat.1.0','main.mat.1.1','main.mat.1.2']; }
+  var main = {id:'main', title:'main()', vars:[]};
+  snap(0, '실행 준비 완료 — [다음 \u25b6] 버튼으로 한 단계씩 진행하세요');
+  frames.push(main);
+  snap(11, 'main() 실행 시작');
+  var mat = {id:'main.mat', name:'mat', is2D:true, rows:2, cols:3, values:[[null,null,null],[null,null,null]], addrs:[['0x1000','0x1004','0x1008'],['0x100c','0x1010','0x1014']]};
+  main.vars.push(mat);
+  snap(12, 'int mat[2][3] — 2행 3열 선언. 겉모습은 표(격자)지만, 실제 메모리에는 행 우선(row-major)으로 한 줄로 이어져 저장됩니다 — 주소가 0x1000~0x1014로 연속인 것을 확인하세요!', cells2d());
+  snap(14, 'fill(mat, 2) 호출 — 2차원 배열도 통째로 복사되지 않습니다. mat은 "첫 행(row 0)의 주소" 0x1000으로 decay되어 전달됩니다');
+  var fl = {id:'fill', title:'fill(int m[][3], int rows)', vars:[]};
+  frames.unshift(fl);
+  fl.vars.push({id:'fill.m', name:'m', value:'0x1000', addr:'0x2000', ptr:true});
+  arrows.push({from:'fill.m', to:'main.mat.0.0'});
+  snap(3, 'int m[][3]의 정체는 int (*m)[3] — "int 3칸짜리 행"을 가리키는 포인터입니다. 열 개수 [3]은 m[i][j] 위치 계산에 필요해서 절대 생략할 수 없습니다!', ['fill.m'], {from:'main.mat.0.0', to:'fill.m', label:'주소 0x1000 복사'});
+  fl.vars.push({id:'fill.rows', name:'rows', value:2, addr:'0x2004'});
+  snap(3, '행 개수는 전달되지 않으므로 rows = 2를 값 전달로 따로 넘깁니다 (열 개수 3은 타입에 포함되어 있음)', ['fill.rows'], {from:'main.mat.0.0', to:'fill.rows', label:'값 2 복사'});
+  fl.vars.push({id:'fill.i', name:'i', value:0, addr:'0x2008'});
+  snap(4, 'i = 0 — 첫째 행 시작. 조건 i \u003c rows(2) \u2192 참', ['fill.i']);
+  fl.vars.push({id:'fill.j', name:'j', value:0, addr:'0x200c'});
+  mat.values[0][0] = 0;
+  snap(6, 'j = 0: m[0][0] = 0\u00d73+0 = 0. 주소 계산: 0x1000 + (0\u00d73+0)\u00d74 = 0x1000 — 화살표를 따라가 원본에 직접 씁니다!', ['fill.j','main.mat.0.0'], {from:'fill.m', to:'main.mat.0.0', label:'0 쓰기'});
+  fl.vars[3].value = 1;
+  mat.values[0][1] = 1;
+  snap(6, 'j = 1: m[0][1] = 1. 주소: 0x1000 + (0\u00d73+1)\u00d74 = 0x1004', ['fill.j','main.mat.0.1'], {from:'fill.m', to:'main.mat.0.1', label:'1 쓰기'});
+  fl.vars[3].value = 2;
+  mat.values[0][2] = 2;
+  snap(6, 'j = 2: m[0][2] = 2. 주소: 0x1008 — 첫째 행 완료', ['fill.j','main.mat.0.2'], {from:'fill.m', to:'main.mat.0.2', label:'2 쓰기'});
+  fl.vars[2].value = 1;
+  fl.vars[3].value = 0;
+  snap(4, 'i = 1 — 둘째 행 시작. 메모리에서는 첫 행 바로 뒤(0x100c)부터 이어집니다', ['fill.i']);
+  mat.values[1][0] = 3;
+  snap(6, 'j = 0: m[1][0] = 1\u00d73+0 = 3. 주소: 0x1000 + (1\u00d73+0)\u00d74 = 0x100c — 행이 바뀌어도 계산은 하나의 식!', ['fill.j','main.mat.1.0'], {from:'fill.m', to:'main.mat.1.0', label:'3 쓰기'});
+  fl.vars[3].value = 2;
+  mat.values[1][1] = 4;
+  mat.values[1][2] = 5;
+  snap(6, '같은 방식으로 m[1][1] = 4 (0x1010), m[1][2] = 5 (0x1014)까지 채웁니다', ['main.mat.1.1','main.mat.1.2','fill.j']);
+  fl.vars[2].value = 2;
+  snap(4, 'i = 2 \u2192 조건 i \u003c rows(2) 거짓, 반복 종료', ['fill.i']);
+  frames.shift();
+  arrows = [];
+  snap(9, 'fill 종료 — m, rows, i, j는 프레임과 함께 사라지지만, main의 mat에는 0~5가 그대로 남습니다!', cells2d());
+  out = '5\n';
+  snap(16, 'printf mat[1][2] \u2192 "5" 출력 — 함수가 원본 2차원 배열을 채웠습니다');
+  snap(-1, '결론: 2차원 배열도 결국 "연속된 1차원 메모리 + 시작 주소 전달"입니다. m[i][j]의 주소는 시작 + (i\u00d7열개수 + j)\u00d74로 계산되므로, 매개변수 타입에 열 개수 [3]을 반드시 적어야 합니다');
+  return steps;
+}
+
 var SCENARIOS = [
   {
     name:'1. 값 전달 — swap 실패',
@@ -269,6 +416,21 @@ var SCENARIOS = [
     name:'3. 반환값으로 받기',
     code:'int square(int n) {\n    return n * n;\n}\n\nint main(void) {\n    int x = 5;\n    int result;\n\n    result = square(x);\n\n    printf("%d\\n", result);\n    return 0;\n}',
     build:buildS3
+  },
+  {
+    name:'4. 배열 전달 — 원본이 바뀐다',
+    code:'#include \u003cstdio.h\u003e\n\nvoid fill(int arr[], int n) {\n    for (int i = 0; i \u003c n; i++) {\n        arr[i] = i * 10;\n    }\n}\n\nint main(void) {\n    int data[5];\n\n    fill(data, 5);\n\n    printf("%d %d\\n", data[0], data[4]);\n    return 0;\n}',
+    build:buildS4
+  },
+  {
+    name:'5. 포인터 연산 p + i',
+    code:'#include \u003cstdio.h\u003e\n\nint main(void) {\n    int arr[5] = {10, 20, 30, 40, 50};\n    int *p;\n\n    p = arr;\n\n    printf("%d\\n", *p);\n    printf("%d\\n", *(p + 2));\n\n    p = p + 3;\n    printf("%d\\n", *p);\n\n    return 0;\n}',
+    build:buildS5
+  },
+  {
+    name:'6. 2차원 배열 전달',
+    code:'#include \u003cstdio.h\u003e\n\nvoid fill(int m[][3], int rows) {\n    for (int i = 0; i \u003c rows; i++) {\n        for (int j = 0; j \u003c 3; j++) {\n            m[i][j] = i * 3 + j;\n        }\n    }\n}\n\nint main(void) {\n    int mat[2][3];\n\n    fill(mat, 2);\n\n    printf("%d\\n", mat[1][2]);\n    return 0;\n}',
+    build:buildS6
   }
 ];
 </script>
@@ -334,6 +496,79 @@ function renderFrames(st){
       row.appendChild(ph);
     }
     f.vars.forEach(function(v){
+      if(v.is2D){
+        var wrap2 = document.createElement('div');
+        wrap2.className = 'awrap';
+        var t2 = document.createElement('div');
+        t2.className = 'aname';
+        t2.textContent = 'int ' + v.name + '[' + v.rows + '][' + v.cols + ']';
+        wrap2.appendChild(t2);
+        var colBox = document.createElement('div');
+        colBox.style.display = 'flex';
+        colBox.style.flexDirection = 'column';
+        colBox.style.gap = '6px';
+        for(var ri = 0; ri < v.rows; ri++){
+          var rrow = document.createElement('div');
+          rrow.className = 'acells';
+          for(var cj = 0; cj < v.cols; cj++){
+            var cid2 = v.id + '.' + ri + '.' + cj;
+            var c2 = document.createElement('div');
+            c2.className = 'acell' + (st.changed.indexOf(cid2) >= 0 ? ' hit' : '');
+            c2.setAttribute('data-vid', cid2);
+            var cv2 = document.createElement('div');
+            var vv2 = v.values[ri][cj];
+            cv2.className = (vv2 === null) ? 'aval empty' : 'aval';
+            cv2.textContent = (vv2 === null) ? '?' : String(vv2);
+            var cx2 = document.createElement('div');
+            cx2.className = 'aidx';
+            cx2.textContent = '[' + ri + '][' + cj + ']';
+            var ca2 = document.createElement('div');
+            ca2.className = 'aaddr';
+            ca2.textContent = v.addrs[ri][cj];
+            c2.appendChild(cv2);
+            c2.appendChild(cx2);
+            c2.appendChild(ca2);
+            rrow.appendChild(c2);
+          }
+          colBox.appendChild(rrow);
+        }
+        wrap2.appendChild(colBox);
+        row.appendChild(wrap2);
+        return;
+      }
+      if(v.isArray){
+        var wrap = document.createElement('div');
+        wrap.className = 'awrap';
+        var ttl = document.createElement('div');
+        ttl.className = 'aname';
+        ttl.textContent = 'int ' + v.name + '[' + v.size + ']';
+        wrap.appendChild(ttl);
+        var cellsRow = document.createElement('div');
+        cellsRow.className = 'acells';
+        for(var ci = 0; ci < v.size; ci++){
+          var cid = v.id + '.' + ci;
+          var c = document.createElement('div');
+          c.className = 'acell' + (st.changed.indexOf(cid) >= 0 ? ' hit' : '');
+          c.setAttribute('data-vid', cid);
+          var cv = document.createElement('div');
+          var vv = v.values[ci];
+          cv.className = (vv === null) ? 'aval empty' : 'aval';
+          cv.textContent = (vv === null) ? '?' : String(vv);
+          var cx = document.createElement('div');
+          cx.className = 'aidx';
+          cx.textContent = '[' + ci + ']';
+          var ca = document.createElement('div');
+          ca.className = 'aaddr';
+          ca.textContent = v.addrs[ci];
+          c.appendChild(cv);
+          c.appendChild(cx);
+          c.appendChild(ca);
+          cellsRow.appendChild(c);
+        }
+        wrap.appendChild(cellsRow);
+        row.appendChild(wrap);
+        return;
+      }
       var box = document.createElement('div');
       box.className = 'vbox' + (v.ptr ? ' ptr' : '') + (st.changed.indexOf(v.id) >= 0 ? ' hit' : '');
       box.setAttribute('data-vid', v.id);
@@ -375,17 +610,32 @@ function drawArrows(st){
   st.arrows.forEach(function(a){
     var f = rectOf(a.from), t = rectOf(a.to);
     if(!f || !t) return;
-    var x1 = f.x + f.w / 2, y1 = f.y + f.h;
-    var x2 = t.x + t.w / 2, y2 = t.y - 4;
-    var midBend = Math.max(24, (y2 - y1) * 0.5);
-    var d = 'M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + (y1 + midBend) + ', ' + x2 + ' ' + (y2 - midBend) + ', ' + x2 + ' ' + y2;
+    var color = a.color || '#fbbf24';
+    var x1 = f.x + f.w / 2, x2 = t.x + t.w / 2, y1, y2, c1y, c2y, bend;
+    if(t.y >= f.y + f.h){
+      /* target is below the source */
+      y1 = f.y + f.h; y2 = t.y - 4;
+      bend = Math.max(24, (y2 - y1) * 0.5);
+      c1y = y1 + bend; c2y = y2 - bend;
+    } else if(t.y + t.h <= f.y){
+      /* target is above the source */
+      y1 = f.y; y2 = t.y + t.h + 4;
+      bend = Math.max(24, (y1 - y2) * 0.5);
+      c1y = y1 - bend; c2y = y2 + bend;
+    } else {
+      /* roughly side by side: arc over the top */
+      y1 = f.y; y2 = t.y;
+      c1y = y1 - 34; c2y = y2 - 34;
+      y2 = t.y - 2;
+    }
+    var d = 'M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + c1y + ', ' + x2 + ' ' + c2y + ', ' + x2 + ' ' + y2;
     var path = document.createElementNS(SVGNS, 'path');
     path.setAttribute('d', d);
     path.setAttribute('fill', 'none');
-    path.setAttribute('stroke', '#fbbf24');
+    path.setAttribute('stroke', color);
     path.setAttribute('stroke-width', '2');
     path.setAttribute('stroke-dasharray', '6 4');
-    path.setAttribute('marker-end', 'url(#arrowHead)');
+    path.setAttribute('marker-end', color === '#2dd4bf' ? 'url(#arrowHeadTeal)' : 'url(#arrowHead)');
     path.setAttribute('opacity', '0.9');
     els.arrowSvg.appendChild(path);
   });
