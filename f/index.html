@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C 언어 함수 호출 시각화 — Call by Value vs Call by Reference</title>
+<style>
+:root{
+  --bg:#0b1526; --panel:#12203a; --panel2:#0e1a30; --line:#1e3a5f;
+  --teal:#2dd4bf; --teal-dim:#14b8a6; --amber:#fbbf24; --red:#f87171;
+  --text:#e2e8f0; --muted:#8aa3c4; --code-bg:#0a1322;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;min-height:100vh;}
+.wrap{max-width:1280px;margin:0 auto;padding:20px 18px 48px;}
+header{padding:22px 4px 18px;border-bottom:2px solid var(--line);margin-bottom:20px;display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;}
+header h1{font-size:1.5rem;letter-spacing:-0.5px;}
+header h1 span{color:var(--teal);}
+.badge{background:rgba(45,212,191,0.12);border:1px solid var(--teal-dim);color:var(--teal);font-size:0.78rem;padding:3px 10px;border-radius:999px;}
+.sub{color:var(--muted);font-size:0.88rem;width:100%;line-height:1.6;}
+.sub b{color:var(--text);}
+.grid{display:grid;grid-template-columns:minmax(420px,46%) 1fr;gap:18px;align-items:start;}
+@media(max-width:960px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+.card h2{font-size:0.92rem;padding:11px 16px;border-bottom:1px solid var(--line);color:var(--teal);display:flex;align-items:center;gap:8px;font-weight:600;}
+.card h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);display:inline-block;}
+.card .body{padding:14px 16px;}
+/* scenario chips */
+.chips{display:flex;flex-wrap:wrap;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel2);}
+.chips button{background:transparent;border:1px solid var(--line);color:var(--muted);font-size:0.8rem;padding:6px 12px;border-radius:999px;cursor:pointer;transition:all .15s;font-family:inherit;}
+.chips button:hover{border-color:var(--teal-dim);color:var(--teal);}
+.chips button.active{background:rgba(45,212,191,0.14);border-color:var(--teal);color:var(--teal);font-weight:700;}
+/* code viewer */
+.viewer{background:var(--code-bg);height:400px;overflow:auto;padding:12px 0;font:13px/1.6 Consolas,'D2Coding',monospace;}
+.viewer .cline{display:flex;}
+.viewer .ln{width:44px;flex:none;text-align:right;padding-right:12px;color:#3d5878;user-select:none;}
+.viewer .txt{white-space:pre;flex:1;padding-right:14px;}
+.viewer .cline.cur{background:rgba(45,212,191,0.14);box-shadow:inset 3px 0 0 var(--teal);}
+.viewer .cline.cur .txt{color:#a7f3ea;}
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:var(--panel2);align-items:center;}
+.controls button{background:#173052;border:1px solid var(--line);color:var(--text);font-size:0.83rem;padding:7px 13px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .15s;}
+.controls button:hover:not(:disabled){border-color:var(--teal-dim);color:var(--teal);}
+.controls button:disabled{opacity:0.35;cursor:default;}
+.controls select{background:#173052;border:1px solid var(--line);color:var(--text);font-size:0.82rem;padding:6px 8px;border-radius:8px;font-family:inherit;}
+.stepbar{padding:11px 16px;border-top:1px solid var(--line);font-size:0.86rem;min-height:48px;display:flex;gap:10px;align-items:flex-start;}
+.stepbar .cnt{flex:none;background:rgba(45,212,191,0.12);color:var(--teal);border-radius:6px;padding:2px 9px;font-size:0.78rem;font-family:Consolas,monospace;margin-top:2px;}
+.stepbar .desc{color:var(--text);line-height:1.5;}
+/* stack visualization */
+.stackviz{position:relative;min-height:280px;}
+#framesBox{display:flex;flex-direction:column;gap:16px;}
+.frame{border:1.5px solid var(--line);border-radius:10px;background:var(--code-bg);animation:frameIn .35s ease;}
+.frame.callee{border-color:var(--teal-dim);box-shadow:0 0 0 1px rgba(45,212,191,0.15);}
+.frame .fhead{display:flex;justify-content:space-between;align-items:center;padding:9px 13px;border-bottom:1px solid var(--line);font:600 13px Consolas,'D2Coding',monospace;color:var(--teal);gap:8px;flex-wrap:wrap;}
+.frame.callee .fhead{color:#a7f3ea;}
+.frame .fbadge{font-size:10px;color:var(--muted);border:1px solid var(--line);padding:2px 8px;border-radius:999px;font-family:'Segoe UI','Malgun Gothic',sans-serif;flex:none;}
+.frame .fvars{display:flex;flex-wrap:wrap;gap:10px;padding:13px;min-height:52px;}
+.vbox{min-width:88px;text-align:center;background:var(--panel);border:1.5px solid var(--line);border-radius:8px;padding:8px 9px 6px;transition:border-color .2s,background .2s;}
+.vbox .vname{font:600 12px Consolas,'D2Coding',monospace;color:var(--muted);}
+.vbox .vvalue{font:700 17px Consolas,'D2Coding',monospace;margin:3px 0 2px;}
+.vbox .vvalue.empty{color:#42597c;font-style:italic;font-weight:400;}
+.vbox.ptr .vvalue{color:var(--amber);font-size:13.5px;}
+.vbox .vaddr{font:10px Consolas,monospace;color:#4e6a8f;}
+.vbox.hit{border-color:var(--amber);background:rgba(251,191,36,0.09);animation:pulse .5s ease;}
+@keyframes pulse{0%{transform:scale(1);}40%{transform:scale(1.12);}100%{transform:scale(1);}}
+@keyframes frameIn{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:none;}}
+#arrowSvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6;overflow:visible;}
+.ghost{position:absolute;z-index:9;background:var(--teal);color:#04211c;font:700 12px Consolas,'D2Coding',monospace;padding:5px 11px;border-radius:999px;pointer-events:none;white-space:nowrap;transition:transform .55s cubic-bezier(.4,0,.2,1);box-shadow:0 4px 16px rgba(45,212,191,0.45);}
+.placeholder{color:var(--muted);font-size:0.85rem;padding:6px 0;}
+/* output */
+pre#outputBox{background:var(--code-bg);border:1px solid var(--line);border-radius:8px;min-height:56px;padding:10px 12px;font:13px/1.5 Consolas,'D2Coding',monospace;white-space:pre-wrap;color:#a7f3ea;}
+/* tips */
+.tips{font-size:0.83rem;color:var(--muted);line-height:1.75;}
+.tips b{color:var(--teal);}
+.tips code{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font:12px Consolas,monospace;color:var(--amber);}
+.tips .vs{color:var(--amber);font-weight:700;}
+.rightcol{display:flex;flex-direction:column;gap:16px;}
+@media(prefers-reduced-motion:reduce){
+  .ghost{transition:none;}
+  .vbox.hit,.frame{animation:none;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1><span>C 언어</span> 함수 호출 시각화</h1>
+  <span class="badge">Call by Value vs Call by Reference</span>
+  <p class="sub">함수를 호출하면 <b>인자(argument)의 값이 매개변수(parameter)로 복사되어 이동</b>합니다. 아래 시나리오를 고르고 한 단계씩 진행하면, 값(또는 주소)이 스택 프레임 사이를 <b>날아가서 복사되는 순간</b>과, 포인터가 원본을 가리키는 <b>화살표</b>를 눈으로 확인할 수 있습니다.</p>
+</header>
+
+<div class="grid">
+  <!-- LEFT: code + controls -->
+  <section class="card">
+    <h2><span class="dot"></span>코드 · 단계 실행</h2>
+    <div class="chips" id="scenChips"></div>
+    <div class="viewer" id="viewerWrap"></div>
+    <div class="controls">
+      <button id="homeBtn">&#9198; 처음</button>
+      <button id="prevBtn">&#9664; 이전</button>
+      <button id="nextBtn">다음 &#9654;</button>
+      <button id="endBtn">끝 &#9197;</button>
+      <span style="flex:1"></span>
+      <button id="playBtn">자동 재생</button>
+      <select id="speedSel" aria-label="재생 속도">
+        <option value="1600">느리게</option>
+        <option value="1000" selected>보통</option>
+        <option value="550">빠르게</option>
+      </select>
+    </div>
+    <div class="stepbar">
+      <span class="cnt" id="stepCnt">- / -</span>
+      <span class="desc" id="stepDesc"></span>
+    </div>
+  </section>
+
+  <!-- RIGHT: memory visualization -->
+  <div class="rightcol">
+    <section class="card">
+      <h2><span class="dot"></span>메모리 — 스택 프레임</h2>
+      <div class="body">
+        <div class="stackviz" id="stackViz">
+          <svg id="arrowSvg" aria-hidden="true">
+            <defs>
+              <marker id="arrowHead" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+                <path d="M0,0 L9,4.5 L0,9 z" fill="#fbbf24"></path>
+              </marker>
+            </defs>
+          </svg>
+          <div id="framesBox"></div>
+        </div>
+      </div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>출력 (printf)</h2>
+      <div class="body"><pre id="outputBox"></pre></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>학습 포인트</h2>
+      <div class="body tips">
+        <b>1. 값 전달 (call by value)</b> — 인자의 <b>값을 복사</b>해 매개변수에 넣습니다. 함수 안에서 매개변수를 바꿔도 <b>원본은 절대 변하지 않습니다</b>. 그래서 시나리오 1의 swap은 실패합니다.<br>
+        <b>2. 참조 전달 (call by reference)</b> — C에는 진짜 참조가 없어서, 대신 <b>주소(&amp;x)를 복사</b>해 넘깁니다. 포인터 매개변수가 원본이 사는 곳을 가리키므로 <code>*a = ...</code>로 <b>원본을 직접 수정</b>할 수 있습니다.<br>
+        <b>3. 사실 C는 모든 전달이 복사</b> — 포인터를 넘길 때도 "주소값"이 복사됩니다. 복사되는 것이 <span class="vs">데이터냐, 주소냐</span>의 차이일 뿐입니다.<br>
+        <b>4. 선택 기준</b> — 읽기만 하면 값 전달 + <code>return</code>(시나리오 3)이 깔끔하고, 원본을 바꾸거나 결과를 2개 이상 돌려줘야 하면 포인터를 씁니다.
+      </div>
+    </section>
+  </div>
+</div>
+</div>
+<script>
+/* ===================== 시나리오 데이터 ===================== */
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+
+function buildS1(){
+  var steps = [], frames = [], out = '', arrows = [];
+  function snap(line, desc, changed, fly){
+    steps.push({line:line, desc:desc, frames:clone(frames), output:out, changed:changed||[], fly:fly||null, arrows:clone(arrows)});
+  }
+  var main = {id:'main', title:'main()', vars:[]};
+  snap(0, '실행 준비 완료 — [다음 \u25b6] 버튼으로 한 단계씩 진행하세요');
+  frames.push(main);
+  snap(10, 'main() 실행 시작 — 스택에 main 프레임이 만들어집니다');
+  main.vars.push({id:'main.x', name:'x', value:3, addr:'0x1000'});
+  snap(11, 'int x = 3 — main 프레임에 변수 x가 생기고 3이 저장됩니다', ['main.x']);
+  main.vars.push({id:'main.y', name:'y', value:7, addr:'0x1004'});
+  snap(12, 'int y = 7 — 변수 y에 7 저장', ['main.y']);
+  snap(14, 'swap(x, y) 호출 — C는 인자의 "값"을 복사해서 전달합니다 (call by value)');
+  var sw = {id:'swap', title:'swap(int a, int b)', vars:[]};
+  frames.unshift(sw);
+  sw.vars.push({id:'swap.a', name:'a', value:3, addr:'0x2000'});
+  snap(3, 'swap 프레임 생성 — 매개변수 a에 x의 값 3이 복사됩니다. x(0x1000)와 a(0x2000)는 주소가 다른, 완전히 별개의 상자입니다!', ['swap.a'], {from:'main.x', to:'swap.a', label:'값 3 복사'});
+  sw.vars.push({id:'swap.b', name:'b', value:7, addr:'0x2004'});
+  snap(3, '매개변수 b에 y의 값 7이 복사됩니다', ['swap.b'], {from:'main.y', to:'swap.b', label:'값 7 복사'});
+  sw.vars.push({id:'swap.tmp', name:'tmp', value:null, addr:'0x2008'});
+  snap(4, 'int tmp — 임시 변수 tmp 선언 (아직 쓰레기값)', ['swap.tmp']);
+  sw.vars[2].value = 3;
+  snap(5, 'tmp = a \u2192 tmp에 3 저장', ['swap.tmp'], {from:'swap.a', to:'swap.tmp', label:'3'});
+  sw.vars[0].value = 7;
+  snap(6, 'a = b \u2192 a가 7로 바뀝니다. 하지만 아래 main 프레임의 x는 여전히 3! 복사본만 바뀌는 중입니다', ['swap.a'], {from:'swap.b', to:'swap.a', label:'7'});
+  sw.vars[1].value = 3;
+  snap(7, 'b = tmp \u2192 b가 3으로 바뀝니다. main의 y도 여전히 7!', ['swap.b'], {from:'swap.tmp', to:'swap.b', label:'3'});
+  frames.shift();
+  snap(8, 'swap 종료 — swap 프레임이 통째로 사라집니다 (a, b, tmp 모두 소멸). main의 x, y는 한 번도 건드려지지 않았습니다');
+  out = '3 7\n';
+  snap(16, 'printf 실행 \u2192 "3 7" 출력 — 교환 실패!');
+  snap(-1, '결론: 값 전달은 복사본을 넘기는 것이므로, 함수 안에서 아무리 바꿔도 원본 x, y는 변하지 않습니다');
+  return steps;
+}
+
+function buildS2(){
+  var steps = [], frames = [], out = '', arrows = [];
+  function snap(line, desc, changed, fly){
+    steps.push({line:line, desc:desc, frames:clone(frames), output:out, changed:changed||[], fly:fly||null, arrows:clone(arrows)});
+  }
+  var main = {id:'main', title:'main()', vars:[]};
+  snap(0, '실행 준비 완료 — [다음 \u25b6] 버튼으로 한 단계씩 진행하세요');
+  frames.push(main);
+  snap(10, 'main() 실행 시작 — 스택에 main 프레임이 만들어집니다');
+  main.vars.push({id:'main.x', name:'x', value:3, addr:'0x1000'});
+  snap(11, 'int x = 3 — x는 주소 0x1000에 삽니다', ['main.x']);
+  main.vars.push({id:'main.y', name:'y', value:7, addr:'0x1004'});
+  snap(12, 'int y = 7 — y는 주소 0x1004에 삽니다', ['main.y']);
+  snap(14, 'swap(&x, &y) 호출 — 이번에는 값이 아니라 "주소"를 넘깁니다. &x는 x의 주소 0x1000, &y는 0x1004');
+  var sw = {id:'swap', title:'swap(int *a, int *b)', vars:[]};
+  frames.unshift(sw);
+  sw.vars.push({id:'swap.a', name:'a', value:'0x1000', addr:'0x2000', ptr:true});
+  arrows.push({from:'swap.a', to:'main.x'});
+  snap(3, '포인터 매개변수 a에 주소 0x1000이 복사됩니다 \u2192 a는 이제 x가 사는 곳을 가리킵니다 (화살표!)', ['swap.a'], {from:'main.x', to:'swap.a', label:'주소 0x1000 복사'});
+  sw.vars.push({id:'swap.b', name:'b', value:'0x1004', addr:'0x2004', ptr:true});
+  arrows.push({from:'swap.b', to:'main.y'});
+  snap(3, '포인터 매개변수 b에 주소 0x1004가 복사됩니다 \u2192 b는 y를 가리킵니다', ['swap.b'], {from:'main.y', to:'swap.b', label:'주소 0x1004 복사'});
+  sw.vars.push({id:'swap.tmp', name:'tmp', value:null, addr:'0x2008'});
+  snap(4, 'int tmp — 임시 변수 선언', ['swap.tmp']);
+  sw.vars[2].value = 3;
+  snap(5, 'tmp = *a — a에 저장된 주소(0x1000)의 화살표를 따라가 x의 값 3을 읽어옵니다', ['swap.tmp'], {from:'main.x', to:'swap.tmp', label:'*a = 3 읽기'});
+  main.vars[0].value = 7;
+  snap(6, '*a = *b — a가 가리키는 곳(x)에 *b(=7)를 씁니다 \u2192 swap 안에서 main의 x가 직접 바뀌었습니다!', ['main.x'], {from:'main.y', to:'main.x', label:'7 쓰기'});
+  main.vars[1].value = 3;
+  snap(7, '*b = tmp — b가 가리키는 곳(y)에 3을 씁니다 \u2192 main의 y도 바뀌었습니다', ['main.y'], {from:'swap.tmp', to:'main.y', label:'3 쓰기'});
+  frames.shift();
+  arrows = [];
+  snap(8, 'swap 종료 — 포인터 a, b는 사라지지만, 이미 바뀐 x = 7, y = 3은 그대로 남습니다!', ['main.x','main.y']);
+  out = '7 3\n';
+  snap(16, 'printf 실행 \u2192 "7 3" 출력 — 교환 성공!');
+  snap(-1, '결론: 주소를 넘기면 함수가 원본이 사는 곳을 알게 되어, *포인터로 원본을 직접 수정할 수 있습니다');
+  return steps;
+}
+
+function buildS3(){
+  var steps = [], frames = [], out = '', arrows = [];
+  function snap(line, desc, changed, fly){
+    steps.push({line:line, desc:desc, frames:clone(frames), output:out, changed:changed||[], fly:fly||null, arrows:clone(arrows)});
+  }
+  var main = {id:'main', title:'main()', vars:[]};
+  snap(0, '실행 준비 완료 — [다음 \u25b6] 버튼으로 한 단계씩 진행하세요');
+  frames.push(main);
+  snap(5, 'main() 실행 시작');
+  main.vars.push({id:'main.x', name:'x', value:5, addr:'0x1000'});
+  snap(6, 'int x = 5', ['main.x']);
+  main.vars.push({id:'main.result', name:'result', value:null, addr:'0x1004'});
+  snap(7, 'int result — 아직 쓰레기값', ['main.result']);
+  snap(9, 'square(x) 호출 — x의 값 5를 복사해서 전달합니다');
+  var sq = {id:'square', title:'square(int n)', vars:[]};
+  frames.unshift(sq);
+  sq.vars.push({id:'square.n', name:'n', value:5, addr:'0x2000'});
+  snap(1, 'square 프레임 생성 — 매개변수 n에 5가 복사됩니다', ['square.n'], {from:'main.x', to:'square.n', label:'값 5 복사'});
+  snap(2, 'n * n = 5 * 5 = 25 계산 — return이 이 값을 호출한 곳으로 돌려보냅니다');
+  frames.shift();
+  main.vars[1].value = 25;
+  snap(9, '반환값 25가 main으로 날아와 result에 저장되고, square 프레임은 사라집니다', ['main.result'], {from:'square.n', to:'main.result', label:'반환값 25'});
+  out = '25\n';
+  snap(11, 'printf 실행 \u2192 "25" 출력');
+  snap(-1, '결론: 원본을 바꿀 필요 없이 읽기만 한다면, 값 전달 + return으로 결과를 받는 방식이 가장 깔끔합니다');
+  return steps;
+}
+
+var SCENARIOS = [
+  {
+    name:'1. 값 전달 — swap 실패',
+    code:'#include \u003cstdio.h\u003e\n\nvoid swap(int a, int b) {\n    int tmp;\n    tmp = a;\n    a = b;\n    b = tmp;\n}\n\nint main(void) {\n    int x = 3;\n    int y = 7;\n\n    swap(x, y);\n\n    printf("%d %d\\n", x, y);\n    return 0;\n}',
+    build:buildS1
+  },
+  {
+    name:'2. 주소 전달 — swap 성공',
+    code:'#include \u003cstdio.h\u003e\n\nvoid swap(int *a, int *b) {\n    int tmp;\n    tmp = *a;\n    *a = *b;\n    *b = tmp;\n}\n\nint main(void) {\n    int x = 3;\n    int y = 7;\n\n    swap(&x, &y);\n\n    printf("%d %d\\n", x, y);\n    return 0;\n}',
+    build:buildS2
+  },
+  {
+    name:'3. 반환값으로 받기',
+    code:'int square(int n) {\n    return n * n;\n}\n\nint main(void) {\n    int x = 5;\n    int result;\n\n    result = square(x);\n\n    printf("%d\\n", result);\n    return 0;\n}',
+    build:buildS3
+  }
+];
+</script>
+<script>
+/* ===================== UI ===================== */
+var els = {};
+['scenChips','viewerWrap','homeBtn','prevBtn','nextBtn','endBtn','playBtn','speedSel','stepCnt','stepDesc','stackViz','arrowSvg','framesBox','outputBox'].forEach(function(id){
+  els[id] = document.getElementById(id);
+});
+
+var scen = null, steps = [], cur = 0, timer = null;
+var SVGNS = 'http://www.w3.org/2000/svg';
+
+/* ----- 코드 뷰어 ----- */
+function buildViewer(src){
+  while(els.viewerWrap.firstChild) els.viewerWrap.removeChild(els.viewerWrap.firstChild);
+  var lines = src.split('\n');
+  for(var i = 0; i < lines.length; i++){
+    var row = document.createElement('div');
+    row.className = 'cline';
+    var ln = document.createElement('span');
+    ln.className = 'ln';
+    ln.textContent = String(i + 1);
+    var tx = document.createElement('span');
+    tx.className = 'txt';
+    tx.textContent = lines[i] === '' ? ' ' : lines[i];
+    row.appendChild(ln);
+    row.appendChild(tx);
+    els.viewerWrap.appendChild(row);
+  }
+}
+
+/* ----- 스택 프레임 렌더링 ----- */
+function renderFrames(st){
+  while(els.framesBox.firstChild) els.framesBox.removeChild(els.framesBox.firstChild);
+  if(st.frames.length === 0){
+    var p = document.createElement('p');
+    p.className = 'placeholder';
+    p.textContent = '아직 스택 프레임이 없습니다. [다음 \u25b6]을 눌러 시작하세요.';
+    els.framesBox.appendChild(p);
+    return;
+  }
+  st.frames.forEach(function(f){
+    var fr = document.createElement('div');
+    fr.className = f.id === 'main' ? 'frame' : 'frame callee';
+    fr.setAttribute('data-fid', f.id);
+    var head = document.createElement('div');
+    head.className = 'fhead';
+    var t = document.createElement('span');
+    t.textContent = f.title;
+    var bd = document.createElement('span');
+    bd.className = 'fbadge';
+    bd.textContent = f.id === 'main' ? '스택 프레임 (호출자)' : '스택 프레임 (호출된 함수)';
+    head.appendChild(t);
+    head.appendChild(bd);
+    fr.appendChild(head);
+    var row = document.createElement('div');
+    row.className = 'fvars';
+    if(f.vars.length === 0){
+      var ph = document.createElement('span');
+      ph.className = 'placeholder';
+      ph.textContent = '(지역 변수 없음)';
+      row.appendChild(ph);
+    }
+    f.vars.forEach(function(v){
+      var box = document.createElement('div');
+      box.className = 'vbox' + (v.ptr ? ' ptr' : '') + (st.changed.indexOf(v.id) >= 0 ? ' hit' : '');
+      box.setAttribute('data-vid', v.id);
+      var nm = document.createElement('div');
+      nm.className = 'vname';
+      nm.textContent = (v.ptr ? '*' : '') + v.name;
+      var val = document.createElement('div');
+      val.className = (v.value === null) ? 'vvalue empty' : 'vvalue';
+      val.textContent = (v.value === null) ? '?' : String(v.value);
+      var ad = document.createElement('div');
+      ad.className = 'vaddr';
+      ad.textContent = v.addr;
+      box.appendChild(nm);
+      box.appendChild(val);
+      box.appendChild(ad);
+      row.appendChild(box);
+    });
+    fr.appendChild(row);
+    els.framesBox.appendChild(fr);
+  });
+}
+
+/* ----- 포인터 화살표 ----- */
+function clearArrows(){
+  var svg = els.arrowSvg;
+  var kids = Array.prototype.slice.call(svg.childNodes);
+  kids.forEach(function(k){ if(k.nodeName !== 'defs') svg.removeChild(k); });
+}
+function rectOf(vid){
+  var el = els.stackViz.querySelector('[data-vid="' + vid + '"]');
+  if(!el) return null;
+  var r = el.getBoundingClientRect();
+  var w = els.stackViz.getBoundingClientRect();
+  return {x:r.left - w.left, y:r.top - w.top, w:r.width, h:r.height};
+}
+function drawArrows(st){
+  clearArrows();
+  if(!st.arrows || st.arrows.length === 0) return;
+  st.arrows.forEach(function(a){
+    var f = rectOf(a.from), t = rectOf(a.to);
+    if(!f || !t) return;
+    var x1 = f.x + f.w / 2, y1 = f.y + f.h;
+    var x2 = t.x + t.w / 2, y2 = t.y - 4;
+    var midBend = Math.max(24, (y2 - y1) * 0.5);
+    var d = 'M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + (y1 + midBend) + ', ' + x2 + ' ' + (y2 - midBend) + ', ' + x2 + ' ' + y2;
+    var path = document.createElementNS(SVGNS, 'path');
+    path.setAttribute('d', d);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', '#fbbf24');
+    path.setAttribute('stroke-width', '2');
+    path.setAttribute('stroke-dasharray', '6 4');
+    path.setAttribute('marker-end', 'url(#arrowHead)');
+    path.setAttribute('opacity', '0.9');
+    els.arrowSvg.appendChild(path);
+  });
+}
+
+/* ----- 값 이동(고스트) 애니메이션 ----- */
+function spawnFly(fly, prevRects){
+  var from = (prevRects && prevRects[fly.from]) || rectOf(fly.from);
+  var to = rectOf(fly.to);
+  if(!from || !to) return;
+  var g = document.createElement('div');
+  g.className = 'ghost';
+  g.textContent = fly.label;
+  els.stackViz.appendChild(g);
+  var gw = g.offsetWidth, gh = g.offsetHeight;
+  var sx = from.x + from.w / 2 - gw / 2, sy = from.y + from.h / 2 - gh / 2;
+  var ex = to.x + to.w / 2 - gw / 2, ey = to.y + to.h / 2 - gh / 2;
+  g.style.left = sx + 'px';
+  g.style.top = sy + 'px';
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      g.style.transform = 'translate(' + (ex - sx) + 'px, ' + (ey - sy) + 'px)';
+    });
+  });
+  setTimeout(function(){
+    g.style.opacity = '0';
+    g.style.transition = 'opacity .25s';
+    setTimeout(function(){ if(g.parentNode) g.parentNode.removeChild(g); }, 280);
+  }, 620);
+}
+
+/* ----- 단계 렌더링 ----- */
+function renderStep(forward){
+  var st = steps[cur];
+  var prevRects = null;
+  if(forward && st.fly){
+    prevRects = {};
+    var boxes = els.stackViz.querySelectorAll('[data-vid]');
+    for(var i = 0; i < boxes.length; i++){
+      prevRects[boxes[i].getAttribute('data-vid')] = rectOf(boxes[i].getAttribute('data-vid'));
+    }
+  }
+  var rows = els.viewerWrap.children;
+  for(var j = 0; j < rows.length; j++) rows[j].classList.remove('cur');
+  if(st.line >= 1 && st.line <= rows.length){
+    rows[st.line - 1].classList.add('cur');
+    rows[st.line - 1].scrollIntoView({block:'nearest'});
+  }
+  els.stepCnt.textContent = (cur + 1) + ' / ' + steps.length;
+  els.stepDesc.textContent = st.desc;
+  renderFrames(st);
+  els.outputBox.textContent = st.output;
+  requestAnimationFrame(function(){
+    drawArrows(st);
+    if(forward && st.fly) spawnFly(st.fly, prevRects);
+  });
+  els.homeBtn.disabled = (cur === 0);
+  els.prevBtn.disabled = (cur === 0);
+  els.nextBtn.disabled = (cur >= steps.length - 1);
+  els.endBtn.disabled = (cur >= steps.length - 1);
+}
+
+/* ----- 재생 ----- */
+function stopTimer(){
+  if(timer){ clearInterval(timer); timer = null; }
+  els.playBtn.textContent = '자동 재생';
+}
+function startTimer(){
+  stopTimer();
+  els.playBtn.textContent = '\u23f8 정지';
+  timer = setInterval(function(){
+    if(cur < steps.length - 1){ cur++; renderStep(true); }
+    else stopTimer();
+  }, parseInt(els.speedSel.value, 10));
+}
+
+/* ----- 시나리오 전환 ----- */
+function loadScenario(idx){
+  stopTimer();
+  scen = SCENARIOS[idx];
+  steps = scen.build();
+  cur = 0;
+  buildViewer(scen.code);
+  var chips = els.scenChips.children;
+  for(var i = 0; i < chips.length; i++){
+    chips[i].className = (i === idx) ? 'active' : '';
+  }
+  renderStep(false);
+}
+
+SCENARIOS.forEach(function(s, idx){
+  var b = document.createElement('button');
+  b.textContent = s.name;
+  b.addEventListener('click', function(){ loadScenario(idx); });
+  els.scenChips.appendChild(b);
+});
+
+els.homeBtn.addEventListener('click', function(){ stopTimer(); cur = 0; renderStep(false); });
+els.prevBtn.addEventListener('click', function(){ stopTimer(); if(cur > 0){ cur--; renderStep(false); } });
+els.nextBtn.addEventListener('click', function(){ stopTimer(); if(cur < steps.length - 1){ cur++; renderStep(true); } });
+els.endBtn.addEventListener('click', function(){ stopTimer(); cur = steps.length - 1; renderStep(false); });
+els.playBtn.addEventListener('click', function(){
+  if(timer){ stopTimer(); return; }
+  if(cur >= steps.length - 1){ cur = 0; renderStep(false); }
+  startTimer();
+});
+els.speedSel.addEventListener('change', function(){ if(timer) startTimer(); });
+window.addEventListener('resize', function(){ if(steps.length) drawArrows(steps[cur]); });
+
+loadScenario(0);
+</script>
+</body>
+</html>
