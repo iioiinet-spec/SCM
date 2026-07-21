@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>직각삼각형의 삼각함수 - 교과서 스타일</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .textbook-card {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .textbook-header {
+            background: #1e3a5f;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px 8px 0 0;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .textbook-section {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: #ffffff;
+        }
+
+        .textbook-label {
+            background: #f1f5f9;
+            border-left: 4px solid #3b82f6;
+            padding: 8px 16px;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 12px;
+        }
+
+        .formula-box {
+            background: #fefce8;
+            border: 1px solid #fde047;
+            border-radius: 6px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .highlight-red { color: #dc2626; font-weight: 700; }
+        .highlight-blue { color: #2563eb; font-weight: 700; }
+        .highlight-green { color: #16a34a; font-weight: 700; }
+        .highlight-purple { color: #7c3aed; font-weight: 700; }
+
+        .angle-btn {
+            border: 2px solid #94a3b8;
+            background: #ffffff;
+            color: #475569;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .angle-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .angle-btn.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .slider-track {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+        }
+
+        .slider-track::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: 3px solid #ffffff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .value-display {
+            font-family: 'Times New Roman', 'Noto Serif KR', serif;
+            font-size: 20px;
+        }
+
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            font-size: 18px;
+        }
+
+        .fraction .num {
+            border-bottom: 2px solid currentColor;
+            padding: 0 4px;
+            text-align: center;
+        }
+
+        .fraction .den {
+            padding: 0 4px;
+            text-align: center;
+        }
+
+        .sqrt { font-style: normal; }
+
+        table.textbook-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+        }
+
+        table.textbook-table th {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 12px;
+            font-weight: 700;
+        }
+
+        table.textbook-table td {
+            border: 1px solid #cbd5e1;
+            padding: 12px;
+            text-align: center;
+        }
+
+        table.textbook-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .canvas-border {
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            background: #ffffff;
+        }
+
+        .definition-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .note-box {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #9a3412;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+
+        <!-- 교과서 스타일 헤더 -->
+        <div class="textbook-card mb-6">
+            <div class="textbook-header flex items-center gap-3">
+                <span class="text-2xl">📐</span>
+                <span>2. 직각삼각형의 삼각비</span>
+                <span class="ml-auto text-sm font-normal opacity-80">중학교 수학 3학년</span>
+            </div>
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-slate-800 mb-2">직각삼각형의 삼각비</h1>
+                <p class="text-slate-600">
+                    직각삼각형의 한 예각의 크기가 정해지면, 세 변의 비율도 정해집니다. 
+                    이 비율을 <strong>삼각비</strong>라고 합니다.
+                </p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- 왼쪽: 도형 영역 -->
+            <div class="lg:col-span-7 space-y-4">
+
+                <!-- 도형 그리기 -->
+                <div class="textbook-card">
+                    <div class="p-4 border-b border-slate-200">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-700 text-lg">[그림] 직각삼각형과 단위원</span>
+                            <span class="text-sm text-slate-500">빗변의 길이 = 1</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="canvas-border">
+                            <canvas id="mainCanvas" width="640" height="480"></canvas>
+                        </div>
+                        <div class="mt-3 flex justify-center gap-6 text-sm">
+                            <span class="flex items-center gap-2">
+                                <span class="w-4 h-1 bg-red-600 rounded"></span> 
+                                <span class="text-red-700 font-semibold">대변 (높이) = sin θ</span>
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="w-4 h-1 bg-blue-600 rounded"></span> 
+                                <span class="text-blue-700 font-semibold">밑변 = cos θ</span>
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="w-4 h-1 bg-slate-600 rounded"></span> 
+                                <span class="text-slate-700 font-semibold">빗변 = 1</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 각도 조절 -->
+                <div class="textbook-card p-5">
+                    <div class="textbook-label mb-4">각도 조절</div>
+
+                    <div class="flex items-center gap-4 mb-4">
+                        <span class="font-bold text-slate-700">기준각:</span>
+                        <span class="text-2xl font-bold text-blue-700 font-mono">
+                            θ = <span id="angleDisplay">30</span>°
+                        </span>
+                        <span class="text-lg text-slate-500 font-mono">
+                            = <span id="radDisplay">π/6</span>
+                        </span>
+                    </div>
+
+                    <input type="range" id="angleSlider" min="1" max="89" value="30" class="slider-track mb-4">
+
+                    <div class="flex justify-between text-xs text-slate-400 mb-4 px-1">
+                        <span>1°</span>
+                        <span>30°</span>
+                        <span>45°</span>
+                        <span>60°</span>
+                        <span>89°</span>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-sm text-slate-500 self-center mr-2 font-semibold">특수각:</span>
+                        <button onclick="setAngle(30)" class="angle-btn" data-angle="30">30° (π/6)</button>
+                        <button onclick="setAngle(45)" class="angle-btn" data-angle="45">45° (π/4)</button>
+                        <button onclick="setAngle(60)" class="angle-btn" data-angle="60">60° (π/3)</button>
+                    </div>
+
+                    <div class="note-box mt-4">
+                        💡 <strong>팁:</strong> 슬라이더를 움직이거나 도형 위를 드래그하여 각도를 바꿔보세요. 
+                        특수각(30°, 45°, 60°)을 선택하면 분수로 정확한 값이 표시됩니다.
+                    </div>
+                </div>
+
+                <!-- 정의 -->
+                <div class="definition-box">
+                    <div class="font-bold text-blue-800 mb-3 text-lg">📖 삼각비의 정의</div>
+                    <div class="space-y-2 text-slate-700">
+                        <p>직각삼각형 ABC에서 ∠C = 90°, ∠A = θ일 때,</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                            <div class="bg-white rounded-lg p-3 border border-blue-200 text-center">
+                                <div class="highlight-red text-lg mb-1">사인 (sine)</div>
+                                <div class="value-display">
+                                    sin θ = <span class="fraction"><span class="num">대변의 길이</span><span class="den">빗변의 길이</span></span>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 border border-blue-200 text-center">
+                                <div class="highlight-blue text-lg mb-1">코사인 (cosine)</div>
+                                <div class="value-display">
+                                    cos θ = <span class="fraction"><span class="num">밑변의 길이</span><span class="den">빗변의 길이</span></span>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-3 border border-blue-200 text-center">
+                                <div class="highlight-purple text-lg mb-1">탄젠트 (tangent)</div>
+                                <div class="value-display">
+                                    tan θ = <span class="fraction"><span class="num">대변의 길이</span><span class="den">밑변의 길이</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 오른쪽: 값 표시 -->
+            <div class="lg:col-span-5 space-y-4">
+
+                <!-- 현재 삼각비 값 -->
+                <div class="textbook-card">
+                    <div class="textbook-label">현재 삼각비 값</div>
+                    <div class="p-4 space-y-4">
+
+                        <!-- sin -->
+                        <div class="border-2 border-red-200 rounded-lg p-4 bg-red-50">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="highlight-red text-xl font-bold">sin θ</span>
+                                <span class="text-sm text-slate-500">대변 / 빗변</span>
+                            </div>
+                            <div class="text-center py-2">
+                                <span id="sinFraction" class="value-display text-red-700 text-2xl">
+                                    <span class="fraction"><span class="num">1</span><span class="den">2</span></span>
+                                </span>
+                                <span class="text-slate-400 mx-3">≈</span>
+                                <span id="sinDecimal" class="font-mono text-slate-600">0.500</span>
+                            </div>
+                            <div class="w-full bg-white rounded-full h-3 mt-2 border border-red-200">
+                                <div id="sinBar" class="h-full bg-red-500 rounded-full transition-all duration-300" style="width: 50%"></div>
+                            </div>
+                        </div>
+
+                        <!-- cos -->
+                        <div class="border-2 border-blue-200 rounded-lg p-4 bg-blue-50">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="highlight-blue text-xl font-bold">cos θ</span>
+                                <span class="text-sm text-slate-500">밑변 / 빗변</span>
+                            </div>
+                            <div class="text-center py-2">
+                                <span id="cosFraction" class="value-display text-blue-700 text-2xl">
+                                    <span class="fraction"><span class="num">√3</span><span class="den">2</span></span>
+                                </span>
+                                <span class="text-slate-400 mx-3">≈</span>
+                                <span id="cosDecimal" class="font-mono text-slate-600">0.866</span>
+                            </div>
+                            <div class="w-full bg-white rounded-full h-3 mt-2 border border-blue-200">
+                                <div id="cosBar" class="h-full bg-blue-500 rounded-full transition-all duration-300" style="width: 86.6%"></div>
+                            </div>
+                        </div>
+
+                        <!-- tan -->
+                        <div class="border-2 border-purple-200 rounded-lg p-4 bg-purple-50">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="highlight-purple text-xl font-bold">tan θ</span>
+                                <span class="text-sm text-slate-500">대변 / 밑변</span>
+                            </div>
+                            <div class="text-center py-2">
+                                <span id="tanFraction" class="value-display text-purple-700 text-2xl">
+                                    <span class="fraction"><span class="num">√3</span><span class="den">3</span></span>
+                                </span>
+                                <span class="text-slate-400 mx-3">≈</span>
+                                <span id="tanDecimal" class="font-mono text-slate-600">0.577</span>
+                            </div>
+                            <div class="w-full bg-white rounded-full h-3 mt-2 border border-purple-200">
+                                <div id="tanBar" class="h-full bg-purple-500 rounded-full transition-all duration-300" style="width: 28.9%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 변의 길이 -->
+                <div class="textbook-card p-5">
+                    <div class="textbook-label">변의 길이 (빗변 = 1)</div>
+                    <div class="space-y-3 mt-3">
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg border border-slate-200">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded bg-red-100 flex items-center justify-center text-red-700 font-bold border border-red-200">a</span>
+                                <span class="font-semibold text-slate-700">대변 (BC)</span>
+                            </div>
+                            <span id="sideA" class="font-mono font-bold text-red-700 text-lg">0.500</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg border border-slate-200">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded bg-blue-100 flex items-center justify-center text-blue-700 font-bold border border-blue-200">b</span>
+                                <span class="font-semibold text-slate-700">밑변 (AC)</span>
+                            </div>
+                            <span id="sideB" class="font-mono font-bold text-blue-700 text-lg">0.866</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg border border-slate-200">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded bg-slate-100 flex items-center justify-center text-slate-700 font-bold border border-slate-200">c</span>
+                                <span class="font-semibold text-slate-700">빗변 (AB)</span>
+                            </div>
+                            <span class="font-mono font-bold text-slate-700 text-lg">1.000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 좌표 -->
+                <div class="textbook-card p-5">
+                    <div class="textbook-label">꼭짓점 좌표</div>
+                    <div class="space-y-2 mt-3">
+                        <div class="flex justify-between items-center p-2 bg-slate-50 rounded border border-slate-200">
+                            <span class="font-bold text-slate-700">O (원점)</span>
+                            <span class="font-mono">(0, 0)</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-blue-50 rounded border border-blue-200">
+                            <span class="font-bold text-blue-700">B (x축 위)</span>
+                            <span id="coordB" class="font-mono text-blue-700">(√3/2, 0)</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-red-50 rounded border border-red-200">
+                            <span class="font-bold text-red-700">A (단위원 위)</span>
+                            <span id="coordA" class="font-mono text-red-700">(√3/2, 1/2)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 피타고라스 -->
+                <div class="textbook-card p-5">
+                    <div class="textbook-label">피타고라스 정리 확인</div>
+                    <div class="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200 mt-3">
+                        <div class="value-display text-lg text-slate-700 mb-2">
+                            sin²θ + cos²θ = 1
+                        </div>
+                        <div class="font-mono text-slate-600" id="pythagoreanCheck">
+                            (1/2)² + (√3/2)² = 1/4 + 3/4 = 1 ✓
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 특수각 암기표 -->
+        <div class="textbook-card mt-6">
+            <div class="textbook-label m-4 mb-0">특수각의 삼각비 (암기)</div>
+            <div class="p-4">
+                <table class="textbook-table">
+                    <thead>
+                        <tr>
+                            <th>각도</th>
+                            <th class="highlight-red">sin θ</th>
+                            <th class="highlight-blue">cos θ</th>
+                            <th class="highlight-purple">tan θ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-bold">30° <span class="text-slate-400">(π/6)</span></td>
+                            <td class="highlight-red">
+                                <span class="fraction"><span class="num">1</span><span class="den">2</span></span>
+                            </td>
+                            <td class="highlight-blue">
+                                <span class="fraction"><span class="num">√3</span><span class="den">2</span></span>
+                            </td>
+                            <td class="highlight-purple">
+                                <span class="fraction"><span class="num">√3</span><span class="den">3</span></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">45° <span class="text-slate-400">(π/4)</span></td>
+                            <td class="highlight-red">
+                                <span class="fraction"><span class="num">√2</span><span class="den">2</span></span>
+                            </td>
+                            <td class="highlight-blue">
+                                <span class="fraction"><span class="num">√2</span><span class="den">2</span></span>
+                            </td>
+                            <td class="highlight-purple">1</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">60° <span class="text-slate-400">(π/3)</span></td>
+                            <td class="highlight-red">
+                                <span class="fraction"><span class="num">√3</span><span class="den">2</span></span>
+                            </td>
+                            <td class="highlight-blue">
+                                <span class="fraction"><span class="num">1</span><span class="den">2</span></span>
+                            </td>
+                            <td class="highlight-purple">√3</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note-box mt-4">
+                    <strong>암기법:</strong> sin 값은 30°→45°→60° 순으로 <span class="fraction"><span class="num" style="border-color:#9a3412">1</span><span class="den" style="color:#9a3412">2</span></span> → 
+                    <span class="fraction"><span class="num" style="border-color:#9a3412">√2</span><span class="den" style="color:#9a3412">2</span></span> → 
+                    <span class="fraction"><span class="num" style="border-color:#9a3412">√3</span><span class="den" style="color:#9a3412">2</span></span> 이고, 
+                    cos 값은 sin 값의 역순입니다. tan θ = sin θ / cos θ 입니다.
+                </div>
+            </div>
+        </div>
+
+        <!-- 관계식 -->
+        <div class="textbook-card mt-6 p-5">
+            <div class="textbook-label mb-4">삼각비의 관계</div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="formula-box">
+                    <div class="font-bold text-slate-700 mb-2">제곱의 관계</div>
+                    <div class="value-display text-lg">
+                        sin²θ + cos²θ = 1
+                    </div>
+                </div>
+                <div class="formula-box">
+                    <div class="font-bold text-slate-700 mb-2">나눗셈의 관계</div>
+                    <div class="value-display text-lg">
+                        tan θ = <span class="fraction"><span class="num">sin θ</span><span class="den">cos θ</span></span>
+                    </div>
+                </div>
+                <div class="formula-box">
+                    <div class="font-bold text-slate-700 mb-2">코탄젠트</div>
+                    <div class="value-display text-lg">
+                        cot θ = <span class="fraction"><span class="num">cos θ</span><span class="den">sin θ</span></span> = <span class="fraction"><span class="num">1</span><span class="den">tan θ</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        const slider = document.getElementById('angleSlider');
+
+        let angle = 30;
+        const radius = 160;
+        const centerX = 180;
+        const centerY = 360;
+        let isDragging = false;
+
+        function toRad(deg) {
+            return deg * Math.PI / 180;
+        }
+
+        // 특수각 분수값
+        const specialValues = {
+            30: {
+                sin: { num: '1', den: '2', val: 0.5 },
+                cos: { num: '√3', den: '2', val: Math.sqrt(3)/2 },
+                tan: { num: '√3', den: '3', val: Math.sqrt(3)/3 },
+                rad: 'π/6',
+                coordB: '(√3/2, 0)',
+                coordA: '(√3/2, 1/2)',
+                pythagorean: '(1/2)² + (√3/2)² = 1/4 + 3/4 = 1 ✓',
+                sideA: '1/2',
+                sideB: '√3/2'
+            },
+            45: {
+                sin: { num: '√2', den: '2', val: Math.sqrt(2)/2 },
+                cos: { num: '√2', den: '2', val: Math.sqrt(2)/2 },
+                tan: { num: '1', den: '', val: 1 },
+                rad: 'π/4',
+                coordB: '(√2/2, 0)',
+                coordA: '(√2/2, √2/2)',
+                pythagorean: '(√2/2)² + (√2/2)² = 2/4 + 2/4 = 1 ✓',
+                sideA: '√2/2',
+                sideB: '√2/2'
+            },
+            60: {
+                sin: { num: '√3', den: '2', val: Math.sqrt(3)/2 },
+                cos: { num: '1', den: '2', val: 0.5 },
+                tan: { num: '√3', den: '', val: Math.sqrt(3) },
+                rad: 'π/3',
+                coordB: '(1/2, 0)',
+                coordA: '(1/2, √3/2)',
+                pythagorean: '(√3/2)² + (1/2)² = 3/4 + 1/4 = 1 ✓',
+                sideA: '√3/2',
+                sideB: '1/2'
+            }
+        };
+
+        function formatRadian(deg) {
+            const r = deg * Math.PI / 180;
+            if (deg === 30) return 'π/6';
+            if (deg === 45) return 'π/4';
+            if (deg === 60) return 'π/3';
+            if (deg === 90) return 'π/2';
+            return r.toFixed(3) + ' rad';
+        }
+
+        function isSpecialAngle(deg) {
+            return specialValues.hasOwnProperty(deg);
+        }
+
+        function getFractionHTML(frac) {
+            if (!frac.den) {
+                return frac.num;
+            }
+            return `<span class="fraction"><span class="num">${frac.num}</span><span class="den">${frac.den}</span></span>`;
+        }
+
+        function drawGrid() {
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+
+            for (let i = -4; i <= 4; i++) {
+                const pos = i * (radius / 2);
+                ctx.beginPath();
+                ctx.moveTo(centerX + pos, 20);
+                ctx.lineTo(centerX + pos, canvas.height - 20);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(20, centerY - pos);
+                ctx.lineTo(canvas.width - 20, centerY - pos);
+                ctx.stroke();
+            }
+        }
+
+        function drawAxes() {
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+
+            // X axis
+            ctx.beginPath();
+            ctx.moveTo(30, centerY);
+            ctx.lineTo(canvas.width - 30, centerY);
+            ctx.stroke();
+
+            // Y axis
+            ctx.beginPath();
+            ctx.moveTo(centerX, 30);
+            ctx.lineTo(centerX, canvas.height - 30);
+            ctx.stroke();
+
+            // Arrow heads
+            ctx.fillStyle = '#475569';
+            ctx.beginPath();
+            ctx.moveTo(canvas.width - 30, centerY);
+            ctx.lineTo(canvas.width - 40, centerY - 5);
+            ctx.lineTo(canvas.width - 40, centerY + 5);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, 30);
+            ctx.lineTo(centerX - 5, 40);
+            ctx.lineTo(centerX + 5, 40);
+            ctx.fill();
+
+            // Labels
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillStyle = '#64748b';
+            ctx.fillText('x', canvas.width - 35, centerY + 22);
+            ctx.fillText('y', centerX + 12, 38);
+
+            // Origin
+            ctx.fillStyle = '#1e293b';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillText('O', centerX - 22, centerY + 22);
+
+            // Tick marks and values
+            ctx.font = '11px monospace';
+            ctx.fillStyle = '#94a3b8';
+
+            for (let i = -1; i <= 1; i += 0.5) {
+                if (i === 0) continue;
+                const tx = centerX + i * radius;
+                ctx.fillText(i.toFixed(1), tx - 10, centerY + 18);
+
+                const ty = centerY - i * radius;
+                ctx.fillText(i.toFixed(1), centerX - 32, ty + 4);
+            }
+        }
+
+        function drawUnitCircle() {
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, -Math.PI/2, 0);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px sans-serif';
+            ctx.fillText('단위원', centerX + radius + 8, centerY - radius + 15);
+        }
+
+        function drawTriangle() {
+            const rad = toRad(angle);
+            const sinVal = Math.sin(rad);
+            const cosVal = Math.cos(rad);
+
+            const ax = centerX + radius * cosVal;
+            const ay = centerY - radius * sinVal;
+            const bx = centerX + radius * cosVal;
+            const by = centerY;
+
+            // Fill triangle
+            ctx.fillStyle = 'rgba(59, 130, 246, 0.1)';
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(bx, by);
+            ctx.lineTo(ax, ay);
+            ctx.closePath();
+            ctx.fill();
+
+            // Hypotenuse (c) - black
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(ax, ay);
+            ctx.stroke();
+
+            // Base (b = cos) - blue
+            ctx.strokeStyle = '#2563eb';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(bx, by);
+            ctx.stroke();
+
+            // Height (a = sin) - red
+            ctx.strokeStyle = '#dc2626';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(bx, by);
+            ctx.lineTo(ax, ay);
+            ctx.stroke();
+
+            // Right angle marker
+            const ms = 10;
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(bx - ms, by);
+            ctx.lineTo(bx - ms, by - ms);
+            ctx.lineTo(bx, by - ms);
+            ctx.stroke();
+
+            // Vertices
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#2563eb';
+            ctx.beginPath();
+            ctx.arc(bx, by, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#dc2626';
+            ctx.beginPath();
+            ctx.arc(ax, ay, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Vertex labels
+            ctx.font = 'bold 15px sans-serif';
+            ctx.fillStyle = '#1e293b';
+            ctx.fillText('O', centerX - 22, centerY + 22);
+
+            ctx.fillStyle = '#2563eb';
+            ctx.fillText('B', bx + 8, by + 18);
+
+            ctx.fillStyle = '#dc2626';
+            ctx.fillText('A', ax + 10, ay - 10);
+
+            // Side labels
+            ctx.font = 'bold 13px sans-serif';
+
+            const midAB = {x: (bx + ax) / 2 + 12, y: (by + ay) / 2};
+            ctx.fillStyle = '#dc2626';
+            ctx.fillText('a = sin θ', midAB.x, midAB.y);
+
+            const midOB = {x: (centerX + bx) / 2 - 10, y: (centerY + by) / 2 + 20};
+            ctx.fillStyle = '#2563eb';
+            ctx.fillText('b = cos θ', midOB.x, midOB.y);
+
+            const midOA = {x: (centerX + ax) / 2 - 35, y: (centerY + ay) / 2 - 8};
+            ctx.fillStyle = '#1e293b';
+            ctx.fillText('c = 1', midOA.x, midOA.y);
+
+            // Angle arc
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 30, 0, -rad, true);
+            ctx.stroke();
+
+            // Angle label
+            ctx.fillStyle = '#f59e0b';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillText('θ', centerX + 38, centerY - 8);
+
+            // Angle value
+            ctx.fillStyle = '#1e293b';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.fillText(angle + '°', centerX + 42, centerY - 25);
+
+            // Projection lines (dashed)
+            ctx.strokeStyle = 'rgba(220, 38, 38, 0.4)';
+            ctx.setLineDash([3, 3]);
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(ax, ay);
+            ctx.lineTo(ax, centerY + radius + 15);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.strokeStyle = 'rgba(37, 99, 235, 0.4)';
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(ax, ay);
+            ctx.lineTo(centerX - radius - 20, ay);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Projection labels
+            ctx.font = '11px sans-serif';
+            ctx.fillStyle = 'rgba(220, 38, 38, 0.7)';
+            ctx.fillText('sin θ', ax + 5, centerY + radius + 28);
+
+            ctx.fillStyle = 'rgba(37, 99, 235, 0.7)';
+            ctx.fillText('cos θ', centerX - radius - 38, ay + 4);
+        }
+
+        function drawMiniUnitCircle() {
+            const cx = 520;
+            const cy = 100;
+            const r = 50;
+            const rad = toRad(angle);
+
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#94a3b8';
+            ctx.beginPath();
+            ctx.moveTo(cx - r - 8, cy);
+            ctx.lineTo(cx + r + 8, cy);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - r - 8);
+            ctx.lineTo(cx, cy + r + 8);
+            ctx.stroke();
+
+            const px = cx + r * Math.cos(rad);
+            const py = cy - r * Math.sin(rad);
+
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(px, py);
+            ctx.stroke();
+
+            ctx.strokeStyle = 'rgba(220, 38, 38, 0.5)';
+            ctx.setLineDash([2, 2]);
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(px, cy);
+            ctx.stroke();
+
+            ctx.strokeStyle = 'rgba(37, 99, 235, 0.5)';
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(cx, py);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#f59e0b';
+            ctx.beginPath();
+            ctx.arc(px, py, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#64748b';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('단위원', cx - 20, cy + r + 18);
+        }
+
+        function updateValues() {
+            const rad = toRad(angle);
+            const sinVal = Math.sin(rad);
+            const cosVal = Math.cos(rad);
+            const tanVal = Math.tan(rad);
+
+            document.getElementById('angleDisplay').textContent = angle;
+            document.getElementById('radDisplay').textContent = formatRadian(angle);
+
+            if (isSpecialAngle(angle)) {
+                const sv = specialValues[angle];
+
+                document.getElementById('sinFraction').innerHTML = getFractionHTML(sv.sin);
+                document.getElementById('sinDecimal').textContent = sinVal.toFixed(3);
+
+                document.getElementById('cosFraction').innerHTML = getFractionHTML(sv.cos);
+                document.getElementById('cosDecimal').textContent = cosVal.toFixed(3);
+
+                document.getElementById('tanFraction').innerHTML = getFractionHTML(sv.tan);
+                document.getElementById('tanDecimal').textContent = tanVal.toFixed(3);
+
+                document.getElementById('sideA').textContent = sv.sideA;
+                document.getElementById('sideB').textContent = sv.sideB;
+                document.getElementById('coordB').textContent = sv.coordB;
+                document.getElementById('coordA').textContent = sv.coordA;
+                document.getElementById('pythagoreanCheck').textContent = sv.pythagorean;
+            } else {
+                document.getElementById('sinFraction').innerHTML = `<span class="text-slate-400 text-lg">소수값</span>`;
+                document.getElementById('sinDecimal').textContent = sinVal.toFixed(3);
+
+                document.getElementById('cosFraction').innerHTML = `<span class="text-slate-400 text-lg">소수값</span>`;
+                document.getElementById('cosDecimal').textContent = cosVal.toFixed(3);
+
+                document.getElementById('tanFraction').innerHTML = `<span class="text-slate-400 text-lg">소수값</span>`;
+                document.getElementById('tanDecimal').textContent = tanVal.toFixed(3);
+
+                document.getElementById('sideA').textContent = sinVal.toFixed(3);
+                document.getElementById('sideB').textContent = cosVal.toFixed(3);
+                document.getElementById('coordB').textContent = `(${cosVal.toFixed(3)}, 0)`;
+                document.getElementById('coordA').textContent = `(${cosVal.toFixed(3)}, ${sinVal.toFixed(3)})`;
+                document.getElementById('pythagoreanCheck').textContent = 
+                    `${sinVal.toFixed(3)}² + ${cosVal.toFixed(3)}² = ${(sinVal*sinVal).toFixed(3)} + ${(cosVal*cosVal).toFixed(3)} = ${(sinVal*sinVal + cosVal*cosVal).toFixed(3)} ✓`;
+            }
+
+            document.getElementById('sinBar').style.width = (sinVal * 100) + '%';
+            document.getElementById('cosBar').style.width = (cosVal * 100) + '%';
+            const tanBarWidth = Math.min(tanVal * 15, 100);
+            document.getElementById('tanBar').style.width = tanBarWidth + '%';
+
+            // Update active button
+            document.querySelectorAll('.angle-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.dataset.angle) === angle) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
+            drawAxes();
+            drawUnitCircle();
+            drawTriangle();
+            drawMiniUnitCircle();
+            updateValues();
+        }
+
+        slider.addEventListener('input', (e) => {
+            angle = parseInt(e.target.value);
+            render();
+        });
+
+        function setAngle(deg) {
+            angle = deg;
+            slider.value = deg;
+            render();
+        }
+
+        // Canvas drag
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            updateAngleFromMouse(e);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                updateAngleFromMouse(e);
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => isDragging = false);
+        canvas.addEventListener('mouseleave', () => isDragging = false);
+
+        function updateAngleFromMouse(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const dx = x - centerX;
+            const dy = centerY - y;
+            let newAngle = Math.atan2(dy, dx) * 180 / Math.PI;
+            if (newAngle < 0) newAngle += 360;
+            if (newAngle >= 1 && newAngle <= 89) {
+                angle = Math.round(newAngle);
+                slider.value = angle;
+                render();
+            }
+        }
+
+        // Touch support
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isDragging = true;
+            updateAngleFromTouch(e);
+        }, {passive: false});
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (isDragging) updateAngleFromTouch(e);
+        }, {passive: false});
+
+        canvas.addEventListener('touchend', () => isDragging = false);
+
+        function updateAngleFromTouch(e) {
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            const dx = x - centerX;
+            const dy = centerY - y;
+            let newAngle = Math.atan2(dy, dx) * 180 / Math.PI;
+            if (newAngle < 0) newAngle += 360;
+            if (newAngle >= 1 && newAngle <= 89) {
+                angle = Math.round(newAngle);
+                slider.value = angle;
+                render();
+            }
+        }
+
+        render();
+    </script>
+</body>
+</html>
