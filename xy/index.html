@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>좌표평면 대칭 변환 - 인터랙티브 강의자료</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Noto Sans KR', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        .canvas-container {
+            background: #1e293b;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid #334155;
+        }
+        canvas {
+            display: block;
+            cursor: crosshair;
+        }
+        .control-panel {
+            background: #1e293b;
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+        .btn-shape {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-shape::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+        .btn-shape:hover::after {
+            transform: translateX(100%);
+        }
+        .btn-shape:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+        }
+        .btn-shape.active {
+            ring: 2px solid #38bdf8;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+        }
+        .toggle-switch {
+            position: relative;
+            width: 52px;
+            height: 28px;
+            background: #334155;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle-switch.on {
+            background: #38bdf8;
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .toggle-switch.on::after {
+            transform: translateX(24px);
+        }
+        .coord-label {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .math-formula {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+        }
+        .glow-text {
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+        }
+        .info-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid #334155;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        .animate-pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        .vertex-dot {
+            transition: r 0.2s, fill 0.2s;
+            cursor: grab;
+        }
+        .vertex-dot:hover {
+            r: 8;
+            fill: #fbbf24;
+        }
+        .vertex-dot:active {
+            cursor: grabbing;
+            r: 10;
+        }
+        .reflection-line {
+            stroke-dasharray: 8, 4;
+            animation: dash 20s linear infinite;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: -100; }
+        }
+        .tooltip {
+            position: absolute;
+            background: #0f172a;
+            border: 1px solid #475569;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 50;
+            white-space: nowrap;
+        }
+        .tooltip.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-3 glow-text bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                좌표평면에서의 대칭 변환
+            </h1>
+            <p class="text-slate-400 text-lg">점, 선, 도형을 드래그하여 x축, y축, 원점 대칭을 탐구해보세요</p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Canvas Area -->
+            <div class="lg:col-span-2">
+                <div class="canvas-container p-4 relative">
+                    <div class="flex justify-between items-center mb-3">
+                        <div class="flex gap-4 text-sm">
+                            <span class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-cyan-400"></span> 원본
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-rose-400"></span> x축 대칭
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-emerald-400"></span> y축 대칭
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-amber-400"></span> 원점 대칭
+                            </span>
+                        </div>
+                        <div class="text-xs text-slate-500 coord-label">드래그로 이동 | 휠로 확대/축소</div>
+                    </div>
+                    <canvas id="mainCanvas" width="800" height="600"></canvas>
+                    <div id="tooltip" class="tooltip"></div>
+                </div>
+
+                <!-- Coordinate Display -->
+                <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="info-card rounded-lg p-3">
+                        <div class="text-xs text-slate-400 mb-1">원본 좌표</div>
+                        <div id="originalCoords" class="text-cyan-400 font-mono text-sm">-</div>
+                    </div>
+                    <div class="info-card rounded-lg p-3">
+                        <div class="text-xs text-slate-400 mb-1">x축 대칭 (x, -y)</div>
+                        <div id="xReflectCoords" class="text-rose-400 font-mono text-sm">-</div>
+                    </div>
+                    <div class="info-card rounded-lg p-3">
+                        <div class="text-xs text-slate-400 mb-1">y축 대칭 (-x, y)</div>
+                        <div id="yReflectCoords" class="text-emerald-400 font-mono text-sm">-</div>
+                    </div>
+                    <div class="info-card rounded-lg p-3">
+                        <div class="text-xs text-slate-400 mb-1">원점 대칭 (-x, -y)</div>
+                        <div id="originReflectCoords" class="text-amber-400 font-mono text-sm">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="space-y-4">
+                <!-- Shape Selection -->
+                <div class="control-panel p-5">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                        도형 선택
+                    </h3>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="setShape('triangle')" id="btn-triangle" class="btn-shape active bg-slate-700 hover:bg-slate-600 rounded-xl p-4 flex flex-col items-center gap-2">
+                            <svg width="40" height="40" viewBox="0 0 40 40">
+                                <polygon points="20,5 35,35 5,35" fill="none" stroke="#38bdf8" stroke-width="2"/>
+                            </svg>
+                            <span class="text-sm font-medium">삼각형</span>
+                        </button>
+                        <button onclick="setShape('rectangle')" id="btn-rectangle" class="btn-shape bg-slate-700 hover:bg-slate-600 rounded-xl p-4 flex flex-col items-center gap-2">
+                            <svg width="40" height="40" viewBox="0 0 40 40">
+                                <rect x="5" y="10" width="30" height="20" fill="none" stroke="#38bdf8" stroke-width="2"/>
+                            </svg>
+                            <span class="text-sm font-medium">사각형</span>
+                        </button>
+                        <button onclick="setShape('circle')" id="btn-circle" class="btn-shape bg-slate-700 hover:bg-slate-600 rounded-xl p-4 flex flex-col items-center gap-2">
+                            <svg width="40" height="40" viewBox="0 0 40 40">
+                                <circle cx="20" cy="20" r="15" fill="none" stroke="#38bdf8" stroke-width="2"/>
+                            </svg>
+                            <span class="text-sm font-medium">원</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Reflection Toggles -->
+                <div class="control-panel p-5">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                        대칭 변환 보기
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center">
+                                    <span class="text-rose-400 font-bold text-sm">X</span>
+                                </div>
+                                <div>
+                                    <div class="font-medium">x축 대칭</div>
+                                    <div class="text-xs text-slate-400 math-formula">(x, y) → (x, -y)</div>
+                                </div>
+                            </div>
+                            <div class="toggle-switch on" id="toggleX" onclick="toggleReflection('x')"></div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                                    <span class="text-emerald-400 font-bold text-sm">Y</span>
+                                </div>
+                                <div>
+                                    <div class="font-medium">y축 대칭</div>
+                                    <div class="text-xs text-slate-400 math-formula">(x, y) → (-x, y)</div>
+                                </div>
+                            </div>
+                            <div class="toggle-switch on" id="toggleY" onclick="toggleReflection('y')"></div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center">
+                                    <span class="text-amber-400 font-bold text-sm">O</span>
+                                </div>
+                                <div>
+                                    <div class="font-medium">원점 대칭</div>
+                                    <div class="text-xs text-slate-400 math-formula">(x, y) → (-x, -y)</div>
+                                </div>
+                            </div>
+                            <div class="toggle-switch on" id="toggleOrigin" onclick="toggleReflection('origin')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Properties Panel -->
+                <div class="control-panel p-5">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                        도형 정보
+                    </h3>
+                    <div id="shapeInfo" class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">도형 종류</span>
+                            <span id="infoType" class="text-white font-medium">삼각형</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">면적</span>
+                            <span id="infoArea" class="text-cyan-400 font-mono">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">둘레</span>
+                            <span id="infoPerimeter" class="text-cyan-400 font-mono">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">무게중심</span>
+                            <span id="infoCentroid" class="text-cyan-400 font-mono">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reset Button -->
+                <button onclick="resetShape()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 rounded-xl transition-all flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    초기 위치로 되돌리기
+                </button>
+            </div>
+        </div>
+
+        <!-- Educational Content -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="info-card rounded-xl p-6">
+                <div class="w-12 h-12 rounded-xl bg-rose-500/20 flex items-center justify-center mb-4">
+                    <span class="text-2xl text-rose-400">↕</span>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-rose-400">x축 대칭</h3>
+                <p class="text-slate-400 text-sm mb-3">x축을 기준으로 도형을 접으면 나타나는 모습입니다. x좌표는 변하지 않고 y좌표만 부호가 바뀝니다.</p>
+                <div class="bg-slate-800/50 rounded-lg p-3 font-mono text-sm text-rose-300">
+                    P(x, y) → P'(x, -y)
+                </div>
+            </div>
+            <div class="info-card rounded-xl p-6">
+                <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center mb-4">
+                    <span class="text-2xl text-emerald-400">↔</span>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-emerald-400">y축 대칭</h3>
+                <p class="text-slate-400 text-sm mb-3">y축을 기준으로 도형을 접으면 나타나는 모습입니다. y좌표는 변하지 않고 x좌표만 부호가 바뀝니다.</p>
+                <div class="bg-slate-800/50 rounded-lg p-3 font-mono text-sm text-emerald-300">
+                    P(x, y) → P'(-x, y)
+                </div>
+            </div>
+            <div class="info-card rounded-xl p-6">
+                <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center mb-4">
+                    <span class="text-2xl text-amber-400">⟲</span>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-amber-400">원점 대칭</h3>
+                <p class="text-slate-400 text-sm mb-3">원점을 중심으로 180° 회전한 모습입니다. x좌표와 y좌표 모두 부호가 바뀝니다.</p>
+                <div class="bg-slate-800/50 rounded-lg p-3 font-mono text-sm text-amber-300">
+                    P(x, y) → P'(-x, -y)
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Tips -->
+        <div class="mt-6 text-center text-slate-500 text-sm">
+            💡 <strong class="text-slate-300">팁:</strong> 도형의 꼭짓점(●)을 드래그하여 직접 이동시켜 보세요. 대칭된 도형들이 실시간으로 따라 움직입니다.
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        const tooltip = document.getElementById('tooltip');
+
+        // State
+        let currentShape = 'triangle';
+        let showX = true, showY = true, showOrigin = true;
+        let scale = 40; // pixels per unit
+        let offsetX = canvas.width / 2;
+        let offsetY = canvas.height / 2;
+        let isDragging = false;
+        let draggedVertex = null;
+        let hoveredVertex = null;
+
+        // Shape definitions (in grid coordinates)
+        const initialShapes = {
+            triangle: [
+                {x: 2, y: -3},
+                {x: 5, y: 2},
+                {x: -1, y: 2}
+            ],
+            rectangle: [
+                {x: -3, y: -2},
+                {x: 4, y: -2},
+                {x: 4, y: 3},
+                {x: -3, y: 3}
+            ],
+            circle: [
+                {x: 2, y: 1, r: 3} // center and radius
+            ]
+        };
+
+        let shapes = JSON.parse(JSON.stringify(initialShapes));
+
+        // Coordinate conversion
+        function toCanvas(x, y) {
+            return {
+                x: offsetX + x * scale,
+                y: offsetY - y * scale
+            };
+        }
+
+        function toGrid(cx, cy) {
+            return {
+                x: (cx - offsetX) / scale,
+                y: (offsetY - cy) / scale
+            };
+        }
+
+        // Draw grid
+        function drawGrid() {
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 1;
+
+            // Vertical lines
+            for (let x = -20; x <= 20; x++) {
+                const pos = toCanvas(x, 0);
+                ctx.beginPath();
+                ctx.moveTo(pos.x, 0);
+                ctx.lineTo(pos.x, canvas.height);
+                ctx.stroke();
+            }
+
+            // Horizontal lines
+            for (let y = -15; y <= 15; y++) {
+                const pos = toCanvas(0, y);
+                ctx.beginPath();
+                ctx.moveTo(0, pos.y);
+                ctx.lineTo(canvas.width, pos.y);
+                ctx.stroke();
+            }
+
+            // Axes
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 2;
+
+            // X axis
+            const y0 = toCanvas(0, 0).y;
+            ctx.beginPath();
+            ctx.moveTo(0, y0);
+            ctx.lineTo(canvas.width, y0);
+            ctx.stroke();
+
+            // Y axis
+            const x0 = toCanvas(0, 0).x;
+            ctx.beginPath();
+            ctx.moveTo(x0, 0);
+            ctx.lineTo(x0, canvas.height);
+            ctx.stroke();
+
+            // Axis labels
+            ctx.fillStyle = '#64748b';
+            ctx.font = '12px monospace';
+            ctx.textAlign = 'center';
+
+            // X labels
+            for (let x = -10; x <= 10; x++) {
+                if (x === 0) continue;
+                const pos = toCanvas(x, 0);
+                ctx.fillText(x.toString(), pos.x, y0 + 20);
+            }
+
+            // Y labels
+            ctx.textAlign = 'right';
+            for (let y = -10; y <= 10; y++) {
+                if (y === 0) continue;
+                const pos = toCanvas(0, y);
+                ctx.fillText(y.toString(), x0 - 8, pos.y + 4);
+            }
+
+            // Origin
+            ctx.fillStyle = '#e2e8f0';
+            ctx.textAlign = 'right';
+            ctx.fillText('O', x0 - 8, y0 + 20);
+        }
+
+        // Draw reflection lines
+        function drawReflectionLines() {
+            if (showX) {
+                ctx.strokeStyle = 'rgba(244, 63, 94, 0.3)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([8, 4]);
+                const y0 = toCanvas(0, 0).y;
+                ctx.beginPath();
+                ctx.moveTo(0, y0);
+                ctx.lineTo(canvas.width, y0);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.fillStyle = 'rgba(244, 63, 94, 0.8)';
+                ctx.font = 'bold 12px sans-serif';
+                ctx.fillText('x축', canvas.width - 30, y0 - 8);
+            }
+
+            if (showY) {
+                ctx.strokeStyle = 'rgba(16, 185, 129, 0.3)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([8, 4]);
+                const x0 = toCanvas(0, 0).x;
+                ctx.beginPath();
+                ctx.moveTo(x0, 0);
+                ctx.lineTo(x0, canvas.height);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.fillStyle = 'rgba(16, 185, 129, 0.8)';
+                ctx.font = 'bold 12px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('y축', x0 + 8, 20);
+            }
+        }
+
+        // Draw shape
+        function drawShape(vertices, color, fillColor, isReflection = false) {
+            if (vertices.length === 0) return;
+
+            ctx.fillStyle = fillColor;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = isReflection ? 2 : 3;
+
+            if (currentShape === 'circle' && vertices.length === 1) {
+                const center = toCanvas(vertices[0].x, vertices[0].y);
+                const radius = vertices[0].r * scale;
+
+                ctx.beginPath();
+                ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Center point
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(center.x, center.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                ctx.beginPath();
+                const first = toCanvas(vertices[0].x, vertices[0].y);
+                ctx.moveTo(first.x, first.y);
+
+                for (let i = 1; i < vertices.length; i++) {
+                    const pos = toCanvas(vertices[i].x, vertices[i].y);
+                    ctx.lineTo(pos.x, pos.y);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Draw vertices
+                if (!isReflection) {
+                    vertices.forEach((v, i) => {
+                        const pos = toCanvas(v.x, v.y);
+                        ctx.fillStyle = hoveredVertex === i ? '#fbbf24' : '#38bdf8';
+                        ctx.beginPath();
+                        ctx.arc(pos.x, pos.y, hoveredVertex === i ? 8 : 5, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        // White border
+                        ctx.strokeStyle = '#0f172a';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    });
+                }
+            }
+        }
+
+        // Get reflected vertices
+        function getReflected(vertices, type) {
+            return vertices.map(v => {
+                if (type === 'x') return {...v, y: -v.y};
+                if (type === 'y') return {...v, x: -v.x};
+                if (type === 'origin') return {...v, x: -v.x, y: -v.y};
+                return v;
+            });
+        }
+
+        // Calculate shape properties
+        function calculateProperties() {
+            const verts = shapes[currentShape];
+            let area = 0, perimeter = 0, centroid = {x: 0, y: 0};
+
+            if (currentShape === 'circle' && verts.length === 1) {
+                const r = verts[0].r;
+                area = Math.PI * r * r;
+                perimeter = 2 * Math.PI * r;
+                centroid = {x: verts[0].x, y: verts[0].y};
+            } else {
+                // Polygon area (shoelace)
+                const n = verts.length;
+                for (let i = 0; i < n; i++) {
+                    const j = (i + 1) % n;
+                    area += verts[i].x * verts[j].y - verts[j].x * verts[i].y;
+                    const dx = verts[j].x - verts[i].x;
+                    const dy = verts[j].y - verts[i].y;
+                    perimeter += Math.sqrt(dx * dx + dy * dy);
+                }
+                area = Math.abs(area) / 2;
+
+                // Centroid
+                let cx = 0, cy = 0;
+                for (let i = 0; i < n; i++) {
+                    cx += verts[i].x;
+                    cy += verts[i].y;
+                }
+                centroid = {x: cx / n, y: cy / n};
+            }
+
+            document.getElementById('infoType').textContent = 
+                currentShape === 'triangle' ? '삼각형' : 
+                currentShape === 'rectangle' ? '사각형' : '원';
+            document.getElementById('infoArea').textContent = area.toFixed(2);
+            document.getElementById('infoPerimeter').textContent = perimeter.toFixed(2);
+            document.getElementById('infoCentroid').textContent = 
+                `(${centroid.x.toFixed(1)}, ${centroid.y.toFixed(1)})`;
+        }
+
+        // Update coordinate display
+        function updateCoords() {
+            const verts = shapes[currentShape];
+            if (currentShape === 'circle' && verts.length === 1) {
+                const c = verts[0];
+                document.getElementById('originalCoords').textContent = 
+                    `중심: (${c.x.toFixed(1)}, ${c.y.toFixed(1)}), r=${c.r}`;
+                document.getElementById('xReflectCoords').textContent = 
+                    `중심: (${c.x.toFixed(1)}, ${(-c.y).toFixed(1)}), r=${c.r}`;
+                document.getElementById('yReflectCoords').textContent = 
+                    `중심: (${(-c.x).toFixed(1)}, ${c.y.toFixed(1)}), r=${c.r}`;
+                document.getElementById('originReflectCoords').textContent = 
+                    `중심: (${(-c.x).toFixed(1)}, ${(-c.y).toFixed(1)}), r=${c.r}`;
+            } else {
+                const coords = verts.map(v => `(${v.x.toFixed(1)}, ${v.y.toFixed(1)})`).join(', ');
+                document.getElementById('originalCoords').textContent = coords;
+
+                const xCoords = verts.map(v => `(${v.x.toFixed(1)}, ${(-v.y).toFixed(1)})`).join(', ');
+                document.getElementById('xReflectCoords').textContent = xCoords;
+
+                const yCoords = verts.map(v => `(${(-v.x).toFixed(1)}, ${v.y.toFixed(1)})`).join(', ');
+                document.getElementById('yReflectCoords').textContent = yCoords;
+
+                const oCoords = verts.map(v => `(${(-v.x).toFixed(1)}, ${(-v.y).toFixed(1)})`).join(', ');
+                document.getElementById('originReflectCoords').textContent = oCoords;
+            }
+        }
+
+        // Main render
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawGrid();
+            drawReflectionLines();
+
+            const verts = shapes[currentShape];
+
+            // Draw reflections (behind original)
+            if (showOrigin) {
+                const reflected = getReflected(verts, 'origin');
+                drawShape(reflected, '#fbbf24', 'rgba(251, 191, 36, 0.15)', true);
+            }
+            if (showY) {
+                const reflected = getReflected(verts, 'y');
+                drawShape(reflected, '#34d399', 'rgba(52, 211, 153, 0.15)', true);
+            }
+            if (showX) {
+                const reflected = getReflected(verts, 'x');
+                drawShape(reflected, '#fb7185', 'rgba(251, 113, 133, 0.15)', true);
+            }
+
+            // Draw original (on top)
+            drawShape(verts, '#38bdf8', 'rgba(56, 189, 248, 0.2)', false);
+
+            calculateProperties();
+            updateCoords();
+        }
+
+        // Mouse/Touch handlers
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function findNearestVertex(pos) {
+            const gridPos = toGrid(pos.x, pos.y);
+            const verts = shapes[currentShape];
+            let nearest = -1;
+            let minDist = Infinity;
+
+            verts.forEach((v, i) => {
+                const dx = gridPos.x - v.x;
+                const dy = gridPos.y - v.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 0.8 && dist < minDist) {
+                    minDist = dist;
+                    nearest = i;
+                }
+            });
+
+            return nearest;
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            const pos = getMousePos(e);
+            const vertex = findNearestVertex(pos);
+            if (vertex !== -1) {
+                isDragging = true;
+                draggedVertex = vertex;
+                canvas.style.cursor = 'grabbing';
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            const pos = getMousePos(e);
+
+            if (isDragging && draggedVertex !== null) {
+                const gridPos = toGrid(pos.x, pos.y);
+
+                if (currentShape === 'circle' && shapes[currentShape].length === 1) {
+                    shapes[currentShape][0].x = gridPos.x;
+                    shapes[currentShape][0].y = gridPos.y;
+                } else {
+                    shapes[currentShape][draggedVertex].x = gridPos.x;
+                    shapes[currentShape][draggedVertex].y = gridPos.y;
+                }
+                render();
+            } else {
+                const vertex = findNearestVertex(pos);
+                hoveredVertex = vertex !== -1 ? vertex : null;
+                canvas.style.cursor = vertex !== -1 ? 'grab' : 'crosshair';
+                render();
+
+                // Tooltip
+                if (vertex !== -1) {
+                    const v = shapes[currentShape][vertex];
+                    tooltip.textContent = `(${v.x.toFixed(2)}, ${v.y.toFixed(2)})`;
+                    tooltip.style.left = (pos.x + 15) + 'px';
+                    tooltip.style.top = (pos.y - 30) + 'px';
+                    tooltip.classList.add('visible');
+                } else {
+                    tooltip.classList.remove('visible');
+                }
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+            draggedVertex = null;
+            canvas.style.cursor = 'crosshair';
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+            draggedVertex = null;
+            hoveredVertex = null;
+            tooltip.classList.remove('visible');
+            render();
+        });
+
+        // Touch support
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const pos = getMousePos(e);
+            const vertex = findNearestVertex(pos);
+            if (vertex !== -1) {
+                isDragging = true;
+                draggedVertex = vertex;
+            }
+        }, {passive: false});
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (isDragging && draggedVertex !== null) {
+                const pos = getMousePos(e);
+                const gridPos = toGrid(pos.x, pos.y);
+
+                if (currentShape === 'circle') {
+                    shapes[currentShape][0].x = gridPos.x;
+                    shapes[currentShape][0].y = gridPos.y;
+                } else {
+                    shapes[currentShape][draggedVertex].x = gridPos.x;
+                    shapes[currentShape][draggedVertex].y = gridPos.y;
+                }
+                render();
+            }
+        }, {passive: false});
+
+        canvas.addEventListener('touchend', () => {
+            isDragging = false;
+            draggedVertex = null;
+        });
+
+        // Wheel zoom
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            scale = Math.max(20, Math.min(100, scale * delta));
+            render();
+        }, {passive: false});
+
+        // UI Controls
+        function setShape(shape) {
+            currentShape = shape;
+            document.querySelectorAll('.btn-shape').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + shape).classList.add('active');
+            render();
+        }
+
+        function toggleReflection(type) {
+            if (type === 'x') {
+                showX = !showX;
+                document.getElementById('toggleX').classList.toggle('on');
+            } else if (type === 'y') {
+                showY = !showY;
+                document.getElementById('toggleY').classList.toggle('on');
+            } else {
+                showOrigin = !showOrigin;
+                document.getElementById('toggleOrigin').classList.toggle('on');
+            }
+            render();
+        }
+
+        function resetShape() {
+            shapes = JSON.parse(JSON.stringify(initialShapes));
+            scale = 40;
+            offsetX = canvas.width / 2;
+            offsetY = canvas.height / 2;
+            render();
+        }
+
+        // Initial render
+        render();
+    </script>
+</body>
+</html>
