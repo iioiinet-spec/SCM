@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>두 원의 위치 관계 실습실 — d vs r₁+r₂, |r₁−r₂|</title>
+<style>
+:root{
+  --bg:#0b1526; --panel:#12203a; --panel2:#0e1a30; --line:#1e3a5f;
+  --teal:#2dd4bf; --teal-dim:#14b8a6; --amber:#fbbf24; --red:#f87171;
+  --green:#4ade80; --violet:#a78bfa; --pink:#f472b6;
+  --text:#e2e8f0; --muted:#8aa3c4; --code-bg:#0a1322;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;min-height:100vh;}
+.wrap{max-width:1320px;margin:0 auto;padding:20px 18px 48px;}
+header{padding:22px 4px 18px;border-bottom:2px solid var(--line);margin-bottom:20px;display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;}
+header h1{font-size:1.5rem;letter-spacing:-0.5px;}
+header h1 span{color:var(--teal);}
+.badge{background:rgba(45,212,191,0.12);border:1px solid var(--teal-dim);color:var(--teal);font-size:0.78rem;padding:3px 10px;border-radius:999px;}
+.sub{color:var(--muted);font-size:0.88rem;width:100%;line-height:1.6;}
+.sub b{color:var(--text);}
+.grid{display:grid;grid-template-columns:minmax(440px,52%) 1fr;gap:18px;align-items:start;}
+@media(max-width:1000px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+.card h2{font-size:0.92rem;padding:11px 16px;border-bottom:1px solid var(--line);color:var(--teal);display:flex;align-items:center;gap:8px;font-weight:600;}
+.card h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);display:inline-block;}
+.card .body{padding:14px 16px;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel2);}
+.chips button{background:transparent;border:1px solid var(--line);color:var(--muted);font-size:0.78rem;padding:6px 10px;border-radius:999px;cursor:pointer;transition:all .15s;font-family:inherit;}
+.chips button:hover{border-color:var(--teal-dim);color:var(--teal);}
+#planeSvg{display:block;width:100%;max-width:560px;margin:0 auto;background:var(--code-bg);touch-action:none;user-select:none;-webkit-user-select:none;}
+.controls{display:flex;flex-wrap:wrap;gap:12px;padding:10px 16px;border-top:1px solid var(--line);background:var(--panel2);align-items:center;font-size:0.82rem;color:var(--muted);}
+.grptag{font:700 12px Consolas,'D2Coding',monospace;padding:3px 9px;border-radius:6px;}
+.grptag.g1{color:var(--teal);border:1px solid rgba(45,212,191,0.5);}
+.grptag.g2{color:var(--violet);border:1px solid rgba(167,139,250,0.5);}
+.stepgrp{display:flex;align-items:center;gap:4px;}
+.stepgrp button{background:#173052;border:1px solid var(--line);color:var(--text);font:700 13px Consolas,monospace;width:25px;height:25px;border-radius:7px;cursor:pointer;transition:all .15s;}
+.stepgrp button:hover{border-color:var(--teal-dim);color:var(--teal);}
+.stepgrp .val{font:700 13.5px Consolas,'D2Coding',monospace;color:var(--amber);min-width:26px;text-align:center;}
+.hintline{padding:9px 16px;border-top:1px solid var(--line);font-size:0.78rem;color:var(--muted);}
+/* 판정 배너 */
+.judg{border-radius:10px;padding:13px 15px;font-size:1.02rem;font-weight:800;text-align:center;letter-spacing:-0.3px;}
+.judg .cnt{display:block;margin-top:6px;font-size:0.78rem;font-weight:700;}
+.judg.meet{background:rgba(45,212,191,0.1);border:1.5px solid var(--teal);color:#a7f3ea;}
+.judg.tang{background:rgba(251,191,36,0.1);border:1.5px solid var(--amber);color:#fde68a;}
+.judg.apart{background:rgba(248,113,113,0.08);border:1.5px solid rgba(248,113,113,0.6);color:#fecaca;}
+.judg.conc{background:rgba(167,139,250,0.1);border:1.5px solid var(--violet);color:#ddd6fe;}
+/* 위치 관계 자(눈금) */
+.rulerwrap{margin-top:14px;}
+.rulertitle{font-size:0.76rem;color:var(--muted);margin-bottom:16px;}
+.rulerbar{position:relative;height:24px;background:var(--code-bg);border:1px solid var(--line);border-radius:7px;}
+.zone{position:absolute;top:0;height:100%;}
+.zone.zin{background:rgba(248,113,113,0.28);border-radius:7px 0 0 7px;}
+.zone.zmid{background:rgba(45,212,191,0.25);}
+.zone.zout{background:rgba(251,191,36,0.16);border-radius:0 7px 7px 0;}
+.dmark{position:absolute;top:-7px;width:3px;height:38px;background:var(--pink);border-radius:2px;transform:translateX(-50%);}
+.dmarklbl{position:absolute;top:-24px;transform:translateX(-50%);font:700 12px Consolas,monospace;color:var(--pink);}
+.rtick{position:absolute;top:27px;transform:translateX(-50%);font:600 11px Consolas,'D2Coding',monospace;color:var(--muted);white-space:nowrap;}
+.rulerlegend{margin-top:26px;font-size:0.72rem;color:var(--muted);line-height:1.6;}
+/* 수식/판정 카드 */
+.eqbig{background:var(--code-bg);border:1.5px solid var(--line);border-radius:9px;padding:10px 13px;font:700 16px Consolas,'D2Coding',monospace;text-align:center;margin-bottom:8px;}
+.eqbig.e1{color:#7fe0d4;border-color:rgba(45,212,191,0.45);}
+.eqbig.e2{color:#c4b5fd;border-color:rgba(167,139,250,0.45);}
+.mline{background:var(--code-bg);border:1px solid var(--line);border-radius:9px;padding:9px 13px;font:600 13.5px Consolas,'D2Coding',monospace;line-height:1.6;margin-bottom:8px;color:var(--text);}
+.mline .lab{display:block;font:600 11px 'Segoe UI','Malgun Gothic',sans-serif;color:var(--muted);margin-bottom:3px;}
+.mline.chain{color:#fde68a;border-color:rgba(251,191,36,0.4);text-align:center;font-size:14.5px;}
+.mline.chord{color:var(--green);border-color:rgba(74,222,128,0.4);}
+.mline.pts{color:var(--green);}
+.mline.note{color:var(--muted);font-family:'Segoe UI','Malgun Gothic',sans-serif;font-size:12.5px;}
+.tips{font-size:0.83rem;color:var(--muted);line-height:1.75;}
+.tips b{color:var(--teal);}
+.tips code{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font:12px Consolas,monospace;color:var(--amber);}
+.rightcol{display:flex;flex-direction:column;gap:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1><span>두 원의 위치 관계</span> 실습실</h1>
+  <span class="badge">d vs r&#8321;+r&#8322;, |r&#8321;&#8722;r&#8322;| &#183; 공통현 &#183; 공통접선</span>
+  <p class="sub">두 원의 <b>중심과 반지름을 드래그</b>(정수)하면 중심거리 d와 <b>r&#8321;+r&#8322;, |r&#8321;&#8722;r&#8322;|</b>의 비교로 위치 관계가 판정되고, 두 원의 방정식, d 계산 과정, <b>공통현의 방정식(두 일반형의 차)</b>, 교점·접점 좌표, 공통접선의 개수까지 실시간으로 표시됩니다.</p>
+</header>
+
+<div class="grid">
+  <!-- LEFT -->
+  <section class="card">
+    <h2><span class="dot"></span>좌표평면 — 중심·반지름 핸들을 드래그하세요</h2>
+    <div class="chips" id="exChips"></div>
+    <div class="body" style="padding:10px;">
+      <svg id="planeSvg" viewBox="-10.8 -10.8 21.6 21.6" aria-label="two circles">
+        <g id="gridG" stroke="#13243f" stroke-width="0.05"></g>
+        <line x1="-10.8" y1="0" x2="10.8" y2="0" stroke="#2c4568" stroke-width="0.08"/>
+        <line x1="0" y1="-10.8" x2="0" y2="10.8" stroke="#2c4568" stroke-width="0.08"/>
+        <circle id="c1El" fill="rgba(45,212,191,0.06)" stroke="#2dd4bf" stroke-width="0.13"/>
+        <circle id="c2El" fill="rgba(167,139,250,0.07)" stroke="#a78bfa" stroke-width="0.13"/>
+        <line id="chordSeg" stroke="#4ade80" stroke-width="0.09" stroke-dasharray="0.26 0.18"/>
+        <line id="tanLine" stroke="#fbbf24" stroke-width="0.09" stroke-dasharray="0.26 0.18"/>
+        <line id="ddSeg" stroke="#f472b6" stroke-width="0.08" stroke-dasharray="0.22 0.16"/>
+        <text id="dLbl" font-size="0.58" fill="#f472b6" font-weight="bold" text-anchor="middle"></text>
+        <g id="intG"></g>
+        <line id="r1Line" stroke="#2dd4bf" stroke-width="0.07" opacity="0.8"/>
+        <line id="r2Line" stroke="#a78bfa" stroke-width="0.07" opacity="0.8"/>
+        <text id="r1Lbl" font-size="0.52" fill="#2dd4bf" font-weight="bold" text-anchor="middle"></text>
+        <text id="r2Lbl" font-size="0.52" fill="#a78bfa" font-weight="bold" text-anchor="middle"></text>
+        <circle id="c1Dot" r="0.2" fill="#2dd4bf" stroke="#0a1322" stroke-width="0.06" style="cursor:grab;"/>
+        <circle id="c2Dot" r="0.2" fill="#a78bfa" stroke="#0a1322" stroke-width="0.06" style="cursor:grab;"/>
+        <text id="c1Lbl" font-size="0.56" fill="#2dd4bf" font-weight="bold" text-anchor="middle"></text>
+        <text id="c2Lbl" font-size="0.56" fill="#a78bfa" font-weight="bold" text-anchor="middle"></text>
+        <circle id="h1El" r="0.2" fill="#0e6d61" stroke="#2dd4bf" stroke-width="0.07" style="cursor:ew-resize;"/>
+        <circle id="h2El" r="0.2" fill="#4a3a80" stroke="#a78bfa" stroke-width="0.07" style="cursor:ew-resize;"/>
+        <circle id="hitC1" r="0.65" fill="transparent" style="cursor:grab;"/>
+        <circle id="hitC2" r="0.65" fill="transparent" style="cursor:grab;"/>
+        <circle id="hitR1" r="0.6" fill="transparent" style="cursor:ew-resize;"/>
+        <circle id="hitR2" r="0.6" fill="transparent" style="cursor:ew-resize;"/>
+      </svg>
+    </div>
+    <div class="controls">
+      <span class="grptag g1">원1</span>
+      <span class="stepgrp">a&#8321; <button id="a1M">&#8722;</button><span class="val" id="a1V"></span><button id="a1P">+</button></span>
+      <span class="stepgrp">b&#8321; <button id="b1M">&#8722;</button><span class="val" id="b1V"></span><button id="b1P">+</button></span>
+      <span class="stepgrp">r&#8321; <button id="r1M">&#8722;</button><span class="val" id="r1V"></span><button id="r1P">+</button></span>
+      <span class="grptag g2">원2</span>
+      <span class="stepgrp">a&#8322; <button id="a2M">&#8722;</button><span class="val" id="a2V"></span><button id="a2P">+</button></span>
+      <span class="stepgrp">b&#8322; <button id="b2M">&#8722;</button><span class="val" id="b2V"></span><button id="b2P">+</button></span>
+      <span class="stepgrp">r&#8322; <button id="r2M">&#8722;</button><span class="val" id="r2V"></span><button id="r2P">+</button></span>
+    </div>
+    <div class="hintline">분홍 점선 = 중심거리 d &#183; 초록 점선 = 공통현 &#183; 노랑 점선 = 공통접선(접할 때) &#183; 중심을 겹치면 동심원도 만들 수 있어요</div>
+  </section>
+
+  <!-- RIGHT -->
+  <div class="rightcol">
+    <section class="card">
+      <h2><span class="dot"></span>판정 결과</h2>
+      <div class="body">
+        <div class="judg meet" id="judgBanner"></div>
+        <div class="rulerwrap">
+          <div class="rulertitle">d가 어느 구역에 있나? — 위치 관계 눈금자</div>
+          <div class="rulerbar" id="rulerBar">
+            <div class="zone zin" id="zoneIn"></div>
+            <div class="zone zmid" id="zoneMid"></div>
+            <div class="zone zout" id="zoneOut"></div>
+            <div class="dmark" id="dMark"></div>
+            <div class="dmarklbl" id="dMarkLbl">d</div>
+            <div class="rtick" id="tickDif"></div>
+            <div class="rtick" id="tickSum"></div>
+          </div>
+          <div class="rulerlegend">빨강 구역(d &#60; |r&#8321;&#8722;r&#8322;|) = 내부 &#183; 경계 = 내접 &#183; 청록 구역 = 두 점에서 만남 &#183; 경계 = 외접 &#183; 노랑 구역(d &#62; r&#8321;+r&#8322;) = 외부</div>
+        </div>
+      </div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>두 원의 방정식과 중심거리</h2>
+      <div class="body" id="eqBox"></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>공통현 &#183; 교점 &#183; 공통접선</h2>
+      <div class="body" id="chordBox"></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>학습 포인트</h2>
+      <div class="body tips">
+        <b>1. 판정은 세 수의 비교</b> — 중심거리 d, 반지름의 합 r&#8321;+r&#8322;, 차 |r&#8321;&#8722;r&#8322;|. <code>d &#62; 합</code> 외부(접선 4), <code>d = 합</code> 외접(3), <code>차 &#60; d &#60; 합</code> 두 점(2), <code>d = 차</code> 내접(1), <code>d &#60; 차</code> 내부(0).<br>
+        <b>2. 공통현의 방정식</b> — 두 원의 일반형을 빼면 x&#178;, y&#178;항이 사라지고 <b>직선</b>이 남습니다. 두 원이 만나면 이 직선이 두 교점을 지나는 공통현!<br>
+        <b>3. 접할 때</b> — 같은 직선(근축)이 <b>접점에서의 공통접선</b>이 됩니다. 접점은 항상 중심선 C&#8321;C&#8322; 위!<br>
+        <b>4. 공통접선의 개수</b> — 멀어질수록 4 &#8594; 3 &#8594; 2 &#8594; 1 &#8594; 0으로 변합니다. 드래그하며 눈금자의 d 위치와 함께 확인하세요.<br>
+        <b>5. 동심원</b> — 중심이 같으면(d = 0) 반지름이 달라도 절대 만나지 않는 동심원, 반지름까지 같으면 일치.
+      </div>
+    </section>
+  </div>
+</div>
+</div>
+<script>
+/* ===================== 상태·유틸 ===================== */
+var els = {};
+['exChips','planeSvg','gridG','c1El','c2El','chordSeg','tanLine','ddSeg','dLbl','intG',
+ 'r1Line','r2Line','r1Lbl','r2Lbl','c1Dot','c2Dot','c1Lbl','c2Lbl','h1El','h2El',
+ 'hitC1','hitC2','hitR1','hitR2','judgBanner','rulerBar','zoneIn','zoneMid','zoneOut',
+ 'dMark','dMarkLbl','tickDif','tickSum','eqBox','chordBox',
+ 'a1M','a1P','b1M','b1P','r1M','r1P','a2M','a2P','b2M','b2P','r2M','r2P',
+ 'a1V','b1V','r1V','a2V','b2V','r2V'
+].forEach(function(id){ els[id] = document.getElementById(id); });
+
+var SVGNS = 'http://www.w3.org/2000/svg';
+var S1 = {a:-2, b:0, r:4}, S2 = {a:3, b:0, r:3};
+var C_LIM = 6, R_MIN = 1, R_MAX = 5;
+
+function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); return b ? gcd(b, a % b) : a; }
+function isInt(v){ return Math.abs(v - Math.round(v)) < 1e-9; }
+function fmt2(v){ return isInt(v) ? String(Math.round(v)) : v.toFixed(2); }
+function sqrtStr(s){
+  if(s === 0) return '0';
+  var q = Math.sqrt(s);
+  if(isInt(q)) return String(Math.round(q));
+  var k = 1;
+  for(var i = 2; i * i <= s; i++) if(s % (i * i) === 0) k = i;
+  var inner = s / (k * k);
+  return (k === 1 ? '' : k) + '\u221a' + inner;
+}
+function par(v){ return v < 0 ? '(' + v + ')' : String(v); }
+function sqT(v, k){
+  if(k === 0) return v + '\u00b2';
+  return '(' + v + (k > 0 ? ' - ' : ' + ') + Math.abs(k) + ')\u00b2';
+}
+function stdEq(s){ return sqT('x', s.a) + ' + ' + sqT('y', s.b) + ' = ' + (s.r * s.r); }
+function lineStr(A, B, C){
+  var parts = [];
+  if(A !== 0) parts.push((A < 0 ? '-' : '') + (Math.abs(A) === 1 ? '' : Math.abs(A)) + 'x');
+  if(B !== 0) parts.push((parts.length ? (B > 0 ? ' + ' : ' - ') : (B < 0 ? '-' : '')) + (Math.abs(B) === 1 ? '' : Math.abs(B)) + 'y');
+  if(C !== 0) parts.push((parts.length ? (C > 0 ? ' + ' : ' - ') : (C < 0 ? '-' : '')) + Math.abs(C));
+  if(!parts.length) return '0 = 0';
+  return parts.join('') + ' = 0';
+}
+
+/* ===================== 판정 ===================== */
+function analyze(){
+  var da = S2.a - S1.a, db = S2.b - S1.b;
+  var d2 = da * da + db * db;
+  var d = Math.sqrt(d2);
+  var sum = S1.r + S2.r, dif = Math.abs(S1.r - S2.r);
+  var rel, tangents;
+  if(d2 === 0){ rel = (S1.r === S2.r) ? '일치' : '동심원'; tangents = (rel === '일치') ? '\u221e' : 0; }
+  else if(d2 > sum * sum){ rel = '외부'; tangents = 4; }
+  else if(d2 === sum * sum){ rel = '외접'; tangents = 3; }
+  else if(d2 > dif * dif){ rel = '두 점'; tangents = 2; }
+  else if(d2 === dif * dif){ rel = '내접'; tangents = 1; }
+  else { rel = '내부'; tangents = 0; }
+  var F1 = S1.a * S1.a + S1.b * S1.b - S1.r * S1.r;
+  var F2 = S2.a * S2.a + S2.b * S2.b - S2.r * S2.r;
+  var LA = 2 * da, LB = 2 * db, LC = F1 - F2;
+  var pts = [], T = null;
+  if(rel === '두 점'){
+    var l = (S1.r * S1.r - S2.r * S2.r + d2) / (2 * d);
+    var h = Math.sqrt(Math.max(0, S1.r * S1.r - l * l));
+    var ux = da / d, uy = db / d;
+    var px = S1.a + l * ux, py = S1.b + l * uy;
+    pts = [[px - h * uy, py + h * ux], [px + h * uy, py - h * ux]];
+  }
+  if(rel === '외접' || rel === '내접'){
+    var ux2 = da / d, uy2 = db / d;
+    var sg = (rel === '외접') ? 1 : (S1.r >= S2.r ? 1 : -1);
+    T = [S1.a + sg * S1.r * ux2, S1.b + sg * S1.r * uy2];
+  }
+  return {d2:d2, d:d, sum:sum, dif:dif, rel:rel, tangents:tangents,
+          LA:LA, LB:LB, LC:LC, pts:pts, T:T, da:da, db:db};
+}
+
+/* ===================== 그리기 ===================== */
+function setC(el, x, y){ el.setAttribute('cx', x); el.setAttribute('cy', -y); }
+function setL(el, x1, y1, x2, y2){
+  el.setAttribute('x1', x1); el.setAttribute('y1', -y1);
+  el.setAttribute('x2', x2); el.setAttribute('y2', -y2);
+}
+function setT(el, x, y, txt){
+  el.setAttribute('x', x); el.setAttribute('y', -y);
+  if(txt !== undefined) el.textContent = txt;
+}
+function showEl(el, on){ el.setAttribute('display', on ? 'inline' : 'none'); }
+function diamond(x, y, tangent){
+  var g = document.createElementNS(SVGNS, 'rect');
+  var s = 0.24;
+  g.setAttribute('x', x - s); g.setAttribute('y', -y - s);
+  g.setAttribute('width', s * 2); g.setAttribute('height', s * 2);
+  g.setAttribute('transform', 'rotate(45 ' + x + ' ' + (-y) + ')');
+  g.setAttribute('fill', tangent ? '#fbbf24' : '#4ade80');
+  g.setAttribute('stroke', '#0a1322');
+  g.setAttribute('stroke-width', '0.06');
+  els.intG.appendChild(g);
+}
+function renderPlane(m){
+  setC(els.c1El, S1.a, S1.b); els.c1El.setAttribute('r', S1.r);
+  setC(els.c2El, S2.a, S2.b); els.c2El.setAttribute('r', S2.r);
+  setC(els.c1Dot, S1.a, S1.b); setC(els.hitC1, S1.a, S1.b);
+  setC(els.c2Dot, S2.a, S2.b); setC(els.hitC2, S2.a, S2.b);
+  setT(els.c1Lbl, S1.a, S1.b + 0.55, 'C\u2081(' + S1.a + ', ' + S1.b + ')');
+  setT(els.c2Lbl, S2.a, S2.b - 0.85, 'C\u2082(' + S2.a + ', ' + S2.b + ')');
+  setC(els.h1El, S1.a + S1.r, S1.b); setC(els.hitR1, S1.a + S1.r, S1.b);
+  setC(els.h2El, S2.a + S2.r, S2.b); setC(els.hitR2, S2.a + S2.r, S2.b);
+  setL(els.r1Line, S1.a, S1.b, S1.a + S1.r, S1.b);
+  setL(els.r2Line, S2.a, S2.b, S2.a + S2.r, S2.b);
+  setT(els.r1Lbl, S1.a + S1.r / 2, S1.b + 0.35, 'r\u2081=' + S1.r);
+  setT(els.r2Lbl, S2.a + S2.r / 2, S2.b + 0.35, 'r\u2082=' + S2.r);
+  var hasD = m.d2 > 0;
+  showEl(els.ddSeg, hasD); showEl(els.dLbl, hasD);
+  if(hasD){
+    setL(els.ddSeg, S1.a, S1.b, S2.a, S2.b);
+    setT(els.dLbl, (S1.a + S2.a) / 2 + 0.4, (S1.b + S2.b) / 2 + 0.42, 'd = ' + fmt2(m.d));
+  }
+  while(els.intG.firstChild) els.intG.removeChild(els.intG.firstChild);
+  showEl(els.chordSeg, m.rel === '두 점');
+  showEl(els.tanLine, !!m.T);
+  if(m.rel === '두 점'){
+    var p1 = m.pts[0], p2 = m.pts[1];
+    var ex = (p2[0] - p1[0]) * 0.25, ey = (p2[1] - p1[1]) * 0.25;
+    setL(els.chordSeg, p1[0] - ex, p1[1] - ey, p2[0] + ex, p2[1] + ey);
+    diamond(p1[0], p1[1], false);
+    diamond(p2[0], p2[1], false);
+  }
+  if(m.T){
+    var nx = -m.db / m.d, ny = m.da / m.d;
+    setL(els.tanLine, m.T[0] - nx * 3.2, m.T[1] - ny * 3.2, m.T[0] + nx * 3.2, m.T[1] + ny * 3.2);
+    diamond(m.T[0], m.T[1], true);
+  }
+}
+
+/* ===================== 배너·눈금자 ===================== */
+function renderBanner(m){
+  var title = {'외부':'만나지 않는다 — 서로 밖에 있다', '외접':'외접한다 (한 점)', '두 점':'서로 다른 두 점에서 만난다',
+               '내접':'내접한다 (한 점)', '내부':'만나지 않는다 — 한 원이 다른 원 안에', '동심원':'동심원 — 중심이 같다',
+               '일치':'두 원이 일치한다'}[m.rel];
+  var cls = (m.rel === '두 점') ? 'meet' : (m.rel === '외접' || m.rel === '내접') ? 'tang'
+          : (m.rel === '동심원' || m.rel === '일치') ? 'conc' : 'apart';
+  els.judgBanner.className = 'judg ' + cls;
+  while(els.judgBanner.firstChild) els.judgBanner.removeChild(els.judgBanner.firstChild);
+  els.judgBanner.appendChild(document.createTextNode(title));
+  var c = document.createElement('span');
+  c.className = 'cnt';
+  c.textContent = '공통접선 ' + m.tangents + '개';
+  els.judgBanner.appendChild(c);
+}
+function renderRuler(m){
+  var L = Math.max(m.sum + 1.5, m.d + 1.2, 3);
+  function pct(v){ return Math.min(100, v / L * 100); }
+  els.zoneIn.style.left = '0%';
+  els.zoneIn.style.width = pct(m.dif) + '%';
+  els.zoneMid.style.left = pct(m.dif) + '%';
+  els.zoneMid.style.width = (pct(m.sum) - pct(m.dif)) + '%';
+  els.zoneOut.style.left = pct(m.sum) + '%';
+  els.zoneOut.style.width = (100 - pct(m.sum)) + '%';
+  els.dMark.style.left = pct(m.d) + '%';
+  els.dMarkLbl.style.left = pct(m.d) + '%';
+  els.dMarkLbl.textContent = 'd = ' + fmt2(m.d);
+  els.tickDif.style.left = pct(m.dif) + '%';
+  els.tickDif.textContent = '|r\u2081-r\u2082| = ' + m.dif;
+  els.tickSum.style.left = pct(m.sum) + '%';
+  els.tickSum.textContent = 'r\u2081+r\u2082 = ' + m.sum;
+}
+
+/* ===================== 수식·공통현 카드 ===================== */
+function mline(box, lab, txt, cls){
+  var d = document.createElement('div');
+  d.className = 'mline' + (cls ? ' ' + cls : '');
+  if(lab){
+    var l = document.createElement('span');
+    l.className = 'lab';
+    l.textContent = lab;
+    d.appendChild(l);
+  }
+  d.appendChild(document.createTextNode(txt));
+  box.appendChild(d);
+}
+function cmpSym(x2, y2){ return x2 < y2 ? '\u003c' : (x2 === y2 ? '=' : '\u003e'); }
+function renderEq(m){
+  while(els.eqBox.firstChild) els.eqBox.removeChild(els.eqBox.firstChild);
+  var e1 = document.createElement('div');
+  e1.className = 'eqbig e1';
+  e1.textContent = '원1: ' + stdEq(S1);
+  els.eqBox.appendChild(e1);
+  var e2 = document.createElement('div');
+  e2.className = 'eqbig e2';
+  e2.textContent = '원2: ' + stdEq(S2);
+  els.eqBox.appendChild(e2);
+  var dTxt = 'd = \u221a((' + S2.a + ' - ' + par(S1.a) + ')\u00b2 + (' + S2.b + ' - ' + par(S1.b) + ')\u00b2) = \u221a' + m.d2;
+  var dEx = sqrtStr(m.d2);
+  if(isInt(m.d)) dTxt += ' = ' + Math.round(m.d);
+  else dTxt += ' = ' + dEx + ' \u2248 ' + m.d.toFixed(2);
+  mline(els.eqBox, '중심거리 (거리 공식)', dTxt);
+  mline(els.eqBox, '반지름의 합과 차', 'r\u2081 + r\u2082 = ' + m.sum + '   \u00b7   |r\u2081 - r\u2082| = ' + m.dif);
+  var s1 = cmpSym(m.dif * m.dif, m.d2);
+  var s2 = cmpSym(m.d2, m.sum * m.sum);
+  mline(els.eqBox, '비교', '|r\u2081-r\u2082| = ' + m.dif + '  ' + s1 + '  d = ' + fmt2(m.d) + '  ' + s2 + '  r\u2081+r\u2082 = ' + m.sum, 'chain');
+}
+function renderChord(m){
+  while(els.chordBox.firstChild) els.chordBox.removeChild(els.chordBox.firstChild);
+  if(m.rel === '동심원'){
+    mline(els.chordBox, null, '중심이 같아 두 일반형의 차에서 x, y항이 모두 사라집니다 \u2014 공통현도 공통접선도 없습니다.', 'note');
+    return;
+  }
+  if(m.rel === '일치'){
+    mline(els.chordBox, null, '두 원이 완전히 같은 원입니다 \u2014 모든 점이 공통!', 'note');
+    return;
+  }
+  var g = gcd(gcd(Math.abs(m.LA), Math.abs(m.LB)), Math.abs(m.LC)) || 1;
+  var sgn = (m.LA < 0 || (m.LA === 0 && m.LB < 0)) ? -1 : 1;
+  var sA = m.LA / g * sgn, sB = m.LB / g * sgn, sC = m.LC / g * sgn;
+  var raw = lineStr(m.LA, m.LB, m.LC);
+  var simp = lineStr(sA, sB, sC);
+  var lab = (m.rel === '두 점') ? '공통현의 방정식 — 두 일반형의 차 (이차항이 사라진다!)'
+          : (m.T ? '접점에서의 공통접선 — 두 일반형의 차' : '근축(radical axis) — 두 일반형의 차 [심화]');
+  mline(els.chordBox, lab, raw + (simp !== raw ? '  \u2192  ' + simp : ''), 'chord');
+  if(m.rel === '두 점'){
+    mline(els.chordBox, '교점 (두 원을 연립)', '(' + fmt2(m.pts[0][0]) + ', ' + fmt2(m.pts[0][1]) + '), (' + fmt2(m.pts[1][0]) + ', ' + fmt2(m.pts[1][1]) + ')', 'pts');
+    mline(els.chordBox, null, '초록 점선(공통현)이 두 교점을 지나고, 중심선 C\u2081C\u2082와 수직으로 만납니다.', 'note');
+  } else if(m.T){
+    mline(els.chordBox, '접점 (중심선 C\u2081C\u2082 위)', 'T(' + fmt2(m.T[0]) + ', ' + fmt2(m.T[1]) + ')', 'pts');
+    mline(els.chordBox, null, (m.rel === '외접' ? '외접: 접점이 두 중심 사이에 있고 공통접선은 3개(노랑 점선이 그중 하나).' : '내접: 작은 원이 큰 원 안에서 접하고 공통접선은 접점에서의 1개뿐.'), 'note');
+  } else {
+    mline(els.chordBox, '교점 없음', m.rel === '외부' ? '서로 밖 \u2014 공통접선 4개 (외접선 2 + 내접선 2)' : '한 원이 다른 원 안 \u2014 공통접선 0개', 'note');
+  }
+}
+
+function renderAll(){
+  var m = analyze();
+  renderPlane(m);
+  renderBanner(m);
+  renderRuler(m);
+  renderEq(m);
+  renderChord(m);
+  els.a1V.textContent = S1.a; els.b1V.textContent = S1.b; els.r1V.textContent = S1.r;
+  els.a2V.textContent = S2.a; els.b2V.textContent = S2.b; els.r2V.textContent = S2.r;
+  window.state = {a1:S1.a, b1:S1.b, r1:S1.r, a2:S2.a, b2:S2.b, r2:S2.r,
+                  d2:m.d2, rel:m.rel, tangents:m.tangents};
+}
+function clampAll(){
+  S1.a = Math.max(-C_LIM, Math.min(C_LIM, S1.a));
+  S1.b = Math.max(-C_LIM, Math.min(C_LIM, S1.b));
+  S2.a = Math.max(-C_LIM, Math.min(C_LIM, S2.a));
+  S2.b = Math.max(-C_LIM, Math.min(C_LIM, S2.b));
+  S1.r = Math.max(R_MIN, Math.min(R_MAX, S1.r));
+  S2.r = Math.max(R_MIN, Math.min(R_MAX, S2.r));
+}
+
+/* ===================== 입력 ===================== */
+var EXAMPLES = [
+  {name:'\u2460 두 점에서 만남', v:[-2,0,4, 3,0,3]},
+  {name:'\u2461 외접 (d = 합)', v:[-3,0,2, 2,0,3]},
+  {name:'\u2462 내접 (d = 차)', v:[0,0,5, 2,0,3]},
+  {name:'\u2463 외부 — 접선 4개', v:[-4,-2,2, 4,3,2]},
+  {name:'\u2464 내부 — 접선 0개', v:[0,0,5, 1,0,2]},
+  {name:'\u2465 동심원', v:[0,0,5, 0,0,2]},
+  {name:'\u2466 기울어진 두 점', v:[-2,1,4, 2,-2,3]}
+];
+EXAMPLES.forEach(function(ex){
+  var b = document.createElement('button');
+  b.textContent = ex.name;
+  b.addEventListener('click', function(){
+    S1.a = ex.v[0]; S1.b = ex.v[1]; S1.r = ex.v[2];
+    S2.a = ex.v[3]; S2.b = ex.v[4]; S2.r = ex.v[5];
+    clampAll(); renderAll();
+  });
+  els.exChips.appendChild(b);
+});
+[['a1M',function(){S1.a--;}],['a1P',function(){S1.a++;}],['b1M',function(){S1.b--;}],['b1P',function(){S1.b++;}],
+ ['r1M',function(){S1.r--;}],['r1P',function(){S1.r++;}],['a2M',function(){S2.a--;}],['a2P',function(){S2.a++;}],
+ ['b2M',function(){S2.b--;}],['b2P',function(){S2.b++;}],['r2M',function(){S2.r--;}],['r2P',function(){S2.r++;}]
+].forEach(function(pr){
+  els[pr[0]].addEventListener('click', function(){ pr[1](); clampAll(); renderAll(); });
+});
+
+var dragMode = null;
+function svgPt(ev){
+  var r = els.planeSvg.getBoundingClientRect();
+  return {
+    x: (ev.clientX - r.left) / r.width * 21.6 - 10.8,
+    y: -((ev.clientY - r.top) / r.height * 21.6 - 10.8)
+  };
+}
+[['hitC1','c1'],['c1Dot','c1'],['hitC2','c2'],['c2Dot','c2'],
+ ['hitR1','r1'],['h1El','r1'],['hitR2','r2'],['h2El','r2']
+].forEach(function(pr){
+  els[pr[0]].addEventListener('pointerdown', function(ev){
+    ev.preventDefault();
+    dragMode = pr[1];
+    els.planeSvg.setPointerCapture(ev.pointerId);
+    ev.stopPropagation();
+  });
+});
+els.planeSvg.addEventListener('pointermove', function(ev){
+  if(!dragMode) return;
+  var p = svgPt(ev);
+  if(dragMode === 'c1'){ S1.a = Math.round(p.x); S1.b = Math.round(p.y); }
+  else if(dragMode === 'c2'){ S2.a = Math.round(p.x); S2.b = Math.round(p.y); }
+  else if(dragMode === 'r1'){ S1.r = Math.round(Math.hypot(p.x - S1.a, p.y - S1.b)); }
+  else { S2.r = Math.round(Math.hypot(p.x - S2.a, p.y - S2.b)); }
+  clampAll(); renderAll();
+});
+els.planeSvg.addEventListener('pointerup', function(){ dragMode = null; });
+els.planeSvg.addEventListener('pointercancel', function(){ dragMode = null; });
+
+/* ===================== 초기화 ===================== */
+(function init(){
+  for(var g = -10; g <= 10; g++){
+    if(g === 0) continue;
+    var lv = document.createElementNS(SVGNS, 'line');
+    lv.setAttribute('x1', g); lv.setAttribute('y1', -10.8);
+    lv.setAttribute('x2', g); lv.setAttribute('y2', 10.8);
+    if(g % 5 === 0) lv.setAttribute('stroke', '#1b3050');
+    els.gridG.appendChild(lv);
+    var lh = document.createElementNS(SVGNS, 'line');
+    lh.setAttribute('x1', -10.8); lh.setAttribute('y1', g);
+    lh.setAttribute('x2', 10.8); lh.setAttribute('y2', g);
+    if(g % 5 === 0) lh.setAttribute('stroke', '#1b3050');
+    els.gridG.appendChild(lh);
+  }
+  renderAll();
+})();
+</script>
+</body>
+</html>
