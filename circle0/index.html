@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>원의 방정식 시각화 실습실 — (x−a)² + (y−b)² = r²</title>
+<style>
+:root{
+  --bg:#0b1526; --panel:#12203a; --panel2:#0e1a30; --line:#1e3a5f;
+  --teal:#2dd4bf; --teal-dim:#14b8a6; --amber:#fbbf24; --red:#f87171;
+  --green:#4ade80; --violet:#a78bfa;
+  --text:#e2e8f0; --muted:#8aa3c4; --code-bg:#0a1322;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;min-height:100vh;}
+.wrap{max-width:1320px;margin:0 auto;padding:20px 18px 48px;}
+header{padding:22px 4px 18px;border-bottom:2px solid var(--line);margin-bottom:20px;display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;}
+header h1{font-size:1.5rem;letter-spacing:-0.5px;}
+header h1 span{color:var(--teal);}
+.badge{background:rgba(45,212,191,0.12);border:1px solid var(--teal-dim);color:var(--teal);font-size:0.78rem;padding:3px 10px;border-radius:999px;}
+.sub{color:var(--muted);font-size:0.88rem;width:100%;line-height:1.6;}
+.sub b{color:var(--text);}
+.grid{display:grid;grid-template-columns:minmax(440px,52%) 1fr;gap:18px;align-items:start;}
+@media(max-width:1000px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+.card h2{font-size:0.92rem;padding:11px 16px;border-bottom:1px solid var(--line);color:var(--teal);display:flex;align-items:center;gap:8px;font-weight:600;}
+.card h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);display:inline-block;}
+.card .body{padding:14px 16px;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel2);}
+.chips button{background:transparent;border:1px solid var(--line);color:var(--muted);font-size:0.79rem;padding:6px 11px;border-radius:999px;cursor:pointer;transition:all .15s;font-family:inherit;}
+.chips button:hover{border-color:var(--teal-dim);color:var(--teal);}
+#planeSvg{display:block;width:100%;max-width:560px;margin:0 auto;background:var(--code-bg);touch-action:none;user-select:none;-webkit-user-select:none;}
+.controls{display:flex;flex-wrap:wrap;gap:14px;padding:12px 16px;border-top:1px solid var(--line);background:var(--panel2);align-items:center;font-size:0.84rem;color:var(--muted);}
+.stepgrp{display:flex;align-items:center;gap:6px;}
+.stepgrp button{background:#173052;border:1px solid var(--line);color:var(--text);font:700 14px Consolas,monospace;width:28px;height:28px;border-radius:8px;cursor:pointer;transition:all .15s;}
+.stepgrp button:hover{border-color:var(--teal-dim);color:var(--teal);}
+.stepgrp .val{font:700 14px Consolas,'D2Coding',monospace;color:var(--amber);min-width:32px;text-align:center;}
+.hintline{padding:9px 16px;border-top:1px solid var(--line);font-size:0.78rem;color:var(--muted);}
+/* equation */
+.eqbig{background:var(--code-bg);border:1.5px solid var(--line);border-radius:10px;padding:14px 16px;font:700 20px Consolas,'D2Coding',monospace;text-align:center;letter-spacing:0.5px;line-height:1.5;}
+.eqbig .tx{color:var(--teal);}
+.eqbig .ty{color:var(--amber);}
+.eqbig .tr{color:var(--violet);}
+.eqlabel{font-size:0.76rem;color:var(--muted);margin:10px 0 5px;}
+.eqgen{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:11px 14px;font:600 15.5px Consolas,'D2Coding',monospace;text-align:center;color:var(--text);}
+.eqder{margin-top:10px;font-size:0.8rem;color:var(--muted);line-height:1.7;}
+.eqder code{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font:12px Consolas,monospace;color:#a7f3ea;}
+.vchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.vchip{background:var(--code-bg);border:1.5px solid var(--line);border-radius:8px;padding:7px 12px;font:600 13px Consolas,'D2Coding',monospace;}
+.vchip.c1{color:var(--teal);}
+.vchip.c2{color:var(--violet);}
+.vchip.org{color:var(--green);border-color:rgba(74,222,128,0.55);}
+/* relation chips */
+.relbox{display:flex;flex-direction:column;gap:9px;}
+.rel{background:var(--code-bg);border:1.5px solid var(--line);border-radius:9px;padding:9px 13px;font-size:0.84rem;line-height:1.55;}
+.rel b{font-family:Consolas,'D2Coding',monospace;}
+.rel.meet b{color:var(--teal);}
+.rel.tang b{color:var(--amber);}
+.rel.none b{color:var(--muted);}
+.rel.pt-on{border-color:var(--green);}
+.rel.pt-on b{color:var(--green);}
+.rel.pt-in b{color:var(--amber);}
+.rel.pt-out b{color:var(--red);}
+.rel .sub2{color:var(--muted);font-size:0.78rem;font-family:Consolas,'D2Coding',monospace;}
+.tips{font-size:0.83rem;color:var(--muted);line-height:1.75;}
+.tips b{color:var(--teal);}
+.tips code{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font:12px Consolas,monospace;color:var(--amber);}
+.rightcol{display:flex;flex-direction:column;gap:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1><span>원의 방정식</span> 시각화 실습실</h1>
+  <span class="badge">(x&#8722;a)&#178; + (y&#8722;b)&#178; = r&#178;</span>
+  <p class="sub">좌표평면 위에서 <b>중심(주황 점)을 드래그</b>하거나 <b>가장자리 핸들로 반지름</b>을 바꾸면(모두 정수 단위) 원의 방정식이 실시간으로 바뀝니다. 하늘색 <b>점 P</b>를 움직여 대입 판정(원 위/안/밖)도 확인해 보세요.</p>
+</header>
+
+<div class="grid">
+  <!-- LEFT -->
+  <section class="card">
+    <h2><span class="dot"></span>좌표평면 — 중심·핸들·점 P를 드래그하세요</h2>
+    <div class="chips" id="exChips"></div>
+    <div class="body" style="padding:10px;">
+      <svg id="planeSvg" viewBox="-10.8 -10.8 21.6 21.6" aria-label="coordinate plane with circle">
+        <g id="gridG" stroke="#13243f" stroke-width="0.05"></g>
+        <line x1="-10.8" y1="0" x2="10.8" y2="0" stroke="#3d5878" stroke-width="0.1"/>
+        <line x1="0" y1="-10.8" x2="0" y2="10.8" stroke="#3d5878" stroke-width="0.1"/>
+        <g id="axisLblG" font-size="0.62" fill="#5f7ba3"></g>
+        <text x="10.15" y="0.85" font-size="0.68" fill="#8aa3c4">x</text>
+        <text x="0.25" y="-10.05" font-size="0.68" fill="#8aa3c4">y</text>
+        <line id="guideA" stroke="#2dd4bf" stroke-width="0.06" stroke-dasharray="0.22 0.18" opacity="0.5"/>
+        <line id="guideB" stroke="#fbbf24" stroke-width="0.06" stroke-dasharray="0.22 0.18" opacity="0.5"/>
+        <circle id="circleEl" fill="rgba(45,212,191,0.06)" stroke="#2dd4bf" stroke-width="0.14"/>
+        <g id="intG"></g>
+        <line id="radLine" stroke="#e2e8f0" stroke-width="0.09"/>
+        <text id="radLbl" font-size="0.62" fill="#e2e8f0" font-weight="bold" text-anchor="middle"></text>
+        <line id="distLine" stroke="#60a5fa" stroke-width="0.06" stroke-dasharray="0.2 0.16" opacity="0.8"/>
+        <circle id="centerDot" r="0.28" fill="#fbbf24" stroke="#0a1322" stroke-width="0.08" style="cursor:grab;"/>
+        <text id="centerLbl" font-size="0.62" fill="#fbbf24" font-weight="bold" text-anchor="middle"></text>
+        <circle id="radHandle" r="0.24" fill="#2dd4bf" stroke="#0a1322" stroke-width="0.08" style="cursor:ew-resize;"/>
+        <circle id="testP" r="0.24" fill="#60a5fa" stroke="#0a1322" stroke-width="0.08" style="cursor:grab;"/>
+        <text id="testLbl" font-size="0.6" fill="#60a5fa" font-weight="bold" text-anchor="middle"></text>
+        <circle id="centerHit" r="0.7" fill="transparent" style="cursor:grab;"/>
+        <circle id="radHit" r="0.7" fill="transparent" style="cursor:ew-resize;"/>
+        <circle id="testHit" r="0.7" fill="transparent" style="cursor:grab;"/>
+      </svg>
+    </div>
+    <div class="controls">
+      <span class="stepgrp">a (중심 x)
+        <button id="aMinus">&#8722;</button><span class="val" id="aVal">2</span><button id="aPlus">+</button>
+      </span>
+      <span class="stepgrp">b (중심 y)
+        <button id="bMinus">&#8722;</button><span class="val" id="bVal">-1</span><button id="bPlus">+</button>
+      </span>
+      <span class="stepgrp">r (반지름)
+        <button id="rMinus">&#8722;</button><span class="val" id="rVal">3</span><button id="rPlus">+</button>
+      </span>
+    </div>
+    <div class="hintline">범위: 중심 a, b는 -6 ~ 6, 반지름 r은 1 ~ 6 (정수). 초록 마름모 = 좌표축과의 교점.</div>
+  </section>
+
+  <!-- RIGHT -->
+  <div class="rightcol">
+    <section class="card">
+      <h2><span class="dot"></span>원의 방정식</h2>
+      <div class="body">
+        <div class="eqlabel">표준형 — 중심 (a, b), 반지름 r가 그대로 보입니다</div>
+        <div class="eqbig" id="eqStd"></div>
+        <div class="eqlabel">일반형 — 표준형을 전개한 x&#178; + y&#178; + Dx + Ey + F = 0</div>
+        <div class="eqgen" id="eqGen"></div>
+        <div class="eqder" id="eqDer"></div>
+        <div class="vchips" id="infoChips"></div>
+      </div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>위치 관계 판정</h2>
+      <div class="body"><div class="relbox" id="relBox"></div></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>학습 포인트</h2>
+      <div class="body tips">
+        <b>1. 방정식의 뿌리는 거리 공식</b> — 원 = 중심에서 거리가 r로 같은 점들의 모임. <code>&#8730;((x&#8722;a)&#178;+(y&#8722;b)&#178;) = r</code>의 양변을 제곱한 것이 표준형입니다.<br>
+        <b>2. 부호 함정</b> — 중심이 (2, &#8722;1)이면 식은 <code>(x&#8722;2)&#178; + (y+1)&#178;</code>. 괄호 안 부호는 중심 좌표의 <b>반대</b>입니다!<br>
+        <b>3. 우변은 r&#178;</b> — 우변이 9라면 반지름은 9가 아니라 3. 반지름을 2배로 하면 우변은 4배가 됩니다.<br>
+        <b>4. 축과의 위치 관계</b> — 중심에서 x축까지 거리 |b|와 r를 비교: |b| &#60; r 두 점 / |b| = r 접함 / |b| &#62; r 안 만남. y축은 |a|로 같은 판정.<br>
+        <b>5. 점 대입 판정</b> — 점 P를 좌변에 대입한 값이 r&#178;보다 작으면 원 안, 같으면 원 위, 크면 원 밖. 일반형에서 <code>F = 0</code>이면 원점을 지나는 원!
+      </div>
+    </section>
+  </div>
+</div>
+</div>
+<script>
+/* ===================== 상태·수식 유틸 ===================== */
+var els = {};
+['exChips','planeSvg','gridG','axisLblG','guideA','guideB','circleEl','intG','radLine','radLbl',
+ 'distLine','centerDot','centerLbl','radHandle','testP','testLbl','centerHit','radHit','testHit',
+ 'aMinus','aPlus','bMinus','bPlus','rMinus','rPlus','aVal','bVal','rVal',
+ 'eqStd','eqGen','eqDer','infoChips','relBox'
+].forEach(function(id){ els[id] = document.getElementById(id); });
+
+var SVGNS = 'http://www.w3.org/2000/svg';
+var A = 2, B = -1, R = 3, PX = 5, PY = 2;
+var A_MIN = -6, A_MAX = 6, R_MIN = 1, R_MAX = 6, P_LIM = 9;
+
+function sqTerm(v, k){
+  if(k === 0) return v + '\u00b2';
+  return '(' + v + (k > 0 ? ' - ' : ' + ') + Math.abs(k) + ')\u00b2';
+}
+function linTerm(coef, v){
+  if(coef === 0) return '';
+  var s = coef > 0 ? ' + ' : ' - ';
+  var m = Math.abs(coef);
+  return s + (m === 1 ? '' : m) + v;
+}
+function constTerm(c){
+  if(c === 0) return '';
+  return (c > 0 ? ' + ' : ' - ') + Math.abs(c);
+}
+function isInt(v){ return Math.abs(v - Math.round(v)) < 1e-9; }
+function fmtNum(v){
+  return isInt(v) ? String(Math.round(v)) : (Math.round(v * 100) / 100).toFixed(2);
+}
+function sqrtStr(s){
+  var q = Math.sqrt(s);
+  if(isInt(q)) return String(Math.round(q));
+  var k = 1;
+  for(var i = 2; i * i <= s; i++){
+    if(s % (i * i) === 0) k = i;
+  }
+  var inner = s / (k * k);
+  return (k === 1 ? '' : k) + '\u221a' + inner;
+}
+
+/* ===================== 그리기 ===================== */
+function setL(el, x1, y1, x2, y2){
+  el.setAttribute('x1', x1); el.setAttribute('y1', y1);
+  el.setAttribute('x2', x2); el.setAttribute('y2', y2);
+}
+function setC(el, x, y){
+  el.setAttribute('cx', x); el.setAttribute('cy', -y);
+}
+function setT(el, x, y, txt){
+  el.setAttribute('x', x); el.setAttribute('y', -y);
+  if(txt !== undefined) el.textContent = txt;
+}
+function diamond(x, y, tangent){
+  var g = document.createElementNS(SVGNS, 'rect');
+  var s = 0.22;
+  g.setAttribute('x', x - s); g.setAttribute('y', -y - s);
+  g.setAttribute('width', s * 2); g.setAttribute('height', s * 2);
+  g.setAttribute('transform', 'rotate(45 ' + x + ' ' + (-y) + ')');
+  g.setAttribute('fill', tangent ? '#fbbf24' : '#4ade80');
+  g.setAttribute('stroke', '#0a1322');
+  g.setAttribute('stroke-width', '0.06');
+  els.intG.appendChild(g);
+}
+function axisPoints(centerPerp, centerAlong, r){
+  /* 축까지 수직거리 = |centerPerp|; 교점의 축방향 좌표 = centerAlong ± √(r²−perp²) */
+  var s = r * r - centerPerp * centerPerp;
+  if(s < 0) return {kind:'none', pts:[]};
+  if(s === 0) return {kind:'tangent', pts:[centerAlong]};
+  var q = Math.sqrt(s);
+  return {kind:'meet', pts:[centerAlong - q, centerAlong + q], s:s};
+}
+
+function renderPlane(){
+  setC(els.circleEl, A, B);
+  els.circleEl.setAttribute('r', R);
+  setC(els.centerDot, A, B);
+  setC(els.centerHit, A, B);
+  setT(els.centerLbl, A, B + 0.65, '(' + A + ', ' + B + ')');
+  setC(els.radHandle, A + R, B);
+  setC(els.radHit, A + R, B);
+  setL(els.radLine, A, -B, A + R, -B);
+  setT(els.radLbl, A + R / 2, B + 0.42, 'r = ' + R);
+  setL(els.guideA, A, -B, A, 0);
+  setL(els.guideB, A, -B, 0, -B);
+  setC(els.testP, PX, PY);
+  setC(els.testHit, PX, PY);
+  setT(els.testLbl, PX, PY + 0.62, 'P(' + PX + ', ' + PY + ')');
+  setL(els.distLine, A, -B, PX, -PY);
+  while(els.intG.firstChild) els.intG.removeChild(els.intG.firstChild);
+  var xr = axisPoints(B, A, R);
+  xr.pts.forEach(function(x){ diamond(x, 0, xr.kind === 'tangent'); });
+  var yr = axisPoints(A, B, R);
+  yr.pts.forEach(function(y){ diamond(0, y, yr.kind === 'tangent'); });
+  return {xr:xr, yr:yr};
+}
+
+/* ===================== 방정식·판정 ===================== */
+function renderEq(){
+  while(els.eqStd.firstChild) els.eqStd.removeChild(els.eqStd.firstChild);
+  function span(cls, txt){
+    var s = document.createElement('span');
+    s.className = cls;
+    s.textContent = txt;
+    els.eqStd.appendChild(s);
+  }
+  span('tx', sqTerm('x', A));
+  span('', ' + ');
+  span('ty', sqTerm('y', B));
+  span('', ' = ');
+  span('tr', String(R * R));
+  var D = -2 * A, E = -2 * B, F = A * A + B * B - R * R;
+  els.eqGen.textContent = 'x\u00b2 + y\u00b2' + linTerm(D, 'x') + linTerm(E, 'y') + constTerm(F) + ' = 0';
+  while(els.eqDer.firstChild) els.eqDer.removeChild(els.eqDer.firstChild);
+  var b1 = document.createElement('b');
+  b1.textContent = '유도 — ';
+  els.eqDer.appendChild(b1);
+  els.eqDer.appendChild(document.createTextNode('원 위의 점 (x, y)와 중심 (' + A + ', ' + B + ')의 거리가 항상 ' + R + ': '));
+  var cd = document.createElement('code');
+  cd.textContent = '\u221a(' + sqTerm('x', A) + ' + ' + sqTerm('y', B) + ') = ' + R;
+  els.eqDer.appendChild(cd);
+  els.eqDer.appendChild(document.createTextNode(' 의 양변을 제곱하면 표준형이 됩니다.'));
+  while(els.infoChips.firstChild) els.infoChips.removeChild(els.infoChips.firstChild);
+  function chip(cls, txt){
+    var d = document.createElement('div');
+    d.className = 'vchip ' + cls;
+    d.textContent = txt;
+    els.infoChips.appendChild(d);
+  }
+  chip('c1', '중심 (' + A + ', ' + B + ')');
+  chip('c2', 'r = ' + R + ' \u2192 r\u00b2 = ' + (R * R));
+  if(F === 0) chip('org', 'F = 0 \u2192 이 원은 원점 (0, 0)을 지납니다!');
+  return F;
+}
+
+function relChip(cls, title, sub){
+  var d = document.createElement('div');
+  d.className = 'rel ' + cls;
+  var b = document.createElement('b');
+  b.textContent = title;
+  d.appendChild(b);
+  if(sub){
+    d.appendChild(document.createElement('br'));
+    var s = document.createElement('span');
+    s.className = 'sub2';
+    s.textContent = sub;
+    d.appendChild(s);
+  }
+  els.relBox.appendChild(d);
+}
+function axisRelText(axisName, perp, res, isXAxis){
+  var pv = Math.abs(perp);
+  function pt(v){
+    var vv = isInt(v) ? String(Math.round(v)) : fmtNum(v);
+    return isXAxis ? '(' + vv + ', 0)' : '(0, ' + vv + ')';
+  }
+  if(res.kind === 'meet'){
+    var q = sqrtStr(res.s);
+    var exact = isInt(Math.sqrt(res.s)) ? res.pts.map(pt).join(', ')
+      : (isXAxis ? '(' + (isXAxis ? A : B) + '\u00b1' + q + ', 0)' : '(0, ' + B + '\u00b1' + q + ')');
+    relChip('meet', axisName + ': 두 점에서 만난다', '|' + (isXAxis ? 'b' : 'a') + '| = ' + pv + ' \u003c r = ' + R + ' \u2192 교점 ' + exact);
+  } else if(res.kind === 'tangent'){
+    relChip('tang', axisName + ': 접한다 (한 점)', '|' + (isXAxis ? 'b' : 'a') + '| = ' + pv + ' = r \u2192 접점 ' + pt(res.pts[0]));
+  } else {
+    relChip('none', axisName + ': 만나지 않는다', '|' + (isXAxis ? 'b' : 'a') + '| = ' + pv + ' \u003e r = ' + R);
+  }
+}
+function renderRel(geo){
+  while(els.relBox.firstChild) els.relBox.removeChild(els.relBox.firstChild);
+  axisRelText('x축', B, geo.xr, true);
+  axisRelText('y축', A, geo.yr, false);
+  var d2 = (PX - A) * (PX - A) + (PY - B) * (PY - B);
+  var lhs = '(' + PX + (A > 0 ? ' - ' + A : A < 0 ? ' + ' + (-A) : '') + ')\u00b2 + (' + PY + (B > 0 ? ' - ' + B : B < 0 ? ' + ' + (-B) : '') + ')\u00b2';
+  var sum = (PX - A) * (PX - A) + ' + ' + (PY - B) * (PY - B);
+  var r2 = R * R;
+  var cls, title;
+  if(d2 === r2){ cls = 'pt-on'; title = '점 P(' + PX + ', ' + PY + '): 원 위에 있다!'; }
+  else if(d2 < r2){ cls = 'pt-in'; title = '점 P(' + PX + ', ' + PY + '): 원 안에 있다'; }
+  else { cls = 'pt-out'; title = '점 P(' + PX + ', ' + PY + '): 원 밖에 있다'; }
+  var cmp = d2 === r2 ? '=' : (d2 < r2 ? '\u003c' : '\u003e');
+  relChip(cls, title, '대입: ' + lhs + ' = ' + sum + ' = ' + d2 + ' ' + cmp + ' r\u00b2 = ' + r2 + ' (거리 = ' + sqrtStr(d2) + (isInt(Math.sqrt(d2)) ? '' : ' \u2248 ' + fmtNum(Math.sqrt(d2))) + ')');
+  els.testP.setAttribute('fill', cls === 'pt-on' ? '#4ade80' : cls === 'pt-in' ? '#fbbf24' : '#60a5fa');
+  els.testLbl.setAttribute('fill', cls === 'pt-on' ? '#4ade80' : cls === 'pt-in' ? '#fbbf24' : '#60a5fa');
+}
+
+function renderAll(){
+  var geo = renderPlane();
+  renderEq();
+  renderRel(geo);
+  els.aVal.textContent = A;
+  els.bVal.textContent = B;
+  els.rVal.textContent = R;
+  window.state = {a:A, b:B, r:R, px:PX, py:PY};
+}
+function clampAll(){
+  A = Math.max(A_MIN, Math.min(A_MAX, A));
+  B = Math.max(A_MIN, Math.min(A_MAX, B));
+  R = Math.max(R_MIN, Math.min(R_MAX, R));
+  PX = Math.max(-P_LIM, Math.min(P_LIM, PX));
+  PY = Math.max(-P_LIM, Math.min(P_LIM, PY));
+}
+
+/* ===================== 입력 ===================== */
+var EXAMPLES = [
+  {name:'\u2460 원점 중심 x\u00b2+y\u00b2=9', a:0, b:0, r:3},
+  {name:'\u2461 x축에 접하는 원', a:2, b:3, r:3},
+  {name:'\u2462 y축에 접하는 원', a:4, b:-2, r:4},
+  {name:'\u2463 원점을 지나는 원 (3-4-5)', a:3, b:4, r:5},
+  {name:'\u2464 기본으로', a:2, b:-1, r:3}
+];
+EXAMPLES.forEach(function(ex){
+  var btn = document.createElement('button');
+  btn.textContent = ex.name;
+  btn.addEventListener('click', function(){
+    A = ex.a; B = ex.b; R = ex.r;
+    clampAll();
+    renderAll();
+  });
+  els.exChips.appendChild(btn);
+});
+[['aMinus', function(){ A--; }], ['aPlus', function(){ A++; }],
+ ['bMinus', function(){ B--; }], ['bPlus', function(){ B++; }],
+ ['rMinus', function(){ R--; }], ['rPlus', function(){ R++; }]
+].forEach(function(pair){
+  els[pair[0]].addEventListener('click', function(){ pair[1](); clampAll(); renderAll(); });
+});
+
+/* 드래그 (정수 스냅) */
+var dragMode = null;
+function svgPt(ev){
+  var r = els.planeSvg.getBoundingClientRect();
+  return {
+    x: (ev.clientX - r.left) / r.width * 21.6 - 10.8,
+    y: -((ev.clientY - r.top) / r.height * 21.6 - 10.8)
+  };
+}
+function startDrag(mode){
+  return function(ev){
+    ev.preventDefault();
+    dragMode = mode;
+    els.planeSvg.setPointerCapture(ev.pointerId);
+    ev.stopPropagation();
+  };
+}
+els.centerHit.addEventListener('pointerdown', startDrag('center'));
+els.centerDot.addEventListener('pointerdown', startDrag('center'));
+els.radHit.addEventListener('pointerdown', startDrag('rad'));
+els.radHandle.addEventListener('pointerdown', startDrag('rad'));
+els.testHit.addEventListener('pointerdown', startDrag('test'));
+els.testP.addEventListener('pointerdown', startDrag('test'));
+els.planeSvg.addEventListener('pointermove', function(ev){
+  if(!dragMode) return;
+  var p = svgPt(ev);
+  if(dragMode === 'center'){
+    A = Math.round(p.x); B = Math.round(p.y);
+  } else if(dragMode === 'rad'){
+    R = Math.round(Math.hypot(p.x - A, p.y - B));
+  } else {
+    PX = Math.round(p.x); PY = Math.round(p.y);
+  }
+  clampAll();
+  renderAll();
+});
+els.planeSvg.addEventListener('pointerup', function(){ dragMode = null; });
+els.planeSvg.addEventListener('pointercancel', function(){ dragMode = null; });
+
+/* ===================== 초기화 ===================== */
+(function init(){
+  for(var g = -10; g <= 10; g++){
+    if(g === 0) continue;
+    var lv = document.createElementNS(SVGNS, 'line');
+    lv.setAttribute('x1', g); lv.setAttribute('y1', -10.8);
+    lv.setAttribute('x2', g); lv.setAttribute('y2', 10.8);
+    if(g % 5 === 0) lv.setAttribute('stroke', '#1b3050');
+    els.gridG.appendChild(lv);
+    var lh = document.createElementNS(SVGNS, 'line');
+    lh.setAttribute('x1', -10.8); lh.setAttribute('y1', g);
+    lh.setAttribute('x2', 10.8); lh.setAttribute('y2', g);
+    if(g % 5 === 0) lh.setAttribute('stroke', '#1b3050');
+    els.gridG.appendChild(lh);
+  }
+  for(var t = -10; t <= 10; t += 2){
+    if(t === 0) continue;
+    var tx = document.createElementNS(SVGNS, 'text');
+    tx.setAttribute('x', t - 0.28);
+    tx.setAttribute('y', 0.78);
+    tx.textContent = t;
+    els.axisLblG.appendChild(tx);
+    var ty = document.createElementNS(SVGNS, 'text');
+    ty.setAttribute('x', 0.22);
+    ty.setAttribute('y', -t + 0.2);
+    ty.textContent = t;
+    els.axisLblG.appendChild(ty);
+  }
+  renderAll();
+})();
+</script>
+</body>
+</html>

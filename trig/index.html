@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>단위원 삼각함수 시각화 실습실 — sin · cos · tan · sec</title>
+<style>
+:root{
+  --bg:#0b1526; --panel:#12203a; --panel2:#0e1a30; --line:#1e3a5f;
+  --teal:#2dd4bf; --teal-dim:#14b8a6; --amber:#fbbf24; --red:#f87171;
+  --green:#4ade80; --violet:#a78bfa; --pink:#f472b6; --blue:#60a5fa;
+  --text:#e2e8f0; --muted:#8aa3c4; --code-bg:#0a1322;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;min-height:100vh;}
+.wrap{max-width:1320px;margin:0 auto;padding:20px 18px 48px;}
+header{padding:22px 4px 18px;border-bottom:2px solid var(--line);margin-bottom:20px;display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;}
+header h1{font-size:1.5rem;letter-spacing:-0.5px;}
+header h1 span{color:var(--teal);}
+.badge{background:rgba(45,212,191,0.12);border:1px solid var(--teal-dim);color:var(--teal);font-size:0.78rem;padding:3px 10px;border-radius:999px;}
+.sub{color:var(--muted);font-size:0.88rem;width:100%;line-height:1.6;}
+.sub b{color:var(--text);}
+.grid{display:grid;grid-template-columns:minmax(440px,52%) 1fr;gap:18px;align-items:start;}
+@media(max-width:1000px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+.card h2{font-size:0.92rem;padding:11px 16px;border-bottom:1px solid var(--line);color:var(--teal);display:flex;align-items:center;gap:8px;font-weight:600;}
+.card h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);display:inline-block;}
+.card .body{padding:14px 16px;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel2);}
+.chips button{background:transparent;border:1px solid var(--line);color:var(--muted);font-size:0.78rem;padding:5px 10px;border-radius:999px;cursor:pointer;transition:all .15s;font-family:Consolas,'D2Coding',monospace;}
+.chips button:hover{border-color:var(--teal-dim);color:var(--teal);}
+.chips button.active{background:rgba(45,212,191,0.14);border-color:var(--teal);color:var(--teal);font-weight:700;}
+#circSvg{display:block;width:100%;max-width:540px;margin:0 auto;background:var(--code-bg);cursor:crosshair;touch-action:none;}
+.controls{display:flex;flex-wrap:wrap;gap:10px;padding:12px 16px;border-top:1px solid var(--line);background:var(--panel2);align-items:center;}
+.controls button{background:#173052;border:1px solid var(--line);color:var(--text);font-size:0.83rem;padding:7px 13px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .15s;}
+.controls button:hover{border-color:var(--teal-dim);color:var(--teal);}
+.controls select{background:#173052;border:1px solid var(--line);color:var(--text);font-size:0.82rem;padding:6px 8px;border-radius:8px;font-family:inherit;}
+#angSlider{flex:1;min-width:140px;accent-color:var(--teal);}
+#degRead{font:700 14px Consolas,'D2Coding',monospace;color:var(--amber);min-width:64px;text-align:right;}
+.tglrow{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;border-top:1px solid var(--line);align-items:center;font-size:0.82rem;color:var(--muted);}
+.tgl{background:transparent;border:1.5px solid var(--line);color:var(--muted);font:700 12.5px Consolas,'D2Coding',monospace;padding:6px 13px;border-radius:999px;cursor:pointer;transition:all .15s;}
+.tgl:hover{border-color:var(--muted);}
+.tgl.on-tan{border-color:var(--violet);color:var(--violet);background:rgba(167,139,250,0.12);}
+.tgl.on-sec{border-color:var(--green);color:var(--green);background:rgba(74,222,128,0.12);}
+.tgl.on-cot{border-color:var(--pink);color:var(--pink);background:rgba(244,114,182,0.12);}
+.tgl.on-csc{border-color:var(--blue);color:var(--blue);background:rgba(96,165,250,0.12);}
+.vchips{display:flex;flex-wrap:wrap;gap:8px;}
+.vchip{background:var(--code-bg);border:1.5px solid var(--line);border-radius:8px;padding:8px 13px;font:600 13.5px Consolas,'D2Coding',monospace;line-height:1.4;}
+.vchip.ang{color:var(--text);}
+.vchip.quad{color:var(--muted);font-family:'Segoe UI','Malgun Gothic',sans-serif;font-size:12.5px;}
+.vchip.sin{color:var(--amber);border-color:rgba(251,191,36,0.5);}
+.vchip.cos{color:var(--teal);border-color:rgba(45,212,191,0.5);}
+.vchip.tan{color:var(--violet);border-color:rgba(167,139,250,0.5);}
+.vchip.sec{color:var(--green);border-color:rgba(74,222,128,0.5);}
+.vchip.cot{color:var(--pink);border-color:rgba(244,114,182,0.5);}
+.vchip.csc{color:var(--blue);border-color:rgba(96,165,250,0.5);}
+#waveSvg{display:block;width:100%;height:160px;background:var(--code-bg);border-radius:8px;}
+.wavelabels{display:flex;justify-content:space-between;font:11px Consolas,monospace;color:var(--muted);padding:4px 2px 0;}
+.wavelegend{display:flex;gap:14px;margin-top:8px;font-size:0.76rem;color:var(--muted);flex-wrap:wrap;}
+.wavelegend span{display:inline-flex;align-items:center;gap:5px;}
+.wavelegend .sw{width:16px;height:3px;border-radius:2px;display:inline-block;}
+table.stdtbl{border-collapse:collapse;width:100%;font:13px Consolas,'D2Coding',monospace;}
+.stdtbl th,.stdtbl td{border:1px solid var(--line);padding:7px 6px;text-align:center;}
+.stdtbl th{color:var(--teal);background:var(--panel2);font-weight:700;}
+.stdtbl td.fn{color:var(--muted);}
+.stdtbl .cur{background:rgba(45,212,191,0.13);color:#a7f3ea;}
+.tips{font-size:0.83rem;color:var(--muted);line-height:1.75;}
+.tips b{color:var(--teal);}
+.tips code{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font:12px Consolas,monospace;color:var(--amber);}
+.rightcol{display:flex;flex-direction:column;gap:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1><span>단위원</span> 삼각함수 시각화 실습실</h1>
+  <span class="badge">sin · cos + tan · sec 토글</span>
+  <p class="sub">데카르트 좌표계의 <b>반지름 1인 원(단위원)</b> 위를 점 P가 돕니다. P의 좌표가 곧 <b>(cos θ, sin θ)</b> — 표준각 버튼·슬라이더·드래그로 각을 바꾸며, tan(접선 위 길이)과 sec(원점→접선 교점)의 기하학적 의미를 눈으로 확인하세요.</p>
+</header>
+
+<div class="grid">
+  <!-- LEFT: unit circle -->
+  <section class="card">
+    <h2><span class="dot"></span>단위원 — 점 P를 드래그해 보세요</h2>
+    <div class="chips" id="stdChips"></div>
+    <div class="body" style="padding:10px;">
+      <svg id="circSvg" viewBox="-2.3 -2.3 4.6 4.6" aria-label="unit circle">
+        <g id="gridG" stroke="#13243f" stroke-width="0.012"></g>
+        <line x1="-2.3" y1="0" x2="2.3" y2="0" stroke="#3d5878" stroke-width="0.022"/>
+        <line x1="0" y1="-2.3" x2="0" y2="2.3" stroke="#3d5878" stroke-width="0.022"/>
+        <text x="2.14" y="0.24" font-size="0.15" fill="#8aa3c4">x</text>
+        <text x="0.08" y="-2.12" font-size="0.15" fill="#8aa3c4">y</text>
+        <text x="0.98" y="0.26" font-size="0.14" fill="#5f7ba3">1</text>
+        <text x="-1.14" y="0.26" font-size="0.14" fill="#5f7ba3">-1</text>
+        <text x="0.07" y="-0.96" font-size="0.14" fill="#5f7ba3">1</text>
+        <text x="0.07" y="1.12" font-size="0.14" fill="#5f7ba3">-1</text>
+        <circle cx="0" cy="0" r="1" fill="none" stroke="#4e6a8f" stroke-width="0.025"/>
+        <line id="tanBase" x1="1" y1="-2.3" x2="1" y2="2.3" stroke="#a78bfa" stroke-width="0.014" stroke-dasharray="0.07 0.05" opacity="0.45" display="none"/>
+        <line id="cotBase" x1="-2.3" y1="-1" x2="2.3" y2="-1" stroke="#f472b6" stroke-width="0.014" stroke-dasharray="0.07 0.05" opacity="0.45" display="none"/>
+        <polygon id="triFill" points="0,0 1,0 1,0" fill="rgba(45,212,191,0.07)"/>
+        <path id="angArc" d="" fill="none" stroke="#8aa3c4" stroke-width="0.022"/>
+        <text id="angLbl" font-size="0.15" fill="#cbd8ea" text-anchor="middle"></text>
+        <line id="helpY" stroke="#fbbf24" stroke-width="0.012" stroke-dasharray="0.05 0.05" opacity="0.4"/>
+        <line id="secSeg" stroke="#4ade80" stroke-width="0.05" opacity="0.85" display="none"/>
+        <line id="cscSeg" stroke="#60a5fa" stroke-width="0.05" opacity="0.85" display="none"/>
+        <line id="tanSeg" stroke="#a78bfa" stroke-width="0.05" display="none"/>
+        <line id="cotSeg" stroke="#f472b6" stroke-width="0.05" display="none"/>
+        <line id="cosSeg" stroke="#2dd4bf" stroke-width="0.05"/>
+        <line id="sinSeg" stroke="#fbbf24" stroke-width="0.05"/>
+        <line id="radiusL" stroke="#e2e8f0" stroke-width="0.028"/>
+        <circle id="originDot" cx="0" cy="0" r="0.035" fill="#8aa3c4"/>
+        <circle id="ptDot" r="0.06" fill="#fbbf24" stroke="#0a1322" stroke-width="0.02" style="cursor:grab;"/>
+        <text id="ptLbl" font-size="0.14" fill="#e2e8f0" text-anchor="middle"></text>
+        <text id="sinLbl" font-size="0.14" fill="#fbbf24" font-weight="bold">sin</text>
+        <text id="cosLbl" font-size="0.14" fill="#2dd4bf" font-weight="bold" text-anchor="middle">cos</text>
+        <text id="tanLbl" font-size="0.14" fill="#a78bfa" font-weight="bold" display="none">tan</text>
+        <text id="secLbl" font-size="0.14" fill="#4ade80" font-weight="bold" display="none">sec</text>
+        <text id="cotLbl" font-size="0.14" fill="#f472b6" font-weight="bold" display="none">cot</text>
+        <text id="cscLbl" font-size="0.14" fill="#60a5fa" font-weight="bold" display="none">csc</text>
+        <text id="infLbl" font-size="0.15" fill="#a78bfa" font-weight="bold" display="none" text-anchor="middle">&#177;&#8734; 발산!</text>
+      </svg>
+    </div>
+    <div class="controls">
+      <button id="playBtn">&#9654; 자동 회전</button>
+      <select id="speedSel" aria-label="회전 속도">
+        <option value="20">느리게</option>
+        <option value="45" selected>보통</option>
+        <option value="90">빠르게</option>
+      </select>
+      <input type="range" id="angSlider" min="0" max="360" step="0.5" value="30" aria-label="각도 슬라이더">
+      <span id="degRead">30.0&#176;</span>
+    </div>
+    <div class="tglrow">
+      <span>추가 표시:</span>
+      <button class="tgl" id="tglTan" data-fn="tan">tan</button>
+      <button class="tgl" id="tglSec" data-fn="sec">sec</button>
+      <button class="tgl" id="tglCot" data-fn="cot">cot</button>
+      <button class="tgl" id="tglCsc" data-fn="csc">csc</button>
+    </div>
+  </section>
+
+  <!-- RIGHT -->
+  <div class="rightcol">
+    <section class="card">
+      <h2><span class="dot"></span>현재 값</h2>
+      <div class="body"><div class="vchips" id="valsBox"></div></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>파형 그래프 — 원을 "펼치면" 파도가 됩니다</h2>
+      <div class="body">
+        <svg id="waveSvg" viewBox="0 -1.35 360 2.7" preserveAspectRatio="none" aria-label="sine cosine waves">
+          <line x1="0" y1="0" x2="360" y2="0" stroke="#3d5878" stroke-width="0.02"/>
+          <line x1="90" y1="-1.35" x2="90" y2="1.35" stroke="#1e3a5f" stroke-width="0.8"/>
+          <line x1="180" y1="-1.35" x2="180" y2="1.35" stroke="#1e3a5f" stroke-width="0.8"/>
+          <line x1="270" y1="-1.35" x2="270" y2="1.35" stroke="#1e3a5f" stroke-width="0.8"/>
+          <line x1="0" y1="-1" x2="360" y2="-1" stroke="#1e3a5f" stroke-width="0.6" stroke-dasharray="4 4"/>
+          <line x1="0" y1="1" x2="360" y2="1" stroke="#1e3a5f" stroke-width="0.6" stroke-dasharray="4 4"/>
+          <g id="tanWaveG" display="none"></g>
+          <g id="secWaveG" display="none"></g>
+          <polyline id="cosWave" fill="none" stroke="#2dd4bf" stroke-width="1.6"/>
+          <polyline id="sinWave" fill="none" stroke="#fbbf24" stroke-width="1.6"/>
+          <line id="waveMark" y1="-1.35" y2="1.35" stroke="#e2e8f0" stroke-width="1" opacity="0.6"/>
+          <ellipse id="waveSinDot" rx="4" ry="0.075" fill="#fbbf24"/>
+          <ellipse id="waveCosDot" rx="4" ry="0.075" fill="#2dd4bf"/>
+        </svg>
+        <div class="wavelabels"><span>0&#176;</span><span>90&#176;</span><span>180&#176;</span><span>270&#176;</span><span>360&#176;</span></div>
+        <div class="wavelegend">
+          <span><span class="sw" style="background:var(--amber);"></span>sin &#952;</span>
+          <span><span class="sw" style="background:var(--teal);"></span>cos &#952;</span>
+          <span><span class="sw" style="background:var(--violet);"></span>tan &#952; (토글)</span>
+          <span><span class="sw" style="background:var(--green);"></span>sec &#952; (토글)</span>
+        </div>
+      </div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>표준각 암기표 (제1사분면)</h2>
+      <div class="body" id="tblBox"></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>학습 포인트</h2>
+      <div class="body tips">
+        <b>1. 단위원 정의</b> — 반지름 1인 원 위의 점 P의 좌표가 그대로 <code>(cos &#952;, sin &#952;)</code>입니다. 세로 주황 선분이 sin, 가로 청록 선분이 cos.<br>
+        <b>2. tan의 정체</b> — 반지름을 <code>x = 1</code> 접선까지 늘렸을 때 접선 위에 생기는 길이가 <code>tan &#952; = sin &#952; / cos &#952;</code>. 이름 그대로 탄젠트(tangent) = 접선! cos &#952; = 0인 90&#176;, 270&#176;에서는 만나지 못해 <b>정의되지 않습니다(발산)</b>.<br>
+        <b>3. sec의 정체</b> — 원점에서 그 접선 교점까지의 빗변 길이가 <code>sec &#952; = 1 / cos &#952;</code> (secant = 자르는 선). cot·csc는 <code>y = 1</code> 접선에서 같은 방식으로 나옵니다.<br>
+        <b>4. 부호는 사분면</b> — 1사분면 모두+, 2사분면 sin만+, 3사분면 tan만+, 4사분면 cos만+ ("올,싸,탄,코").<br>
+        <b>5. 라디안</b> — 180&#176; = &#960; rad. 표준각을 &#960;/6, &#960;/4, &#960;/3의 배수로 읽는 습관을 들이세요.
+      </div>
+    </section>
+  </div>
+</div>
+</div>
+<script>
+/* ===================== 상태·수학 유틸 ===================== */
+var els = {};
+['stdChips','circSvg','gridG','tanBase','cotBase','triFill','angArc','angLbl','helpY',
+ 'secSeg','cscSeg','tanSeg','cotSeg','cosSeg','sinSeg','radiusL','ptDot','ptLbl',
+ 'sinLbl','cosLbl','tanLbl','secLbl','cotLbl','cscLbl','infLbl',
+ 'playBtn','speedSel','angSlider','degRead','tglTan','tglSec','tglCot','tglCsc',
+ 'valsBox','waveSvg','tanWaveG','secWaveG','sinWave','cosWave','waveMark','waveSinDot','waveCosDot','tblBox'
+].forEach(function(id){ els[id] = document.getElementById(id); });
+
+var SVGNS = 'http://www.w3.org/2000/svg';
+var STD = [0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330,360];
+var deg = 30, playing = false, show = {tan:false, sec:false, cot:false, csc:false};
+var tween = null, rafId = null, lastTs = null;
+var CLIP = 2.2;
+
+function dec4(v){
+  if(!isFinite(v)) return '\u221e';
+  return (v >= 0 ? '' : '-') + Math.abs(v).toFixed(4);
+}
+function gcd(a, b){ return b ? gcd(b, a % b) : a; }
+function radFrac(d){
+  d = Math.round(d);
+  var dd = ((d % 360) + 360) % 360;
+  if(d === 360) dd = 360;
+  if(dd === 0) return '0';
+  var g = gcd(dd, 180);
+  var num = dd / g, den = 180 / g;
+  var top = (num === 1) ? '\u03c0' : num + '\u03c0';
+  return den === 1 ? top : top + '/' + den;
+}
+var AXIS_EXACT = {
+  0:{s:'0', c:'1', t:'0', sec:'1', csc:null, cot:null},
+  90:{s:'1', c:'0', t:null, sec:null, csc:'1', cot:'0'},
+  180:{s:'0', c:'-1', t:'0', sec:'-1', csc:null, cot:null},
+  270:{s:'-1', c:'0', t:null, sec:null, csc:'-1', cot:'0'}
+};
+var REF_EXACT = {
+  30:{s:'1/2', c:'\u221a3/2', t:'\u221a3/3', sec:'2\u221a3/3', csc:'2', cot:'\u221a3'},
+  45:{s:'\u221a2/2', c:'\u221a2/2', t:'1', sec:'\u221a2', csc:'\u221a2', cot:'1'},
+  60:{s:'\u221a3/2', c:'1/2', t:'\u221a3', sec:'2', csc:'2\u221a3/3', cot:'\u221a3/3'}
+};
+function exactFor(d){
+  var dd = ((Math.round(d) % 360) + 360) % 360;
+  if(Math.abs(d - Math.round(d)) > 1e-9) return null;
+  if(AXIS_EXACT[dd]) return AXIS_EXACT[dd];
+  var q = Math.floor(dd / 90);
+  var ref = (q === 0) ? dd : (q === 1) ? 180 - dd : (q === 2) ? dd - 180 : 360 - dd;
+  var e = REF_EXACT[ref];
+  if(!e) return null;
+  var sPos = (q === 0 || q === 1), cPos = (q === 0 || q === 3), tPos = (q === 0 || q === 2);
+  function sg(pos, str){ return (pos ? '' : '-') + str; }
+  return {s:sg(sPos, e.s), c:sg(cPos, e.c), t:sg(tPos, e.t),
+          sec:sg(cPos, e.sec), csc:sg(sPos, e.csc), cot:sg(tPos, e.cot)};
+}
+function quadText(d){
+  var dd = ((d % 360) + 360) % 360;
+  if(dd % 90 === 0 && Math.abs(d - Math.round(d)) < 1e-9) return '축 위의 각 (경계)';
+  var q = Math.floor(dd / 90);
+  return ['제1사분면 — 모두 +', '제2사분면 — sin만 +', '제3사분면 — tan만 +', '제4사분면 — cos만 +'][q];
+}
+
+/* ===================== 단위원 렌더링 ===================== */
+function setL(el, x1, y1, x2, y2){
+  el.setAttribute('x1', x1); el.setAttribute('y1', y1);
+  el.setAttribute('x2', x2); el.setAttribute('y2', y2);
+}
+function setT(el, x, y, txt){
+  el.setAttribute('x', x); el.setAttribute('y', y);
+  if(txt !== undefined) el.textContent = txt;
+}
+function showEl(el, on){ el.setAttribute('display', on ? 'inline' : 'none'); }
+
+function renderCircle(){
+  var rad = deg * Math.PI / 180;
+  var s = Math.sin(rad), c = Math.cos(rad);
+  var px = c, py = -s;
+  setL(els.radiusL, 0, 0, px, py);
+  els.ptDot.setAttribute('cx', px);
+  els.ptDot.setAttribute('cy', py);
+  setL(els.sinSeg, c, 0, c, py);
+  setL(els.cosSeg, 0, 0, c, 0);
+  setL(els.helpY, px, py, 0, py);
+  els.triFill.setAttribute('points', '0,0 ' + c + ',0 ' + c + ',' + py);
+  /* 각 호 */
+  var pts = ['M 0.34 0'];
+  var step = Math.max(2, deg / 40);
+  for(var t = step; t <= deg + 0.001; t += step){
+    var tr = t * Math.PI / 180;
+    pts.push('L ' + (0.34 * Math.cos(tr)).toFixed(4) + ' ' + (-0.34 * Math.sin(tr)).toFixed(4));
+  }
+  els.angArc.setAttribute('d', deg < 1 ? '' : pts.join(' '));
+  var mid = deg / 2 * Math.PI / 180;
+  showEl(els.angLbl, deg >= 14);
+  setT(els.angLbl, 0.56 * Math.cos(mid), -0.56 * Math.sin(mid) + 0.05, Math.round(deg * 10) / 10 + '\u00b0');
+  /* P 라벨 */
+  setT(els.ptLbl, 1.22 * c, -1.22 * s + 0.05, 'P(' + c.toFixed(2) + ', ' + s.toFixed(2) + ')');
+  /* sin·cos 라벨 */
+  setT(els.sinLbl, c + (c >= 0 ? 0.09 : -0.09), py / 2 + 0.05);
+  els.sinLbl.setAttribute('text-anchor', c >= 0 ? 'start' : 'end');
+  setT(els.cosLbl, c / 2, s >= 0 ? 0.25 : -0.14);
+  /* tan·sec (x=1 접선) */
+  var tanv = s / c;
+  var undef = Math.abs(c) < 1e-9;
+  var clipped = !undef && Math.abs(tanv) > CLIP;
+  var tOn = show.tan, sOn = show.sec;
+  showEl(els.tanBase, tOn || sOn);
+  showEl(els.infLbl, (tOn || sOn) && (undef || clipped));
+  if(undef || clipped){
+    showEl(els.tanSeg, false); showEl(els.secSeg, false);
+    showEl(els.tanLbl, false); showEl(els.secLbl, false);
+    setT(els.infLbl, 1.0, (s >= 0 ? -2.02 : 2.14));
+  } else {
+    var ty = -tanv;
+    showEl(els.tanSeg, tOn);
+    showEl(els.tanLbl, tOn);
+    if(tOn){
+      setL(els.tanSeg, 1, 0, 1, ty);
+      setT(els.tanLbl, 1.08, ty / 2 + 0.05);
+    }
+    showEl(els.secSeg, sOn);
+    showEl(els.secLbl, sOn);
+    if(sOn){
+      setL(els.secSeg, 0, 0, 1, ty);
+      setT(els.secLbl, 1.1, ty + (tanv >= 0 ? -0.12 : 0.22));
+    }
+  }
+  /* cot·csc (y=1 접선) */
+  var cotv = c / s;
+  var undef2 = Math.abs(s) < 1e-9;
+  var clipped2 = !undef2 && Math.abs(cotv) > CLIP;
+  var cOn = show.cot, kOn = show.csc;
+  showEl(els.cotBase, cOn || kOn);
+  if(undef2 || clipped2){
+    showEl(els.cotSeg, false); showEl(els.cscSeg, false);
+    showEl(els.cotLbl, false); showEl(els.cscLbl, false);
+  } else {
+    showEl(els.cotSeg, cOn);
+    showEl(els.cotLbl, cOn);
+    if(cOn){
+      setL(els.cotSeg, 0, -1, cotv, -1);
+      setT(els.cotLbl, cotv / 2, -1.1);
+      els.cotLbl.setAttribute('text-anchor', 'middle');
+    }
+    showEl(els.cscSeg, kOn);
+    showEl(els.cscLbl, kOn);
+    if(kOn){
+      setL(els.cscSeg, 0, 0, cotv, -1);
+      setT(els.cscLbl, cotv + (cotv >= 0 ? 0.08 : -0.08), -0.98);
+      els.cscLbl.setAttribute('text-anchor', cotv >= 0 ? 'start' : 'end');
+    }
+  }
+  return {s:s, c:c, tanv:tanv, cotv:cotv, undefT:undef, undefC:undef2};
+}
+
+/* ===================== 값 패널 ===================== */
+function addChip(cls, txt){
+  var d = document.createElement('div');
+  d.className = 'vchip ' + cls;
+  d.textContent = txt;
+  els.valsBox.appendChild(d);
+  return d;
+}
+function fnText(name, exact, val, undef, undefReason){
+  if(undef) return name + ' \u03b8 = 정의 안 됨 (' + undefReason + ' = 0)';
+  if(Math.abs(val) > 99.99) return name + ' \u03b8 \u2248 ' + (val > 0 ? '+' : '-') + '\u221e (발산 중)';
+  if(exact) return name + ' \u03b8 = ' + exact + ' \u2248 ' + dec4(val);
+  return name + ' \u03b8 \u2248 ' + dec4(val);
+}
+function renderVals(m){
+  while(els.valsBox.firstChild) els.valsBox.removeChild(els.valsBox.firstChild);
+  var ex = exactFor(deg);
+  var degTxt = Math.round(deg * 10) / 10;
+  addChip('ang', '\u03b8 = ' + degTxt + '\u00b0' + (ex ? ' = ' + radFrac(deg) + ' rad' : ' \u2248 ' + (deg * Math.PI / 180).toFixed(3) + ' rad'));
+  addChip('quad', quadText(deg));
+  addChip('sin', fnText('sin', ex ? ex.s : null, m.s, false, ''));
+  addChip('cos', fnText('cos', ex ? ex.c : null, m.c, false, ''));
+  if(show.tan) addChip('tan', fnText('tan', ex ? ex.t : null, m.tanv, m.undefT, 'cos \u03b8'));
+  if(show.sec) addChip('sec', fnText('sec', ex ? ex.sec : null, 1 / m.c, m.undefT, 'cos \u03b8'));
+  if(show.cot) addChip('cot', fnText('cot', ex ? ex.cot : null, m.cotv, m.undefC, 'sin \u03b8'));
+  if(show.csc) addChip('csc', fnText('csc', ex ? ex.csc : null, 1 / m.s, m.undefC, 'sin \u03b8'));
+}
+
+/* ===================== 파형 ===================== */
+function buildWave(poly, fn){
+  var pts = [];
+  for(var d = 0; d <= 360; d += 2){
+    pts.push(d + ',' + (-fn(d * Math.PI / 180)).toFixed(4));
+  }
+  poly.setAttribute('points', pts.join(' '));
+}
+function buildClippedWave(group, fn, color){
+  while(group.firstChild) group.removeChild(group.firstChild);
+  var seg = [];
+  function flush(){
+    if(seg.length > 1){
+      var p = document.createElementNS(SVGNS, 'polyline');
+      p.setAttribute('points', seg.join(' '));
+      p.setAttribute('fill', 'none');
+      p.setAttribute('stroke', color);
+      p.setAttribute('stroke-width', '1.3');
+      p.setAttribute('opacity', '0.85');
+      group.appendChild(p);
+    }
+    seg = [];
+  }
+  for(var d = 0; d <= 360; d += 1){
+    var v = fn(d * Math.PI / 180);
+    if(isFinite(v) && Math.abs(v) <= 1.3) seg.push(d + ',' + (-v).toFixed(4));
+    else flush();
+  }
+  flush();
+}
+function renderWave(m){
+  els.waveMark.setAttribute('x1', deg);
+  els.waveMark.setAttribute('x2', deg);
+  els.waveSinDot.setAttribute('cx', deg);
+  els.waveSinDot.setAttribute('cy', -m.s);
+  els.waveCosDot.setAttribute('cx', deg);
+  els.waveCosDot.setAttribute('cy', -m.c);
+  showEl(els.tanWaveG, show.tan);
+  showEl(els.secWaveG, show.sec);
+}
+
+/* ===================== 표준각 표 ===================== */
+var TBL_ANGLES = [0, 30, 45, 60, 90];
+function buildTable(){
+  while(els.tblBox.firstChild) els.tblBox.removeChild(els.tblBox.firstChild);
+  var tbl = document.createElement('table');
+  tbl.className = 'stdtbl';
+  var hdr = document.createElement('tr');
+  var h0 = document.createElement('th');
+  h0.textContent = '\u03b8';
+  hdr.appendChild(h0);
+  TBL_ANGLES.forEach(function(a){
+    var th = document.createElement('th');
+    th.textContent = a + '\u00b0';
+    th.setAttribute('data-ang', a);
+    hdr.appendChild(th);
+  });
+  tbl.appendChild(hdr);
+  [['sin', 's'], ['cos', 'c'], ['tan', 't']].forEach(function(row){
+    var tr = document.createElement('tr');
+    var td0 = document.createElement('td');
+    td0.className = 'fn';
+    td0.textContent = row[0];
+    tr.appendChild(td0);
+    TBL_ANGLES.forEach(function(a){
+      var td = document.createElement('td');
+      var e = exactFor(a);
+      td.textContent = e[row[1]] === null ? '\u2014' : e[row[1]];
+      td.setAttribute('data-ang', a);
+      tr.appendChild(td);
+    });
+    tbl.appendChild(tr);
+  });
+  els.tblBox.appendChild(tbl);
+}
+function highlightTable(){
+  var dd = ((Math.round(deg) % 360) + 360) % 360;
+  var cells = els.tblBox.querySelectorAll('[data-ang]');
+  for(var i = 0; i < cells.length; i++){
+    var on = (Math.abs(deg - Math.round(deg)) < 1e-9) && parseInt(cells[i].getAttribute('data-ang'), 10) === dd;
+    cells[i].className = (cells[i].tagName === 'TD' ? '' : '') + (on ? (cells[i].className.indexOf('fn') >= 0 ? 'fn cur' : 'cur') : (cells[i].className.indexOf('fn') >= 0 ? 'fn' : ''));
+  }
+}
+
+/* ===================== 통합 렌더 ===================== */
+function renderAll(){
+  var m = renderCircle();
+  renderVals(m);
+  renderWave(m);
+  highlightTable();
+  els.degRead.textContent = (Math.round(deg * 10) / 10) + '\u00b0';
+  els.angSlider.value = deg;
+  var chips = els.stdChips.children;
+  for(var i = 0; i < chips.length; i++){
+    chips[i].className = (Math.abs(STD[i] - deg) < 1e-9) ? 'active' : '';
+  }
+  window.currentDeg = deg;
+}
+function setDeg(d){
+  deg = ((d % 360) + 360) % 360;
+  if(d === 360) deg = 360;
+  renderAll();
+}
+
+/* ===================== 트윈·자동 회전 ===================== */
+function stopTween(){ if(tween){ cancelAnimationFrame(tween); tween = null; } }
+function animateTo(target){
+  stopTween(); stopPlay();
+  var from = deg;
+  var diff = target - from;
+  if(diff > 180) diff -= 360;
+  if(diff < -180) diff += 360;
+  var t0 = null;
+  function frame(ts){
+    if(t0 === null) t0 = ts;
+    var p = Math.min(1, (ts - t0) / 380);
+    var e = 1 - Math.pow(1 - p, 3);
+    var d = from + diff * e;
+    deg = ((d % 360) + 360) % 360;
+    if(p >= 1) deg = ((target % 360) + 360) % 360 === 0 && target === 360 ? 360 : ((target % 360) + 360) % 360;
+    if(target === 360) deg = (p >= 1) ? 360 : deg;
+    renderAll();
+    if(p < 1) tween = requestAnimationFrame(frame);
+    else tween = null;
+  }
+  tween = requestAnimationFrame(frame);
+}
+function stopPlay(){
+  playing = false;
+  if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
+  lastTs = null;
+  els.playBtn.textContent = '\u25b6 자동 회전';
+}
+function startPlay(){
+  stopTween();
+  playing = true;
+  els.playBtn.textContent = '\u23f8 정지';
+  function loop(ts){
+    if(!playing) return;
+    if(lastTs === null) lastTs = ts;
+    var dt = (ts - lastTs) / 1000;
+    lastTs = ts;
+    setDeg((deg + parseFloat(els.speedSel.value) * dt) % 360);
+    rafId = requestAnimationFrame(loop);
+  }
+  rafId = requestAnimationFrame(loop);
+}
+
+/* ===================== 입력 ===================== */
+STD.forEach(function(a){
+  var b = document.createElement('button');
+  b.textContent = a + '\u00b0';
+  b.addEventListener('click', function(){ animateTo(a); });
+  els.stdChips.appendChild(b);
+});
+els.playBtn.addEventListener('click', function(){ playing ? stopPlay() : startPlay(); });
+els.angSlider.addEventListener('input', function(){
+  stopTween(); stopPlay();
+  setDeg(parseFloat(els.angSlider.value));
+});
+[['tglTan','tan'],['tglSec','sec'],['tglCot','cot'],['tglCsc','csc']].forEach(function(pair){
+  var btn = els[pair[0]], fn = pair[1];
+  btn.addEventListener('click', function(){
+    show[fn] = !show[fn];
+    btn.className = 'tgl' + (show[fn] ? ' on-' + fn : '');
+    renderAll();
+  });
+});
+
+/* 드래그 */
+var dragging = false;
+function svgAngle(ev){
+  var r = els.circSvg.getBoundingClientRect();
+  var vx = (ev.clientX - r.left) / r.width * 4.6 - 2.3;
+  var vy = (ev.clientY - r.top) / r.height * 4.6 - 2.3;
+  var a = Math.atan2(-vy, vx) * 180 / Math.PI;
+  if(a < 0) a += 360;
+  return a;
+}
+els.circSvg.addEventListener('pointerdown', function(ev){
+  dragging = true;
+  stopTween(); stopPlay();
+  els.circSvg.setPointerCapture(ev.pointerId);
+  setDeg(Math.round(svgAngle(ev) * 10) / 10);
+});
+els.circSvg.addEventListener('pointermove', function(ev){
+  if(!dragging) return;
+  setDeg(Math.round(svgAngle(ev) * 10) / 10);
+});
+els.circSvg.addEventListener('pointerup', function(){ dragging = false; });
+
+/* ===================== 초기화 ===================== */
+(function init(){
+  for(var g = -2; g <= 2; g += 0.5){
+    if(Math.abs(g) < 1e-9) continue;
+    var lv = document.createElementNS(SVGNS, 'line');
+    lv.setAttribute('x1', g); lv.setAttribute('y1', -2.3);
+    lv.setAttribute('x2', g); lv.setAttribute('y2', 2.3);
+    els.gridG.appendChild(lv);
+    var lh = document.createElementNS(SVGNS, 'line');
+    lh.setAttribute('x1', -2.3); lh.setAttribute('y1', g);
+    lh.setAttribute('x2', 2.3); lh.setAttribute('y2', g);
+    els.gridG.appendChild(lh);
+  }
+  buildWave(els.sinWave, Math.sin);
+  buildWave(els.cosWave, Math.cos);
+  buildClippedWave(els.tanWaveG, Math.tan, '#a78bfa');
+  buildClippedWave(els.secWaveG, function(r){ return 1 / Math.cos(r); }, '#4ade80');
+  buildTable();
+  renderAll();
+})();
+</script>
+</body>
+</html>

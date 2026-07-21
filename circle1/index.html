@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>원과 직선의 위치 관계 실습실 — 판별식 vs 거리 비교</title>
+<style>
+:root{
+  --bg:#0b1526; --panel:#12203a; --panel2:#0e1a30; --line:#1e3a5f;
+  --teal:#2dd4bf; --teal-dim:#14b8a6; --amber:#fbbf24; --red:#f87171;
+  --green:#4ade80; --violet:#a78bfa;
+  --text:#e2e8f0; --muted:#8aa3c4; --code-bg:#0a1322;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;min-height:100vh;}
+.wrap{max-width:1320px;margin:0 auto;padding:20px 18px 48px;}
+header{padding:22px 4px 18px;border-bottom:2px solid var(--line);margin-bottom:20px;display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;}
+header h1{font-size:1.5rem;letter-spacing:-0.5px;}
+header h1 span{color:var(--teal);}
+.badge{background:rgba(45,212,191,0.12);border:1px solid var(--teal-dim);color:var(--teal);font-size:0.78rem;padding:3px 10px;border-radius:999px;}
+.sub{color:var(--muted);font-size:0.88rem;width:100%;line-height:1.6;}
+.sub b{color:var(--text);}
+.grid{display:grid;grid-template-columns:minmax(440px,52%) 1fr;gap:18px;align-items:start;}
+@media(max-width:1000px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+.card h2{font-size:0.92rem;padding:11px 16px;border-bottom:1px solid var(--line);color:var(--teal);display:flex;align-items:center;gap:8px;font-weight:600;}
+.card h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);display:inline-block;}
+.card .body{padding:14px 16px;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel2);}
+.chips button{background:transparent;border:1px solid var(--line);color:var(--muted);font-size:0.79rem;padding:6px 11px;border-radius:999px;cursor:pointer;transition:all .15s;font-family:inherit;}
+.chips button:hover{border-color:var(--teal-dim);color:var(--teal);}
+#planeSvg{display:block;width:100%;max-width:560px;margin:0 auto;background:var(--code-bg);touch-action:none;user-select:none;-webkit-user-select:none;}
+.controls{display:flex;flex-wrap:wrap;gap:12px;padding:11px 16px;border-top:1px solid var(--line);background:var(--panel2);align-items:center;font-size:0.83rem;color:var(--muted);}
+.stepgrp{display:flex;align-items:center;gap:5px;}
+.stepgrp button{background:#173052;border:1px solid var(--line);color:var(--text);font:700 14px Consolas,monospace;width:27px;height:27px;border-radius:8px;cursor:pointer;transition:all .15s;}
+.stepgrp button:hover{border-color:var(--teal-dim);color:var(--teal);}
+.stepgrp .val{font:700 14px Consolas,'D2Coding',monospace;color:var(--amber);min-width:30px;text-align:center;}
+.stepgrp.ln .val{color:var(--violet);}
+.hintline{padding:9px 16px;border-top:1px solid var(--line);font-size:0.78rem;color:var(--muted);}
+/* judgement banner */
+.judg{border-radius:10px;padding:13px 15px;font-size:1.02rem;font-weight:800;text-align:center;letter-spacing:-0.3px;}
+.judg.meet{background:rgba(45,212,191,0.1);border:1.5px solid var(--teal);color:#a7f3ea;}
+.judg.tang{background:rgba(251,191,36,0.1);border:1.5px solid var(--amber);color:#fde68a;}
+.judg.none{background:rgba(248,113,113,0.09);border:1.5px solid rgba(248,113,113,0.6);color:#fecaca;}
+.judg .agree{display:block;margin-top:7px;font-size:0.76rem;font-weight:600;color:var(--muted);}
+/* method cards */
+.mline{background:var(--code-bg);border:1px solid var(--line);border-radius:9px;padding:9px 13px;font:600 13.5px Consolas,'D2Coding',monospace;line-height:1.6;margin-bottom:8px;color:var(--text);}
+.mline .lab{display:block;font:600 11px 'Segoe UI','Malgun Gothic',sans-serif;color:var(--muted);margin-bottom:3px;}
+.mline.res-meet{border-color:rgba(45,212,191,0.55);color:#a7f3ea;}
+.mline.res-tang{border-color:rgba(251,191,36,0.55);color:#fde68a;}
+.mline.res-none{border-color:rgba(248,113,113,0.5);color:#fecaca;}
+.mline.pts{color:var(--green);border-color:rgba(74,222,128,0.4);}
+.tips{font-size:0.83rem;color:var(--muted);line-height:1.75;}
+.tips b{color:var(--teal);}
+.tips code{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font:12px Consolas,monospace;color:var(--amber);}
+.rightcol{display:flex;flex-direction:column;gap:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1><span>원과 직선</span>의 위치 관계 실습실</h1>
+  <span class="badge">판별식 D vs 거리 d 비교</span>
+  <p class="sub">원(중심·반지름)과 직선 <b>y = mx + n</b>(기울기 핸들·직선 몸통 드래그, 모두 정수)을 움직이면, <b>① 대입 → 판별식</b>과 <b>② 중심-직선 거리 d vs r</b> 두 방법이 나란히 계산되고 <b>같은 결론</b>에 도달하는 것을 확인할 수 있습니다.</p>
+</header>
+
+<div class="grid">
+  <!-- LEFT -->
+  <section class="card">
+    <h2><span class="dot"></span>좌표평면 — 원과 직선을 드래그하세요</h2>
+    <div class="chips" id="exChips"></div>
+    <div class="body" style="padding:10px;">
+      <svg id="planeSvg" viewBox="-10.8 -10.8 21.6 21.6" aria-label="circle and line">
+        <g id="gridG" stroke="#13243f" stroke-width="0.05"></g>
+        <line x1="-10.8" y1="0" x2="10.8" y2="0" stroke="#3d5878" stroke-width="0.1"/>
+        <line x1="0" y1="-10.8" x2="0" y2="10.8" stroke="#3d5878" stroke-width="0.1"/>
+        <g id="axisLblG" font-size="0.62" fill="#5f7ba3"></g>
+        <text x="10.15" y="0.85" font-size="0.68" fill="#8aa3c4">x</text>
+        <text x="0.25" y="-10.05" font-size="0.68" fill="#8aa3c4">y</text>
+        <circle id="circleEl" fill="rgba(45,212,191,0.06)" stroke="#2dd4bf" stroke-width="0.14"/>
+        <line id="lineEl" stroke="#a78bfa" stroke-width="0.13"/>
+        <line id="lineHit" stroke="transparent" stroke-width="0.9" style="cursor:ns-resize;"/>
+        <line id="perpSeg" stroke="#f472b6" stroke-width="0.09" stroke-dasharray="0.24 0.18"/>
+        <path id="rightAngle" fill="none" stroke="#f472b6" stroke-width="0.06"/>
+        <text id="dLbl" font-size="0.6" fill="#f472b6" font-weight="bold" text-anchor="middle"></text>
+        <g id="intG"></g>
+        <line id="radLine" stroke="#e2e8f0" stroke-width="0.08"/>
+        <text id="radLbl" font-size="0.6" fill="#e2e8f0" font-weight="bold" text-anchor="middle"></text>
+        <circle id="centerDot" r="0.27" fill="#fbbf24" stroke="#0a1322" stroke-width="0.08" style="cursor:grab;"/>
+        <text id="centerLbl" font-size="0.6" fill="#fbbf24" font-weight="bold" text-anchor="middle"></text>
+        <circle id="radHandle" r="0.23" fill="#2dd4bf" stroke="#0a1322" stroke-width="0.08" style="cursor:ew-resize;"/>
+        <rect id="slopeHandle" width="0.44" height="0.44" fill="#a78bfa" stroke="#0a1322" stroke-width="0.07" style="cursor:grab;"/>
+        <text id="slopeLbl" font-size="0.56" fill="#a78bfa" font-weight="bold" text-anchor="middle"></text>
+        <circle id="centerHit" r="0.7" fill="transparent" style="cursor:grab;"/>
+        <circle id="radHit" r="0.7" fill="transparent" style="cursor:ew-resize;"/>
+        <circle id="slopeHit" r="0.75" fill="transparent" style="cursor:grab;"/>
+      </svg>
+    </div>
+    <div class="controls">
+      <span class="stepgrp">a <button id="aMinus">&#8722;</button><span class="val" id="aVal">0</span><button id="aPlus">+</button></span>
+      <span class="stepgrp">b <button id="bMinus">&#8722;</button><span class="val" id="bVal">0</span><button id="bPlus">+</button></span>
+      <span class="stepgrp">r <button id="rMinus">&#8722;</button><span class="val" id="rVal">5</span><button id="rPlus">+</button></span>
+      <span style="width:8px;border-left:1px solid var(--line);height:22px;"></span>
+      <span class="stepgrp ln">m <button id="mMinus">&#8722;</button><span class="val" id="mVal">1</span><button id="mPlus">+</button></span>
+      <span class="stepgrp ln">n <button id="nMinus">&#8722;</button><span class="val" id="nVal">1</span><button id="nPlus">+</button></span>
+    </div>
+    <div class="hintline">직선 몸통 드래그 = n(y절편) 이동 · 보라 네모 핸들 드래그 = 기울기 m 변경 · 분홍 점선 = 중심에서 직선까지의 수선(거리 d)</div>
+  </section>
+
+  <!-- RIGHT -->
+  <div class="rightcol">
+    <section class="card">
+      <h2><span class="dot"></span>판정 결과</h2>
+      <div class="body"><div class="judg meet" id="judgBanner"></div></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>방법 &#9312; — 대입해서 판별식</h2>
+      <div class="body" id="discBox"></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>방법 &#9313; — 중심과 직선 사이 거리</h2>
+      <div class="body" id="distBox"></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>학습 포인트</h2>
+      <div class="body tips">
+        <b>1. 방법 &#9312; 판별식</b> — 직선을 원에 대입하면 x에 대한 이차방정식. 실근의 개수 = 교점의 개수이므로 <code>D &#62; 0</code> 두 점(할선), <code>D = 0</code> 접선, <code>D &#60; 0</code> 만나지 않음.<br>
+        <b>2. 방법 &#9313; 거리 비교</b> — 중심 (a, b)에서 직선 mx &#8722; y + n = 0까지 <code>d = |ma &#8722; b + n| / &#8730;(m&#178;+1)</code>. <code>d &#60; r</code> 두 점, <code>d = r</code> 접선, <code>d &#62; r</code> 만나지 않음.<br>
+        <b>3. 언제 무엇을?</b> — 판정만 필요하면 거리 비교가 계산이 빠르고, <b>교점의 좌표</b>까지 구해야 하면 대입(판별식) 방법을 씁니다. 두 방법의 결론은 항상 일치!<br>
+        <b>4. 접선 조건</b> — 원점 중심 원 x&#178;+y&#178;=r&#178;과 y=mx+n이 접하려면 <code>n&#178; = r&#178;(m&#178;+1)</code>.<br>
+        <b>5. 주의</b> — 이 실습기의 직선은 y = mx + n 꼴이라 수직선(x = k)은 다루지 않습니다. 수직선은 |a &#8722; k|와 r를 비교하면 됩니다.
+      </div>
+    </section>
+  </div>
+</div>
+</div>
+<script>
+/* ===================== 상태·수식 유틸 ===================== */
+var els = {};
+['exChips','planeSvg','gridG','axisLblG','circleEl','lineEl','lineHit','perpSeg','rightAngle','dLbl',
+ 'intG','radLine','radLbl','centerDot','centerLbl','radHandle','slopeHandle','slopeLbl',
+ 'centerHit','radHit','slopeHit','aMinus','aPlus','bMinus','bPlus','rMinus','rPlus',
+ 'mMinus','mPlus','nMinus','nPlus','aVal','bVal','rVal','mVal','nVal',
+ 'judgBanner','discBox','distBox'
+].forEach(function(id){ els[id] = document.getElementById(id); });
+
+var SVGNS = 'http://www.w3.org/2000/svg';
+var A = 0, B = 0, R = 5, M = 1, N = 1;
+var AB_LIM = 5, R_MIN = 1, R_MAX = 6, M_LIM = 4, N_LIM = 7;
+
+function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); return b ? gcd(b, a % b) : a; }
+function isInt(v){ return Math.abs(v - Math.round(v)) < 1e-9; }
+function fmt2(v){ return isInt(v) ? String(Math.round(v)) : (Math.round(v * 100) / 100).toFixed(2); }
+function sqrtParts(s){
+  var k = 1;
+  for(var i = 2; i * i <= s; i++) if(s % (i * i) === 0) k = i;
+  return {k:k, inner:s / (k * k)};
+}
+function sqrtStr(s){
+  if(s === 0) return '0';
+  var p = sqrtParts(s);
+  if(p.inner === 1) return String(p.k);
+  return (p.k === 1 ? '' : p.k) + '\u221a' + p.inner;
+}
+function coefX(m){ return m === 1 ? 'x' : (m === -1 ? '-x' : m + 'x'); }
+function linTerm(c, v){
+  if(c === 0) return '';
+  return (c > 0 ? ' + ' : ' - ') + (Math.abs(c) === 1 ? '' : Math.abs(c)) + v;
+}
+function constTerm(c){
+  if(c === 0) return '';
+  return (c > 0 ? ' + ' : ' - ') + Math.abs(c);
+}
+function lineEqStr(){
+  if(M === 0) return 'y = ' + N;
+  var s = 'y = ' + coefX(M);
+  if(N !== 0) s += (N > 0 ? ' + ' : ' - ') + Math.abs(N);
+  return s;
+}
+function stdLineStr(){
+  if(M === 0) return 'y - ' + N + ' = 0';
+  return coefX(M) + ' - y' + constTerm(N) + ' = 0';
+}
+function circEqStr(){
+  function sq(v, k){
+    if(k === 0) return v + '\u00b2';
+    return '(' + v + (k > 0 ? ' - ' : ' + ') + Math.abs(k) + ')\u00b2';
+  }
+  return sq('x', A) + ' + ' + sq('y', B) + ' = ' + (R * R);
+}
+function par(v){ return v < 0 ? '(' + v + ')' : String(v); }
+
+/* ===================== 판정 계산 ===================== */
+function analyze(){
+  var qa = 1 + M * M;
+  var qb = 2 * (M * (N - B) - A);
+  var qc = A * A + (N - B) * (N - B) - R * R;
+  var D = qb * qb - 4 * qa * qc;
+  var K = M * A - B + N;
+  var den = M * M + 1;
+  var rel = (D > 0) ? 'meet' : (D === 0 ? 'tang' : 'none');
+  var xs = [];
+  if(D >= 0){
+    var sd = Math.sqrt(D);
+    if(D === 0) xs = [-qb / (2 * qa)];
+    else xs = [(-qb - sd) / (2 * qa), (-qb + sd) / (2 * qa)];
+  }
+  return {qa:qa, qb:qb, qc:qc, D:D, K:K, den:den, rel:rel, xs:xs,
+          pts:xs.map(function(x){ return [x, M * x + N]; })};
+}
+
+/* ===================== 그리기 ===================== */
+function setL(el, x1, y1, x2, y2){
+  el.setAttribute('x1', x1); el.setAttribute('y1', y1);
+  el.setAttribute('x2', x2); el.setAttribute('y2', y2);
+}
+function setC(el, x, y){ el.setAttribute('cx', x); el.setAttribute('cy', -y); }
+function setT(el, x, y, txt){
+  el.setAttribute('x', x); el.setAttribute('y', -y);
+  if(txt !== undefined) el.textContent = txt;
+}
+function diamond(x, y, tangent){
+  var g = document.createElementNS(SVGNS, 'rect');
+  var s = 0.24;
+  g.setAttribute('x', x - s); g.setAttribute('y', -y - s);
+  g.setAttribute('width', s * 2); g.setAttribute('height', s * 2);
+  g.setAttribute('transform', 'rotate(45 ' + x + ' ' + (-y) + ')');
+  g.setAttribute('fill', tangent ? '#fbbf24' : '#4ade80');
+  g.setAttribute('stroke', '#0a1322');
+  g.setAttribute('stroke-width', '0.06');
+  els.intG.appendChild(g);
+}
+function renderPlane(res){
+  setC(els.circleEl, A, B);
+  els.circleEl.setAttribute('r', R);
+  setC(els.centerDot, A, B);
+  setC(els.centerHit, A, B);
+  setT(els.centerLbl, A, B + 0.62, '(' + A + ', ' + B + ')');
+  setC(els.radHandle, A + R, B);
+  setC(els.radHit, A + R, B);
+  setL(els.radLine, A, -B, A + R, -B);
+  setT(els.radLbl, A + R / 2, B + 0.4, 'r = ' + R);
+  setL(els.lineEl, -11, -(M * -11 + N), 11, -(M * 11 + N));
+  setL(els.lineHit, -11, -(M * -11 + N), 11, -(M * 11 + N));
+  var hx = 1, hy = M + N;
+  els.slopeHandle.setAttribute('x', hx - 0.22);
+  els.slopeHandle.setAttribute('y', -hy - 0.22);
+  setC(els.slopeHit, hx, hy);
+  setT(els.slopeLbl, hx + 0.05, hy + 0.62, 'm = ' + M);
+  /* 수선의 발 */
+  var K2 = (M * A - B + N) / (M * M + 1);
+  var fx = A - K2 * M, fy = B + K2;
+  setL(els.perpSeg, A, -B, fx, -fy);
+  var dv = Math.abs(K2) * Math.sqrt(M * M + 1);
+  setT(els.dLbl, (A + fx) / 2 + 0.45, (B + fy) / 2 + 0.3, 'd \u2248 ' + fmt2(dv));
+  /* 직각 표시 */
+  var dl = Math.sqrt(M * M + 1);
+  var ux = 1 / dl, uy = M / dl;
+  var sgn = K2 >= 0 ? 1 : -1;
+  var vx = sgn * M / dl, vy = -sgn * 1 / dl;
+  var s2 = 0.38;
+  if(dv > 0.3){
+    els.rightAngle.setAttribute('d',
+      'M ' + (fx + ux * s2) + ' ' + (-(fy + uy * s2)) +
+      ' L ' + (fx + ux * s2 + vx * s2) + ' ' + (-(fy + uy * s2 + vy * s2)) +
+      ' L ' + (fx + vx * s2) + ' ' + (-(fy + vy * s2)));
+  } else {
+    els.rightAngle.setAttribute('d', '');
+  }
+  while(els.intG.firstChild) els.intG.removeChild(els.intG.firstChild);
+  res.pts.forEach(function(p){ diamond(p[0], p[1], res.rel === 'tang'); });
+}
+
+/* ===================== 방법 카드 렌더링 ===================== */
+function mline(box, lab, txt, cls){
+  var d = document.createElement('div');
+  d.className = 'mline' + (cls ? ' ' + cls : '');
+  var l = document.createElement('span');
+  l.className = 'lab';
+  l.textContent = lab;
+  d.appendChild(l);
+  d.appendChild(document.createTextNode(txt));
+  box.appendChild(d);
+}
+function ptsStr(res){
+  return res.pts.map(function(p){
+    return '(' + fmt2(p[0]) + ', ' + fmt2(p[1]) + ')';
+  }).join(', ');
+}
+function rootExprStr(res){
+  var p = sqrtParts(res.D);
+  var g = gcd(gcd(Math.abs(res.qb), p.k), 2 * res.qa);
+  var nb = -res.qb / g, kk = p.k / g, dd = 2 * res.qa / g;
+  var rootTxt = (kk === 1 ? '' : kk) + '\u221a' + p.inner;
+  var top = (nb === 0 ? '' : nb + ' ') + '\u00b1 ' + rootTxt;
+  return dd === 1 ? top : '(' + top + ') / ' + dd;
+}
+function renderDisc(res){
+  while(els.discBox.firstChild) els.discBox.removeChild(els.discBox.firstChild);
+  mline(els.discBox, '대입', '직선 ' + lineEqStr() + ' 을(를) 원 ' + circEqStr() + ' 에 대입');
+  mline(els.discBox, 'x에 대한 이차방정식', (res.qa === 1 ? '' : res.qa) + 'x\u00b2' + linTerm(res.qb, 'x') + constTerm(res.qc) + ' = 0');
+  var b2 = res.qb * res.qb, f = 4 * res.qa * res.qc;
+  mline(els.discBox, '판별식', 'D = B\u00b2 - 4AC = ' + par(res.qb) + '\u00b2 - 4\u00b7' + res.qa + '\u00b7' + par(res.qc) + ' = ' + b2 + (f < 0 ? ' + ' + (-f) : ' - ' + f) + ' = ' + res.D);
+  var cls = 'res-' + res.rel;
+  if(res.rel === 'meet'){
+    mline(els.discBox, '판정', 'D = ' + res.D + ' \u003e 0 \u2192 서로 다른 두 실근 \u2192 두 점에서 만난다', cls);
+    var p = sqrtParts(res.D);
+    if(p.inner === 1) mline(els.discBox, '교점', ptsStr(res), 'pts');
+    else mline(els.discBox, '교점', 'x = ' + rootExprStr(res) + ' \u2192 ' + ptsStr(res), 'pts');
+  } else if(res.rel === 'tang'){
+    mline(els.discBox, '판정', 'D = 0 \u2192 중근 \u2192 한 점에서 접한다', cls);
+    mline(els.discBox, '접점', ptsStr(res), 'pts');
+  } else {
+    mline(els.discBox, '판정', 'D = ' + res.D + ' \u003c 0 \u2192 실근 없음 \u2192 만나지 않는다', cls);
+  }
+}
+function renderDist(res){
+  while(els.distBox.firstChild) els.distBox.removeChild(els.distBox.firstChild);
+  var K = res.K, den = res.den, r2 = R * R;
+  var dv = Math.abs(K) / Math.sqrt(den);
+  if(M === 0){
+    mline(els.distBox, '수평선까지의 거리', 'd = |b - n| = |' + B + ' - ' + N + '| = ' + Math.abs(K));
+  } else {
+    mline(els.distBox, '직선의 표준형', stdLineStr());
+    mline(els.distBox, '거리 공식', 'd = |m\u00b7a - b + n| / \u221a(m\u00b2+1) = |' + M + '\u00b7' + par(A) + ' - ' + par(B) + ' + ' + par(N) + '| / \u221a' + den + ' = ' + Math.abs(K) + '/\u221a' + den + ' \u2248 ' + fmt2(dv));
+  }
+  var cmp = (K * K < r2 * den) ? '\u003c' : (K * K === r2 * den ? '=' : '\u003e');
+  mline(els.distBox, '정확 비교 (제곱)', 'd\u00b2 = ' + (K * K) + '/' + den + ' = ' + fmt2(K * K / den) + '  vs  r\u00b2 = ' + r2 + '  \u2192  d\u00b2 ' + cmp + ' r\u00b2');
+  var cls = 'res-' + res.rel;
+  if(res.rel === 'meet') mline(els.distBox, '판정', 'd \u003c r \u2192 두 점에서 만난다 (판별식과 일치 \u2714)', cls);
+  else if(res.rel === 'tang') mline(els.distBox, '판정', 'd = r \u2192 접한다 (판별식과 일치 \u2714)', cls);
+  else mline(els.distBox, '판정', 'd \u003e r \u2192 만나지 않는다 (판별식과 일치 \u2714)', cls);
+  if(A === 0 && B === 0 && res.rel === 'tang'){
+    mline(els.distBox, '접선 조건 확인', 'n\u00b2 = r\u00b2(m\u00b2+1): ' + (N * N) + ' = ' + r2 + '\u00b7' + den + ' \u2714');
+  }
+}
+function renderBanner(res){
+  var dv = Math.abs(res.K) / Math.sqrt(res.den);
+  var t1 = res.rel === 'meet' ? '서로 다른 두 점에서 만난다 (할선)'
+        : res.rel === 'tang' ? '한 점에서 접한다 (접선)'
+        : '만나지 않는다';
+  els.judgBanner.className = 'judg ' + (res.rel === 'tang' ? 'tang' : res.rel === 'none' ? 'none' : 'meet');
+  while(els.judgBanner.firstChild) els.judgBanner.removeChild(els.judgBanner.firstChild);
+  els.judgBanner.appendChild(document.createTextNode(t1));
+  var s = document.createElement('span');
+  s.className = 'agree';
+  var cmp = res.rel === 'meet' ? '\u003c' : (res.rel === 'tang' ? '=' : '\u003e');
+  s.textContent = '판별식 D = ' + res.D + ' \u00b7 거리 d \u2248 ' + fmt2(dv) + ' ' + cmp + ' r = ' + R + ' — 두 방법의 결론 일치 \u2714';
+  els.judgBanner.appendChild(s);
+}
+
+function renderAll(){
+  var res = analyze();
+  renderPlane(res);
+  renderBanner(res);
+  renderDisc(res);
+  renderDist(res);
+  els.aVal.textContent = A; els.bVal.textContent = B; els.rVal.textContent = R;
+  els.mVal.textContent = M; els.nVal.textContent = N;
+  window.state = {a:A, b:B, r:R, m:M, n:N, D:res.D, rel:res.rel};
+}
+function clampAll(){
+  A = Math.max(-AB_LIM, Math.min(AB_LIM, A));
+  B = Math.max(-AB_LIM, Math.min(AB_LIM, B));
+  R = Math.max(R_MIN, Math.min(R_MAX, R));
+  M = Math.max(-M_LIM, Math.min(M_LIM, M));
+  N = Math.max(-N_LIM, Math.min(N_LIM, N));
+}
+
+/* ===================== 입력 ===================== */
+var EXAMPLES = [
+  {name:'\u2460 두 점에서 만남', a:0, b:0, r:5, m:1, n:1},
+  {name:'\u2461 접한다 (d = r)', a:1, b:-2, r:3, m:0, n:1},
+  {name:'\u2462 만나지 않음', a:0, b:0, r:2, m:1, n:4},
+  {name:'\u2463 중심 이동 + 무리수 교점', a:2, b:-1, r:3, m:-1, n:2},
+  {name:'\u2464 기본으로', a:0, b:0, r:5, m:1, n:1}
+];
+EXAMPLES.forEach(function(ex){
+  var btn = document.createElement('button');
+  btn.textContent = ex.name;
+  btn.addEventListener('click', function(){
+    A = ex.a; B = ex.b; R = ex.r; M = ex.m; N = ex.n;
+    clampAll(); renderAll();
+  });
+  els.exChips.appendChild(btn);
+});
+[['aMinus', function(){ A--; }], ['aPlus', function(){ A++; }],
+ ['bMinus', function(){ B--; }], ['bPlus', function(){ B++; }],
+ ['rMinus', function(){ R--; }], ['rPlus', function(){ R++; }],
+ ['mMinus', function(){ M--; }], ['mPlus', function(){ M++; }],
+ ['nMinus', function(){ N--; }], ['nPlus', function(){ N++; }]
+].forEach(function(pair){
+  els[pair[0]].addEventListener('click', function(){ pair[1](); clampAll(); renderAll(); });
+});
+
+var dragMode = null;
+function svgPt(ev){
+  var r = els.planeSvg.getBoundingClientRect();
+  return {
+    x: (ev.clientX - r.left) / r.width * 21.6 - 10.8,
+    y: -((ev.clientY - r.top) / r.height * 21.6 - 10.8)
+  };
+}
+function startDrag(mode){
+  return function(ev){
+    ev.preventDefault();
+    dragMode = mode;
+    els.planeSvg.setPointerCapture(ev.pointerId);
+    ev.stopPropagation();
+  };
+}
+[['centerHit','center'],['centerDot','center'],['radHit','rad'],['radHandle','rad'],
+ ['slopeHit','slope'],['slopeHandle','slope'],['lineHit','lineN']
+].forEach(function(pair){
+  els[pair[0]].addEventListener('pointerdown', startDrag(pair[1]));
+});
+els.planeSvg.addEventListener('pointermove', function(ev){
+  if(!dragMode) return;
+  var p = svgPt(ev);
+  if(dragMode === 'center'){ A = Math.round(p.x); B = Math.round(p.y); }
+  else if(dragMode === 'rad'){ R = Math.round(Math.hypot(p.x - A, p.y - B)); }
+  else if(dragMode === 'slope'){ M = Math.round(p.y - N); }
+  else if(dragMode === 'lineN'){ N = Math.round(p.y - M * p.x); }
+  clampAll(); renderAll();
+});
+els.planeSvg.addEventListener('pointerup', function(){ dragMode = null; });
+els.planeSvg.addEventListener('pointercancel', function(){ dragMode = null; });
+
+/* ===================== 초기화 ===================== */
+(function init(){
+  for(var g = -10; g <= 10; g++){
+    if(g === 0) continue;
+    var lv = document.createElementNS(SVGNS, 'line');
+    lv.setAttribute('x1', g); lv.setAttribute('y1', -10.8);
+    lv.setAttribute('x2', g); lv.setAttribute('y2', 10.8);
+    if(g % 5 === 0) lv.setAttribute('stroke', '#1b3050');
+    els.gridG.appendChild(lv);
+    var lh = document.createElementNS(SVGNS, 'line');
+    lh.setAttribute('x1', -10.8); lh.setAttribute('y1', g);
+    lh.setAttribute('x2', 10.8); lh.setAttribute('y2', g);
+    if(g % 5 === 0) lh.setAttribute('stroke', '#1b3050');
+    els.gridG.appendChild(lh);
+  }
+  for(var t = -10; t <= 10; t += 2){
+    if(t === 0) continue;
+    var tx = document.createElementNS(SVGNS, 'text');
+    tx.setAttribute('x', t - 0.28); tx.setAttribute('y', 0.78);
+    tx.textContent = t;
+    els.axisLblG.appendChild(tx);
+    var ty = document.createElementNS(SVGNS, 'text');
+    ty.setAttribute('x', 0.22); ty.setAttribute('y', -t + 0.2);
+    ty.textContent = t;
+    els.axisLblG.appendChild(ty);
+  }
+  renderAll();
+})();
+</script>
+</body>
+</html>
