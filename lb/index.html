@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>탐색 알고리즘 시각화 실습실 — 선형 탐색 vs 이진 탐색 (C · Python)</title>
+<style>
+:root{
+  --bg:#0b1526; --panel:#12203a; --panel2:#0e1a30; --line:#1e3a5f;
+  --teal:#2dd4bf; --teal-dim:#14b8a6; --amber:#fbbf24; --red:#f87171;
+  --green:#4ade80; --violet:#a78bfa;
+  --text:#e2e8f0; --muted:#8aa3c4; --code-bg:#0a1322;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;min-height:100vh;}
+.wrap{max-width:1320px;margin:0 auto;padding:20px 18px 48px;}
+header{padding:22px 4px 18px;border-bottom:2px solid var(--line);margin-bottom:20px;display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;}
+header h1{font-size:1.5rem;letter-spacing:-0.5px;}
+header h1 span{color:var(--teal);}
+.badge{background:rgba(45,212,191,0.12);border:1px solid var(--teal-dim);color:var(--teal);font-size:0.78rem;padding:3px 10px;border-radius:999px;}
+.sub{color:var(--muted);font-size:0.88rem;width:100%;line-height:1.6;}
+.sub b{color:var(--text);}
+.grid{display:grid;grid-template-columns:minmax(430px,47%) 1fr;gap:18px;align-items:start;}
+@media(max-width:980px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+.card h2{font-size:0.92rem;padding:11px 16px;border-bottom:1px solid var(--line);color:var(--teal);display:flex;align-items:center;gap:8px;font-weight:600;}
+.card h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);display:inline-block;}
+.card .body{padding:14px 16px;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel2);}
+.chips button{background:transparent;border:1px solid var(--line);color:var(--muted);font-size:0.8rem;padding:6px 12px;border-radius:999px;cursor:pointer;transition:all .15s;font-family:inherit;}
+.chips button:hover{border-color:var(--teal-dim);color:var(--teal);}
+.chips button.active{background:rgba(45,212,191,0.14);border-color:var(--teal);color:var(--teal);font-weight:700;}
+.viewer{background:var(--code-bg);height:340px;overflow:auto;padding:12px 0;font:13px/1.6 Consolas,'D2Coding',monospace;}
+.viewer .cline{display:flex;}
+.viewer .ln{width:42px;flex:none;text-align:right;padding-right:12px;color:#3d5878;user-select:none;}
+.viewer .txt{white-space:pre;flex:1;padding-right:14px;}
+.viewer .cline.cur{background:rgba(45,212,191,0.14);box-shadow:inset 3px 0 0 var(--teal);}
+.viewer .cline.cur .txt{color:#a7f3ea;}
+.racePanel{display:none;background:var(--code-bg);min-height:340px;padding:18px 16px;}
+.rhint{font-size:0.85rem;color:var(--muted);line-height:1.8;}
+.rhint b{color:var(--text);}
+.raceBanner{display:none;margin-top:16px;background:rgba(251,191,36,0.1);border:1px solid var(--amber);color:#fde68a;border-radius:10px;padding:13px 15px;font-size:0.88rem;line-height:1.65;}
+.controls{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:var(--panel2);align-items:center;}
+.controls button{background:#173052;border:1px solid var(--line);color:var(--text);font-size:0.83rem;padding:7px 12px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .15s;}
+.controls button:hover:not(:disabled){border-color:var(--teal-dim);color:var(--teal);}
+.controls button:disabled{opacity:0.35;cursor:default;}
+.controls select{background:#173052;border:1px solid var(--line);color:var(--text);font-size:0.82rem;padding:6px 8px;border-radius:8px;font-family:inherit;}
+.stepbar{padding:11px 16px;border-top:1px solid var(--line);font-size:0.86rem;min-height:48px;display:flex;gap:10px;align-items:flex-start;}
+.stepbar .cnt{flex:none;background:rgba(45,212,191,0.12);color:var(--teal);border-radius:6px;padding:2px 9px;font-size:0.78rem;font-family:Consolas,monospace;margin-top:2px;}
+.stepbar .desc{color:var(--text);line-height:1.5;}
+.arrbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;font-size:0.83rem;color:var(--muted);}
+.arrbar input{background:var(--code-bg);border:1px solid var(--line);color:var(--text);font:13px Consolas,'D2Coding',monospace;padding:7px 10px;border-radius:8px;}
+#arrInput{width:200px;}
+#targetInput{width:60px;text-align:center;}
+.arrbar button{background:#173052;border:1px solid var(--line);color:var(--text);font-size:0.8rem;padding:7px 12px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .15s;}
+.arrbar button:hover{border-color:var(--teal-dim);color:var(--teal);}
+.arrbar .err{color:var(--red);font-size:0.78rem;}
+.notice{display:none;background:rgba(251,191,36,0.09);border:1px solid rgba(251,191,36,0.45);color:#fde68a;font-size:0.79rem;border-radius:8px;padding:6px 11px;margin-bottom:10px;width:fit-content;}
+.stats{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.stat{background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:5px 12px;font:600 12.5px Consolas,'D2Coding',monospace;}
+.stat.cmp{color:#7fe0d4;}
+.stat.left{color:var(--violet);}
+.stat.tgt{color:var(--amber);}
+.bars{display:flex;align-items:flex-end;gap:8px;min-height:215px;padding:6px 2px 0;}
+.barw{display:flex;flex-direction:column;align-items:center;gap:4px;flex:none;width:47px;transition:opacity .2s;}
+.barw.dim{opacity:0.22;}
+.barw.passed{opacity:0.4;}
+.bar{width:100%;border-radius:7px 7px 3px 3px;background:#173052;border:1.5px solid var(--line);display:flex;align-items:flex-start;justify-content:center;font:700 13px Consolas,'D2Coding',monospace;color:var(--text);padding-top:4px;transition:height .25s ease,background .2s,border-color .2s;}
+.bidx{font:11px Consolas,monospace;color:var(--muted);}
+.bptr{font:800 11px Consolas,monospace;color:var(--violet);height:15px;letter-spacing:1px;}
+.bar.chk{border-color:var(--teal);box-shadow:0 0 0 2px rgba(45,212,191,0.35);color:#a7f3ea;}
+.bar.mid{border-color:var(--violet);background:rgba(167,139,250,0.15);color:#c4b5fd;}
+.bar.found{background:rgba(74,222,128,0.16);border-color:var(--green);color:var(--green);animation:pulse .5s ease;}
+@keyframes pulse{0%{transform:scale(1);}40%{transform:scale(1.12);}100%{transform:scale(1);}}
+.legend{display:flex;gap:13px;margin-top:12px;font-size:0.75rem;color:var(--muted);flex-wrap:wrap;}
+.legend span{display:inline-flex;align-items:center;gap:5px;}
+.legend .sw{width:13px;height:13px;border-radius:4px;display:inline-block;border:1.5px solid var(--line);background:#173052;}
+#raceBox{display:none;}
+.racePane{border:1.5px solid var(--line);border-radius:10px;background:var(--code-bg);padding:12px;margin-bottom:12px;}
+.rhead{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;font-size:0.82rem;}
+.rname{font-weight:700;color:var(--teal);}
+.rstat{color:var(--muted);font:600 12px Consolas,'D2Coding',monospace;}
+.rprog{color:var(--muted);font:600 12px Consolas,'D2Coding',monospace;margin-left:auto;}
+.finish{display:none;background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.6);color:var(--green);border-radius:999px;padding:2px 10px;font-size:0.75rem;}
+.bars.mini{min-height:130px;gap:5px;}
+.bars.mini .barw{width:34px;}
+.bars.mini .bar{font-size:11px;padding-top:2px;border-radius:5px 5px 2px 2px;}
+.varchips{display:flex;flex-wrap:wrap;gap:8px;min-height:34px;}
+.varchip{background:var(--code-bg);border:1.5px solid var(--line);border-radius:8px;padding:7px 12px;font:600 13px Consolas,'D2Coding',monospace;}
+.tips{font-size:0.83rem;color:var(--muted);line-height:1.75;}
+.tips b{color:var(--teal);}
+.rightcol{display:flex;flex-direction:column;gap:16px;}
+.placeholder{color:var(--muted);font-size:0.85rem;padding:6px 0;}
+@media(prefers-reduced-motion:reduce){.bar.found{animation:none;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1><span>탐색 알고리즘</span> 시각화 실습실</h1>
+  <span class="badge">선형 탐색 vs 이진 탐색 · C / Python</span>
+  <p class="sub">배열에서 값을 찾는 두 가지 방법을 비교합니다. <b>선형 탐색</b>은 앞에서부터 하나씩, <b>이진 탐색</b>은 정렬된 배열에서 반씩 잘라내며 찾습니다. 언어(C/Python)를 바꿔 같은 알고리즘의 두 표현을 보고, 🏁 경주 모드에서 <b>비교 횟수 차이</b>를 확인하세요.</p>
+</header>
+
+<div class="grid">
+  <!-- LEFT -->
+  <section class="card">
+    <h2><span class="dot"></span>코드 · 단계 실행</h2>
+    <div class="chips">
+      <button id="modeStudy" class="active">학습 모드</button>
+      <button id="modeRace">&#127937; 경주 모드</button>
+      <span style="flex:1"></span>
+      <button id="langC" class="active">C 언어</button>
+      <button id="langPy">Python</button>
+    </div>
+    <div class="chips" id="algoChips"></div>
+    <div class="viewer" id="viewerWrap"></div>
+    <div class="racePanel" id="racePanel">
+      <p class="rhint"><b>선형 탐색 vs 이진 탐색</b> — 같은 값을 찾는 경주입니다. <b>원소 1개를 확인(비교)할 때마다 한 걸음</b>씩 나아갑니다.<br>
+      이진 탐색은 한 번 비교할 때마다 <b>남은 후보가 절반</b>으로 줄어듭니다. 값을 배열 끝쪽 수로 바꾸거나, 없는 값(예: 8)으로 바꿔서 차이를 극대화해 보세요!<br>
+      원소가 1,000개라면? 선형은 최대 1,000번, 이진은 <b>최대 10번</b>. 10억 개라도 이진 탐색은 30번이면 끝납니다.</p>
+      <div class="raceBanner" id="raceBanner"></div>
+    </div>
+    <div class="controls">
+      <button id="homeBtn">&#9198;</button>
+      <button id="prevBtn">&#9664; 이전</button>
+      <button id="nextBtn">다음 &#9654;</button>
+      <button id="endBtn">끝 &#9197;</button>
+      <span style="flex:1"></span>
+      <button id="playBtn">자동 재생</button>
+      <select id="speedSel" aria-label="재생 속도">
+        <option value="1200">느리게</option>
+        <option value="700" selected>보통</option>
+        <option value="300">빠르게</option>
+      </select>
+    </div>
+    <div class="stepbar">
+      <span class="cnt" id="stepCnt">- / -</span>
+      <span class="desc" id="stepDesc"></span>
+    </div>
+  </section>
+
+  <!-- RIGHT -->
+  <div class="rightcol">
+    <section class="card">
+      <h2><span class="dot"></span>배열 · 찾을 값</h2>
+      <div class="body">
+        <div class="arrbar">
+          <label for="arrInput">배열:</label>
+          <input id="arrInput" value="7, 2, 19, 4, 11, 15, 3, 9" spellcheck="false">
+          <label for="targetInput">&#127919; 찾을 값:</label>
+          <input id="targetInput" value="11" spellcheck="false">
+          <button id="applyBtn">적용</button>
+          <button id="randBtn">&#127922; 무작위</button>
+          <span class="err" id="arrErr"></span>
+        </div>
+        <div class="notice" id="sortNotice">&#9888; 이진 탐색은 정렬된 배열에서만 동작합니다 — 입력한 배열을 정렬한 상태로 탐색합니다</div>
+        <div id="studyView">
+          <div class="stats">
+            <span class="stat tgt" id="statTgt">목표 11</span>
+            <span class="stat cmp" id="statCmp">비교 0회</span>
+            <span class="stat left" id="statLeft">남은 후보 8개</span>
+          </div>
+          <div class="bars" id="barsBox"></div>
+          <div class="legend">
+            <span><span class="sw" style="border-color:var(--teal);box-shadow:0 0 0 2px rgba(45,212,191,0.35);"></span>지금 비교</span>
+            <span><span class="sw" style="border-color:var(--violet);background:rgba(167,139,250,0.15);"></span>mid (가운데)</span>
+            <span><span class="sw" style="border-color:var(--green);background:rgba(74,222,128,0.16);"></span>찾았다!</span>
+            <span><span class="sw" style="opacity:0.4;"></span>지나감</span>
+            <span><span class="sw" style="opacity:0.22;"></span>후보 제외</span>
+          </div>
+        </div>
+        <div id="raceBox">
+          <div class="racePane">
+            <div class="rhead">
+              <span class="rname" id="nameA"></span>
+              <span class="rstat" id="statA"></span>
+              <span class="rprog" id="progA"></span>
+              <span class="finish" id="finA">&#127937; 완주!</span>
+            </div>
+            <div class="bars mini" id="barsA"></div>
+          </div>
+          <div class="racePane">
+            <div class="rhead">
+              <span class="rname" id="nameB"></span>
+              <span class="rstat" id="statB"></span>
+              <span class="rprog" id="progB"></span>
+              <span class="finish" id="finB">&#127937; 완주!</span>
+            </div>
+            <div class="bars mini" id="barsB"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>변수</h2>
+      <div class="body"><div class="varchips" id="varsBox"><p class="placeholder">실행을 시작하면 변수가 표시됩니다.</p></div></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>학습 포인트</h2>
+      <div class="body tips" id="tipsBox"></div>
+    </section>
+  </div>
+</div>
+</div>
+<script>
+/* ===================== 트레이스 생성기 (L: 언어별 줄번호 맵) ===================== */
+function traceLinear(arr, target, L){
+  var a = arr.slice(), steps = [], n = a.length, c = 0;
+  function rec(line, desc, mk, vars){
+    steps.push({line:line, desc:desc, arr:a.slice(), target:target,
+      marks:mk||{}, vars:vars||{}, cnt:{c:c}, remaining:(mk&&typeof mk.rem==='number')?mk.rem:n});
+  }
+  rec(0, '실행 준비 완료 — 앞에서부터 하나씩 ' + target + '을(를) 찾습니다', {rem:n});
+  for(var i = 0; i < n; i++){
+    c++;
+    var hit = a[i] === target;
+    var passed = [];
+    for(var k = 0; k < i; k++) passed.push(k);
+    rec(L.cmp, '비교 ' + c + '번째: arr[' + i + ']=' + a[i] + ' == ' + target + ' ? \u2192 ' + (hit ? '예! 찾았습니다' : '아니오, 다음 칸으로'), {check:i, passed:passed, rem:n - i, exam:true}, {i:i});
+    if(hit){
+      rec(L.found, 'return ' + i + ' — 인덱스 ' + i + ' 반환! (비교 ' + c + '회)', {found:i, passed:passed, rem:1}, {i:i});
+      rec(-1, '탐색 성공 \u2714 — ' + target + '은(는) arr[' + i + ']에 있었습니다. 총 비교 ' + c + '회', {found:i, passed:passed, rem:1});
+      return steps;
+    }
+  }
+  var allp = [];
+  for(var q = 0; q < n; q++) allp.push(q);
+  rec(L.notfound, 'return -1 — 끝까지 확인했지만 ' + target + '이(가) 없습니다 (비교 ' + c + '회)', {passed:allp, rem:0});
+  rec(-1, '탐색 실패 \u2716 — 없는 값은 n번 전부 비교해야 확인됩니다. 총 비교 ' + c + '회', {passed:allp, rem:0});
+  return steps;
+}
+
+function traceBinary(sortedArr, target, L){
+  var a = sortedArr.slice(), steps = [], n = a.length, c = 0;
+  var low = 0, high = n - 1;
+  function ptr(mid){ return {low:low, mid:(mid === undefined ? null : mid), high:high}; }
+  function rec(line, desc, mk, vars){
+    var m = mk || {};
+    m.range = [low, high];
+    steps.push({line:line, desc:desc, arr:a.slice(), target:target,
+      marks:m, vars:vars||{}, cnt:{c:c}, remaining:(low <= high ? high - low + 1 : 0)});
+  }
+  steps.push({line:0, desc:'실행 준비 완료 — 정렬된 배열에서 반씩 잘라내며 ' + target + '을(를) 찾습니다', arr:a.slice(), target:target, marks:{range:[0, n-1], ptr:{low:0, mid:null, high:n-1}}, vars:{}, cnt:{c:0}, remaining:n});
+  rec(L.init, 'low = 0, high = ' + high + ' — 후보 구간은 전체 [0..' + high + '] (' + n + '개)', {ptr:ptr()}, {low:low, high:high});
+  var guard = 0;
+  while(low <= high){
+    rec(L.whileLn, 'low(' + low + ') \u2264 high(' + high + ') \u2192 참 — 후보가 남아 있으니 계속', {ptr:ptr()}, {low:low, high:high});
+    var mid = (low + high) >> 1;
+    rec(L.mid, 'mid = (' + low + ' + ' + high + ') / 2 = ' + mid + ' — 후보 구간의 정가운데를 봅니다', {ptr:ptr(mid)}, {low:low, high:high, mid:mid});
+    c++;
+    var eq = a[mid] === target;
+    rec(L.cmpEq, '비교 ' + c + '번째: arr[' + mid + ']=' + a[mid] + ' == ' + target + ' ? \u2192 ' + (eq ? '예! 찾았습니다' : '아니오'), {ptr:ptr(mid), check:mid, exam:true}, {low:low, high:high, mid:mid});
+    if(eq){
+      rec(L.found, 'return ' + mid + ' — 인덱스 ' + mid + ' 반환! (비교 ' + c + '회)', {ptr:ptr(mid), found:mid}, {mid:mid});
+      steps.push({line:-1, desc:'탐색 성공 \u2714 — 총 비교 ' + c + '회. 선형 탐색이었다면 최대 ' + n + '회!', arr:a.slice(), target:target, marks:{found:mid, range:[low, high]}, vars:{}, cnt:{c:c}, remaining:1});
+      return steps;
+    }
+    c++;
+    var lt = a[mid] < target;
+    rec(L.cmpLt, '비교 ' + c + '번째: arr[' + mid + ']=' + a[mid] + ' \u003c ' + target + ' ? \u2192 ' + (lt ? '예 — 답은 mid보다 오른쪽!' : '아니오 — 답은 mid보다 왼쪽!'), {ptr:ptr(mid), check:mid}, {low:low, high:high, mid:mid});
+    if(lt){
+      var cut = mid - low + 1;
+      low = mid + 1;
+      rec(L.goRight, 'low = ' + low + ' — 왼쪽 절반 ' + cut + '개를 후보에서 제외! 남은 후보 ' + (low <= high ? high - low + 1 : 0) + '개', {ptr:ptr()}, {low:low, high:high});
+    } else {
+      var cut2 = high - mid + 1;
+      high = mid - 1;
+      rec(L.goLeft, 'high = ' + high + ' — 오른쪽 절반 ' + cut2 + '개를 후보에서 제외! 남은 후보 ' + (low <= high ? high - low + 1 : 0) + '개', {ptr:ptr()}, {low:low, high:high});
+    }
+    if(++guard > 100) break;
+  }
+  rec(L.whileLn, 'low(' + low + ') \u2264 high(' + high + ') \u2192 거짓 — 후보 구간이 사라졌습니다', {ptr:ptr()}, {low:low, high:high});
+  rec(L.notfound, 'return -1 — ' + target + '이(가) 배열에 없습니다 (비교 ' + c + '회)', {}, {});
+  steps.push({line:-1, desc:'탐색 실패 \u2716 — 없어도 log\u2082(n)번 만에 확인 끝! 총 비교 ' + c + '회', arr:a.slice(), target:target, marks:{}, vars:{}, cnt:{c:c}, remaining:0});
+  return steps;
+}
+</script>
+<script>
+/* ===================== 언어별 코드/줄번호 정의 (gcc·python3로 검증됨) ===================== */
+var LANG_DEFS = {
+  c: {
+    linear: {
+      code:'int linear_search(int arr[], int n, int target) {\n    for (int i = 0; i \u003c n; i++) {\n        if (arr[i] == target) {\n            return i;\n        }\n    }\n    return -1;\n}',
+      L:{cmp:3, found:4, notfound:7}
+    },
+    binary: {
+      code:'int binary_search(int arr[], int n, int target) {\n    int low = 0, high = n - 1;\n    while (low \u003c= high) {\n        int mid = (low + high) / 2;\n        if (arr[mid] == target) {\n            return mid;\n        } else if (arr[mid] \u003c target) {\n            low = mid + 1;\n        } else {\n            high = mid - 1;\n        }\n    }\n    return -1;\n}',
+      L:{init:2, whileLn:3, mid:4, cmpEq:5, found:6, cmpLt:7, goRight:8, goLeft:10, notfound:13}
+    }
+  },
+  py: {
+    linear: {
+      code:'def linear_search(arr, target):\n    for i in range(len(arr)):\n        if arr[i] == target:\n            return i\n    return -1',
+      L:{cmp:3, found:4, notfound:5}
+    },
+    binary: {
+      code:'def binary_search(arr, target):\n    low, high = 0, len(arr) - 1\n    while low \u003c= high:\n        mid = (low + high) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] \u003c target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1',
+      L:{init:2, whileLn:3, mid:4, cmpEq:5, found:6, cmpLt:7, goRight:8, goLeft:10, notfound:11}
+    }
+  }
+};
+
+var ALGOS = [
+  {
+    key:'linear', name:'선형 탐색', gen:traceLinear, needSorted:false,
+    tips:[
+      ['원리', '앞에서부터 한 칸씩 target과 비교합니다. 찾으면 그 자리에서 인덱스를 반환, 끝까지 없으면 -1.'],
+      ['시간복잡도', '최선 1회(첫 칸), 평균 n/2회, 최악 n회(마지막 칸이거나 없을 때). O(n).'],
+      ['특징', '배열이 정렬되어 있지 않아도 됩니다. 데이터가 적거나 딱 한 번만 찾을 때는 이것으로 충분합니다.']
+    ]
+  },
+  {
+    key:'binary', name:'이진 탐색', gen:traceBinary, needSorted:true,
+    tips:[
+      ['원리', '정렬된 배열의 정가운데(mid)를 보고, target이 더 크면 왼쪽 절반을, 더 작으면 오른쪽 절반을 통째로 버립니다. 후보가 반씩 줄어듭니다.'],
+      ['시간복잡도', '최대 \u2308log\u2082(n)\u2309+1회 비교. n=1,000이면 10회, n=10억이면 30회면 끝! O(log n).'],
+      ['특징', '반드시 정렬된 배열이 필요합니다. 자주 찾아야 한다면 한 번 정렬해 두고(O(n log n)) 이진 탐색을 쓰는 것이 이득입니다.']
+    ]
+  }
+];
+</script>
+<script>
+/* ===================== UI ===================== */
+var els = {};
+['algoChips','viewerWrap','racePanel','raceBanner','modeStudy','modeRace','langC','langPy',
+ 'homeBtn','prevBtn','nextBtn','endBtn','playBtn','speedSel','stepCnt','stepDesc',
+ 'arrInput','targetInput','applyBtn','randBtn','arrErr','sortNotice','studyView','raceBox',
+ 'statTgt','statCmp','statLeft','barsBox','varsBox','tipsBox',
+ 'nameA','nameB','statA','statB','progA','progB','finA','finB','barsA','barsB'
+].forEach(function(id){ els[id] = document.getElementById(id); });
+
+var curArr = [7, 2, 19, 4, 11, 15, 3, 9];
+var target = 11;
+var lang = 'c', algoIdx = 0, trace = [], cur = 0, timer = null;
+var raceMode = false, trA = [], trB = [], curA = 0, curB = 0;
+
+function sortedArr(){ return curArr.slice().sort(function(x, y){ return x - y; }); }
+function algoArr(idx){ return ALGOS[idx].needSorted ? sortedArr() : curArr.slice(); }
+function isSortedInput(){
+  var s = sortedArr();
+  for(var i = 0; i < curArr.length; i++) if(curArr[i] !== s[i]) return false;
+  return true;
+}
+
+function buildViewer(src){
+  while(els.viewerWrap.firstChild) els.viewerWrap.removeChild(els.viewerWrap.firstChild);
+  var lines = src.split('\n');
+  for(var i = 0; i < lines.length; i++){
+    var row = document.createElement('div');
+    row.className = 'cline';
+    var ln = document.createElement('span');
+    ln.className = 'ln';
+    ln.textContent = String(i + 1);
+    var tx = document.createElement('span');
+    tx.className = 'txt';
+    tx.textContent = lines[i] === '' ? ' ' : lines[i];
+    row.appendChild(ln);
+    row.appendChild(tx);
+    els.viewerWrap.appendChild(row);
+  }
+}
+
+function renderTips(idx){
+  while(els.tipsBox.firstChild) els.tipsBox.removeChild(els.tipsBox.firstChild);
+  ALGOS[idx].tips.forEach(function(pair){
+    var b = document.createElement('b');
+    b.textContent = pair[0] + ' — ';
+    els.tipsBox.appendChild(b);
+    els.tipsBox.appendChild(document.createTextNode(pair[1]));
+    els.tipsBox.appendChild(document.createElement('br'));
+  });
+  var b2 = document.createElement('b');
+  b2.textContent = '선택 기준 — ';
+  els.tipsBox.appendChild(b2);
+  els.tipsBox.appendChild(document.createTextNode('한 번만 찾는다면 선형(정렬 비용 0), 여러 번 찾는다면 정렬 후 이진 탐색. 정렬 비용 O(n log n)은 여러 번의 O(log n) 탐색으로 회수됩니다.'));
+}
+
+function ptrLabel(marks, idx){
+  if(!marks.ptr) return '';
+  var s = '';
+  if(marks.ptr.low === idx) s += 'L';
+  if(marks.ptr.mid === idx) s += 'M';
+  if(marks.ptr.high === idx) s += 'H';
+  return s;
+}
+
+function renderBarsInto(st, box, base, scale){
+  while(box.firstChild) box.removeChild(box.firstChild);
+  var maxV = 1;
+  st.arr.forEach(function(v){ if(v > maxV) maxV = v; });
+  st.arr.forEach(function(v, idx){
+    var w = document.createElement('div');
+    var cls2 = 'barw';
+    if(st.marks.range && (idx < st.marks.range[0] || idx > st.marks.range[1])) cls2 += ' dim';
+    else if(st.marks.passed && st.marks.passed.indexOf(idx) >= 0) cls2 += ' passed';
+    w.className = cls2;
+    var b = document.createElement('div');
+    var cls = 'bar';
+    if(st.marks.ptr && st.marks.ptr.mid === idx) cls += ' mid';
+    if(st.marks.check === idx) cls += ' chk';
+    if(st.marks.found === idx) cls += ' found';
+    b.className = cls;
+    b.style.height = (base + Math.round(v / maxV * scale)) + 'px';
+    b.textContent = v;
+    var ix = document.createElement('div');
+    ix.className = 'bidx';
+    ix.textContent = '[' + idx + ']';
+    var pt = document.createElement('div');
+    pt.className = 'bptr';
+    pt.textContent = ptrLabel(st.marks, idx);
+    w.appendChild(b);
+    w.appendChild(ix);
+    w.appendChild(pt);
+    box.appendChild(w);
+  });
+}
+
+function renderVars(st){
+  while(els.varsBox.firstChild) els.varsBox.removeChild(els.varsBox.firstChild);
+  var names = Object.keys(st.vars);
+  if(names.length === 0){
+    var p = document.createElement('p');
+    p.className = 'placeholder';
+    p.textContent = raceMode ? '경주 모드에서는 카운터를 비교하세요.' : '이 단계에는 표시할 변수가 없습니다.';
+    els.varsBox.appendChild(p);
+    return;
+  }
+  names.forEach(function(name){
+    var chip = document.createElement('div');
+    chip.className = 'varchip';
+    chip.textContent = name + ' = ' + st.vars[name];
+    els.varsBox.appendChild(chip);
+  });
+}
+
+function renderStep(){
+  var st = trace[cur];
+  var rows = els.viewerWrap.children;
+  for(var i = 0; i < rows.length; i++) rows[i].classList.remove('cur');
+  if(st.line >= 1 && st.line <= rows.length){
+    rows[st.line - 1].classList.add('cur');
+    rows[st.line - 1].scrollIntoView({block:'nearest'});
+  }
+  els.stepCnt.textContent = (cur + 1) + ' / ' + trace.length;
+  els.stepDesc.textContent = st.desc;
+  els.statTgt.textContent = '목표 ' + st.target;
+  els.statCmp.textContent = '비교 ' + st.cnt.c + '회';
+  els.statLeft.textContent = '남은 후보 ' + st.remaining + '개';
+  renderBarsInto(st, els.barsBox, 30, 150);
+  renderVars(st);
+  els.homeBtn.disabled = (cur === 0);
+  els.prevBtn.disabled = (cur === 0);
+  els.nextBtn.disabled = (cur >= trace.length - 1);
+  els.endBtn.disabled = (cur >= trace.length - 1);
+  window.currentDesc = st.desc;
+  window.currentCmp = st.cnt.c;
+}
+
+/* ----- 경주 (선형 vs 이진 고정 — 원소 확인 1회 = 한 걸음) ----- */
+var msA = [0], msB = [0];
+function milestonesOf(tr){
+  var ms = [0];
+  for(var i = 1; i < tr.length; i++){
+    if(tr[i].marks && tr[i].marks.exam) ms.push(i);
+  }
+  if(ms[ms.length - 1] !== tr.length - 1) ms.push(tr.length - 1);
+  return ms;
+}
+function examCount(ms){ return ms.length - 2; }
+function buildRace(){
+  trA = traceLinear(curArr.slice(), target, LANG_DEFS[lang].linear.L);
+  trB = traceBinary(sortedArr(), target, LANG_DEFS[lang].binary.L);
+  msA = milestonesOf(trA);
+  msB = milestonesOf(trB);
+  curA = 0; curB = 0;
+  renderRace();
+}
+function renderRace(){
+  var stA = trA[msA[curA]], stB = trB[msB[curB]];
+  var totA = examCount(msA), totB = examCount(msB);
+  var doneA = curA >= msA.length - 1, doneB = curB >= msB.length - 1;
+  var seenA = Math.min(curA, totA), seenB = Math.min(curB, totB);
+  els.nameA.textContent = 'A: 선형 탐색';
+  els.nameB.textContent = 'B: 이진 탐색 (정렬된 배열)';
+  els.statA.textContent = '확인한 원소 ' + seenA + '개 \u00b7 남은 후보 ' + stA.remaining;
+  els.statB.textContent = '확인한 원소 ' + seenB + '개 \u00b7 남은 후보 ' + stB.remaining;
+  els.progA.textContent = seenA + ' / ' + totA;
+  els.progB.textContent = seenB + ' / ' + totB;
+  els.finA.style.display = doneA ? 'inline-block' : 'none';
+  els.finB.style.display = doneB ? 'inline-block' : 'none';
+  renderBarsInto(stA, els.barsA, 20, 90);
+  renderBarsInto(stB, els.barsB, 20, 90);
+  els.stepCnt.textContent = '\ud83c\udfc1';
+  els.stepDesc.textContent = '목표 ' + target + ' — 원소 1개 확인 = 한 걸음. 선형 ' + seenA + '/' + totA + ' \u00b7 이진 ' + seenB + '/' + totB;
+  if(doneA && doneB){
+    var txt;
+    if(totA === totB){
+      txt = '\ud83c\udfc1 무승부! 두 방법 모두 원소 ' + totA + '개를 확인했습니다';
+    } else {
+      var aw = totA < totB;
+      txt = '\ud83c\udfc6 ' + (aw ? '선형 탐색' : '이진 탐색') + ' 승리! 확인한 원소 ' + (aw ? totA : totB) + '개 vs ' + (aw ? totB : totA) + '개. ' + (aw
+        ? '목표가 앞쪽에 있으면 선형이 이기기도 합니다 — 없는 값(예: 50)이나 뒤쪽 값으로 다시 겨뤄 보세요!'
+        : '후보를 반씩 버리는 힘입니다 — 배열이 클수록 격차는 기하급수로 커집니다!');
+    }
+    els.raceBanner.textContent = txt;
+    els.raceBanner.style.display = 'block';
+  } else {
+    els.raceBanner.style.display = 'none';
+  }
+  els.homeBtn.disabled = (curA === 0 && curB === 0);
+  els.prevBtn.disabled = (curA === 0 && curB === 0);
+  els.nextBtn.disabled = doneA && doneB;
+  els.endBtn.disabled = doneA && doneB;
+  renderVars({vars:{}});
+}
+function raceFwd(){
+  var moved = false;
+  if(curA < msA.length - 1){ curA++; moved = true; }
+  if(curB < msB.length - 1){ curB++; moved = true; }
+  renderRace();
+  if(!moved) stopTimer();
+}
+
+/* ----- 재생/모드/로드 ----- */
+function stopTimer(){
+  if(timer){ clearInterval(timer); timer = null; }
+  els.playBtn.textContent = '자동 재생';
+}
+function startTimer(){
+  stopTimer();
+  els.playBtn.textContent = '\u23f8 정지';
+  timer = setInterval(function(){
+    if(raceMode){
+      if(curA < msA.length - 1 || curB < msB.length - 1) raceFwd();
+      else stopTimer();
+    } else {
+      if(cur < trace.length - 1){ cur++; renderStep(); }
+      else stopTimer();
+    }
+  }, parseInt(els.speedSel.value, 10));
+}
+function updateNotice(){
+  var show = !raceMode && ALGOS[algoIdx].needSorted && !isSortedInput();
+  els.sortNotice.style.display = show ? 'block' : 'none';
+}
+function loadAlgo(idx){
+  stopTimer();
+  algoIdx = idx;
+  var def = LANG_DEFS[lang][ALGOS[idx].key];
+  buildViewer(def.code);
+  trace = ALGOS[idx].gen(algoArr(idx), target, def.L);
+  cur = 0;
+  var chips = els.algoChips.children;
+  for(var i = 0; i < chips.length; i++) chips[i].className = (i === idx) ? 'active' : '';
+  renderTips(idx);
+  updateNotice();
+  renderStep();
+}
+function setMode(race){
+  stopTimer();
+  raceMode = race;
+  els.modeStudy.className = race ? '' : 'active';
+  els.modeRace.className = race ? 'active' : '';
+  els.algoChips.style.display = race ? 'none' : 'flex';
+  els.viewerWrap.style.display = race ? 'none' : 'block';
+  els.racePanel.style.display = race ? 'block' : 'none';
+  els.studyView.style.display = race ? 'none' : 'block';
+  els.raceBox.style.display = race ? 'block' : 'none';
+  updateNotice();
+  if(race) buildRace();
+  else loadAlgo(algoIdx);
+}
+function setLang(l){
+  lang = l;
+  els.langC.className = (l === 'c') ? 'active' : '';
+  els.langPy.className = (l === 'py') ? 'active' : '';
+  if(raceMode) buildRace();
+  else loadAlgo(algoIdx);
+}
+
+ALGOS.forEach(function(a, idx){
+  var b = document.createElement('button');
+  b.textContent = a.name;
+  b.addEventListener('click', function(){ loadAlgo(idx); });
+  els.algoChips.appendChild(b);
+});
+els.modeStudy.addEventListener('click', function(){ if(raceMode) setMode(false); });
+els.modeRace.addEventListener('click', function(){ if(!raceMode) setMode(true); });
+els.langC.addEventListener('click', function(){ if(lang !== 'c') setLang('c'); });
+els.langPy.addEventListener('click', function(){ if(lang !== 'py') setLang('py'); });
+
+els.homeBtn.addEventListener('click', function(){
+  stopTimer();
+  if(raceMode){ curA = 0; curB = 0; renderRace(); }
+  else { cur = 0; renderStep(); }
+});
+els.prevBtn.addEventListener('click', function(){
+  stopTimer();
+  if(raceMode){ if(curA > 0) curA--; if(curB > 0) curB--; renderRace(); }
+  else if(cur > 0){ cur--; renderStep(); }
+});
+els.nextBtn.addEventListener('click', function(){
+  stopTimer();
+  if(raceMode) raceFwd();
+  else if(cur < trace.length - 1){ cur++; renderStep(); }
+});
+els.endBtn.addEventListener('click', function(){
+  stopTimer();
+  if(raceMode){ curA = msA.length - 1; curB = msB.length - 1; renderRace(); }
+  else { cur = trace.length - 1; renderStep(); }
+});
+els.playBtn.addEventListener('click', function(){
+  if(timer){ stopTimer(); return; }
+  if(raceMode){
+    if(curA >= msA.length - 1 && curB >= msB.length - 1){ curA = 0; curB = 0; renderRace(); }
+  } else {
+    if(cur >= trace.length - 1){ cur = 0; renderStep(); }
+  }
+  startTimer();
+});
+els.speedSel.addEventListener('change', function(){ if(timer) startTimer(); });
+
+/* ----- 입력 ----- */
+function applyInput(){
+  var raw = els.arrInput.value.split(',');
+  var vals = [];
+  for(var i = 0; i < raw.length; i++){
+    var t = raw[i].trim();
+    if(t === '') continue;
+    if(!/^[0-9]+$/.test(t)){ els.arrErr.textContent = '배열: 숫자만 입력하세요'; return; }
+    var v = parseInt(t, 10);
+    if(v < 1 || v > 99){ els.arrErr.textContent = '배열 값은 1~99 사이만 가능합니다'; return; }
+    vals.push(v);
+  }
+  if(vals.length < 2 || vals.length > 10){ els.arrErr.textContent = '원소는 2~10개로 입력하세요'; return; }
+  var tt = els.targetInput.value.trim();
+  if(!/^[0-9]+$/.test(tt)){ els.arrErr.textContent = '찾을 값: 숫자를 입력하세요'; return; }
+  var tv = parseInt(tt, 10);
+  if(tv < 1 || tv > 99){ els.arrErr.textContent = '찾을 값은 1~99 사이만 가능합니다'; return; }
+  els.arrErr.textContent = '';
+  curArr = vals;
+  target = tv;
+  els.arrInput.value = vals.join(', ');
+  if(raceMode) buildRace();
+  else loadAlgo(algoIdx);
+}
+els.applyBtn.addEventListener('click', applyInput);
+els.arrInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') applyInput(); });
+els.targetInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') applyInput(); });
+els.randBtn.addEventListener('click', function(){
+  var pool = [];
+  for(var v = 1; v <= 20; v++) pool.push(v);
+  var vals = [];
+  for(var i = 0; i < 8; i++){
+    var k = Math.floor(Math.random() * pool.length);
+    vals.push(pool.splice(k, 1)[0]);
+  }
+  els.arrInput.value = vals.join(', ');
+  var present = Math.random() < 0.5;
+  var tv = present ? vals[Math.floor(Math.random() * vals.length)] : 21 + Math.floor(Math.random() * 10);
+  els.targetInput.value = String(tv);
+  applyInput();
+});
+
+loadAlgo(0);
+</script>
+</body>
+</html>
