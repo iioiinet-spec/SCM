@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4개 사분면의 특수각 삼각함수 - 교과서 스타일</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .textbook-card {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .textbook-header {
+            background: #1e3a5f;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px 8px 0 0;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .textbook-label {
+            background: #f1f5f9;
+            border-left: 4px solid #3b82f6;
+            padding: 8px 16px;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 12px;
+        }
+
+        .formula-box {
+            background: #fefce8;
+            border: 1px solid #fde047;
+            border-radius: 6px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .highlight-red { color: #dc2626; font-weight: 700; }
+        .highlight-blue { color: #2563eb; font-weight: 700; }
+        .highlight-green { color: #16a34a; font-weight: 700; }
+        .highlight-purple { color: #7c3aed; font-weight: 700; }
+        .highlight-orange { color: #ea580c; font-weight: 700; }
+
+        .angle-btn {
+            border: 2px solid #94a3b8;
+            background: #ffffff;
+            color: #475569;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .angle-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .angle-btn.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .quadrant-btn {
+            border: 2px solid #cbd5e1;
+            background: #ffffff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+
+        .quadrant-btn:hover { border-color: #3b82f6; }
+        .quadrant-btn.active-q1 { background: #dcfce7; border-color: #16a34a; color: #166534; }
+        .quadrant-btn.active-q2 { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+        .quadrant-btn.active-q3 { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
+        .quadrant-btn.active-q4 { background: #dbeafe; border-color: #2563eb; color: #1e40af; }
+
+        .slider-track {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+        }
+
+        .slider-track::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: 3px solid #ffffff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .value-display {
+            font-family: 'Times New Roman', 'Noto Serif KR', serif;
+            font-size: 20px;
+        }
+
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            font-size: 18px;
+        }
+
+        .fraction .num {
+            border-bottom: 2px solid currentColor;
+            padding: 0 4px;
+            text-align: center;
+        }
+
+        .fraction .den {
+            padding: 0 4px;
+            text-align: center;
+        }
+
+        table.textbook-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+
+        table.textbook-table th {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 10px 8px;
+            font-weight: 700;
+        }
+
+        table.textbook-table td {
+            border: 1px solid #cbd5e1;
+            padding: 10px 8px;
+            text-align: center;
+        }
+
+        table.textbook-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .canvas-border {
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            background: #ffffff;
+        }
+
+        .note-box {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #9a3412;
+        }
+
+        .sign-table th { font-size: 13px; }
+        .sign-table td { font-size: 14px; }
+
+        .q1-bg { background: #f0fdf4; }
+        .q2-bg { background: #fefce8; }
+        .q3-bg { background: #fef2f2; }
+        .q4-bg { background: #eff6ff; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+
+        <!-- 교과서 스타일 헤더 -->
+        <div class="textbook-card mb-6">
+            <div class="textbook-header flex items-center gap-3">
+                <span class="text-2xl">📐</span>
+                <span>3. 사분면과 삼각함수의 부호</span>
+                <span class="ml-auto text-sm font-normal opacity-80">고등학교 수학 I</span>
+            </div>
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-slate-800 mb-2">4개 사분면에서의 특수각</h1>
+                <p class="text-slate-600">
+                    단위원 위의 한 점 P가 사분면을 이동할 때, <strong>sin θ, cos θ, tan θ</strong>의 값과 부호를 탐구합니다.
+                    각 사분면에서 x좌표와 y좌표의 부호에 따라 삼각함수의 부호가 결정됩니다.
+                </p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+
+            <!-- 왼쪽: 단위원 도형 -->
+            <div class="xl:col-span-7 space-y-4">
+
+                <!-- 단위원 그리기 -->
+                <div class="textbook-card">
+                    <div class="p-4 border-b border-slate-200">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <span class="font-bold text-slate-700 text-lg">[그림] 4개 사분면의 단위원과 특수각</span>
+                            <span class="text-sm text-slate-500">반지름 r = 1</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="canvas-border">
+                            <canvas id="mainCanvas" width="640" height="560"></canvas>
+                        </div>
+                        <div class="mt-3 flex flex-wrap justify-center gap-4 text-sm">
+                            <span class="flex items-center gap-2">
+                                <span class="w-4 h-4 rounded-full bg-green-500"></span> 
+                                <span class="text-green-700 font-semibold">제1사분면 (0°~90°)</span>
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="w-4 h-4 rounded-full bg-amber-500"></span> 
+                                <span class="text-amber-700 font-semibold">제2사분면 (90°~180°)</span>
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="w-4 h-4 rounded-full bg-red-500"></span> 
+                                <span class="text-red-700 font-semibold">제3사분면 (180°~270°)</span>
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="w-4 h-4 rounded-full bg-blue-500"></span> 
+                                <span class="text-blue-700 font-semibold">제4사분면 (270°~360°)</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 각도 조절 -->
+                <div class="textbook-card p-5">
+                    <div class="textbook-label mb-4">각도 조절</div>
+
+                    <div class="flex items-center gap-4 mb-4 flex-wrap">
+                        <span class="font-bold text-slate-700">기준각:</span>
+                        <span class="text-2xl font-bold text-blue-700 font-mono">
+                            θ = <span id="angleDisplay">30</span>°
+                        </span>
+                        <span class="text-lg text-slate-500 font-mono">
+                            = <span id="radDisplay">π/6</span>
+                        </span>
+                        <span id="quadrantBadge" class="px-3 py-1 rounded-full text-sm font-bold bg-green-100 text-green-800 border border-green-300">
+                            제1사분면
+                        </span>
+                    </div>
+
+                    <input type="range" id="angleSlider" min="0" max="360" value="30" class="slider-track mb-4">
+
+                    <div class="flex justify-between text-xs text-slate-400 mb-4 px-1">
+                        <span>0°</span>
+                        <span>90°</span>
+                        <span>180°</span>
+                        <span>270°</span>
+                        <span>360°</span>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="text-sm text-slate-500 self-center mr-1 font-semibold">특수각:</span>
+                        <button onclick="setAngle(30)" class="angle-btn" data-angle="30">30°</button>
+                        <button onclick="setAngle(45)" class="angle-btn" data-angle="45">45°</button>
+                        <button onclick="setAngle(60)" class="angle-btn" data-angle="60">60°</button>
+                        <button onclick="setAngle(120)" class="angle-btn" data-angle="120">120°</button>
+                        <button onclick="setAngle(135)" class="angle-btn" data-angle="135">135°</button>
+                        <button onclick="setAngle(150)" class="angle-btn" data-angle="150">150°</button>
+                        <button onclick="setAngle(210)" class="angle-btn" data-angle="210">210°</button>
+                        <button onclick="setAngle(225)" class="angle-btn" data-angle="225">225°</button>
+                        <button onclick="setAngle(240)" class="angle-btn" data-angle="240">240°</button>
+                        <button onclick="setAngle(300)" class="angle-btn" data-angle="300">300°</button>
+                        <button onclick="setAngle(315)" class="angle-btn" data-angle="315">315°</button>
+                        <button onclick="setAngle(330)" class="angle-btn" data-angle="330">330°</button>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-sm text-slate-500 self-center mr-1 font-semibold">축 위:</span>
+                        <button onclick="setAngle(0)" class="angle-btn" data-angle="0">0°</button>
+                        <button onclick="setAngle(90)" class="angle-btn" data-angle="90">90°</button>
+                        <button onclick="setAngle(180)" class="angle-btn" data-angle="180">180°</button>
+                        <button onclick="setAngle(270)" class="angle-btn" data-angle="270">270°</button>
+                        <button onclick="setAngle(360)" class="angle-btn" data-angle="360">360°</button>
+                    </div>
+                </div>
+
+                <!-- 사분면 부호 규칙 -->
+                <div class="textbook-card p-5">
+                    <div class="textbook-label mb-4">사분면에서 삼각함수의 부호</div>
+                    <div class="overflow-x-auto">
+                        <table class="textbook-table sign-table">
+                            <thead>
+                                <tr>
+                                    <th>삼각함수</th>
+                                    <th class="q1-bg">제1사분면<br><span class="text-xs font-normal">(0°&lt;θ&lt;90°)</span></th>
+                                    <th class="q2-bg">제2사분면<br><span class="text-xs font-normal">(90°&lt;θ&lt;180°)</span></th>
+                                    <th class="q3-bg">제3사분면<br><span class="text-xs font-normal">(180°&lt;θ&lt;270°)</span></th>
+                                    <th class="q4-bg">제4사분면<br><span class="text-xs font-normal">(270°&lt;θ&lt;360°)</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-bold highlight-red">sin θ<br><span class="text-xs font-normal text-slate-500">(y/r)</span></td>
+                                    <td class="q1-bg highlight-green">+</td>
+                                    <td class="q2-bg highlight-green">+</td>
+                                    <td class="q3-bg highlight-red">−</td>
+                                    <td class="q4-bg highlight-red">−</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold highlight-blue">cos θ<br><span class="text-xs font-normal text-slate-500">(x/r)</span></td>
+                                    <td class="q1-bg highlight-green">+</td>
+                                    <td class="q2-bg highlight-red">−</td>
+                                    <td class="q3-bg highlight-red">−</td>
+                                    <td class="q4-bg highlight-green">+</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold highlight-purple">tan θ<br><span class="text-xs font-normal text-slate-500">(y/x)</span></td>
+                                    <td class="q1-bg highlight-green">+</td>
+                                    <td class="q2-bg highlight-red">−</td>
+                                    <td class="q3-bg highlight-green">+</td>
+                                    <td class="q4-bg highlight-red">−</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="note-box mt-4">
+                        <strong>암기법:</strong> "<span class="highlight-green">전</span><span class="highlight-red">부</span><span class="highlight-green">투</span><span class="highlight-red">명</span>" — 
+                        sin은 1,2사분면(+), cos은 1,4사분면(+), tan은 1,3사분면(+)
+                    </div>
+                </div>
+            </div>
+
+            <!-- 오른쪽: 값 표시 -->
+            <div class="xl:col-span-5 space-y-4">
+
+                <!-- 현재 삼각비 값 -->
+                <div class="textbook-card">
+                    <div class="textbook-label">현재 삼각비 값</div>
+                    <div class="p-4 space-y-4">
+
+                        <!-- sin -->
+                        <div class="border-2 border-red-200 rounded-lg p-4 bg-red-50">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="highlight-red text-xl font-bold">sin θ = y/r</span>
+                                <span id="sinSign" class="text-2xl font-bold text-green-600">+</span>
+                            </div>
+                            <div class="text-center py-2">
+                                <span id="sinFraction" class="value-display text-red-700 text-2xl">
+                                    <span class="fraction"><span class="num">1</span><span class="den">2</span></span>
+                                </span>
+                                <span class="text-slate-400 mx-2">≈</span>
+                                <span id="sinDecimal" class="font-mono text-slate-600">0.500</span>
+                            </div>
+                            <div class="text-center text-sm text-slate-500 mt-1">
+                                y좌표: <span id="sinY" class="font-mono font-bold text-red-600">+1/2</span>
+                            </div>
+                        </div>
+
+                        <!-- cos -->
+                        <div class="border-2 border-blue-200 rounded-lg p-4 bg-blue-50">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="highlight-blue text-xl font-bold">cos θ = x/r</span>
+                                <span id="cosSign" class="text-2xl font-bold text-green-600">+</span>
+                            </div>
+                            <div class="text-center py-2">
+                                <span id="cosFraction" class="value-display text-blue-700 text-2xl">
+                                    <span class="fraction"><span class="num">√3</span><span class="den">2</span></span>
+                                </span>
+                                <span class="text-slate-400 mx-2">≈</span>
+                                <span id="cosDecimal" class="font-mono text-slate-600">0.866</span>
+                            </div>
+                            <div class="text-center text-sm text-slate-500 mt-1">
+                                x좌표: <span id="cosX" class="font-mono font-bold text-blue-600">+√3/2</span>
+                            </div>
+                        </div>
+
+                        <!-- tan -->
+                        <div class="border-2 border-purple-200 rounded-lg p-4 bg-purple-50">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="highlight-purple text-xl font-bold">tan θ = y/x</span>
+                                <span id="tanSign" class="text-2xl font-bold text-green-600">+</span>
+                            </div>
+                            <div class="text-center py-2">
+                                <span id="tanFraction" class="value-display text-purple-700 text-2xl">
+                                    <span class="fraction"><span class="num">√3</span><span class="den">3</span></span>
+                                </span>
+                                <span class="text-slate-400 mx-2">≈</span>
+                                <span id="tanDecimal" class="font-mono text-slate-600">0.577</span>
+                            </div>
+                            <div class="text-center text-sm text-slate-500 mt-1" id="tanNote">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 좌표 -->
+                <div class="textbook-card p-5">
+                    <div class="textbook-label">점 P의 좌표</div>
+                    <div class="text-center p-4 bg-slate-50 rounded-lg border border-slate-200 mt-3">
+                        <div class="value-display text-2xl text-slate-700 mb-2">
+                            P(<span id="coordX" class="text-blue-700 font-bold">√3/2</span>, 
+                            <span id="coordY" class="text-red-700 font-bold">1/2</span>)
+                        </div>
+                        <div class="text-sm text-slate-500">
+                            단위원 위의 점: x = cos θ, y = sin θ
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 관련각 -->
+                <div class="textbook-card p-5">
+                    <div class="textbook-label">4개 사분면의 관련각</div>
+                    <div class="space-y-2 mt-3 text-sm">
+                        <div class="flex justify-between items-center p-2 bg-green-50 rounded border border-green-200">
+                            <span class="font-bold text-green-700">제1사분면</span>
+                            <span class="font-mono">θ</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-amber-50 rounded border border-amber-200">
+                            <span class="font-bold text-amber-700">제2사분면</span>
+                            <span class="font-mono">180° − θ</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-red-50 rounded border border-red-200">
+                            <span class="font-bold text-red-700">제3사분면</span>
+                            <span class="font-mono">180° + θ</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-blue-50 rounded border border-blue-200">
+                            <span class="font-bold text-blue-700">제4사분면</span>
+                            <span class="font-mono">360° − θ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 피타고라스 -->
+                <div class="textbook-card p-5">
+                    <div class="textbook-label">피타고라스 정리 확인</div>
+                    <div class="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200 mt-3">
+                        <div class="value-display text-lg text-slate-700 mb-2">
+                            x² + y² = r² = 1
+                        </div>
+                        <div class="font-mono text-slate-600 text-sm" id="pythagoreanCheck">
+                            (√3/2)² + (1/2)² = 3/4 + 1/4 = 1 ✓
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4개 사분면 특수각 표 -->
+        <div class="textbook-card mt-6">
+            <div class="textbook-label m-4 mb-0">4개 사분면의 특수각 삼각비 (암기표)</div>
+            <div class="p-4">
+                <div class="overflow-x-auto">
+                    <table class="textbook-table">
+                        <thead>
+                            <tr>
+                                <th>사분면</th>
+                                <th>각도</th>
+                                <th class="highlight-red">sin θ</th>
+                                <th class="highlight-blue">cos θ</th>
+                                <th class="highlight-purple">tan θ</th>
+                                <th>점 P 좌표</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="q1-bg">
+                                <td rowspan="3" class="font-bold text-green-700">제1<br>사분면</td>
+                                <td class="font-mono">30° (π/6)</td>
+                                <td class="highlight-red"><span class="fraction"><span class="num">1</span><span class="den">2</span></span></td>
+                                <td class="highlight-blue"><span class="fraction"><span class="num">√3</span><span class="den">2</span></span></td>
+                                <td class="highlight-purple"><span class="fraction"><span class="num">√3</span><span class="den">3</span></span></td>
+                                <td class="font-mono">(√3/2, 1/2)</td>
+                            </tr>
+                            <tr class="q1-bg">
+                                <td class="font-mono">45° (π/4)</td>
+                                <td class="highlight-red"><span class="fraction"><span class="num">√2</span><span class="den">2</span></span></td>
+                                <td class="highlight-blue"><span class="fraction"><span class="num">√2</span><span class="den">2</span></span></td>
+                                <td class="highlight-purple">1</td>
+                                <td class="font-mono">(√2/2, √2/2)</td>
+                            </tr>
+                            <tr class="q1-bg">
+                                <td class="font-mono">60° (π/3)</td>
+                                <td class="highlight-red"><span class="fraction"><span class="num">√3</span><span class="den">2</span></span></td>
+                                <td class="highlight-blue"><span class="fraction"><span class="num">1</span><span class="den">2</span></span></td>
+                                <td class="highlight-purple">√3</td>
+                                <td class="font-mono">(1/2, √3/2)</td>
+                            </tr>
+                            <tr class="q2-bg">
+                                <td rowspan="3" class="font-bold text-amber-700">제2<br>사분면</td>
+                                <td class="font-mono">120° (2π/3)</td>
+                                <td class="highlight-red"><span class="fraction"><span class="num">√3</span><span class="den">2</span></span></td>
+                                <td class="highlight-red">−<span class="fraction"><span class="num">1</span><span class="den">2</span></span></td>
+                                <td class="highlight-red">−√3</td>
+                                <td class="font-mono">(−1/2, √3/2)</td>
+                            </tr>
+                            <tr class="q2-bg">
+                                <td class="font-mono">135° (3π/4)</td>
+                                <td class="highlight-red"><span class="fraction"><span class="num">√2</span><span class="den">2</span></span></td>
+                                <td class="highlight-red">−<span class="fraction"><span class="num">√2</span><span class="den">2</span></span></td>
+                                <td class="highlight-red">−1</td>
+                                <td class="font-mono">(−√2/2, √2/2)</td>
+                            </tr>
+                            <tr class="q2-bg">
+                                <td class="font-mono">150° (5π/6)</td>
+                                <td class="highlight-red"><span class="fraction"><span class="num">1</span><span class="den">2</span></span></td>
+                                <td class="highlight-red">−<span class="fraction"><span class="num">√3</span><span class="den">2</span></span></td>
+                                <td class="highlight-red">−<span class="fraction"><span class="num">√3</span><span class="den">3</span></span></td>
+                                <td class="font-mono">(−√3/2, 1/2)</td>
+                            </tr>
+                            <tr class="q3-bg">
+                                <td rowspan="3" class="font-bold text-red-700">제3<br>사분면</td>
+                                <td class="font-mono">210° (7π/6)</td>
+                                <td class="highlight-red">−<span class="fraction"><span class="num">1</span><span class="den">2</span></span></td>
+                                <td class="highlight-red">−<span class="fraction"><span class="num">√3</span><span class="den">2</span></span></td>
+                                <td class="highlight-purple"><span class="fraction"><span class="num">√3</span><span class="den">3</span></span></td>
+                                <td class="font-mono">(−√3/2, −1/2)</td>
+                            </tr>
+                            <tr class="q3-bg">
+                                <td class="font-mono">225° (5π/4)</td>
+                                <td class="highlight-red">−<span class="fraction"><span class="num">√2</span><span class="den">2</span></span></td>
+                                <td class="highlight-red">−<span class="fraction"><span class="num">√2</span><span class="den">2</span></span></td>
+                                <td class="highlight-purple">1</td>
+                                <td class="font-mono">(−√2/2, −√2/2)</td>
+                            </tr>
+                            <tr class="q3-bg">
+                                <td class="font-mono">240° (4π/3)</td>
+                                <td class="highlight-red">−<span class="fraction"><span class="num">√3</span><span class="den">2</span></span></td>
+                                <td class="highlight-red">−<span class="fraction"><span class="num">1</span><span class="den">2</span></span></td>
+                                <td class="highlight-purple">√3</td>
+                                <td class="font-mono">(−1/2, −√3/2)</td>
+                            </tr>
+                            <tr class="q4-bg">
+                                <td rowspan="3" class="font-bold text-blue-700">제4<br>사분면</td>
+                                <td class="font-mono">300° (5π/3)</td>
+                                <td class="highlight-red">−<span class="fraction"><span class="num">√3</span><span class="den">2</span></span></td>
+                                <td class="highlight-blue"><span class="fraction"><span class="num">1</span><span class="den">2</span></span></td>
+                                <td class="highlight-red">−√3</td>
+                                <td class="font-mono">(1/2, −√3/2)</td>
+                            </tr>
+                            <tr class="q4-bg">
+                                <td class="font-mono">315° (7π/4)</td>
+                                <td class="highlight-red">−<span class="fraction"><span class="num">√2</span><span class="den">2</span></span></td>
+                                <td class="highlight-blue"><span class="fraction"><span class="num">√2</span><span class="den">2</span></span></td>
+                                <td class="highlight-red">−1</td>
+                                <td class="font-mono">(√2/2, −√2/2)</td>
+                            </tr>
+                            <tr class="q4-bg">
+                                <td class="font-mono">330° (11π/6)</td>
+                                <td class="highlight-red">−<span class="fraction"><span class="num">1</span><span class="den">2</span></span></td>
+                                <td class="highlight-blue"><span class="fraction"><span class="num">√3</span><span class="den">2</span></span></td>
+                                <td class="highlight-red">−<span class="fraction"><span class="num">√3</span><span class="den">3</span></span></td>
+                                <td class="font-mono">(√3/2, −1/2)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 관계식 -->
+        <div class="textbook-card mt-6 p-5">
+            <div class="textbook-label mb-4">삼각함수의 성질</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="formula-box">
+                    <div class="font-bold text-slate-700 mb-2">주기성</div>
+                    <div class="value-display text-lg">
+                        sin(θ + 360°) = sin θ<br>
+                        cos(θ + 360°) = cos θ
+                    </div>
+                </div>
+                <div class="formula-box">
+                    <div class="font-bold text-slate-700 mb-2">음각 공식</div>
+                    <div class="value-display text-lg">
+                        sin(−θ) = −sin θ<br>
+                        cos(−θ) = cos θ
+                    </div>
+                </div>
+                <div class="formula-box">
+                    <div class="font-bold text-slate-700 mb-2">보각 공식</div>
+                    <div class="value-display text-lg">
+                        sin(180° − θ) = sin θ<br>
+                        cos(180° − θ) = −cos θ
+                    </div>
+                </div>
+                <div class="formula-box">
+                    <div class="font-bold text-slate-700 mb-2">평각 공식</div>
+                    <div class="value-display text-lg">
+                        sin(180° + θ) = −sin θ<br>
+                        cos(180° + θ) = −cos θ
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        const slider = document.getElementById('angleSlider');
+
+        let angle = 30;
+        const radius = 180;
+        const centerX = 320;
+        const centerY = 280;
+        let isDragging = false;
+
+        function toRad(deg) {
+            return deg * Math.PI / 180;
+        }
+
+        function getQuadrant(deg) {
+            deg = deg % 360;
+            if (deg === 0 || deg === 90 || deg === 180 || deg === 270) return 0; // axis
+            if (deg > 0 && deg < 90) return 1;
+            if (deg > 90 && deg < 180) return 2;
+            if (deg > 180 && deg < 270) return 3;
+            if (deg > 270 && deg < 360) return 4;
+            return 0;
+        }
+
+        function formatRadian(deg) {
+            deg = deg % 360;
+            const map = {
+                0: '0', 30: 'π/6', 45: 'π/4', 60: 'π/3',
+                90: 'π/2', 120: '2π/3', 135: '3π/4', 150: '5π/6',
+                180: 'π', 210: '7π/6', 225: '5π/4', 240: '4π/3',
+                270: '3π/2', 300: '5π/3', 315: '7π/4', 330: '11π/6', 360: '2π'
+            };
+            if (map[deg]) return map[deg];
+            return (deg * Math.PI / 180).toFixed(3) + ' rad';
+        }
+
+        // Special angle exact values
+        const specialValues = {
+            0:   { sin: {n:'0',d:''}, cos: {n:'1',d:''}, tan: {n:'0',d:''} },
+            30:  { sin: {n:'1',d:'2'}, cos: {n:'√3',d:'2'}, tan: {n:'√3',d:'3'} },
+            45:  { sin: {n:'√2',d:'2'}, cos: {n:'√2',d:'2'}, tan: {n:'1',d:''} },
+            60:  { sin: {n:'√3',d:'2'}, cos: {n:'1',d:'2'}, tan: {n:'√3',d:''} },
+            90:  { sin: {n:'1',d:''}, cos: {n:'0',d:''}, tan: {n:'정의되지 않음',d:''} },
+            120: { sin: {n:'√3',d:'2'}, cos: {n:'−1',d:'2'}, tan: {n:'−√3',d:''} },
+            135: { sin: {n:'√2',d:'2'}, cos: {n:'−√2',d:'2'}, tan: {n:'−1',d:''} },
+            150: { sin: {n:'1',d:'2'}, cos: {n:'−√3',d:'2'}, tan: {n:'−√3',d:'3'} },
+            180: { sin: {n:'0',d:''}, cos: {n:'−1',d:''}, tan: {n:'0',d:''} },
+            210: { sin: {n:'−1',d:'2'}, cos: {n:'−√3',d:'2'}, tan: {n:'√3',d:'3'} },
+            225: { sin: {n:'−√2',d:'2'}, cos: {n:'−√2',d:'2'}, tan: {n:'1',d:''} },
+            240: { sin: {n:'−√3',d:'2'}, cos: {n:'−1',d:'2'}, tan: {n:'√3',d:''} },
+            270: { sin: {n:'−1',d:''}, cos: {n:'0',d:''}, tan: {n:'정의되지 않음',d:''} },
+            300: { sin: {n:'−√3',d:'2'}, cos: {n:'1',d:'2'}, tan: {n:'−√3',d:''} },
+            315: { sin: {n:'−√2',d:'2'}, cos: {n:'√2',d:'2'}, tan: {n:'−1',d:''} },
+            330: { sin: {n:'−1',d:'2'}, cos: {n:'√3',d:'2'}, tan: {n:'−√3',d:'3'} },
+            360: { sin: {n:'0',d:''}, cos: {n:'1',d:''}, tan: {n:'0',d:''} }
+        };
+
+        function getFractionHTML(frac, sign) {
+            if (frac.n === '정의되지 않음') return '<span class="text-slate-500 text-lg">정의되지 않음</span>';
+            if (!frac.d) {
+                return (sign < 0 ? '−' : '') + frac.n;
+            }
+            const s = sign < 0 ? '−' : '';
+            return s + '<span class="fraction"><span class="num">' + frac.n + '</span><span class="den">' + frac.d + '</span></span>';
+        }
+
+        function getCoordSign(val) {
+            if (Math.abs(val) < 0.001) return '0';
+            const sign = val > 0 ? '+' : '−';
+            return sign;
+        }
+
+        function drawGrid() {
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+
+            for (let i = -3; i <= 3; i++) {
+                const pos = i * (radius / 2);
+                ctx.beginPath();
+                ctx.moveTo(centerX + pos, 30);
+                ctx.lineTo(centerX + pos, canvas.height - 30);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(30, centerY - pos);
+                ctx.lineTo(canvas.width - 30, centerY - pos);
+                ctx.stroke();
+            }
+        }
+
+        function drawAxes() {
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+
+            // X axis
+            ctx.beginPath();
+            ctx.moveTo(40, centerY);
+            ctx.lineTo(canvas.width - 40, centerY);
+            ctx.stroke();
+
+            // Y axis
+            ctx.beginPath();
+            ctx.moveTo(centerX, 40);
+            ctx.lineTo(centerX, canvas.height - 40);
+            ctx.stroke();
+
+            // Arrows
+            ctx.fillStyle = '#475569';
+            ctx.beginPath();
+            ctx.moveTo(canvas.width - 40, centerY);
+            ctx.lineTo(canvas.width - 50, centerY - 5);
+            ctx.lineTo(canvas.width - 50, centerY + 5);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, 40);
+            ctx.lineTo(centerX - 5, 50);
+            ctx.lineTo(centerX + 5, 50);
+            ctx.fill();
+
+            // Labels
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillStyle = '#64748b';
+            ctx.fillText('x', canvas.width - 45, centerY + 22);
+            ctx.fillText('y', centerX + 12, 48);
+
+            // Origin
+            ctx.fillStyle = '#1e293b';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillText('O', centerX - 22, centerY + 22);
+
+            // Tick marks
+            ctx.font = '11px monospace';
+            ctx.fillStyle = '#94a3b8';
+            for (let i = -1; i <= 1; i += 0.5) {
+                if (Math.abs(i) < 0.1) continue;
+                const tx = centerX + i * radius;
+                ctx.fillText(i.toFixed(1), tx - 10, centerY + 18);
+                const ty = centerY - i * radius;
+                ctx.fillText(i.toFixed(1), centerX - 32, ty + 4);
+            }
+        }
+
+        function drawUnitCircle() {
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px sans-serif';
+            ctx.fillText('단위원 (r=1)', centerX + radius + 10, centerY - radius + 15);
+        }
+
+        function drawQuadrantLabels() {
+            ctx.font = 'bold 16px sans-serif';
+
+            // Q1
+            ctx.fillStyle = 'rgba(22, 163, 74, 0.3)';
+            ctx.fillRect(centerX + 10, centerY - 50, 80, 40);
+            ctx.fillStyle = '#166534';
+            ctx.fillText('제1사분면', centerX + 15, centerY - 25);
+
+            // Q2
+            ctx.fillStyle = 'rgba(245, 158, 11, 0.3)';
+            ctx.fillRect(centerX - 90, centerY - 50, 80, 40);
+            ctx.fillStyle = '#92400e';
+            ctx.fillText('제2사분면', centerX - 85, centerY - 25);
+
+            // Q3
+            ctx.fillStyle = 'rgba(220, 38, 38, 0.3)';
+            ctx.fillRect(centerX - 90, centerY + 10, 80, 40);
+            ctx.fillStyle = '#991b1b';
+            ctx.fillText('제3사분면', centerX - 85, centerY + 35);
+
+            // Q4
+            ctx.fillStyle = 'rgba(37, 99, 235, 0.3)';
+            ctx.fillRect(centerX + 10, centerY + 10, 80, 40);
+            ctx.fillStyle = '#1e40af';
+            ctx.fillText('제4사분면', centerX + 15, centerY + 35);
+        }
+
+        function drawAllSpecialAngles() {
+            const specialAngles = [30, 45, 60, 120, 135, 150, 210, 225, 240, 300, 315, 330];
+            const qColors = ['#16a34a', '#16a34a', '#16a34a', '#f59e0b', '#f59e0b', '#f59e0b',
+                           '#dc2626', '#dc2626', '#dc2626', '#2563eb', '#2563eb', '#2563eb'];
+
+            specialAngles.forEach((a, i) => {
+                const rad = toRad(a);
+                const px = centerX + radius * Math.cos(rad);
+                const py = centerY - radius * Math.sin(rad);
+
+                ctx.fillStyle = qColors[i];
+                ctx.beginPath();
+                ctx.arc(px, py, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Label
+                const labelDist = 25;
+                const lx = px + labelDist * Math.cos(rad);
+                const ly = py - labelDist * Math.sin(rad);
+                ctx.fillStyle = qColors[i];
+                ctx.font = 'bold 11px sans-serif';
+                ctx.fillText(a + '°', lx - 10, ly + 4);
+            });
+
+            // Axis points
+            const axisAngles = [0, 90, 180, 270, 360];
+            axisAngles.forEach(a => {
+                const rad = toRad(a);
+                const px = centerX + radius * Math.cos(rad);
+                const py = centerY - radius * Math.sin(rad);
+                ctx.fillStyle = '#64748b';
+                ctx.beginPath();
+                ctx.arc(px, py, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        function drawCurrentAngle() {
+            const rad = toRad(angle);
+            const sinVal = Math.sin(rad);
+            const cosVal = Math.cos(rad);
+
+            const px = centerX + radius * cosVal;
+            const py = centerY - radius * sinVal;
+
+            const q = getQuadrant(angle);
+            const colors = {0: '#64748b', 1: '#16a34a', 2: '#f59e0b', 3: '#dc2626', 4: '#2563eb'};
+            const color = colors[q] || '#3b82f6';
+
+            // Radius line
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(px, py);
+            ctx.stroke();
+
+            // Projections
+            ctx.strokeStyle = 'rgba(220, 38, 38, 0.5)';
+            ctx.setLineDash([3, 3]);
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(px, centerY);
+            ctx.stroke();
+
+            ctx.strokeStyle = 'rgba(37, 99, 235, 0.5)';
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(centerX, py);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Point P
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(px, py, 7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Label P
+            ctx.fillStyle = color;
+            ctx.font = 'bold 15px sans-serif';
+            const labelX = px + (cosVal >= 0 ? 15 : -35);
+            const labelY = py - (sinVal >= 0 ? 10 : -20);
+            ctx.fillText('P', labelX, labelY);
+
+            // Angle arc
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 28, 0, -rad, true);
+            ctx.stroke();
+
+            // Angle value
+            ctx.fillStyle = color;
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillText('θ = ' + angle + '°', centerX + 40, centerY - 40);
+
+            // Projection labels
+            ctx.font = '11px sans-serif';
+            ctx.fillStyle = 'rgba(37, 99, 235, 0.8)';
+            const xLabelX = px + (cosVal >= 0 ? 5 : -40);
+            ctx.fillText('x = cos θ', xLabelX, centerY + (sinVal >= 0 ? 18 : -12));
+
+            ctx.fillStyle = 'rgba(220, 38, 38, 0.8)';
+            const yLabelY = py + (sinVal >= 0 ? -8 : 18);
+            ctx.fillText('y = sin θ', centerX + (cosVal >= 0 ? 12 : -55), yLabelY);
+        }
+
+        function updateValues() {
+            const rad = toRad(angle);
+            const sinVal = Math.sin(rad);
+            const cosVal = Math.cos(rad);
+            const tanVal = Math.tan(rad);
+            const q = getQuadrant(angle);
+
+            document.getElementById('angleDisplay').textContent = angle;
+            document.getElementById('radDisplay').textContent = formatRadian(angle);
+
+            const badge = document.getElementById('quadrantBadge');
+            const qNames = ['', '제1사분면', '제2사분면', '제3사분면', '제4사분면'];
+            const qClasses = ['', 'bg-green-100 text-green-800 border-green-300', 'bg-amber-100 text-amber-800 border-amber-300', 
+                            'bg-red-100 text-red-800 border-red-300', 'bg-blue-100 text-blue-800 border-blue-300'];
+            badge.textContent = qNames[q] || (angle % 360 === 0 ? '양의 x축' : angle % 360 === 90 ? '양의 y축' : 
+                                              angle % 360 === 180 ? '음의 x축' : angle % 360 === 270 ? '음의 y축' : '');
+            badge.className = 'px-3 py-1 rounded-full text-sm font-bold border ' + (qClasses[q] || 'bg-slate-100 text-slate-800 border-slate-300');
+
+            // Signs
+            const sinSign = Math.abs(sinVal) < 0.001 ? '0' : (sinVal > 0 ? '+' : '−');
+            const cosSign = Math.abs(cosVal) < 0.001 ? '0' : (cosVal > 0 ? '+' : '−');
+            const tanSign = Math.abs(tanVal) > 100 ? '없음' : (Math.abs(tanVal) < 0.001 ? '0' : (tanVal > 0 ? '+' : '−'));
+
+            document.getElementById('sinSign').textContent = sinSign;
+            document.getElementById('sinSign').className = 'text-2xl font-bold ' + (sinSign === '+' ? 'text-green-600' : sinSign === '0' ? 'text-slate-400' : 'text-red-600');
+
+            document.getElementById('cosSign').textContent = cosSign;
+            document.getElementById('cosSign').className = 'text-2xl font-bold ' + (cosSign === '+' ? 'text-green-600' : cosSign === '0' ? 'text-slate-400' : 'text-red-600');
+
+            document.getElementById('tanSign').textContent = tanSign;
+            document.getElementById('tanSign').className = 'text-2xl font-bold ' + (tanSign === '+' ? 'text-green-600' : tanSign === '0' || tanSign === '없음' ? 'text-slate-400' : 'text-red-600');
+
+            // Fractions
+            const sv = specialValues[angle] || specialValues[angle % 360];
+            if (sv) {
+                document.getElementById('sinFraction').innerHTML = getFractionHTML(sv.sin, sinVal >= 0 ? 1 : -1);
+                document.getElementById('sinDecimal').textContent = Math.abs(sinVal).toFixed(3);
+
+                document.getElementById('cosFraction').innerHTML = getFractionHTML(sv.cos, cosVal >= 0 ? 1 : -1);
+                document.getElementById('cosDecimal').textContent = Math.abs(cosVal).toFixed(3);
+
+                document.getElementById('tanFraction').innerHTML = getFractionHTML(sv.tan, tanVal >= 0 ? 1 : -1);
+                document.getElementById('tanDecimal').textContent = Math.abs(tanVal) > 100 ? '∞' : Math.abs(tanVal).toFixed(3);
+            } else {
+                document.getElementById('sinFraction').innerHTML = '<span class="text-slate-400 text-lg">소수값</span>';
+                document.getElementById('sinDecimal').textContent = Math.abs(sinVal).toFixed(3);
+                document.getElementById('cosFraction').innerHTML = '<span class="text-slate-400 text-lg">소수값</span>';
+                document.getElementById('cosDecimal').textContent = Math.abs(cosVal).toFixed(3);
+                document.getElementById('tanFraction').innerHTML = '<span class="text-slate-400 text-lg">소수값</span>';
+                document.getElementById('tanDecimal').textContent = Math.abs(tanVal).toFixed(3);
+            }
+
+            // Y/X coord display
+            const ySign = sinVal >= 0 ? '+' : '−';
+            const xSign = cosVal >= 0 ? '+' : '−';
+            document.getElementById('sinY').textContent = ySign + (sv ? sv.sin.n + (sv.sin.d ? '/' + sv.sin.d : '') : Math.abs(sinVal).toFixed(3));
+            document.getElementById('cosX').textContent = xSign + (sv ? sv.cos.n + (sv.cos.d ? '/' + sv.cos.d : '') : Math.abs(cosVal).toFixed(3));
+
+            // Coordinates
+            const coordX = document.getElementById('coordX');
+            const coordY = document.getElementById('coordY');
+            if (sv) {
+                coordX.innerHTML = (cosVal >= 0 ? '' : '−') + sv.cos.n + (sv.cos.d ? '/' + sv.cos.d : '');
+                coordY.innerHTML = (sinVal >= 0 ? '' : '−') + sv.sin.n + (sv.sin.d ? '/' + sv.sin.d : '');
+            } else {
+                coordX.textContent = cosVal.toFixed(3);
+                coordY.textContent = sinVal.toFixed(3);
+            }
+
+            // Pythagorean
+            if (sv) {
+                const xStr = (cosVal >= 0 ? '' : '−') + sv.cos.n + (sv.cos.d ? '/' + sv.cos.d : '');
+                const yStr = (sinVal >= 0 ? '' : '−') + sv.sin.n + (sv.sin.d ? '/' + sv.sin.d : '');
+                const x2 = sv.cos.n === '0' ? '0' : sv.cos.n + '²/' + sv.cos.d + '²';
+                const y2 = sv.sin.n === '0' ? '0' : sv.sin.n + '²/' + sv.sin.d + '²';
+                document.getElementById('pythagoreanCheck').textContent = 
+                    `(${xStr})² + (${yStr})² = 1 ✓`;
+            } else {
+                document.getElementById('pythagoreanCheck').textContent = 
+                    `${cosVal.toFixed(3)}² + ${sinVal.toFixed(3)}² = ${(cosVal*cosVal + sinVal*sinVal).toFixed(3)} ✓`;
+            }
+
+            // Tan note
+            const tanNote = document.getElementById('tanNote');
+            if (Math.abs(cosVal) < 0.001) {
+                tanNote.innerHTML = '<span class="text-red-500 font-bold">cos θ = 0 이므로 tan θ는 정의되지 않음</span>';
+            } else {
+                tanNote.innerHTML = '';
+            }
+
+            // Active buttons
+            document.querySelectorAll('.angle-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.dataset.angle) === angle) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
+            drawAxes();
+            drawUnitCircle();
+            drawQuadrantLabels();
+            drawAllSpecialAngles();
+            drawCurrentAngle();
+            updateValues();
+        }
+
+        slider.addEventListener('input', (e) => {
+            angle = parseInt(e.target.value);
+            render();
+        });
+
+        function setAngle(deg) {
+            angle = deg;
+            slider.value = deg;
+            render();
+        }
+
+        // Canvas drag
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            updateAngleFromMouse(e);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) updateAngleFromMouse(e);
+        });
+
+        canvas.addEventListener('mouseup', () => isDragging = false);
+        canvas.addEventListener('mouseleave', () => isDragging = false);
+
+        function updateAngleFromMouse(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const dx = x - centerX;
+            const dy = centerY - y;
+            let newAngle = Math.atan2(dy, dx) * 180 / Math.PI;
+            if (newAngle < 0) newAngle += 360;
+            angle = Math.round(newAngle);
+            slider.value = angle;
+            render();
+        }
+
+        // Touch
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isDragging = true;
+            updateAngleFromTouch(e);
+        }, {passive: false});
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (isDragging) updateAngleFromTouch(e);
+        }, {passive: false});
+
+        canvas.addEventListener('touchend', () => isDragging = false);
+
+        function updateAngleFromTouch(e) {
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            const dx = x - centerX;
+            const dy = centerY - y;
+            let newAngle = Math.atan2(dy, dx) * 180 / Math.PI;
+            if (newAngle < 0) newAngle += 360;
+            angle = Math.round(newAngle);
+            slider.value = angle;
+            render();
+        }
+
+        render();
+    </script>
+</body>
+</html>
