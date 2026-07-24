@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>삼차함수 미분·적분 시각화 실습실 — 접선의 기울기와 정적분</title>
+<style>
+:root{
+  --bg:#0b1526; --panel:#12203a; --panel2:#0e1a30; --line:#1e3a5f;
+  --teal:#2dd4bf; --teal-dim:#14b8a6; --amber:#fbbf24; --red:#f87171;
+  --green:#4ade80; --violet:#a78bfa; --pink:#f472b6; --blue:#60a5fa;
+  --text:#e2e8f0; --muted:#8aa3c4; --code-bg:#0a1322;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;min-height:100vh;}
+.wrap{max-width:1320px;margin:0 auto;padding:20px 18px 48px;}
+header{padding:22px 4px 18px;border-bottom:2px solid var(--line);margin-bottom:20px;display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;}
+header h1{font-size:1.5rem;letter-spacing:-0.5px;}
+header h1 span{color:var(--teal);}
+.badge{background:rgba(45,212,191,0.12);border:1px solid var(--teal-dim);color:var(--teal);font-size:0.78rem;padding:3px 10px;border-radius:999px;}
+.sub{color:var(--muted);font-size:0.88rem;width:100%;line-height:1.6;}
+.sub b{color:var(--text);}
+.grid{display:grid;grid-template-columns:minmax(440px,52%) 1fr;gap:18px;align-items:start;}
+@media(max-width:1000px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+.card h2{font-size:0.92rem;padding:11px 16px;border-bottom:1px solid var(--line);color:var(--teal);display:flex;align-items:center;gap:8px;font-weight:600;}
+.card h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);display:inline-block;}
+.card .body{padding:14px 16px;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel2);}
+.chips button{background:transparent;border:1px solid var(--line);color:var(--muted);font-size:0.79rem;padding:6px 11px;border-radius:999px;cursor:pointer;transition:all .15s;font-family:inherit;}
+.chips button:hover{border-color:var(--teal-dim);color:var(--teal);}
+.tglrow{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line);align-items:center;font-size:0.82rem;color:var(--muted);background:var(--panel2);}
+.tgl{background:transparent;border:1.5px solid var(--line);color:var(--muted);font:700 12.5px 'Malgun Gothic','Segoe UI',sans-serif;padding:6px 13px;border-radius:999px;cursor:pointer;transition:all .15s;}
+.tgl.on-tan{border-color:var(--amber);color:var(--amber);background:rgba(251,191,36,0.12);}
+.tgl.on-int{border-color:var(--teal);color:var(--teal);background:rgba(45,212,191,0.12);}
+.tgl.on-der{border-color:var(--violet);color:var(--violet);background:rgba(167,139,250,0.12);}
+#planeSvg{display:block;width:100%;max-width:560px;margin:0 auto;background:var(--code-bg);touch-action:none;user-select:none;-webkit-user-select:none;}
+.controls{display:flex;flex-wrap:wrap;gap:11px;padding:10px 16px;border-top:1px solid var(--line);background:var(--panel2);align-items:center;font-size:0.82rem;color:var(--muted);}
+.stepgrp{display:flex;align-items:center;gap:4px;}
+.stepgrp button{background:#173052;border:1px solid var(--line);color:var(--text);font:700 13px Consolas,monospace;width:25px;height:25px;border-radius:7px;cursor:pointer;transition:all .15s;}
+.stepgrp button:hover{border-color:var(--teal-dim);color:var(--teal);}
+.stepgrp .val{font:700 13.5px Consolas,'D2Coding',monospace;color:var(--amber);min-width:34px;text-align:center;}
+.stepgrp.gT .val{color:var(--amber);}
+.stepgrp.gA .val{color:#7fe0d4;}
+.stepgrp.gB .val{color:#7fe0d4;}
+.hintline{padding:9px 16px;border-top:1px solid var(--line);font-size:0.78rem;color:var(--muted);}
+.eqbig{background:var(--code-bg);border:1.5px solid var(--line);border-radius:9px;padding:10px 13px;font:700 15.5px Consolas,'D2Coding',monospace;text-align:center;margin-bottom:8px;}
+.eqbig.ef{color:#7fe0d4;border-color:rgba(45,212,191,0.45);}
+.eqbig.ed{color:#c4b5fd;border-color:rgba(167,139,250,0.45);}
+.eqbig.eF{color:#fde68a;border-color:rgba(251,191,36,0.45);}
+.mline{background:var(--code-bg);border:1px solid var(--line);border-radius:9px;padding:9px 13px;font:600 13.5px Consolas,'D2Coding',monospace;line-height:1.65;margin-bottom:8px;color:var(--text);}
+.mline .lab{display:block;font:600 11px 'Segoe UI','Malgun Gothic',sans-serif;color:var(--muted);margin-bottom:3px;}
+.mline.ok{color:#a7f3ea;border-color:rgba(45,212,191,0.45);}
+.mline.tanl{color:#fde68a;border-color:rgba(251,191,36,0.45);}
+.mline.inc{color:#a7f3ea;border-color:rgba(45,212,191,0.5);}
+.mline.dec{color:#93c5fd;border-color:rgba(96,165,250,0.5);}
+.mline.ext{color:#fde68a;border-color:rgba(251,191,36,0.55);}
+.mline.sgn{color:var(--green);border-color:rgba(74,222,128,0.4);}
+.mline.note{color:var(--muted);font-family:'Segoe UI','Malgun Gothic',sans-serif;font-size:12.5px;}
+.tips{font-size:0.83rem;color:var(--muted);line-height:1.75;}
+.tips b{color:var(--teal);}
+.tips code{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font:12px Consolas,monospace;color:var(--amber);}
+.rightcol{display:flex;flex-direction:column;gap:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1><span>삼차함수 미분·적분</span> 시각화 실습실</h1>
+  <span class="badge">접선의 기울기 f'(x&#8320;) &#183; 정적분 &#8747;&#8342;&#7495; f(x)dx</span>
+  <p class="sub">곡선 위의 <b>주황 점 T를 드래그</b>하면 그 점에서의 접선과 <b>미분값(기울기) f'(x&#8320;)</b>이, x축의 <b>a, b 마커를 드래그</b>하면 a부터 b까지의 <b>적분 영역</b>이 부호별 색(축 위 +청록 / 아래 &#8722;빨강)으로 칠해지며 <b>정적분 값이 분수로 정확하게</b> 표시됩니다.</p>
+</header>
+
+<div class="grid">
+  <!-- LEFT -->
+  <section class="card">
+    <h2><span class="dot"></span>좌표평면 — T, a, b를 드래그하세요</h2>
+    <div class="chips" id="exChips"></div>
+    <div class="tglrow">
+      <span>표시:</span>
+      <button class="tgl on-tan" id="tglTan">접선 (미분)</button>
+      <button class="tgl on-int" id="tglInt">적분 영역</button>
+      <button class="tgl" id="tglDer">도함수 그래프 f'(x)</button>
+    </div>
+    <div class="body" style="padding:10px;">
+      <svg id="planeSvg" viewBox="-6.5 -6.5 13 13" aria-label="cubic function with tangent and integral">
+        <g id="gridG" stroke="#13243f" stroke-width="0.03"></g>
+        <line x1="-6.5" y1="0" x2="6.5" y2="0" stroke="#2c4568" stroke-width="0.05"/>
+        <line x1="0" y1="-6.5" x2="0" y2="6.5" stroke="#2c4568" stroke-width="0.05"/>
+        <g id="axisLblG" font-size="0.38" fill="#5f7ba3"></g>
+        <g id="fillG"></g>
+        <g id="curveG" fill="none" stroke="#2dd4bf" stroke-width="0.09"></g>
+        <g id="derG" fill="none" stroke="#a78bfa" stroke-width="0.06" stroke-dasharray="0.16 0.12" display="none"></g>
+        <circle id="derDot" r="0.11" fill="#a78bfa" display="none"/>
+        <line id="tanLine" stroke="#fbbf24" stroke-width="0.07"/>
+        <line id="slopeDx" stroke="#8aa3c4" stroke-width="0.05"/>
+        <line id="slopeDy" stroke="#fbbf24" stroke-width="0.05" stroke-dasharray="0.12 0.09"/>
+        <text id="slopeLbl" font-size="0.42" fill="#fbbf24" font-weight="bold"></text>
+        <path id="aMark" fill="#7fe0d4" stroke="#0a1322" stroke-width="0.04" style="cursor:ew-resize;"/>
+        <path id="bMark" fill="#7fe0d4" stroke="#0a1322" stroke-width="0.04" style="cursor:ew-resize;"/>
+        <text id="aLbl" font-size="0.45" fill="#7fe0d4" font-weight="bold" text-anchor="middle"></text>
+        <text id="bLbl" font-size="0.45" fill="#7fe0d4" font-weight="bold" text-anchor="middle"></text>
+        <circle id="tDot" r="0.16" fill="#fbbf24" stroke="#0a1322" stroke-width="0.05" style="cursor:grab;"/>
+        <text id="tLbl" font-size="0.45" fill="#fbbf24" font-weight="bold" text-anchor="middle"></text>
+        <circle id="hitT" r="0.55" fill="transparent" style="cursor:grab;"/>
+        <circle id="hitA" r="0.5" fill="transparent" style="cursor:ew-resize;"/>
+        <circle id="hitB" r="0.5" fill="transparent" style="cursor:ew-resize;"/>
+      </svg>
+    </div>
+    <div class="controls">
+      <span class="stepgrp">p(x&#179;) <button id="pM">&#8722;</button><span class="val" id="pV"></span><button id="pP">+</button></span>
+      <span class="stepgrp">q(x&#178;) <button id="qM">&#8722;</button><span class="val" id="qV"></span><button id="qP">+</button></span>
+      <span class="stepgrp">r(x) <button id="rM">&#8722;</button><span class="val" id="rV"></span><button id="rP">+</button></span>
+      <span class="stepgrp">s <button id="sM">&#8722;</button><span class="val" id="sV"></span><button id="sP">+</button></span>
+    </div>
+    <div class="controls">
+      <span class="stepgrp gT">x&#8320;(접점) <button id="tM">&#8722;</button><span class="val" id="tV"></span><button id="tP">+</button></span>
+      <span class="stepgrp gA">a <button id="aM">&#8722;</button><span class="val" id="aV"></span><button id="aP">+</button></span>
+      <span class="stepgrp gB">b <button id="bM">&#8722;</button><span class="val" id="bV"></span><button id="bP">+</button></span>
+    </div>
+    <div class="hintline">주황 점 T = 접점(0.25 간격) &#183; 청록 삼각형 a, b = 적분 구간(0.5 간격) &#183; 접선 옆 작은 직각삼각형: 가로 1칸 &#8594; 세로 f'(x&#8320;)칸 = 기울기!</div>
+  </section>
+
+  <!-- RIGHT -->
+  <div class="rightcol">
+    <section class="card">
+      <h2><span class="dot"></span>함수 &#183; 도함수 &#183; 부정적분</h2>
+      <div class="body" id="fnBox"></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>미분 — 접선의 기울기</h2>
+      <div class="body" id="difBox"></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>적분 — a부터 b까지</h2>
+      <div class="body" id="intBox"></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>학습 포인트</h2>
+      <div class="body tips">
+        <b>1. 미분 = 순간 기울기</b> — f'(x&#8320;)는 x&#8320;에서의 <b>접선의 기울기</b>. T를 끌면 기울기가 실시간으로 변하고, f' &#62; 0이면 증가, f' &#60; 0이면 감소, f' = 0이면 <b>극값</b>(접선이 수평!).<br>
+        <b>2. 도함수도 함수다</b> — [도함수 그래프] 토글을 켜면 보라 곡선 f'(x) 위의 점이 접선 기울기와 같은 높이에 있음을 확인할 수 있습니다.<br>
+        <b>3. 정적분 = 부호 있는 넓이</b> — 축 위(청록)는 +, 축 아래(빨강)는 &#8722;로 셉니다. 그래서 <b>정적분 &#8800; 넓이</b>! 진짜 넓이는 |f|를 적분해야 합니다.<br>
+        <b>4. 미적분의 기본정리</b> — <code>&#8747;&#8342;&#7495; f(x)dx = F(b) &#8722; F(a)</code>, 단 <code>F'(x) = f(x)</code>. 미분과 적분은 서로 역연산!<br>
+        <b>5. 방향</b> — a &#62; b로 뒤집으면 <code>&#8747;&#8342;&#7495; = &#8722;&#8747;&#7495;&#8342;</code>: 값의 부호가 뒤집힙니다. 직접 만들어 확인해 보세요.
+      </div>
+    </section>
+  </div>
+</div>
+</div>
+<script>
+/* ===================== 상태·유틸 ===================== */
+var els = {};
+['exChips','tglTan','tglInt','tglDer','planeSvg','gridG','axisLblG','fillG','curveG','derG','derDot',
+ 'tanLine','slopeDx','slopeDy','slopeLbl','aMark','bMark','aLbl','bLbl','tDot','tLbl','hitT','hitA','hitB',
+ 'pM','pP','qM','qP','rM','rP','sM','sP','tM','tP','aM','aP','bM','bP',
+ 'pV','qV','rV','sV','tV','aV','bV','fnBox','difBox','intBox'
+].forEach(function(id){ els[id] = document.getElementById(id); });
+
+var SVGNS = 'http://www.w3.org/2000/svg';
+var P = 1, Q = 0, R = -3, S = 0;   /* f(x) = Px³+Qx²+Rx+S */
+var X0 = 2, A = -1, B = 2;
+var show = {tan:true, integ:true, der:false};
+var CLIP = 6.3, XLIM = 4;
+
+function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); return b ? gcd(b, a % b) : a; }
+function isInt(v){ return Math.abs(v - Math.round(v)) < 1e-9; }
+function fmtN(v, d){ return isInt(v) ? String(Math.round(v)) : String(parseFloat(v.toFixed(d === undefined ? 2 : d))); }
+function f(x){ return P*x*x*x + Q*x*x + R*x + S; }
+function df(x){ return 3*P*x*x + 2*Q*x + R; }
+function Fv(x){ return P*x*x*x*x/4 + Q*x*x*x/3 + R*x*x/2 + S*x; }
+
+/* 다항식 문자열 */
+function term(coef, v, first){
+  if(coef === 0) return '';
+  var sign = coef > 0 ? (first ? '' : ' + ') : (first ? '-' : ' - ');
+  var m = Math.abs(coef);
+  var body = v === '' ? String(m) : (m === 1 ? v : m + v);
+  return sign + body;
+}
+function polyStr(c3, c2, c1, c0, name){
+  var out = '', first = true;
+  [[c3,'x\u00b3'],[c2,'x\u00b2'],[c1,'x'],[c0,'']].forEach(function(pr){
+    var t = term(pr[0], pr[1], first);
+    if(t){ out += t; first = false; }
+  });
+  if(out === '') out = '0';
+  return name + ' = ' + out;
+}
+function fracTerm(n, d, v, first){
+  if(n === 0) return '';
+  var g = gcd(Math.abs(n), d);
+  var nn = n / g, dd = d / g;
+  if(dd === 1) return term(nn, v, first);
+  var sign = nn > 0 ? (first ? '' : ' + ') : (first ? '-' : ' - ');
+  var m = Math.abs(nn);
+  return sign + (m === 1 ? v : m + v) + '/' + dd;
+}
+function FStr(){
+  var out = '', first = true;
+  [[P,4,'x\u2074'],[Q,3,'x\u00b3'],[R,2,'x\u00b2'],[S,1,'x']].forEach(function(pr){
+    var t = fracTerm(pr[0], pr[1], pr[2], first);
+    if(t){ out += t; first = false; }
+  });
+  if(out === '') out = '0';
+  return 'F(x) = ' + out + ' (+ C)';
+}
+/* 정적분 정확 분수: x = k/2 (k 정수) → F(x) = (3P·k⁴ + 8Q·k³ + 24R·k² + 96S·k)/192 */
+function Fnum192(k){ return 3*P*k*k*k*k + 8*Q*k*k*k + 24*R*k*k + 96*S*k; }
+function fracStr(num, den){
+  if(num === 0) return '0';
+  var g = gcd(Math.abs(num), den);
+  var nn = num / g, dd = den / g;
+  return dd === 1 ? String(nn) : nn + '/' + dd;
+}
+
+/* ===================== 그리기 ===================== */
+function setL(el, x1, y1, x2, y2){
+  el.setAttribute('x1', x1); el.setAttribute('y1', -y1);
+  el.setAttribute('x2', x2); el.setAttribute('y2', -y2);
+}
+function setT(el, x, y, txt){
+  el.setAttribute('x', x); el.setAttribute('y', -y);
+  if(txt !== undefined) el.textContent = txt;
+}
+function showEl(el, on){ el.setAttribute('display', on ? 'inline' : 'none'); }
+function buildCurveInto(g, fn){
+  while(g.firstChild) g.removeChild(g.firstChild);
+  var seg = [];
+  function flush(){
+    if(seg.length > 1){
+      var pl = document.createElementNS(SVGNS, 'polyline');
+      pl.setAttribute('points', seg.join(' '));
+      g.appendChild(pl);
+    }
+    seg = [];
+  }
+  for(var x = -6.5; x <= 6.501; x += 0.04){
+    var y = fn(x);
+    if(isFinite(y) && Math.abs(y) <= CLIP) seg.push(x.toFixed(3) + ',' + (-y).toFixed(3));
+    else flush();
+  }
+  flush();
+}
+function buildFills(){
+  while(els.fillG.firstChild) els.fillG.removeChild(els.fillG.firstChild);
+  if(!show.integ) return;
+  var lo = Math.min(A, B), hi = Math.max(A, B);
+  if(hi - lo < 1e-9) return;
+  var step = 0.03, seg = [], sgn = 0;
+  function clip(y){ return Math.max(-CLIP, Math.min(CLIP, y)); }
+  function flush(){
+    if(seg.length > 1){
+      var pts = seg.slice();
+      pts.unshift(seg[0].split(',')[0] + ',0');
+      pts.push(seg[seg.length - 1].split(',')[0] + ',0');
+      var pg = document.createElementNS(SVGNS, 'polygon');
+      pg.setAttribute('points', pts.join(' '));
+      pg.setAttribute('fill', sgn >= 0 ? 'rgba(45,212,191,0.28)' : 'rgba(248,113,113,0.26)');
+      pg.setAttribute('stroke', 'none');
+      els.fillG.appendChild(pg);
+    }
+    seg = [];
+  }
+  for(var x = lo; x <= hi + 1e-9; x += step){
+    var xx = Math.min(x, hi);
+    var y = f(xx);
+    var s2 = y >= 0 ? 1 : -1;
+    if(seg.length && s2 !== sgn){
+      seg.push(xx.toFixed(3) + ',' + (-clip(y)).toFixed(3));
+      flush();
+    }
+    sgn = s2;
+    seg.push(xx.toFixed(3) + ',' + (-clip(y)).toFixed(3));
+  }
+  flush();
+}
+function trianglePath(x){
+  return 'M ' + x + ' 0.06 L ' + (x - 0.22) + ' 0.5 L ' + (x + 0.22) + ' 0.5 Z';
+}
+function renderPlane(){
+  buildCurveInto(els.curveG, f);
+  buildFills();
+  showEl(els.derG, show.der);
+  showEl(els.derDot, show.der && show.tan);
+  if(show.der){
+    buildCurveInto(els.derG, df);
+    if(show.tan){
+      els.derDot.setAttribute('cx', X0);
+      els.derDot.setAttribute('cy', -Math.max(-CLIP, Math.min(CLIP, df(X0))));
+    }
+  }
+  var y0 = f(X0), m = df(X0);
+  ['tanLine','slopeDx','slopeDy','slopeLbl','tDot','tLbl'].forEach(function(id){ showEl(els[id], show.tan); });
+  if(show.tan){
+    var dl = Math.hypot(1, m);
+    setL(els.tanLine, X0 - 30 / dl, y0 - 30 * m / dl, X0 + 30 / dl, y0 + 30 * m / dl);
+    els.tDot.setAttribute('cx', X0); els.tDot.setAttribute('cy', -y0);
+    setT(els.tLbl, X0, y0 + 0.55, 'T(' + fmtN(X0) + ', ' + fmtN(y0) + ')');
+    var okTri = Math.abs(m) <= 5 && Math.abs(y0) < 5 && Math.abs(y0 + m) < CLIP && X0 < 5;
+    showEl(els.slopeDx, okTri); showEl(els.slopeDy, okTri); showEl(els.slopeLbl, okTri);
+    if(okTri){
+      setL(els.slopeDx, X0, y0, X0 + 1, y0);
+      setL(els.slopeDy, X0 + 1, y0, X0 + 1, y0 + m);
+      setT(els.slopeLbl, X0 + 1.12, y0 + m / 2, "f'=" + fmtN(m));
+    }
+  }
+  els.hitT.setAttribute('cx', X0); els.hitT.setAttribute('cy', -f(X0));
+  showEl(els.aMark, show.integ); showEl(els.bMark, show.integ);
+  showEl(els.aLbl, show.integ); showEl(els.bLbl, show.integ);
+  els.aMark.setAttribute('d', trianglePath(A));
+  els.bMark.setAttribute('d', trianglePath(B));
+  setT(els.aLbl, A, -0.85, 'a = ' + fmtN(A));
+  setT(els.bLbl, B, -1.35, 'b = ' + fmtN(B));
+  els.hitA.setAttribute('cx', A); els.hitA.setAttribute('cy', 0.3);
+  els.hitB.setAttribute('cx', B); els.hitB.setAttribute('cy', 0.3);
+}
+
+/* ===================== 카드 ===================== */
+function mline(box, lab, txt, cls){
+  var d = document.createElement('div');
+  d.className = 'mline' + (cls ? ' ' + cls : '');
+  if(lab){
+    var l = document.createElement('span');
+    l.className = 'lab';
+    l.textContent = lab;
+    d.appendChild(l);
+  }
+  d.appendChild(document.createTextNode(txt));
+  box.appendChild(d);
+}
+function bigEq(box, cls, txt){
+  var d = document.createElement('div');
+  d.className = 'eqbig ' + cls;
+  d.textContent = txt;
+  box.appendChild(d);
+}
+function clearBox(box){ while(box.firstChild) box.removeChild(box.firstChild); }
+function renderFnCard(){
+  clearBox(els.fnBox);
+  bigEq(els.fnBox, 'ef', polyStr(P, Q, R, S, 'f(x)'));
+  bigEq(els.fnBox, 'ed', polyStr(0, 3 * P, 2 * Q, R, "f'(x)").replace('x\u00b2', 'x\u00b2'));
+  bigEq(els.fnBox, 'eF', FStr());
+  mline(els.fnBox, null, "미분: 지수를 앞으로, 지수는 하나 줄이기 \u00b7 적분: 반대로! F'(x) = f(x)임을 확인하세요.", 'note');
+}
+function renderDifCard(){
+  clearBox(els.difBox);
+  var y0 = f(X0), m = df(X0);
+  mline(els.difBox, '접점', 'T(' + fmtN(X0) + ', ' + fmtN(y0) + ')   \u00b7   f\'(' + fmtN(X0) + ') = ' + fmtN(m, 3), 'tanl');
+  var c = y0 - m * X0;
+  var eq;
+  if(isInt(m) && isInt(c)){
+    eq = 'y = ' + (m === 0 ? '' : (m === 1 ? 'x' : m === -1 ? '-x' : Math.round(m) + 'x'));
+    if(m === 0) eq += Math.round(c);
+    else if(c !== 0) eq += (c > 0 ? ' + ' : ' - ') + Math.abs(Math.round(c));
+  } else {
+    eq = 'y = ' + m.toFixed(2) + 'x ' + (c >= 0 ? '+ ' : '- ') + Math.abs(c).toFixed(2);
+  }
+  mline(els.difBox, '접선의 방정식  y = f\'(x\u2080)(x - x\u2080) + f(x\u2080)', eq, 'tanl');
+  if(Math.abs(m) < 1e-9){
+    var d2v = 6 * P * X0 + 2 * Q;
+    var kind = d2v > 1e-9 ? '극소' : (d2v < -1e-9 ? '극대' : '변곡(안장)');
+    mline(els.difBox, '판정', "f'(x\u2080) = 0 \u2192 접선이 수평! 이 점은 " + kind + '점입니다 (f\'\'(' + fmtN(X0) + ') = ' + fmtN(d2v) + ')', 'ext');
+  } else if(m > 0){
+    mline(els.difBox, '판정', "f'(x\u2080) = " + fmtN(m, 3) + ' \u003e 0 \u2192 이 지점에서 함수는 증가 (접선이 오른쪽 위로)', 'inc');
+  } else {
+    mline(els.difBox, '판정', "f'(x\u2080) = " + fmtN(m, 3) + ' \u003c 0 \u2192 이 지점에서 함수는 감소 (접선이 오른쪽 아래로)', 'dec');
+  }
+  mline(els.difBox, null, '작은 직각삼각형: 오른쪽으로 1칸 갈 때 위아래로 f\'(x\u2080)칸 — 그것이 기울기입니다.', 'note');
+}
+function areaAbs(lo, hi){
+  var n = 800, h = (hi - lo) / n, s2 = 0;
+  for(var i = 0; i < n; i++){
+    var x1 = lo + i * h, x2 = x1 + h;
+    s2 += (Math.abs(f(x1)) + 4 * Math.abs(f((x1 + x2) / 2)) + Math.abs(f(x2))) * h / 6;
+  }
+  return s2;
+}
+function renderIntCard(){
+  clearBox(els.intBox);
+  var ka = Math.round(A * 2), kb = Math.round(B * 2);
+  var num = Fnum192(kb) - Fnum192(ka);
+  var Sval = num / 192;
+  var frac = fracStr(num, 192);
+  mline(els.intBox, '구간', 'a = ' + fmtN(A) + '  \u2192  b = ' + fmtN(B) + (A > B ? '   (a \u003e b: 방향이 뒤집힌 적분!)' : ''));
+  mline(els.intBox, '미적분의 기본정리', '\u222b\u2090\u1d47 f(x)dx = F(b) - F(a) = ' + fmtN(Fv(B), 4) + ' - (' + fmtN(Fv(A), 4) + ')');
+  var res = '\u222b\u2090\u1d47 f(x)dx = ' + frac + (frac.indexOf('/') >= 0 ? ' = ' + fmtN(Sval, 4) : (isInt(Sval) ? '' : ' \u2248 ' + Sval.toFixed(4)));
+  mline(els.intBox, '정적분 (부호 있는 넓이)', res, 'ok');
+  var lo = Math.min(A, B), hi = Math.max(A, B);
+  var ar = areaAbs(lo, hi);
+  mline(els.intBox, '진짜 넓이 (절댓값의 적분)', '\u222b |f(x)| dx \u2248 ' + ar.toFixed(3) + (Math.abs(ar - Math.abs(Sval)) > 1e-3 ? '   \u2190 정적분과 다르다! 축 아래 빨강 영역이 \u2212로 상쇄되었기 때문' : '   (전 구간 부호가 같아 정적분의 절댓값과 일치)'), 'sgn');
+  mline(els.intBox, null, '청록 영역은 +, 빨강 영역은 \u2212로 계산됩니다. a, b를 끌어 상쇄를 만들어 보세요!', 'note');
+}
+function renderAll(){
+  renderPlane();
+  renderFnCard();
+  renderDifCard();
+  renderIntCard();
+  els.pV.textContent = P; els.qV.textContent = Q; els.rV.textContent = R; els.sV.textContent = S;
+  els.tV.textContent = fmtN(X0); els.aV.textContent = fmtN(A); els.bV.textContent = fmtN(B);
+  var ka = Math.round(A * 2), kb = Math.round(B * 2);
+  window.state = {p:P, q:Q, r:R, s:S, x0:X0, a:A, b:B,
+                  m:Math.round(df(X0) * 1000) / 1000,
+                  S:Math.round((Fnum192(kb) - Fnum192(ka)) / 192 * 10000) / 10000};
+}
+
+/* ===================== 입력 ===================== */
+var EXAMPLES = [
+  {name:'\u2460 x\u00b3 - 3x (기본)', v:[1, 0, -3, 0], t:2, a:-1, b:2},
+  {name:'\u2461 x\u00b3 (변곡점 원점)', v:[1, 0, 0, 0], t:0, a:-2, b:2},
+  {name:'\u2462 -x\u00b3 + 3x + 1', v:[-1, 0, 3, 1], t:1, a:-1, b:1},
+  {name:'\u2463 x\u00b3 - 3x\u00b2 + 2x (상쇄 마술)', v:[1, -3, 2, 0], t:0.5, a:0, b:2},
+  {name:'\u2464 기본으로', v:[1, 0, -3, 0], t:2, a:-1, b:2}
+];
+EXAMPLES.forEach(function(ex){
+  var btn = document.createElement('button');
+  btn.textContent = ex.name;
+  btn.addEventListener('click', function(){
+    P = ex.v[0]; Q = ex.v[1]; R = ex.v[2]; S = ex.v[3];
+    X0 = ex.t; A = ex.a; B = ex.b;
+    renderAll();
+  });
+  els.exChips.appendChild(btn);
+});
+[['tglTan','tan','on-tan'],['tglInt','integ','on-int'],['tglDer','der','on-der']].forEach(function(t){
+  els[t[0]].addEventListener('click', function(){
+    show[t[1]] = !show[t[1]];
+    els[t[0]].className = 'tgl' + (show[t[1]] ? ' ' + t[2] : '');
+    renderAll();
+  });
+});
+function stepP(dv){
+  var np = P + dv;
+  if(np === 0) np += dv;               /* 0 건너뛰기 (삼차 유지) */
+  P = Math.max(-2, Math.min(2, np));
+  if(P === 0) P = dv > 0 ? 1 : -1;
+  renderAll();
+}
+els.pM.addEventListener('click', function(){ stepP(-1); });
+els.pP.addEventListener('click', function(){ stepP(1); });
+[['qM',function(){ Q = Math.max(-5, Q - 1); }],['qP',function(){ Q = Math.min(5, Q + 1); }],
+ ['rM',function(){ R = Math.max(-5, R - 1); }],['rP',function(){ R = Math.min(5, R + 1); }],
+ ['sM',function(){ S = Math.max(-5, S - 1); }],['sP',function(){ S = Math.min(5, S + 1); }],
+ ['tM',function(){ X0 = Math.max(-XLIM, X0 - 0.25); }],['tP',function(){ X0 = Math.min(XLIM, X0 + 0.25); }],
+ ['aM',function(){ A = Math.max(-XLIM, A - 0.5); }],['aP',function(){ A = Math.min(XLIM, A + 0.5); }],
+ ['bM',function(){ B = Math.max(-XLIM, B - 0.5); }],['bP',function(){ B = Math.min(XLIM, B + 0.5); }]
+].forEach(function(pr){
+  els[pr[0]].addEventListener('click', function(){ pr[1](); renderAll(); });
+});
+var dragMode = null;
+function svgPt(ev){
+  var r = els.planeSvg.getBoundingClientRect();
+  return {
+    x: (ev.clientX - r.left) / r.width * 13 - 6.5,
+    y: -((ev.clientY - r.top) / r.height * 13 - 6.5)
+  };
+}
+[['hitT','t'],['tDot','t'],['hitA','a'],['aMark','a'],['hitB','b'],['bMark','b']].forEach(function(pr){
+  els[pr[0]].addEventListener('pointerdown', function(ev){
+    ev.preventDefault();
+    dragMode = pr[1];
+    els.planeSvg.setPointerCapture(ev.pointerId);
+    ev.stopPropagation();
+  });
+});
+els.planeSvg.addEventListener('pointermove', function(ev){
+  if(!dragMode) return;
+  var p = svgPt(ev);
+  if(dragMode === 't') X0 = Math.max(-XLIM, Math.min(XLIM, Math.round(p.x * 4) / 4));
+  else if(dragMode === 'a') A = Math.max(-XLIM, Math.min(XLIM, Math.round(p.x * 2) / 2));
+  else B = Math.max(-XLIM, Math.min(XLIM, Math.round(p.x * 2) / 2));
+  renderAll();
+});
+els.planeSvg.addEventListener('pointerup', function(){ dragMode = null; });
+els.planeSvg.addEventListener('pointercancel', function(){ dragMode = null; });
+
+/* ===================== 초기화 ===================== */
+(function init(){
+  for(var g = -6; g <= 6; g++){
+    if(g === 0) continue;
+    var lv = document.createElementNS(SVGNS, 'line');
+    lv.setAttribute('x1', g); lv.setAttribute('y1', -6.5);
+    lv.setAttribute('x2', g); lv.setAttribute('y2', 6.5);
+    els.gridG.appendChild(lv);
+    var lh = document.createElementNS(SVGNS, 'line');
+    lh.setAttribute('x1', -6.5); lh.setAttribute('y1', g);
+    lh.setAttribute('x2', 6.5); lh.setAttribute('y2', g);
+    els.gridG.appendChild(lh);
+  }
+  for(var t = -6; t <= 6; t += 2){
+    if(t === 0) continue;
+    var tx = document.createElementNS(SVGNS, 'text');
+    tx.setAttribute('x', t - 0.16); tx.setAttribute('y', 0.5);
+    tx.textContent = t;
+    els.axisLblG.appendChild(tx);
+    var ty = document.createElementNS(SVGNS, 'text');
+    ty.setAttribute('x', 0.14); ty.setAttribute('y', -t + 0.13);
+    ty.textContent = t;
+    els.axisLblG.appendChild(ty);
+  }
+  renderAll();
+})();
+</script>
+</body>
+</html>
