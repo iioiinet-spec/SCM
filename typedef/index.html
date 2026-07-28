@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>typedef로 만드는 구조체 — 메모리 탐구실</title>
+<style>
+:root{
+  --bg:#10131a;
+  --bg-soft:#151926;
+  --panel:#1b2130;
+  --panel-2:#212942;
+  --border:#2b3348;
+  --text:#e9ebf3;
+  --text-dim:#9aa2ba;
+  --text-faint:#6c7590;
+  --struct:#ffb454;
+  --struct-dim:#7a5c2e;
+  --ptr:#5fd0c8;
+  --ptr-dim:#2c5651;
+  --warn:#ff7a90;
+  --good:#8fd694;
+  --mono: 'JetBrains Mono','Fira Code',Consolas,'D2Coding',monospace;
+  --sans: 'Pretendard','Noto Sans KR','Apple SD Gothic Neo',sans-serif;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--struct);color:#1a1408;}
+
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--struct),var(--ptr));width:0%;z-index:999;transition:width .1s linear;}
+
+a{color:inherit;}
+code,.mono{font-family:var(--mono);}
+
+.wrap{display:flex;max-width:1320px;margin:0 auto;}
+nav.side{
+  position:sticky;top:0;height:100vh;width:236px;flex:0 0 236px;
+  padding:32px 18px 32px 28px;
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+}
+nav.side .brand{font-size:13px;letter-spacing:.14em;color:var(--text-faint);text-transform:uppercase;margin-bottom:28px;}
+nav.side .brand b{color:var(--struct);}
+nav.side ul{list-style:none;padding:0;margin:0;}
+nav.side li{margin-bottom:4px;}
+nav.side a{
+  display:flex;gap:10px;align-items:baseline;
+  padding:9px 10px;border-radius:8px;
+  font-size:14px;color:var(--text-dim);text-decoration:none;
+  border-left:2px solid transparent;
+  transition:background .15s,color .15s,border-color .15s;
+}
+nav.side a .num{font-family:var(--mono);font-size:11px;color:var(--text-faint);}
+nav.side a:hover{background:var(--panel);color:var(--text);}
+nav.side a.active{color:var(--struct);border-left-color:var(--struct);background:var(--panel);}
+nav.side a.active .num{color:var(--struct);}
+
+main{flex:1;min-width:0;padding:0 0 120px;}
+
+.section{padding:88px 56px 20px;max-width:960px;}
+.section:first-of-type{padding-top:0;}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--ptr);text-transform:uppercase;margin-bottom:10px;}
+h2{font-size:30px;margin:0 0 14px;letter-spacing:-.01em;}
+h3{font-size:19px;margin:34px 0 10px;color:var(--text);}
+p{color:var(--text-dim);margin:0 0 16px;font-size:15.5px;}
+p strong{color:var(--text);font-weight:600;}
+.lead{font-size:17px;color:var(--text);}
+
+.hero{padding:64px 56px 40px;max-width:1024px;}
+.hero .eyebrow{color:var(--struct);}
+.hero h1{font-size:44px;line-height:1.15;margin:0 0 18px;letter-spacing:-.02em;}
+.hero h1 em{font-style:normal;color:var(--struct);}
+.hero p{font-size:16.5px;max-width:640px;}
+.hero-visual{margin-top:44px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+.vs-badge{font-family:var(--mono);font-size:12px;color:var(--text-faint);padding:6px 12px;border:1px dashed var(--border);border-radius:20px;}
+
+pre.code{
+  background:#0c0e14;border:1px solid var(--border);border-radius:10px;
+  padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;
+  line-height:1.65;color:#dde1ee;margin:0 0 18px;
+}
+pre.code .kw{color:#7fb3ff;}
+pre.code .ty{color:var(--struct);}
+pre.code .str{color:var(--good);}
+pre.code .cm{color:var(--text-faint);font-style:italic;}
+pre.code .fn{color:var(--ptr);}
+pre.code .op{color:#ff9a76;}
+.codecap{font-family:var(--mono);font-size:11.5px;color:var(--text-faint);letter-spacing:.05em;margin-bottom:8px;text-transform:uppercase;}
+
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px 26px;margin:20px 0;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+.callout{border-left:3px solid var(--ptr);background:var(--panel);border-radius:0 10px 10px 0;padding:14px 18px;margin:18px 0;font-size:14.5px;color:var(--text-dim);}
+.callout b{color:var(--ptr);}
+.callout.warn{border-left-color:var(--warn);}
+.callout.warn b{color:var(--warn);}
+
+.membar{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;margin:22px 0 8px;}
+.mcell{
+  border:1.5px solid var(--struct-dim);background:linear-gradient(180deg,#241d10,#1a1610);
+  border-radius:10px;padding:12px 16px;min-width:96px;text-align:center;
+  transition:transform .18s,border-color .18s,box-shadow .18s,background .18s;
+  position:relative;
+}
+.mcell .field{font-family:var(--mono);font-size:10.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.mcell .val{font-family:var(--mono);font-size:14px;color:var(--struct);font-weight:600;word-break:break-all;}
+.mcell .addr{font-family:var(--mono);font-size:10px;color:var(--text-faint);margin-top:8px;}
+.mcell.ptrcell{border-color:var(--ptr-dim);background:linear-gradient(180deg,#0f2422,#0b1a19);}
+.mcell.ptrcell .val{color:var(--ptr);}
+.mcell.flash{transform:translateY(-4px);border-color:var(--warn);box-shadow:0 6px 18px -4px rgba(255,122,144,.4);}
+.mcell.flash .val{color:var(--warn);}
+.mcell.active{border-color:var(--warn);box-shadow:0 0 0 2px rgba(255,122,144,.25);}
+.arrow-row{display:flex;justify-content:center;color:var(--ptr);font-family:var(--mono);font-size:12px;margin:2px 0 14px;}
+
+.lab{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:28px;margin:24px 0;}
+.lab-head{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.lab-head .dot{width:8px;height:8px;border-radius:50%;background:var(--good);}
+.lab-head span{font-family:var(--mono);font-size:12px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.08em;}
+.controls{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px;}
+.field-in{display:flex;flex-direction:column;gap:6px;}
+.field-in label{font-size:11.5px;color:var(--text-faint);font-family:var(--mono);text-transform:uppercase;}
+.field-in input{
+  background:#0c0e14;border:1px solid var(--border);border-radius:8px;
+  padding:9px 12px;color:var(--text);font-family:var(--mono);font-size:14px;width:150px;
+}
+.field-in input:focus{outline:none;border-color:var(--struct);}
+.outputcard{
+  margin-top:18px;background:linear-gradient(135deg,#191d29,#151824);
+  border:1px solid var(--border);border-radius:12px;padding:18px 20px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.outputcard .name{font-size:17px;font-weight:700;}
+.outputcard .sub{font-family:var(--mono);font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.outputcard .score{font-family:var(--mono);font-size:26px;color:var(--struct);font-weight:700;}
+
+button.btn{
+  background:var(--panel-2);border:1px solid var(--border);color:var(--text);
+  padding:9px 16px;border-radius:8px;font-family:var(--mono);font-size:13px;cursor:pointer;
+  transition:border-color .15s,color .15s,background .15s;
+}
+button.btn:hover{border-color:var(--ptr);color:var(--ptr);}
+button.btn.primary{border-color:var(--struct);color:var(--struct);}
+button.btn.primary:hover{background:rgba(255,180,84,.1);}
+button.btn:disabled{opacity:.35;cursor:default;}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0;}
+
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--border);margin-bottom:16px;flex-wrap:wrap;}
+.tab{padding:9px 14px;font-family:var(--mono);font-size:12.5px;color:var(--text-faint);cursor:pointer;border-bottom:2px solid transparent;}
+.tab.active{color:var(--struct);border-bottom-color:var(--struct);}
+
+.stepper{display:flex;align-items:center;gap:14px;margin:20px 0;}
+.stepper button{width:38px;height:38px;border-radius:50%;background:var(--panel-2);border:1px solid var(--border);color:var(--text);font-size:16px;cursor:pointer;}
+.stepper button:hover{border-color:var(--ptr);color:var(--ptr);}
+.stepper .idxlabel{font-family:var(--mono);font-size:15px;}
+.stepper .idxlabel b{color:var(--warn);font-size:19px;}
+
+.addrformula{
+  font-family:var(--mono);font-size:14.5px;background:#0c0e14;border:1px solid var(--border);
+  border-radius:10px;padding:14px 18px;margin:14px 0;color:var(--text-dim);
+}
+.addrformula .hl{color:var(--warn);font-weight:700;}
+.addrformula .st{color:var(--struct);}
+.addrformula .pt{color:var(--ptr);}
+
+.arrtable{width:100%;border-collapse:collapse;margin:18px 0;font-family:var(--mono);font-size:13px;}
+.arrtable th{text-align:left;color:var(--text-faint);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1px solid var(--border);}
+.arrtable td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text-dim);}
+.arrtable tr.selected td{background:rgba(255,122,144,.08);color:var(--text);}
+.arrtable tr.selected td:first-child{color:var(--warn);font-weight:700;}
+.arrtable input{background:#0c0e14;border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:12.5px;padding:5px 8px;width:100%;}
+
+.qcard{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin:16px 0;}
+.qcard p.q{color:var(--text);font-weight:600;margin-bottom:12px;}
+.opt{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:14px;color:var(--text-dim);border:1px solid transparent;}
+.opt:hover{background:var(--panel-2);}
+.opt input{accent-color:var(--struct);}
+.qcard .explain{display:none;margin-top:12px;padding:12px 14px;border-radius:8px;font-size:13.5px;background:#0c0e14;border-left:3px solid var(--ptr);color:var(--text-dim);}
+.qcard.correct .explain{border-left-color:var(--good);display:block;}
+.qcard.wrong .explain{border-left-color:var(--warn);display:block;}
+.qcard .result{font-family:var(--mono);font-size:12px;margin-left:auto;}
+
+footer{padding:60px 56px;color:var(--text-faint);font-size:13px;border-top:1px solid var(--border);margin-top:40px;}
+
+.mobtoggle{display:none;}
+@media(max-width:900px){
+  nav.side{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%);background:var(--bg);z-index:200;box-shadow:20px 0 40px rgba(0,0,0,.5);transition:transform .25s;}
+  nav.side.open{transform:translateX(0);}
+  .mobtoggle{display:flex;position:fixed;top:14px;left:14px;z-index:201;background:var(--panel);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:10px;align-items:center;justify-content:center;cursor:pointer;font-size:18px;}
+  .section,.hero{padding-left:24px;padding-right:24px;}
+  .grid2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div class="mobtoggle" id="mobToggle">☰</div>
+
+<div class="wrap">
+<nav class="side" id="sideNav">
+  <div class="brand">C LANGUAGE LAB · <b>typedef struct</b></div>
+  <ul>
+    <li><a href="#s1" class="navlink active"><span class="num">01</span>typedef란?</a></li>
+    <li><a href="#s2" class="navlink"><span class="num">02</span>세 가지 선언 방식 비교</a></li>
+    <li><a href="#s3" class="navlink"><span class="num">03</span>실습: 학생 카드 만들기</a></li>
+    <li><a href="#s4" class="navlink"><span class="num">04</span>typedef 구조체와 포인터</a></li>
+    <li><a href="#s5" class="navlink"><span class="num">05</span>포인터로 typedef 구조체 배열 다루기</a></li>
+    <li><a href="#s6" class="navlink"><span class="num">06</span>개념 점검 퀴즈</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<div class="hero">
+  <div class="eyebrow">C typedef + Struct — Memory Model</div>
+  <h1>매번 <em>struct</em>라 쓰지 않고,<br>구조체에 새 이름을 붙이기.</h1>
+  <p><span class="mono">typedef</span>는 기존 자료형에 별명을 붙여주는 문법입니다. 구조체와 함께 쓰면 <span class="mono">struct Student</span>라는 긴 이름을 <span class="mono">Student</span> 한 단어로 줄일 수 있습니다. 메모리 구조나 동작은 일반 구조체와 완전히 같고, <b>이름을 쓰는 방식만</b> 달라집니다.</p>
+  <div class="hero-visual">
+    <span class="vs-badge">struct Student s1;</span>
+    <span style="color:var(--text-faint);font-family:var(--mono);">→ typedef →</span>
+    <span class="vs-badge" style="border-color:var(--struct);color:var(--struct);">Student s1;</span>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<section class="section" id="s1">
+  <div class="eyebrow">01 · 기초 문법</div>
+  <h2>typedef란 무엇인가</h2>
+  <p class="lead"><span class="mono">typedef</span>는 <b>새로운 자료형을 만드는 것이 아니라, 이미 있는 자료형에 별명(alias)을 붙이는 키워드</b>입니다. 지난 강의에서 만든 <span class="mono">struct Student</span>는 변수를 선언할 때마다 <span class="mono">struct</span> 키워드를 꼭 앞에 붙여야 했습니다. typedef를 쓰면 이 키워드를 매번 쓰지 않아도 됩니다.</p>
+
+  <h3>① 일반 변수에 쓰는 typedef (구조체가 아니어도 가능)</h3>
+  <div class="codecap">typedef_basic.c</div>
+  <pre class="code"><span class="kw">typedef</span> <span class="kw">unsigned</span> <span class="kw">int</span> <span class="ty">uint</span>;   <span class="cm">// unsigned int 의 별명이 uint</span>
+
+<span class="ty">uint</span> count = 10;   <span class="cm">// unsigned int count = 10; 과 완전히 동일</span></pre>
+  <p>typedef는 사실 구조체 전용 문법이 아닙니다. <span class="mono">기존 자료형</span> 옆에 <span class="mono">새 이름</span>을 적어주는 일반적인 규칙(<span class="mono">typedef 기존타입 새이름;</span>)이고, 구조체는 그 대상 중 하나일 뿐입니다.</p>
+
+  <h3>② 구조체에 typedef 적용하기</h3>
+  <div class="codecap">typedef_struct.c</div>
+  <pre class="code"><span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="kw">char</span> name[20];
+    <span class="kw">int</span> age;
+    <span class="kw">float</span> score;
+} <span class="ty">Student</span>;   <span class="cm">// 이 익명 구조체 전체의 별명이 Student</span>
+
+<span class="ty">Student</span> s1 = {<span class="str">"김민준"</span>, 17, 92.5};   <span class="cm">// struct 없이 바로 선언</span></pre>
+  <p>여기서 <span class="mono">struct</span> 뒤에 이름이 없다는 것에 주목하세요. 이런 구조체를 <b>익명 구조체(anonymous struct)</b>라고 부릅니다. 원래는 이름이 없어서 변수를 선언할 방법이 없었는데, typedef가 그 자리 전체에 <span class="mono">Student</span>라는 이름을 붙여준 것입니다.</p>
+
+  <div class="membar" id="s1mem"></div>
+  <div class="callout"><b>핵심</b> — typedef는 메모리 구조를 <b>전혀 바꾸지 않습니다</b>. <span class="mono">char[20] + int + float = 28바이트</span>라는 사실은 그대로입니다. 바뀌는 것은 오직 <b>컴파일러에게 이 자료형을 어떤 이름으로 부를지</b> 뿐입니다.</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s2">
+  <div class="eyebrow">02 · 문법 비교</div>
+  <h2>세 가지 선언 방식, 무엇이 다른가</h2>
+  <p class="lead">현업 코드와 교과서에서 아래 세 가지 방식을 모두 볼 수 있습니다. 셋 다 <b>같은 메모리 구조</b>를 만들지만, 변수를 선언할 때 타이핑하는 방식이 다릅니다.</p>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="codecap">방식 A · 구조체 태그만 사용</div>
+      <pre class="code" style="margin-bottom:0;"><span class="kw">struct</span> <span class="ty">Student</span> {
+    <span class="kw">char</span> name[20];
+    <span class="kw">int</span> age;
+};
+
+<span class="kw">struct</span> <span class="ty">Student</span> s1;  <span class="cm">// struct 필수</span></pre>
+    </div>
+    <div class="panel">
+      <div class="codecap">방식 B · 태그 + typedef 별도</div>
+      <pre class="code" style="margin-bottom:0;"><span class="kw">struct</span> <span class="ty">Student</span> {
+    <span class="kw">char</span> name[20];
+    <span class="kw">int</span> age;
+};
+<span class="kw">typedef</span> <span class="kw">struct</span> <span class="ty">Student</span> <span class="ty">Student</span>;
+
+<span class="ty">Student</span> s1;  <span class="cm">// struct 생략 가능</span></pre>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="codecap">방식 C · 익명 구조체 + typedef (가장 흔한 방식)</div>
+    <pre class="code" style="margin-bottom:0;"><span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="kw">char</span> name[20];
+    <span class="kw">int</span> age;
+} <span class="ty">Student</span>;   <span class="cm">// 태그 이름 없이 바로 typedef</span>
+
+<span class="ty">Student</span> s1;  <span class="cm">// struct 생략 가능, 태그 이름 자체가 없음</span></pre>
+  </div>
+
+  <table class="arrtable" style="margin-top:24px;">
+    <thead><tr><th>방식</th><th>구조체 태그</th><th>변수 선언</th><th>메모리 구조</th></tr></thead>
+    <tbody>
+      <tr><td>A. 태그만</td><td>struct Student</td><td><span class="mono">struct Student</span> s1;</td><td>동일</td></tr>
+      <tr><td>B. 태그 + typedef</td><td>struct Student</td><td><span class="mono">Student</span> s1; <span class="mono">또는 struct Student</span> s1;</td><td>동일</td></tr>
+      <tr><td>C. 익명 + typedef</td><td>없음</td><td><span class="mono">Student</span> s1;</td><td>동일</td></tr>
+    </tbody>
+  </table>
+  <div class="callout"><b>실전 팁</b> — 특별한 이유가 없다면 <b>방식 C</b>가 가장 간결해서 널리 쓰입니다. 다만 구조체 내부에서 <b>자기 자신을 가리키는 포인터</b>가 필요한 경우(연결 리스트의 노드 등)에는 태그 이름이 필요해, 방식 B처럼 태그를 남겨두기도 합니다.</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s3">
+  <div class="eyebrow">03 · 인터랙티브 실습</div>
+  <h2>typedef로 학생 카드 만들기</h2>
+  <p class="lead">아래 입력값을 바꿔보세요. 지난 구조체 강의와 <b>완전히 같은 메모리 구조</b>이지만, 코드에서 <span class="mono">struct</span> 키워드가 사라진 것을 확인할 수 있습니다.</p>
+
+  <div class="lab">
+    <div class="lab-head"><span class="dot"></span><span>LIVE · Student s1  (typedef struct { ... } Student;)</span></div>
+    <div class="controls">
+      <div class="field-in"><label>name</label><input id="inName" type="text" maxlength="10" value="김민준"></div>
+      <div class="field-in"><label>age</label><input id="inAge" type="number" min="0" max="99" value="17"></div>
+      <div class="field-in"><label>score</label><input id="inScore" type="number" min="0" max="100" step="0.1" value="92.5"></div>
+    </div>
+
+    <div class="codecap">실시간 생성 코드</div>
+    <pre class="code" id="s3code"></pre>
+
+    <div class="codecap">메모리 레이아웃 (base = 0x1000) — struct 버전과 바이트까지 동일</div>
+    <div class="membar" id="s3mem"></div>
+
+    <div class="codecap">printf 실행 결과</div>
+    <pre class="code" id="s3printf"></pre>
+
+    <div class="outputcard">
+      <div>
+        <div class="name" id="s3cardName">김민준</div>
+        <div class="sub" id="s3cardSub">age 17 · Student, 28 bytes</div>
+      </div>
+      <div class="score" id="s3cardScore">92.5</div>
+    </div>
+  </div>
+  <div class="callout"><b>관찰</b> — 이전 강의의 <span class="mono">struct Student s1</span> 실습과 메모리 다이어그램이 <b>완전히 동일</b>합니다. typedef는 타이핑을 줄여줄 뿐, 바이트 하나도 바꾸지 않는다는 것을 다시 확인할 수 있습니다.</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s4">
+  <div class="eyebrow">04 · typedef 구조체와 포인터</div>
+  <h2>Student *p — struct 없이 포인터 선언하기</h2>
+  <p class="lead">포인터 선언에서도 <span class="mono">struct</span> 키워드가 사라지는 효과는 그대로 이어집니다. <span class="mono">struct Student *p</span> 대신 <span class="mono">Student *p</span>라고만 쓰면 됩니다. 접근 방법(<span class="mono">-></span>, <span class="mono">(*p).</span>)은 지난 강의와 똑같습니다.</p>
+
+  <div class="codecap">typedef_ptr.c</div>
+  <pre class="code"><span class="ty">Student</span> s1 = {<span class="str">"박지후"</span>, 16, 88.5};
+<span class="ty">Student</span> *p = &s1;      <span class="cm">// struct 없이 포인터 선언</span>
+
+p->age = 20;             <span class="cm">// 화살표 연산자, 의미는 이전과 동일</span>
+(*p).score = 100.0;      <span class="cm">// 역참조 + 점 연산자, 위와 동일</span></pre>
+
+  <div class="lab">
+    <div class="lab-head"><span class="dot"></span><span>LIVE · Student s1, *p = &s1</span></div>
+    <p style="margin-bottom:6px;">버튼을 눌러 <b>포인터를 통해</b> s1의 값을 바꿔보세요.</p>
+
+    <div class="membar" id="s4mem"></div>
+    <div class="arrow-row" id="s4arrow">p (0x7F00) ──▶ s1 (0x3000)</div>
+
+    <div class="btnrow">
+      <button class="btn primary" id="btnPAge">p->age = 20 실행</button>
+      <button class="btn primary" id="btnPScore">(*p).score = 100.0 실행</button>
+      <button class="btn" id="btnPReset">초기화</button>
+    </div>
+    <div class="codecap">실행된 코드 로그</div>
+    <pre class="code" id="s4log">// 버튼을 눌러 실행해 보세요</pre>
+  </div>
+  <div class="callout warn"><b>주의</b> — typedef로 이름만 짧아졌을 뿐, <span class="mono">p</span>가 <b>s1의 주소를 담고 있다</b>는 사실과, <span class="mono">p->age = 20</span>이 <b>원본 s1을 직접 수정</b>한다는 사실은 struct 버전과 완전히 같습니다.</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s5">
+  <div class="eyebrow">05 · 핵심: 포인터를 배열처럼</div>
+  <h2>포인터로 typedef 구조체 배열 다루기</h2>
+  <p class="lead"><span class="mono">malloc</span>으로 여러 개를 한 번에 할당할 때도 <span class="mono">struct</span> 키워드만 빠질 뿐, 원리는 동일합니다. <span class="mono">arr[i]</span>, <span class="mono">*(arr+i)</span>, <span class="mono">(arr+i)->field</span>는 여전히 같은 메모리를 가리킵니다.</p>
+
+  <div class="codecap">typedef_array.c</div>
+  <pre class="code"><span class="ty">Student</span> *arr = (<span class="ty">Student</span> *)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="ty">Student</span>) * 5);  <span class="cm">// struct 없이 sizeof(Student)</span>
+
+<span class="kw">for</span> (<span class="kw">int</span> i = 0; i < 5; i++) {
+    <span class="fn">sprintf</span>(arr[i].name, <span class="str">"학생%d"</span>, i + 1);
+    arr[i].age = 15 + i;
+    arr[i].score = 70.0 + i * 5;
+}
+
+<span class="kw">for</span> (<span class="kw">int</span> i = 0; i < 5; i++) {
+    <span class="fn">printf</span>(<span class="str">"%s (%d세) - %.1f점\n"</span>, arr[i].name, arr[i].age, arr[i].score);
+}
+<span class="fn">free</span>(arr);</pre>
+
+  <div class="lab">
+    <div class="lab-head"><span class="dot"></span><span>LIVE · Student *arr (5칸, base = 0x2000)</span></div>
+
+    <div class="tabs">
+      <div class="tab active" data-syn="idx">arr[i].field</div>
+      <div class="tab" data-syn="deref">(*(arr + i)).field</div>
+      <div class="tab" data-syn="arrow">(arr + i)->field</div>
+    </div>
+
+    <div class="stepper">
+      <button id="idxDown">−</button>
+      <div class="idxlabel">i = <b id="idxVal">0</b></div>
+      <button id="idxUp">+</button>
+    </div>
+
+    <div class="addrformula" id="addrFormula"></div>
+
+    <div class="membar" id="s5mem"></div>
+
+    <table class="arrtable">
+      <thead><tr><th>i</th><th>주소</th><th>name</th><th>age</th><th>score</th></tr></thead>
+      <tbody id="s5table"></tbody>
+    </table>
+    <p style="font-size:13px;">표의 <b>age</b>, <b>score</b> 칸을 클릭해서 직접 값을 바꿀 수 있습니다.</p>
+  </div>
+
+  <div class="callout"><b>핵심 공식</b> — <span class="mono">arr + i</span>의 주소는 여전히 <span class="mono">base + i × sizeof(Student)</span>입니다. typedef는 이름만 줄여줄 뿐 <span class="mono">sizeof(Student)</span>의 값(28바이트) 자체는 <span class="mono">sizeof(struct Student)</span>와 정확히 같습니다.</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s6">
+  <div class="eyebrow">06 · 개념 점검</div>
+  <h2>퀴즈로 확인하기</h2>
+  <p class="lead">typedef와 구조체를 함께 쓰는 문법을 스스로 점검해 보세요.</p>
+  <div id="quizWrap"></div>
+</section>
+
+<footer>C Language Lab · typedef struct 강의자료 — 고교학점제 AI 교과 보조자료</footer>
+</main>
+</div>
+
+<script>
+function hex(n){ return '0x' + n.toString(16).toUpperCase(); }
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+const links = document.querySelectorAll('.navlink');
+const sections = [...document.querySelectorAll('.section')];
+function onScroll(){
+  const doc = document.documentElement;
+  const pct = (doc.scrollTop) / (doc.scrollHeight - doc.clientHeight) * 100;
+  document.getElementById('progress').style.width = pct + '%';
+  let current = sections[0];
+  for(const s of sections){ if(s.getBoundingClientRect().top < 140) current = s; }
+  links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current.id));
+}
+document.addEventListener('scroll', onScroll);
+onScroll();
+
+const mobToggle = document.getElementById('mobToggle');
+const sideNav = document.getElementById('sideNav');
+mobToggle.addEventListener('click', () => sideNav.classList.toggle('open'));
+links.forEach(l => l.addEventListener('click', () => sideNav.classList.remove('open')));
+
+/* section 1 static memory bar */
+(function(){
+  const holder = document.getElementById('s1mem');
+  const layout = [
+    {f:'name', bytes:20, val:'char[20]', addr:0x1000},
+    {f:'age', bytes:4, val:'int', addr:0x1014},
+    {f:'score', bytes:4, val:'float', addr:0x1018},
+  ];
+  layout.forEach(c=>{
+    const d = el('div','mcell');
+    d.style.flex = c.bytes;
+    d.innerHTML = `<div class="field">${c.f}</div><div class="val">${c.val}</div><div class="addr">${hex(c.addr)} · ${c.bytes}B</div>`;
+    holder.appendChild(d);
+  });
+})();
+
+/* section 3: interactive student card (typedef) */
+(function(){
+  const inName = document.getElementById('inName');
+  const inAge = document.getElementById('inAge');
+  const inScore = document.getElementById('inScore');
+  const codeBox = document.getElementById('s3code');
+  const memBox = document.getElementById('s3mem');
+  const pfBox = document.getElementById('s3printf');
+  const cardName = document.getElementById('s3cardName');
+  const cardSub = document.getElementById('s3cardSub');
+  const cardScore = document.getElementById('s3cardScore');
+
+  function render(){
+    const name = inName.value || '이름없음';
+    const age = parseInt(inAge.value || '0', 10);
+    const score = parseFloat(inScore.value || '0');
+    const displayName = name.length > 19 ? name.slice(0,19) : name;
+
+    codeBox.innerHTML =
+`<span class="ty">Student</span> s1 = {<span class="str">"${escapeHtml(displayName)}"</span>, ${age}, ${isNaN(score)?0:score}};
+
+<span class="fn">printf</span>(<span class="str">"이름: %s, 나이: %d, 점수: %.1f\\n"</span>,
+       s1.name, s1.age, s1.score);`;
+
+    memBox.innerHTML = '';
+    const layout = [
+      {f:'name', v:'"'+displayName+'"', addr:0x1000, size:20},
+      {f:'age', v:String(age), addr:0x1014, size:4},
+      {f:'score', v:(isNaN(score)?0:score).toFixed(1), addr:0x1018, size:4},
+    ];
+    layout.forEach(c=>{
+      const d = el('div','mcell');
+      d.style.flex = c.size;
+      d.innerHTML = `<div class="field">${c.f}</div><div class="val">${escapeHtml(c.v)}</div><div class="addr">${hex(c.addr)} · ${c.size}B</div>`;
+      d.classList.add('flash');
+      setTimeout(()=>d.classList.remove('flash'), 260);
+      memBox.appendChild(d);
+    });
+
+    pfBox.textContent = `이름: ${displayName}, 나이: ${age}, 점수: ${(isNaN(score)?0:score).toFixed(1)}`;
+
+    cardName.textContent = displayName;
+    cardSub.textContent = `age ${age} · Student, 28 bytes`;
+    cardScore.textContent = (isNaN(score)?0:score).toFixed(1);
+  }
+  [inName, inAge, inScore].forEach(i => i.addEventListener('input', render));
+  render();
+})();
+
+/* section 4: typedef struct pointer demo */
+(function(){
+  const state = { name:'박지후', age:16, score:88.5 };
+  const initial = {...state};
+  const mem = document.getElementById('s4mem');
+  const log = document.getElementById('s4log');
+
+  function render(flashField){
+    mem.innerHTML = '';
+    const layout = [
+      {f:'name', v:'"'+state.name+'"', addr:0x3000, size:20, key:'name'},
+      {f:'age', v:String(state.age), addr:0x3014, size:4, key:'age'},
+      {f:'score', v:state.score.toFixed(1), addr:0x3018, size:4, key:'score'},
+    ];
+    layout.forEach(c=>{
+      const d = el('div','mcell');
+      d.style.flex = c.size;
+      d.innerHTML = `<div class="field">${c.f}</div><div class="val">${escapeHtml(c.v)}</div><div class="addr">${hex(c.addr)}</div>`;
+      if(flashField === c.key){ d.classList.add('flash'); setTimeout(()=>d.classList.remove('flash'), 500); }
+      mem.appendChild(d);
+    });
+    const pcell = el('div','mcell ptrcell');
+    pcell.style.flex = 6;
+    pcell.innerHTML = `<div class="field">p (pointer)</div><div class="val">${hex(0x3000)}</div><div class="addr">stored at 0x7F00</div>`;
+    mem.appendChild(pcell);
+  }
+  function addLog(line){ log.textContent += '\n' + line; }
+
+  document.getElementById('btnPAge').addEventListener('click', ()=>{
+    state.age = 20; render('age'); addLog('p->age = 20;   // s1.age → 20');
+  });
+  document.getElementById('btnPScore').addEventListener('click', ()=>{
+    state.score = 100.0; render('score'); addLog('(*p).score = 100.0;   // s1.score → 100.0');
+  });
+  document.getElementById('btnPReset').addEventListener('click', ()=>{
+    Object.assign(state, initial); render(); log.textContent = '// 초기화됨 — s1 = {"박지후", 16, 88.5}';
+  });
+  render();
+})();
+
+/* section 5: pointer-as-array (typedef) */
+(function(){
+  const N = 5;
+  const BASE = 0x2000;
+  const SIZE = 28; // sizeof(Student)
+  const students = Array.from({length:N}, (_,i)=>({
+    name: '학생' + (i+1), age: 15+i, score: 70 + i*5
+  }));
+  let idx = 0;
+  let syn = 'idx';
+
+  const idxVal = document.getElementById('idxVal');
+  const formula = document.getElementById('addrFormula');
+  const mem = document.getElementById('s5mem');
+  const table = document.getElementById('s5table');
+
+  function syntaxFor(field){
+    if(syn === 'idx') return `arr[${idx}].${field}`;
+    if(syn === 'deref') return `(*(arr + ${idx})).${field}`;
+    return `(arr + ${idx})->${field}`;
+  }
+
+  function render(){
+    idxVal.textContent = idx;
+    const addr = BASE + idx * SIZE;
+    formula.innerHTML =
+      `arr + <span class="hl">${idx}</span>  =  ${hex(BASE)} + <span class="hl">${idx}</span> × <span class="st">sizeof(Student)</span>(<span class="st">${SIZE}</span>)  =  <span class="pt">${hex(addr)}</span>` +
+      `<br><br>` +
+      `${syntaxFor('age')}  <span style="color:var(--text-faint)">// 방금 계산한 ${hex(addr)} 위치의 age 멤버에 접근</span>`;
+
+    mem.innerHTML = '';
+    for(let i=0;i<N;i++){
+      const d = el('div','mcell');
+      d.style.minWidth = '108px';
+      const isSel = i === idx;
+      if(isSel) d.classList.add('active');
+      d.innerHTML = `<div class="field">arr[${i}]</div><div class="val">${escapeHtml(students[i].name)}</div><div class="addr">${hex(BASE + i*SIZE)}</div>`;
+      d.addEventListener('click', ()=>{ idx = i; render(); });
+      d.style.cursor = 'pointer';
+      mem.appendChild(d);
+    }
+
+    table.innerHTML = '';
+    students.forEach((s,i)=>{
+      const tr = el('tr'); if(i===idx) tr.classList.add('selected');
+      tr.innerHTML = `<td>${i}</td><td>${hex(BASE+i*SIZE)}</td><td>${escapeHtml(s.name)}</td>` +
+        `<td><input data-i="${i}" data-k="age" type="number" value="${s.age}"></td>` +
+        `<td><input data-i="${i}" data-k="score" type="number" step="0.1" value="${s.score}"></td>`;
+      tr.querySelector('td:first-child').style.cursor='pointer';
+      tr.addEventListener('click', (e)=>{ if(e.target.tagName!=='INPUT'){ idx=i; render(); } });
+      table.appendChild(tr);
+    });
+    table.querySelectorAll('input').forEach(inp=>{
+      inp.addEventListener('input', (e)=>{
+        const i = parseInt(e.target.dataset.i,10), k = e.target.dataset.k;
+        students[i][k] = k==='score' ? parseFloat(e.target.value||0) : parseInt(e.target.value||0,10);
+        render();
+        const again = table.querySelector(`input[data-i="${i}"][data-k="${k}"]`);
+        if(again){ again.focus(); }
+      });
+    });
+  }
+
+  document.getElementById('idxUp').addEventListener('click', ()=>{ idx = Math.min(N-1, idx+1); render(); });
+  document.getElementById('idxDown').addEventListener('click', ()=>{ idx = Math.max(0, idx-1); render(); });
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      syn = t.dataset.syn;
+      render();
+    });
+  });
+  render();
+})();
+
+/* quiz */
+(function(){
+  const QUESTIONS = [
+    {
+      q: 'Q1. typedef가 하는 일로 가장 정확한 설명은?',
+      options: ['새로운 자료형을 만든다', '기존 자료형에 별명을 붙인다', '구조체의 크기를 줄인다', '구조체 멤버를 자동으로 초기화한다'],
+      correct: 1,
+      explain: 'typedef는 새 자료형을 만드는 것이 아니라, 이미 존재하는 자료형(구조체 포함)에 새 이름(별명)을 붙이는 문법입니다. 메모리 구조는 전혀 바뀌지 않습니다.'
+    },
+    {
+      q: 'Q2. 다음 중 문법적으로 올바른 typedef + 구조체 선언은?',
+      options: [
+        'typedef Student struct { int age; };',
+        'struct typedef { int age; } Student;',
+        'typedef struct { int age; } Student;',
+        'Student typedef struct { int age; };'
+      ],
+      correct: 2,
+      explain: '순서는 typedef → struct { 멤버들 } → 새이름; 입니다. typedef struct { int age; } Student; 가 올바른 형태입니다.'
+    },
+    {
+      q: 'Q3. typedef struct { char name[20]; int age; float score; } Student; 로 선언했을 때, sizeof(Student)는?',
+      options: ['3', '20', '28', '컴파일 오류'],
+      correct: 2,
+      explain: 'typedef는 이름만 바꿀 뿐 메모리 구조는 그대로이므로, sizeof(Student)는 sizeof(struct Student)와 같은 28바이트입니다.'
+    },
+    {
+      q: 'Q4. typedef struct { ... } Student; 로 선언한 뒤 포인터를 만드는 올바른 문법은?',
+      options: ['struct Student *p;', 'Student *p;', 'typedef Student *p;', 'p = struct Student*;'],
+      correct: 1,
+      explain: '익명 구조체(태그 이름 없음)는 struct 키워드로 접근할 방법이 아예 없습니다. typedef로 얻은 이름 Student만으로 Student *p; 처럼 선언합니다.'
+    },
+    {
+      q: 'Q5. Student *arr = (Student *)malloc(sizeof(Student) * 5); 에서 arr[2]의 주소를 구하는 공식은? (base = arr의 시작 주소)',
+      options: ['base + 2', 'base + 2 × sizeof(int)', 'base + 2 × sizeof(Student)', 'base × 2'],
+      correct: 2,
+      explain: '구조체 배열에서 포인터의 +i는 i × 구조체 전체 크기만큼 이동합니다. typedef를 썼어도 이 규칙은 sizeof(Student)를 기준으로 동일하게 적용됩니다.'
+    },
+  ];
+
+  const wrap = document.getElementById('quizWrap');
+  QUESTIONS.forEach((qd, qi) => {
+    const card = el('div','qcard');
+    const qline = el('div');
+    qline.style.display='flex'; qline.style.justifyContent='space-between'; qline.style.alignItems='center';
+    qline.innerHTML = `<p class="q">${qd.q}</p><span class="result"></span>`;
+    card.appendChild(qline);
+    qd.options.forEach((opt, oi) => {
+      const label = el('label','opt');
+      label.innerHTML = `<input type="radio" name="q${qi}" value="${oi}"><span>${escapeHtml(opt)}</span>`;
+      card.appendChild(label);
+      label.querySelector('input').addEventListener('change', () => {
+        const ok = oi === qd.correct;
+        card.classList.remove('correct','wrong');
+        card.classList.add(ok ? 'correct' : 'wrong');
+        card.querySelector('.result').textContent = ok ? '✓ 정답' : '✗ 다시 생각해보세요';
+        card.querySelector('.result').style.color = ok ? 'var(--good)' : 'var(--warn)';
+        let ex = card.querySelector('.explain');
+        if(!ex){ ex = el('div','explain'); card.appendChild(ex); }
+        ex.textContent = qd.explain;
+        ex.style.display = 'block';
+      });
+    });
+    wrap.appendChild(card);
+  });
+})();
+</script>
+</body>
+</html>
