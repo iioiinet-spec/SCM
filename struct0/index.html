@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C 구조체(struct) 완전 정복 — 메모리 탐구실</title>
+<style>
+:root{
+  --bg:#10131a;
+  --bg-soft:#151926;
+  --panel:#1b2130;
+  --panel-2:#212942;
+  --border:#2b3348;
+  --text:#e9ebf3;
+  --text-dim:#9aa2ba;
+  --text-faint:#6c7590;
+  --struct:#ffb454;
+  --struct-dim:#7a5c2e;
+  --ptr:#5fd0c8;
+  --ptr-dim:#2c5651;
+  --warn:#ff7a90;
+  --good:#8fd694;
+  --mono: 'JetBrains Mono','Fira Code',Consolas,'D2Coding',monospace;
+  --sans: 'Pretendard','Noto Sans KR','Apple SD Gothic Neo',sans-serif;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--struct);color:#1a1408;}
+
+/* progress bar */
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--struct),var(--ptr));width:0%;z-index:999;transition:width .1s linear;}
+
+a{color:inherit;}
+code,.mono{font-family:var(--mono);}
+
+/* ---------- layout ---------- */
+.wrap{display:flex;max-width:1320px;margin:0 auto;}
+nav.side{
+  position:sticky;top:0;height:100vh;width:236px;flex:0 0 236px;
+  padding:32px 18px 32px 28px;
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+}
+nav.side .brand{font-size:13px;letter-spacing:.14em;color:var(--text-faint);text-transform:uppercase;margin-bottom:28px;}
+nav.side .brand b{color:var(--struct);}
+nav.side ul{list-style:none;padding:0;margin:0;}
+nav.side li{margin-bottom:4px;}
+nav.side a{
+  display:flex;gap:10px;align-items:baseline;
+  padding:9px 10px;border-radius:8px;
+  font-size:14px;color:var(--text-dim);text-decoration:none;
+  border-left:2px solid transparent;
+  transition:background .15s,color .15s,border-color .15s;
+}
+nav.side a .num{font-family:var(--mono);font-size:11px;color:var(--text-faint);}
+nav.side a:hover{background:var(--panel);color:var(--text);}
+nav.side a.active{color:var(--struct);border-left-color:var(--struct);background:var(--panel);}
+nav.side a.active .num{color:var(--struct);}
+
+main{flex:1;min-width:0;padding:0 0 120px;}
+
+.section{padding:88px 56px 20px;max-width:960px;}
+.section:first-of-type{padding-top:0;}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--ptr);text-transform:uppercase;margin-bottom:10px;}
+h2{font-size:30px;margin:0 0 14px;letter-spacing:-.01em;}
+h3{font-size:19px;margin:34px 0 10px;color:var(--text);}
+p{color:var(--text-dim);margin:0 0 16px;font-size:15.5px;}
+p strong{color:var(--text);font-weight:600;}
+.lead{font-size:17px;color:var(--text);}
+
+/* ---------- hero ---------- */
+.hero{padding:64px 56px 40px;max-width:1024px;}
+.hero .eyebrow{color:var(--struct);}
+.hero h1{font-size:44px;line-height:1.15;margin:0 0 18px;letter-spacing:-.02em;}
+.hero h1 em{font-style:normal;color:var(--struct);}
+.hero p{font-size:16.5px;max-width:640px;}
+.hero-visual{margin-top:44px;display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;}
+
+/* ---------- code block ---------- */
+pre.code{
+  background:#0c0e14;border:1px solid var(--border);border-radius:10px;
+  padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;
+  line-height:1.65;color:#dde1ee;margin:0 0 18px;
+}
+pre.code .kw{color:#7fb3ff;}
+pre.code .ty{color:var(--struct);}
+pre.code .str{color:var(--good);}
+pre.code .cm{color:var(--text-faint);font-style:italic;}
+pre.code .fn{color:var(--ptr);}
+pre.code .op{color:#ff9a76;}
+.codecap{font-family:var(--mono);font-size:11.5px;color:var(--text-faint);letter-spacing:.05em;margin-bottom:8px;text-transform:uppercase;}
+
+/* ---------- panel / callout ---------- */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:24px 26px;margin:20px 0;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+.callout{border-left:3px solid var(--ptr);background:var(--panel);border-radius:0 10px 10px 0;padding:14px 18px;margin:18px 0;font-size:14.5px;color:var(--text-dim);}
+.callout b{color:var(--ptr);}
+.callout.warn{border-left-color:var(--warn);}
+.callout.warn b{color:var(--warn);}
+
+/* ---------- memory cell visualization (signature element) ---------- */
+.membar{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;margin:22px 0 8px;}
+.mcell{
+  border:1.5px solid var(--struct-dim);background:linear-gradient(180deg,#241d10,#1a1610);
+  border-radius:10px;padding:12px 16px;min-width:96px;text-align:center;
+  transition:transform .18s,border-color .18s,box-shadow .18s,background .18s;
+  position:relative;
+}
+.mcell .field{font-family:var(--mono);font-size:10.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.mcell .val{font-family:var(--mono);font-size:14px;color:var(--struct);font-weight:600;word-break:break-all;}
+.mcell .addr{font-family:var(--mono);font-size:10px;color:var(--text-faint);margin-top:8px;}
+.mcell.ptrcell{border-color:var(--ptr-dim);background:linear-gradient(180deg,#0f2422,#0b1a19);}
+.mcell.ptrcell .val{color:var(--ptr);}
+.mcell.flash{transform:translateY(-4px);border-color:var(--warn);box-shadow:0 6px 18px -4px rgba(255,122,144,.4);}
+.mcell.flash .val{color:var(--warn);}
+.mcell.active{border-color:var(--warn);box-shadow:0 0 0 2px rgba(255,122,144,.25);}
+.arrow-row{display:flex;justify-content:center;color:var(--ptr);font-family:var(--mono);font-size:12px;margin:2px 0 14px;}
+
+/* ---------- interactive card ---------- */
+.lab{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:28px;margin:24px 0;}
+.lab-head{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.lab-head .dot{width:8px;height:8px;border-radius:50%;background:var(--good);}
+.lab-head span{font-family:var(--mono);font-size:12px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.08em;}
+.controls{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px;}
+.field-in{display:flex;flex-direction:column;gap:6px;}
+.field-in label{font-size:11.5px;color:var(--text-faint);font-family:var(--mono);text-transform:uppercase;}
+.field-in input{
+  background:#0c0e14;border:1px solid var(--border);border-radius:8px;
+  padding:9px 12px;color:var(--text);font-family:var(--mono);font-size:14px;width:150px;
+}
+.field-in input:focus{outline:none;border-color:var(--struct);}
+.outputcard{
+  margin-top:18px;background:linear-gradient(135deg,#191d29,#151824);
+  border:1px solid var(--border);border-radius:12px;padding:18px 20px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.outputcard .name{font-size:17px;font-weight:700;}
+.outputcard .sub{font-family:var(--mono);font-size:12.5px;color:var(--text-dim);margin-top:4px;}
+.outputcard .score{font-family:var(--mono);font-size:26px;color:var(--struct);font-weight:700;}
+
+/* buttons */
+button.btn{
+  background:var(--panel-2);border:1px solid var(--border);color:var(--text);
+  padding:9px 16px;border-radius:8px;font-family:var(--mono);font-size:13px;cursor:pointer;
+  transition:border-color .15s,color .15s,background .15s;
+}
+button.btn:hover{border-color:var(--ptr);color:var(--ptr);}
+button.btn.primary{border-color:var(--struct);color:var(--struct);}
+button.btn.primary:hover{background:rgba(255,180,84,.1);}
+button.btn:disabled{opacity:.35;cursor:default;}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0;}
+
+/* tabs */
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--border);margin-bottom:16px;flex-wrap:wrap;}
+.tab{padding:9px 14px;font-family:var(--mono);font-size:12.5px;color:var(--text-faint);cursor:pointer;border-bottom:2px solid transparent;}
+.tab.active{color:var(--struct);border-bottom-color:var(--struct);}
+
+/* index stepper for section 4 */
+.stepper{display:flex;align-items:center;gap:14px;margin:20px 0;}
+.stepper button{width:38px;height:38px;border-radius:50%;background:var(--panel-2);border:1px solid var(--border);color:var(--text);font-size:16px;cursor:pointer;}
+.stepper button:hover{border-color:var(--ptr);color:var(--ptr);}
+.stepper .idxlabel{font-family:var(--mono);font-size:15px;}
+.stepper .idxlabel b{color:var(--warn);font-size:19px;}
+
+.addrformula{
+  font-family:var(--mono);font-size:14.5px;background:#0c0e14;border:1px solid var(--border);
+  border-radius:10px;padding:14px 18px;margin:14px 0;color:var(--text-dim);
+}
+.addrformula .hl{color:var(--warn);font-weight:700;}
+.addrformula .st{color:var(--struct);}
+.addrformula .pt{color:var(--ptr);}
+
+.arrtable{width:100%;border-collapse:collapse;margin:18px 0;font-family:var(--mono);font-size:13px;}
+.arrtable th{text-align:left;color:var(--text-faint);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1px solid var(--border);}
+.arrtable td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text-dim);}
+.arrtable tr.selected td{background:rgba(255,122,144,.08);color:var(--text);}
+.arrtable tr.selected td:first-child{color:var(--warn);font-weight:700;}
+.arrtable input{background:#0c0e14;border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:12.5px;padding:5px 8px;width:100%;}
+
+/* quiz */
+.qcard{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin:16px 0;}
+.qcard p.q{color:var(--text);font-weight:600;margin-bottom:12px;}
+.opt{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:14px;color:var(--text-dim);border:1px solid transparent;}
+.opt:hover{background:var(--panel-2);}
+.opt input{accent-color:var(--struct);}
+.qcard .explain{display:none;margin-top:12px;padding:12px 14px;border-radius:8px;font-size:13.5px;background:#0c0e14;border-left:3px solid var(--ptr);color:var(--text-dim);}
+.qcard.correct .explain{border-left-color:var(--good);display:block;}
+.qcard.wrong .explain{border-left-color:var(--warn);display:block;}
+.qcard .result{font-family:var(--mono);font-size:12px;margin-left:auto;}
+
+footer{padding:60px 56px;color:var(--text-faint);font-size:13px;border-top:1px solid var(--border);margin-top:40px;}
+
+/* mobile */
+.mobtoggle{display:none;}
+@media(max-width:900px){
+  nav.side{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%);background:var(--bg);z-index:200;box-shadow:20px 0 40px rgba(0,0,0,.5);transition:transform .25s;}
+  nav.side.open{transform:translateX(0);}
+  .mobtoggle{display:flex;position:fixed;top:14px;left:14px;z-index:201;background:var(--panel);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:10px;align-items:center;justify-content:center;cursor:pointer;font-size:18px;}
+  .section,.hero{padding-left:24px;padding-right:24px;}
+  .grid2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div class="mobtoggle" id="mobToggle">☰</div>
+
+<div class="wrap">
+<nav class="side" id="sideNav">
+  <div class="brand">C LANGUAGE LAB · <b>구조체</b></div>
+  <ul>
+    <li><a href="#s1" class="navlink active"><span class="num">01</span>구조체란?</a></li>
+    <li><a href="#s2" class="navlink"><span class="num">02</span>실습: 학생 카드 만들기</a></li>
+    <li><a href="#s3" class="navlink"><span class="num">03</span>구조체와 포인터</a></li>
+    <li><a href="#s4" class="navlink"><span class="num">04</span>포인터로 구조체 배열 다루기</a></li>
+    <li><a href="#s5" class="navlink"><span class="num">05</span>개념 점검 퀴즈</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<div class="hero">
+  <div class="eyebrow">C Struct — Memory Model</div>
+  <h1>서로 다른 자료형을,<br>하나의 <em>메모리 덩어리</em>로.</h1>
+  <p>구조체(struct)는 여러 개의 변수를 하나의 이름 아래 묶어, 나란히 붙어 있는 메모리 조각으로 만드는 문법입니다. 이 강의에서는 구조체의 문법부터, 포인터로 구조체를 가리키는 법, 그리고 포인터를 배열처럼 움직여 여러 구조체를 한 번에 다루는 법까지 직접 만져보며 익힙니다.</p>
+  <div class="hero-visual" id="heroCells"></div>
+</div>
+
+<!-- ============================================================ -->
+<section class="section" id="s1">
+  <div class="eyebrow">01 · 기초 문법</div>
+  <h2>구조체란 무엇인가</h2>
+  <p class="lead">배열은 <b>같은 자료형</b>을 여러 개 묶습니다. 구조체는 <b>서로 다른 자료형</b>을 하나의 이름으로 묶습니다. 학생 한 명을 표현하려면 이름(문자열), 나이(정수), 점수(실수)가 모두 필요한데, 이걸 각각 따로 변수로 만들면 관리가 번거롭습니다. 구조체는 이 세 가지를 <b>Student</b>라는 하나의 새로운 자료형으로 합쳐줍니다.</p>
+
+  <h3>① 구조체 선언 — 새로운 자료형의 설계도</h3>
+  <div class="codecap">struct.c</div>
+  <pre class="code"><span class="kw">struct</span> <span class="ty">Student</span> {
+    <span class="kw">char</span> name[20];   <span class="cm">// 이름 (문자 배열)</span>
+    <span class="kw">int</span> age;         <span class="cm">// 나이</span>
+    <span class="kw">float</span> score;     <span class="cm">// 점수</span>
+};  <span class="cm">// 세미콜론을 꼭 붙여야 합니다</span></pre>
+  <p>이 구문은 변수를 만드는 것이 아니라, <b>Student라는 이름의 새 자료형을 설계</b>하는 것입니다. <span class="mono">int</span>가 원래 있던 자료형이듯, 이제부터 <span class="mono">struct Student</span>도 하나의 자료형처럼 쓸 수 있습니다.</p>
+
+  <div class="callout"><b>NOTE</b> — 구조체 안에서는 배열의 크기(<span class="mono">char name[20]</span>)처럼 <b>고정된 크기</b>만 선언할 수 있습니다. 크기가 상황마다 달라져야 한다면 이후 배울 포인터와 <span class="mono">malloc</span>이 필요합니다.</div>
+
+  <h3>② 변수 선언과 초기화</h3>
+  <div class="codecap">struct.c</div>
+  <pre class="code"><span class="cm">// 방법 1: 선언 후 순서대로 초기화</span>
+<span class="kw">struct</span> <span class="ty">Student</span> s1 = {<span class="str">"김민준"</span>, 17, 92.5};
+
+<span class="cm">// 방법 2: 멤버 이름을 지정해서 초기화 (C99 이후)</span>
+<span class="kw">struct</span> <span class="ty">Student</span> s2 = { .age = 16, .score = 88.0, .name = <span class="str">"이서연"</span> };
+
+<span class="cm">// 방법 3: 먼저 선언하고 나중에 하나씩 대입</span>
+<span class="kw">struct</span> <span class="ty">Student</span> s3;
+s3.age = 18;
+s3.score = 95.0;</pre>
+  <p>중괄호 초기화는 <b>선언과 동시에</b>만 가능합니다. 이미 선언된 구조체 변수에는 <span class="mono">s3 = {18, 95.0};</span> 처럼 다시 통째로 대입할 수 없고, 멤버 하나씩 <span class="mono">.</span>(점) 연산자로 접근해야 합니다.</p>
+
+  <h3>③ 멤버 접근 — 점(.) 연산자</h3>
+  <pre class="code"><span class="kw">printf</span>(<span class="str">"이름: %s, 나이: %d, 점수: %.1f\n"</span>, s1.name, s1.age, s1.score);
+s1.age = s1.age + 1;  <span class="cm">// 생일이 지나 나이를 1 올림</span></pre>
+  <p>구조체 변수 뒤에 마침표를 찍고 멤버 이름을 쓰면, 그 멤버 하나만 정확히 골라서 읽고 쓸 수 있습니다.</p>
+
+  <h3>④ typedef로 이름 줄이기</h3>
+  <pre class="code"><span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="kw">char</span> name[20];
+    <span class="kw">int</span> age;
+    <span class="kw">float</span> score;
+} <span class="ty">Student</span>;
+
+<span class="ty">Student</span> s1 = {<span class="str">"김민준"</span>, 17, 92.5};  <span class="cm">// 이제 struct 를 매번 안 써도 됨</span></pre>
+
+  <h3>⑤ 메모리 관점에서 본 구조체</h3>
+  <p>구조체 변수를 하나 만들면, 컴퓨터는 각 멤버가 차지할 만큼의 공간을 <b>순서대로, 나란히 붙여서</b> 확보합니다. <span class="mono">Student</span>는 <span class="mono">char[20]</span>(20바이트) + <span class="mono">int</span>(4바이트) + <span class="mono">float</span>(4바이트) = 총 <b>28바이트</b>짜리 연속된 메모리 조각이 됩니다.</p>
+  <div class="membar" id="s1mem"></div>
+  <div class="callout"><b>핵심</b> — 구조체는 변수들의 "묶음"이 아니라, 실제로 <b>메모리 위에 나란히 붙어 있는 하나의 덩어리</b>입니다. 이 사실이 다음 섹션에서 포인터로 구조체를 다루는 이유가 됩니다.</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s2">
+  <div class="eyebrow">02 · 인터랙티브 실습</div>
+  <h2>학생 카드 만들기</h2>
+  <p class="lead">아래 입력값을 바꿔보세요. C 코드, 메모리 다이어그램, 실행 결과 카드가 <b>동시에</b> 실시간으로 바뀝니다. 구조체 변수 하나가 어떻게 코드 → 메모리 → 결과로 이어지는지 눈으로 확인해 보세요.</p>
+
+  <div class="lab">
+    <div class="lab-head"><span class="dot"></span><span>LIVE · struct Student s1</span></div>
+    <div class="controls">
+      <div class="field-in"><label>name</label><input id="inName" type="text" maxlength="10" value="김민준"></div>
+      <div class="field-in"><label>age</label><input id="inAge" type="number" min="0" max="99" value="17"></div>
+      <div class="field-in"><label>score</label><input id="inScore" type="number" min="0" max="100" step="0.1" value="92.5"></div>
+    </div>
+
+    <div class="codecap">실시간 생성 코드</div>
+    <pre class="code" id="s2code"></pre>
+
+    <div class="codecap">메모리 레이아웃 (base = 0x1000)</div>
+    <div class="membar" id="s2mem"></div>
+
+    <div class="codecap">printf 실행 결과</div>
+    <pre class="code" id="s2printf"></pre>
+
+    <div class="outputcard">
+      <div>
+        <div class="name" id="s2cardName">김민준</div>
+        <div class="sub" id="s2cardSub">age 17 · struct Student, 28 bytes</div>
+      </div>
+      <div class="score" id="s2cardScore">92.5</div>
+    </div>
+  </div>
+  <div class="callout"><b>관찰</b> — name의 글자 수와 상관없이 <span class="mono">name</span> 칸은 항상 20바이트를 차지합니다. 구조체의 크기는 <b>입력값이 아니라 선언 시점의 자료형</b>으로 고정되기 때문입니다.</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s3">
+  <div class="eyebrow">03 · 포인터와 구조체</div>
+  <h2>구조체를 가리키는 포인터</h2>
+  <p class="lead">구조체 변수도 결국 메모리 위의 한 덩어리이므로, 그 <b>시작 주소</b>를 포인터에 담을 수 있습니다. 포인터를 통해 구조체를 다루면, 원본을 복사하지 않고도 원본을 직접 읽고 고칠 수 있습니다.</p>
+
+  <h3>① 문법: 선언과 두 가지 접근법</h3>
+  <div class="codecap">struct_ptr.c</div>
+  <pre class="code"><span class="kw">struct</span> <span class="ty">Student</span> s1 = {<span class="str">"박지후"</span>, 16, 88.5};
+<span class="kw">struct</span> <span class="ty">Student</span> *p = &s1;   <span class="cm">// p는 s1의 주소를 저장</span>
+
+<span class="cm">// 접근법 1: 화살표 연산자 (가장 많이 씀)</span>
+p->age = 20;
+
+<span class="cm">// 접근법 2: 역참조 후 점 연산자 — 위와 완전히 동일</span>
+(*p).age = 20;</pre>
+  <p><span class="mono">p->age</span>는 <span class="mono">(*p).age</span>의 축약형일 뿐, 의미는 똑같습니다. <span class="mono">*p</span>로 먼저 구조체 자체를 얻고, <span class="mono">.age</span>로 멤버에 접근하는 과정을 화살표 하나로 줄인 것입니다.</p>
+
+  <div class="lab">
+    <div class="lab-head"><span class="dot"></span><span>LIVE · struct Student s1, *p = &s1</span></div>
+    <p style="margin-bottom:6px;">아래 버튼을 눌러 <b>포인터를 통해</b> s1의 값을 바꿔보세요. p는 별도 저장 공간이지만, 가리키는 대상은 s1 그 자체입니다.</p>
+
+    <div class="membar" id="s3mem"></div>
+    <div class="arrow-row" id="s3arrow">p (0x7F00) ──▶ s1 (0x3000)</div>
+
+    <div class="btnrow">
+      <button class="btn primary" id="btnPAge">p->age = 20 실행</button>
+      <button class="btn primary" id="btnPScore">(*p).score = 100.0 실행</button>
+      <button class="btn" id="btnPReset">초기화</button>
+    </div>
+    <div class="codecap">실행된 코드 로그</div>
+    <pre class="code" id="s3log">// 버튼을 눌러 실행해 보세요</pre>
+  </div>
+
+  <div class="callout warn"><b>왜 이게 중요한가</b> — 만약 함수에 구조체를 <b>값으로</b> 전달하면(<span class="mono">void f(struct Student s)</span>), 함수 안에서는 <b>복사본</b>을 고치는 것이라 원본은 그대로입니다. 반대로 <b>주소를 전달</b>하면(<span class="mono">void f(struct Student *p)</span>), 함수 안에서 <span class="mono">p->age = 20</span>처럼 고치는 순간 원본 s1이 바뀝니다. 방금 실습이 바로 그 원리입니다.</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s4">
+  <div class="eyebrow">04 · 핵심: 포인터를 배열처럼</div>
+  <h2>포인터로 구조체 배열 다루기</h2>
+  <p class="lead">학생 한 명이 아니라 <b>여러 명</b>을 관리하려면 구조체 배열이 필요합니다. 이때 배열 이름은 사실 <b>그 배열의 첫 번째 원소를 가리키는 포인터</b>처럼 동작합니다. 그래서 <span class="mono">arr[i]</span>와 <span class="mono">*(arr + i)</span>는 완전히 같은 것을 가리킵니다 — 단, 구조체 배열에서는 <b>+1이 sizeof(struct)만큼</b> 건너뛴다는 점이 다릅니다.</p>
+
+  <h3>① malloc으로 구조체 배열 만들기</h3>
+  <div class="codecap">struct_array.c</div>
+  <pre class="code"><span class="kw">struct</span> <span class="ty">Student</span> *arr = (<span class="kw">struct</span> <span class="ty">Student</span> *)<span class="fn">malloc</span>(<span class="kw">sizeof</span>(<span class="kw">struct</span> <span class="ty">Student</span>) * 5);
+
+<span class="kw">for</span> (<span class="kw">int</span> i = 0; i < 5; i++) {
+    <span class="fn">sprintf</span>(arr[i].name, <span class="str">"학생%d"</span>, i + 1);
+    arr[i].age = 15 + i;
+    arr[i].score = 70.0 + i * 5;
+}
+
+<span class="kw">for</span> (<span class="kw">int</span> i = 0; i < 5; i++) {
+    <span class="fn">printf</span>(<span class="str">"%s (%d세) - %.1f점\n"</span>, arr[i].name, arr[i].age, arr[i].score);
+}
+<span class="fn">free</span>(arr);</pre>
+
+  <h3>② 세 가지 표현, 같은 메모리</h3>
+  <p><span class="mono">arr[i]</span>, <span class="mono">*(arr+i)</span>, <span class="mono">(arr+i)</span>는 모두 같은 구조체를 가리킵니다. 아래에서 인덱스를 움직이며 세 표현이 정확히 같은 칸을 가리키는 것을 확인해 보세요.</p>
+
+  <div class="lab">
+    <div class="lab-head"><span class="dot"></span><span>LIVE · struct Student *arr (5칸, base = 0x2000)</span></div>
+
+    <div class="tabs">
+      <div class="tab active" data-syn="idx">arr[i].field</div>
+      <div class="tab" data-syn="deref">(*(arr + i)).field</div>
+      <div class="tab" data-syn="arrow">(arr + i)->field</div>
+    </div>
+
+    <div class="stepper">
+      <button id="idxDown">−</button>
+      <div class="idxlabel">i = <b id="idxVal">0</b></div>
+      <button id="idxUp">+</button>
+    </div>
+
+    <div class="addrformula" id="addrFormula"></div>
+
+    <div class="membar" id="s4mem"></div>
+
+    <table class="arrtable">
+      <thead><tr><th>i</th><th>주소</th><th>name</th><th>age</th><th>score</th></tr></thead>
+      <tbody id="s4table"></tbody>
+    </table>
+    <p style="font-size:13px;">표의 <b>age</b>, <b>score</b> 칸은 직접 클릭해서 값을 바꿀 수 있습니다 — 위 코드의 <span class="mono">arr[i].age = ...</span> 한 줄이 실제로 하는 일과 같습니다.</p>
+  </div>
+
+  <div class="callout"><b>핵심 공식</b> — <span class="mono">arr + i</span>가 가리키는 주소는 <span class="mono">base + i × sizeof(struct Student)</span> 입니다. <span class="mono">int</span> 배열이었다면 원소당 4바이트씩 건너뛰지만, 구조체 배열은 원소당 <b>구조체 전체 크기(여기서는 28바이트)</b>씩 건너뜁니다. 포인터의 <span class="mono">+1</span>은 "1바이트 이동"이 아니라 "그 포인터가 가리키는 자료형 하나만큼 이동"이라는 뜻이기 때문입니다.</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s5">
+  <div class="eyebrow">05 · 개념 점검</div>
+  <h2>퀴즈로 확인하기</h2>
+  <p class="lead">지금까지 배운 내용을 스스로 점검해 보세요.</p>
+  <div id="quizWrap"></div>
+</section>
+
+<footer>C Language Lab · 구조체(struct) 강의자료 — 고교학점제 AI 교과 보조자료</footer>
+</main>
+</div>
+
+<script>
+/* ---------------- utils ---------------- */
+function hex(n){ return '0x' + n.toString(16).toUpperCase(); }
+function el(tag, cls, html){ const e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------------- nav active-state & progress ---------------- */
+const links = document.querySelectorAll('.navlink');
+const sections = [...document.querySelectorAll('.section')];
+function onScroll(){
+  const doc = document.documentElement;
+  const pct = (doc.scrollTop) / (doc.scrollHeight - doc.clientHeight) * 100;
+  document.getElementById('progress').style.width = pct + '%';
+  let current = sections[0];
+  for(const s of sections){ if(s.getBoundingClientRect().top < 140) current = s; }
+  links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current.id));
+}
+document.addEventListener('scroll', onScroll);
+onScroll();
+
+const mobToggle = document.getElementById('mobToggle');
+const sideNav = document.getElementById('sideNav');
+mobToggle.addEventListener('click', () => sideNav.classList.toggle('open'));
+links.forEach(l => l.addEventListener('click', () => sideNav.classList.remove('open')));
+
+/* ---------------- hero cells ---------------- */
+(function(){
+  const holder = document.getElementById('heroCells');
+  const cells = [
+    {f:'name', v:'"김민준"', w:120}, {f:'age', v:'17', w:70}, {f:'score', v:'92.5', w:80}
+  ];
+  cells.forEach((c,i)=>{
+    const d = el('div','mcell');
+    d.style.minWidth = c.w+'px';
+    d.style.opacity = 0; d.style.transform='translateY(14px)';
+    d.innerHTML = `<div class="field">${c.f}</div><div class="val">${c.v}</div><div class="addr">${hex(0x1000 + i*20)}</div>`;
+    holder.appendChild(d);
+    setTimeout(()=>{ d.style.transition='opacity .5s, transform .5s'; d.style.opacity=1; d.style.transform='translateY(0)'; }, 200 + i*180);
+  });
+})();
+
+/* ---------------- section 1 static memory bar ---------------- */
+(function(){
+  const holder = document.getElementById('s1mem');
+  const layout = [
+    {f:'name', bytes:20, val:'char[20]', addr:0x1000},
+    {f:'age', bytes:4, val:'int', addr:0x1014},
+    {f:'score', bytes:4, val:'float', addr:0x1018},
+  ];
+  layout.forEach(c=>{
+    const d = el('div','mcell');
+    d.style.flex = c.bytes;
+    d.innerHTML = `<div class="field">${c.f}</div><div class="val">${c.val}</div><div class="addr">${hex(c.addr)} · ${c.bytes}B</div>`;
+    holder.appendChild(d);
+  });
+})();
+
+/* ---------------- section 2: interactive student card ---------------- */
+(function(){
+  const inName = document.getElementById('inName');
+  const inAge = document.getElementById('inAge');
+  const inScore = document.getElementById('inScore');
+  const codeBox = document.getElementById('s2code');
+  const memBox = document.getElementById('s2mem');
+  const pfBox = document.getElementById('s2printf');
+  const cardName = document.getElementById('s2cardName');
+  const cardSub = document.getElementById('s2cardSub');
+  const cardScore = document.getElementById('s2cardScore');
+
+  function render(){
+    const name = inName.value || '이름없음';
+    const age = parseInt(inAge.value || '0', 10);
+    const score = parseFloat(inScore.value || '0');
+    const displayName = name.length > 19 ? name.slice(0,19) : name;
+
+    codeBox.innerHTML =
+`<span class="kw">struct</span> <span class="ty">Student</span> s1 = {<span class="str">"${escapeHtml(displayName)}"</span>, ${age}, ${isNaN(score)?0:score}};
+
+<span class="fn">printf</span>(<span class="str">"이름: %s, 나이: %d, 점수: %.1f\\n"</span>,
+       s1.name, s1.age, s1.score);`;
+
+    memBox.innerHTML = '';
+    const layout = [
+      {f:'name', v:'"'+displayName+'"', addr:0x1000, size:20},
+      {f:'age', v:String(age), addr:0x1014, size:4},
+      {f:'score', v:(isNaN(score)?0:score).toFixed(1), addr:0x1018, size:4},
+    ];
+    layout.forEach(c=>{
+      const d = el('div','mcell');
+      d.style.flex = c.size;
+      d.innerHTML = `<div class="field">${c.f}</div><div class="val">${escapeHtml(c.v)}</div><div class="addr">${hex(c.addr)} · ${c.size}B</div>`;
+      d.classList.add('flash');
+      setTimeout(()=>d.classList.remove('flash'), 260);
+      memBox.appendChild(d);
+    });
+
+    pfBox.textContent = `이름: ${displayName}, 나이: ${age}, 점수: ${(isNaN(score)?0:score).toFixed(1)}`;
+
+    cardName.textContent = displayName;
+    cardSub.textContent = `age ${age} · struct Student, 28 bytes`;
+    cardScore.textContent = (isNaN(score)?0:score).toFixed(1);
+  }
+  [inName, inAge, inScore].forEach(i => i.addEventListener('input', render));
+  render();
+})();
+
+/* ---------------- section 3: struct pointer demo ---------------- */
+(function(){
+  const state = { name:'박지후', age:16, score:88.5 };
+  const initial = {...state};
+  const mem = document.getElementById('s3mem');
+  const log = document.getElementById('s3log');
+
+  function render(flashField){
+    mem.innerHTML = '';
+    const layout = [
+      {f:'name', v:'"'+state.name+'"', addr:0x3000, size:20, key:'name'},
+      {f:'age', v:String(state.age), addr:0x3014, size:4, key:'age'},
+      {f:'score', v:state.score.toFixed(1), addr:0x3018, size:4, key:'score'},
+    ];
+    layout.forEach(c=>{
+      const d = el('div','mcell');
+      d.style.flex = c.size;
+      d.innerHTML = `<div class="field">${c.f}</div><div class="val">${escapeHtml(c.v)}</div><div class="addr">${hex(c.addr)}</div>`;
+      if(flashField === c.key){ d.classList.add('flash'); setTimeout(()=>d.classList.remove('flash'), 500); }
+      mem.appendChild(d);
+    });
+    const pcell = el('div','mcell ptrcell');
+    pcell.style.flex = 6;
+    pcell.innerHTML = `<div class="field">p (pointer)</div><div class="val">${hex(0x3000)}</div><div class="addr">stored at 0x7F00</div>`;
+    mem.appendChild(pcell);
+  }
+  function addLog(line){ log.textContent += '\n' + line; }
+
+  document.getElementById('btnPAge').addEventListener('click', ()=>{
+    state.age = 20; render('age'); addLog('p->age = 20;   // s1.age → 20');
+  });
+  document.getElementById('btnPScore').addEventListener('click', ()=>{
+    state.score = 100.0; render('score'); addLog('(*p).score = 100.0;   // s1.score → 100.0');
+  });
+  document.getElementById('btnPReset').addEventListener('click', ()=>{
+    Object.assign(state, initial); render(); log.textContent = '// 초기화됨 — s1 = {"박지후", 16, 88.5}';
+  });
+  render();
+})();
+
+/* ---------------- section 4: pointer-as-array ---------------- */
+(function(){
+  const N = 5;
+  const BASE = 0x2000;
+  const SIZE = 28; // sizeof(struct Student)
+  const students = Array.from({length:N}, (_,i)=>({
+    name: '학생' + (i+1), age: 15+i, score: 70 + i*5
+  }));
+  let idx = 0;
+  let syn = 'idx';
+
+  const idxVal = document.getElementById('idxVal');
+  const formula = document.getElementById('addrFormula');
+  const mem = document.getElementById('s4mem');
+  const table = document.getElementById('s4table');
+
+  function syntaxFor(field){
+    if(syn === 'idx') return `arr[${idx}].${field}`;
+    if(syn === 'deref') return `(*(arr + ${idx})).${field}`;
+    return `(arr + ${idx})->${field}`;
+  }
+
+  function render(){
+    idxVal.textContent = idx;
+    const addr = BASE + idx * SIZE;
+    formula.innerHTML =
+      `arr + <span class="hl">${idx}</span>  =  ${hex(BASE)} + <span class="hl">${idx}</span> × <span class="st">sizeof(struct Student)</span>(<span class="st">${SIZE}</span>)  =  <span class="pt">${hex(addr)}</span>` +
+      `<br><br>` +
+      `${syntaxFor('age')}  <span style="color:var(--text-faint)">// 방금 계산한 ${hex(addr)} 위치의 age 멤버에 접근</span>`;
+
+    mem.innerHTML = '';
+    for(let i=0;i<N;i++){
+      const d = el('div','mcell');
+      d.style.minWidth = '108px';
+      const isSel = i === idx;
+      if(isSel) d.classList.add('active');
+      d.innerHTML = `<div class="field">arr[${i}]</div><div class="val">${escapeHtml(students[i].name)}</div><div class="addr">${hex(BASE + i*SIZE)}</div>`;
+      d.addEventListener('click', ()=>{ idx = i; render(); });
+      d.style.cursor = 'pointer';
+      mem.appendChild(d);
+    }
+
+    table.innerHTML = '';
+    students.forEach((s,i)=>{
+      const tr = el('tr'); if(i===idx) tr.classList.add('selected');
+      tr.innerHTML = `<td>${i}</td><td>${hex(BASE+i*SIZE)}</td><td>${escapeHtml(s.name)}</td>` +
+        `<td><input data-i="${i}" data-k="age" type="number" value="${s.age}"></td>` +
+        `<td><input data-i="${i}" data-k="score" type="number" step="0.1" value="${s.score}"></td>`;
+      tr.querySelector('td:first-child').style.cursor='pointer';
+      tr.addEventListener('click', (e)=>{ if(e.target.tagName!=='INPUT'){ idx=i; render(); } });
+      table.appendChild(tr);
+    });
+    table.querySelectorAll('input').forEach(inp=>{
+      inp.addEventListener('input', (e)=>{
+        const i = parseInt(e.target.dataset.i,10), k = e.target.dataset.k;
+        students[i][k] = k==='score' ? parseFloat(e.target.value||0) : parseInt(e.target.value||0,10);
+        render();
+        // restore focus after re-render
+        const again = table.querySelector(`input[data-i="${i}"][data-k="${k}"]`);
+        if(again){ again.focus(); }
+      });
+    });
+  }
+
+  document.getElementById('idxUp').addEventListener('click', ()=>{ idx = Math.min(N-1, idx+1); render(); });
+  document.getElementById('idxDown').addEventListener('click', ()=>{ idx = Math.max(0, idx-1); render(); });
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      syn = t.dataset.syn;
+      render();
+    });
+  });
+  render();
+})();
+
+/* ---------------- quiz ---------------- */
+(function(){
+  const QUESTIONS = [
+    {
+      q: 'Q1. 구조체 포인터 p가 struct Student를 가리킬 때, age 멤버에 접근하는 방법으로 옳지 않은 것은?',
+      options: ['p->age', '(*p).age', 'p.age', '*p.age 는 사실 (*p).age와 다르게 동작함(참고용)'],
+      correct: 2,
+      explain: '점(.) 연산자는 구조체 "변수"에만 쓸 수 있습니다. p는 포인터이므로 먼저 *p로 역참조해 구조체 자체를 얻거나, 이를 축약한 화살표(->)를 써야 합니다.'
+    },
+    {
+      q: 'Q2. struct Student { char name[20]; int age; float score; }; 일 때 sizeof(struct Student)는 얼마인가요? (패딩 없다고 가정)',
+      options: ['3', '20', '28', '48'],
+      correct: 2,
+      explain: 'char[20](20바이트) + int(4바이트) + float(4바이트) = 28바이트입니다. 구조체의 크기는 멤버 개수가 아니라 멤버들이 차지하는 바이트의 합입니다.'
+    },
+    {
+      q: 'Q3. struct Student *arr; 로 배열을 가리킬 때, arr[2]와 완전히 같은 의미의 표현은?',
+      options: ['arr + 2', '*(arr + 2)', '&arr[2] + 2', '(arr + 2) 는 포인터이므로 값이 아니라 주소만 같음(참고용)'],
+      correct: 1,
+      explain: 'arr[2]는 *(arr + 2)의 축약형입니다. arr + 2는 "2번째 원소의 주소"이고, 여기에 *를 붙여 역참조해야 arr[2]와 같은 "값"이 됩니다.'
+    },
+    {
+      q: 'Q4. 구조체 배열에서 arr + 1은 몇 바이트를 이동한 주소를 가리키나요? (Student 구조체 크기 = 28바이트)',
+      options: ['1바이트', '4바이트', '20바이트', '28바이트'],
+      correct: 3,
+      explain: '포인터의 +1은 "그 포인터가 가리키는 자료형 하나의 크기"만큼 이동합니다. arr는 struct Student를 가리키므로, +1은 sizeof(struct Student) = 28바이트만큼 이동합니다.'
+    },
+    {
+      q: 'Q5. malloc으로 구조체 5개짜리 배열을 만드는 코드로 올바른 것은?',
+      options: [
+        'malloc(5)',
+        'malloc(sizeof(struct Student))',
+        'malloc(sizeof(struct Student) * 5)',
+        'malloc(struct Student * 5)'
+      ],
+      correct: 2,
+      explain: '구조체 하나의 크기(sizeof(struct Student))에 필요한 개수(5)를 곱해야 5개가 들어갈 만큼의 전체 바이트 수를 요청할 수 있습니다.'
+    },
+  ];
+
+  const wrap = document.getElementById('quizWrap');
+  QUESTIONS.forEach((qd, qi) => {
+    const card = el('div','qcard');
+    const qline = el('div');
+    qline.style.display='flex'; qline.style.justifyContent='space-between'; qline.style.alignItems='center';
+    qline.innerHTML = `<p class="q">${qd.q}</p><span class="result"></span>`;
+    card.appendChild(qline);
+    qd.options.forEach((opt, oi) => {
+      const label = el('label','opt');
+      label.innerHTML = `<input type="radio" name="q${qi}" value="${oi}"><span>${escapeHtml(opt)}</span>`;
+      card.appendChild(label);
+      label.querySelector('input').addEventListener('change', () => {
+        const ok = oi === qd.correct;
+        card.classList.remove('correct','wrong');
+        card.classList.add(ok ? 'correct' : 'wrong');
+        card.querySelector('.result').textContent = ok ? '✓ 정답' : '✗ 다시 생각해보세요';
+        card.querySelector('.result').style.color = ok ? 'var(--good)' : 'var(--warn)';
+        let ex = card.querySelector('.explain');
+        if(!ex){ ex = el('div','explain'); card.appendChild(ex); }
+        ex.textContent = qd.explain;
+        ex.style.display = 'block';
+      });
+    });
+    wrap.appendChild(card);
+  });
+})();
+</script>
+</body>
+</html>
