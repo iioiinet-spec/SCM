@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>두 원의 공통접선과 닮음의 중심 실습실 — 거리 비율 · 접선 길이</title>
+<style>
+:root{
+  --bg:#0b1526; --panel:#12203a; --panel2:#0e1a30; --line:#1e3a5f;
+  --teal:#2dd4bf; --teal-dim:#14b8a6; --amber:#fbbf24; --red:#f87171;
+  --green:#4ade80; --violet:#a78bfa; --pink:#f472b6; --blue:#60a5fa;
+  --text:#e2e8f0; --muted:#8aa3c4; --code-bg:#0a1322;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Malgun Gothic','Apple SD Gothic Neo',sans-serif;min-height:100vh;}
+.wrap{max-width:1320px;margin:0 auto;padding:20px 18px 48px;}
+header{padding:22px 4px 18px;border-bottom:2px solid var(--line);margin-bottom:20px;display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;}
+header h1{font-size:1.5rem;letter-spacing:-0.5px;}
+header h1 span{color:var(--teal);}
+.badge{background:rgba(45,212,191,0.12);border:1px solid var(--teal-dim);color:var(--teal);font-size:0.78rem;padding:3px 10px;border-radius:999px;}
+.sub{color:var(--muted);font-size:0.88rem;width:100%;line-height:1.6;}
+.sub b{color:var(--text);}
+.grid{display:grid;grid-template-columns:minmax(440px,52%) 1fr;gap:18px;align-items:start;}
+@media(max-width:1000px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+.card h2{font-size:0.92rem;padding:11px 16px;border-bottom:1px solid var(--line);color:var(--teal);display:flex;align-items:center;gap:8px;font-weight:600;}
+.card h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);display:inline-block;}
+.card .body{padding:14px 16px;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel2);}
+.chips button{background:transparent;border:1px solid var(--line);color:var(--muted);font-size:0.79rem;padding:6px 11px;border-radius:999px;cursor:pointer;transition:all .15s;font-family:inherit;}
+.chips button:hover{border-color:var(--teal-dim);color:var(--teal);}
+.chips button.active{background:rgba(45,212,191,0.14);border-color:var(--teal);color:var(--teal);font-weight:700;}
+#planeSvg{display:block;width:100%;max-width:560px;margin:0 auto;background:var(--code-bg);touch-action:none;user-select:none;-webkit-user-select:none;}
+.controls{display:flex;flex-wrap:wrap;gap:12px;padding:10px 16px;border-top:1px solid var(--line);background:var(--panel2);align-items:center;font-size:0.82rem;color:var(--muted);}
+.grptag{font:700 12px Consolas,'D2Coding',monospace;padding:3px 9px;border-radius:6px;}
+.grptag.g1{color:var(--teal);border:1px solid rgba(45,212,191,0.5);}
+.grptag.g2{color:var(--violet);border:1px solid rgba(167,139,250,0.5);}
+.stepgrp{display:flex;align-items:center;gap:4px;}
+.stepgrp button{background:#173052;border:1px solid var(--line);color:var(--text);font:700 13px Consolas,monospace;width:25px;height:25px;border-radius:7px;cursor:pointer;transition:all .15s;}
+.stepgrp button:hover{border-color:var(--teal-dim);color:var(--teal);}
+.stepgrp .val{font:700 13.5px Consolas,'D2Coding',monospace;color:var(--amber);min-width:26px;text-align:center;}
+.hintline{padding:9px 16px;border-top:1px solid var(--line);font-size:0.78rem;color:var(--muted);}
+.eqbig{background:var(--code-bg);border:1.5px solid var(--line);border-radius:9px;padding:10px 13px;font:700 15.5px Consolas,'D2Coding',monospace;text-align:center;margin-bottom:8px;}
+.eqbig.e1{color:#7fe0d4;border-color:rgba(45,212,191,0.45);}
+.eqbig.e2{color:#c4b5fd;border-color:rgba(167,139,250,0.45);}
+.eqbig.tl1{color:#fde68a;border-color:rgba(251,191,36,0.5);}
+.eqbig.tl2{color:#f9a8d4;border-color:rgba(244,114,182,0.5);}
+.mline{background:var(--code-bg);border:1px solid var(--line);border-radius:9px;padding:9px 13px;font:600 13.5px Consolas,'D2Coding',monospace;line-height:1.65;margin-bottom:8px;color:var(--text);}
+.mline .lab{display:block;font:600 11px 'Segoe UI','Malgun Gothic',sans-serif;color:var(--muted);margin-bottom:3px;}
+.mline.ok{color:#a7f3ea;border-color:rgba(45,212,191,0.45);}
+.mline.ratio{color:#fde68a;border-color:rgba(251,191,36,0.45);}
+.mline.warn{color:#fecaca;border-color:rgba(248,113,113,0.5);font-family:'Segoe UI','Malgun Gothic',sans-serif;}
+.mline.note{color:var(--muted);font-family:'Segoe UI','Malgun Gothic',sans-serif;font-size:12.5px;}
+.tips{font-size:0.83rem;color:var(--muted);line-height:1.75;}
+.tips b{color:var(--teal);}
+.tips code{background:var(--code-bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font:12px Consolas,monospace;color:var(--amber);}
+.rightcol{display:flex;flex-direction:column;gap:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1><span>두 원의 공통접선</span>과 닮음의 중심 실습실</h1>
+  <span class="badge">PC&#8321; : PC&#8322; = &#8467;&#8321; : &#8467;&#8322; = r&#8321; : r&#8322;</span>
+  <p class="sub">두 원에 <b>동시에 접하는 두 직선(공통접선)은 한 점 P에서 만납니다</b>. 이 P(닮음의 중심)에서 <b>두 원의 중심까지의 거리의 비</b>, <b>접선 길이의 비</b>가 모두 <b>반지름의 비 r&#8321; : r&#8322;</b>와 같고, <b>접선과 각 원의 중심 사이의 거리는 정확히 그 원의 반지름</b>임을 드래그하며 확인하세요.</p>
+</header>
+
+<div class="grid">
+  <!-- LEFT -->
+  <section class="card">
+    <h2><span class="dot"></span>좌표평면 — 중심·반지름 핸들을 드래그하세요</h2>
+    <div class="chips">
+      <button id="modeExt" class="active">외부 공통접선</button>
+      <button id="modeInt">내부 공통접선</button>
+    </div>
+    <div class="chips" id="exChips"></div>
+    <div class="body" style="padding:10px;">
+      <svg id="planeSvg" viewBox="-10.8 -10.8 21.6 21.6" aria-label="two circles with common tangents">
+        <g id="gridG" stroke="#13243f" stroke-width="0.05"></g>
+        <line x1="-10.8" y1="0" x2="10.8" y2="0" stroke="#2c4568" stroke-width="0.08"/>
+        <line x1="0" y1="-10.8" x2="0" y2="10.8" stroke="#2c4568" stroke-width="0.08"/>
+        <circle id="c1El" fill="rgba(45,212,191,0.06)" stroke="#2dd4bf" stroke-width="0.13"/>
+        <circle id="c2El" fill="rgba(167,139,250,0.07)" stroke="#a78bfa" stroke-width="0.13"/>
+        <line id="tanA" stroke="#fbbf24" stroke-width="0.1"/>
+        <line id="tanB" stroke="#f472b6" stroke-width="0.1"/>
+        <line id="axisLine" stroke="#f472b6" stroke-width="0.07" stroke-dasharray="0.24 0.18" opacity="0.75"/>
+        <line id="perp1" stroke="#e2e8f0" stroke-width="0.07"/>
+        <line id="perp2" stroke="#e2e8f0" stroke-width="0.07"/>
+        <path id="ra1" fill="none" stroke="#8aa3c4" stroke-width="0.05"/>
+        <path id="ra2" fill="none" stroke="#8aa3c4" stroke-width="0.05"/>
+        <text id="rL1" font-size="0.5" fill="#7fe0d4" font-weight="bold" text-anchor="middle"></text>
+        <text id="rL2" font-size="0.5" fill="#c4b5fd" font-weight="bold" text-anchor="middle"></text>
+        <text id="pc1Lbl" font-size="0.52" fill="#f472b6" font-weight="bold" text-anchor="middle"></text>
+        <text id="pc2Lbl" font-size="0.52" fill="#f472b6" font-weight="bold" text-anchor="middle"></text>
+        <g id="tpG"></g>
+        <circle id="c1Dot" r="0.19" fill="#2dd4bf" stroke="#0a1322" stroke-width="0.06" style="cursor:grab;"/>
+        <circle id="c2Dot" r="0.19" fill="#a78bfa" stroke="#0a1322" stroke-width="0.06" style="cursor:grab;"/>
+        <text id="c1Lbl" font-size="0.54" fill="#2dd4bf" font-weight="bold" text-anchor="middle"></text>
+        <text id="c2Lbl" font-size="0.54" fill="#a78bfa" font-weight="bold" text-anchor="middle"></text>
+        <circle id="h1El" r="0.19" fill="#0e6d61" stroke="#2dd4bf" stroke-width="0.07" style="cursor:ew-resize;"/>
+        <circle id="h2El" r="0.19" fill="#4a3a80" stroke="#a78bfa" stroke-width="0.07" style="cursor:ew-resize;"/>
+        <circle id="pDot" r="0.23" fill="#60a5fa" stroke="#0a1322" stroke-width="0.07"/>
+        <text id="pLbl" font-size="0.56" fill="#60a5fa" font-weight="bold" text-anchor="middle"></text>
+        <circle id="hitC1" r="0.62" fill="transparent" style="cursor:grab;"/>
+        <circle id="hitC2" r="0.62" fill="transparent" style="cursor:grab;"/>
+        <circle id="hitR1" r="0.58" fill="transparent" style="cursor:ew-resize;"/>
+        <circle id="hitR2" r="0.58" fill="transparent" style="cursor:ew-resize;"/>
+      </svg>
+    </div>
+    <div class="controls">
+      <span class="grptag g1">원1</span>
+      <span class="stepgrp">a&#8321; <button id="a1M">&#8722;</button><span class="val" id="a1V"></span><button id="a1P">+</button></span>
+      <span class="stepgrp">b&#8321; <button id="b1M">&#8722;</button><span class="val" id="b1V"></span><button id="b1P">+</button></span>
+      <span class="stepgrp">r&#8321; <button id="r1M">&#8722;</button><span class="val" id="r1V"></span><button id="r1P">+</button></span>
+      <span class="grptag g2">원2</span>
+      <span class="stepgrp">a&#8322; <button id="a2M">&#8722;</button><span class="val" id="a2V"></span><button id="a2P">+</button></span>
+      <span class="stepgrp">b&#8322; <button id="b2M">&#8722;</button><span class="val" id="b2V"></span><button id="b2P">+</button></span>
+      <span class="stepgrp">r&#8322; <button id="r2M">&#8722;</button><span class="val" id="r2V"></span><button id="r2P">+</button></span>
+    </div>
+    <div class="hintline">파란 점 P = 두 공통접선의 교점(닮음의 중심) &#183; 분홍 점선 = 중심선(P, C&#8321;, C&#8322;는 한 직선 위!) &#183; 흰 선분 = 접선까지의 수직 거리(= 반지름) &#183; 초록 점 = 접점</div>
+  </section>
+
+  <!-- RIGHT -->
+  <div class="rightcol">
+    <section class="card">
+      <h2><span class="dot"></span>두 원과 닮음의 중심 P</h2>
+      <div class="body" id="centerBox"></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>거리의 비율 — 닮음의 핵심</h2>
+      <div class="body" id="ratioBox"></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>접선의 방정식과 중심까지의 거리</h2>
+      <div class="body" id="tanBox"></div>
+    </section>
+    <section class="card">
+      <h2><span class="dot"></span>학습 포인트</h2>
+      <div class="body tips">
+        <b>1. 왜 한 점에서 만날까?</b> — 두 원은 서로 <b>닮음</b>이고, 공통접선은 닮음의 중심 P를 지납니다. 외부 공통접선의 P는 중심선 C&#8321;C&#8322;를 <code>r&#8321; : r&#8322;로 외분</code>, 내부 공통접선의 P는 <code>r&#8321; : r&#8322;로 내분</code>한 점.<br>
+        <b>2. 거리의 비</b> — 닮음비가 r&#8321; : r&#8322;이므로 <code>PC&#8321; : PC&#8322; = r&#8321; : r&#8322;</code>, 접선 길이도 <code>&#8467;&#8321; : &#8467;&#8322; = r&#8321; : r&#8322;</code> (직각삼각형의 닮음).<br>
+        <b>3. 접선의 판정</b> — 한 직선이 원에 접한다 &#8660; <b>중심에서 그 직선까지의 거리 = 반지름</b>. 카드의 검증이 두 원 모두에서 성립하므로 "공통"접선!<br>
+        <b>4. 존재 조건</b> — 외부 공통접선: d &#62; |r&#8321;&#8722;r&#8322;| 이면 2개. 내부 공통접선: d &#62; r&#8321;+r&#8322; (두 원이 떨어져 있을 때)만 2개. 그래서 공통접선 개수가 4&#8594;3&#8594;2&#8594;1&#8594;0으로 변합니다.<br>
+        <b>5. 반지름이 같으면?</b> — 외부 공통접선이 <b>평행</b>해져 만나는 점이 없습니다(무한원점). 내부 공통접선은 여전히 중점에서 만납니다.
+      </div>
+    </section>
+  </div>
+</div>
+</div>
+<script>
+/* ===================== 상태·유틸 ===================== */
+var els = {};
+['modeExt','modeInt','exChips','planeSvg','gridG','c1El','c2El','tanA','tanB','axisLine',
+ 'perp1','perp2','ra1','ra2','rL1','rL2','pc1Lbl','pc2Lbl','tpG','c1Dot','c2Dot','c1Lbl','c2Lbl',
+ 'h1El','h2El','pDot','pLbl','hitC1','hitC2','hitR1','hitR2','centerBox','ratioBox','tanBox',
+ 'a1M','a1P','b1M','b1P','r1M','r1P','a2M','a2P','b2M','b2P','r2M','r2P',
+ 'a1V','b1V','r1V','a2V','b2V','r2V'
+].forEach(function(id){ els[id] = document.getElementById(id); });
+
+var SVGNS = 'http://www.w3.org/2000/svg';
+var MODE = 'ext';
+var S1 = {a:-2, b:0, r:3}, S2 = {a:3, b:0, r:6};
+var C_LIM = 6, R_MIN = 1, R_MAX = 6;
+
+function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); return b ? gcd(b, a % b) : a; }
+function isInt(v){ return Math.abs(v - Math.round(v)) < 1e-7; }
+function fmt2(v){ return isInt(v) ? String(Math.round(v)) : v.toFixed(2); }
+function sqrtStr(s){
+  s = Math.round(s);
+  if(s === 0) return '0';
+  var q = Math.sqrt(s);
+  if(isInt(q)) return String(Math.round(q));
+  var k = 1;
+  for(var i = 2; i * i <= s; i++) if(s % (i * i) === 0) k = i;
+  var inner = s / (k * k);
+  return (k === 1 ? '' : k) + '\u221a' + inner;
+}
+function par(v){ return v < 0 ? '(' + v + ')' : String(v); }
+function sqT(v, k){
+  if(k === 0) return v + '\u00b2';
+  return '(' + v + (k > 0 ? ' - ' : ' + ') + Math.abs(k) + ')\u00b2';
+}
+function stdEq(s){ return sqT('x', s.a) + ' + ' + sqT('y', s.b) + ' = ' + (s.r * s.r); }
+function lineStr(A, B, C){
+  var parts = [];
+  if(A !== 0) parts.push((A < 0 ? '-' : '') + (Math.abs(A) === 1 ? '' : Math.abs(A)) + 'x');
+  if(B !== 0) parts.push((parts.length ? (B > 0 ? ' + ' : ' - ') : (B < 0 ? '-' : '')) + (Math.abs(B) === 1 ? '' : Math.abs(B)) + 'y');
+  if(C !== 0) parts.push((parts.length ? (C > 0 ? ' + ' : ' - ') : (C < 0 ? '-' : '')) + Math.abs(C));
+  if(!parts.length) return '0 = 0';
+  return parts.join('') + ' = 0';
+}
+
+/* ===================== 분석 ===================== */
+function tangentLinesFrom(P, c, r){
+  /* P에서 원(c, r)에 그은 두 접선: {dir, eqStr, N:[A,B,C]|null(수치), nA,nB,nC 수치} */
+  var dx = c[0] - P[0], dy = c[1] - P[1];
+  var ell2 = dx * dx + dy * dy - r * r;
+  if(ell2 <= 1e-9) return [];
+  var out = [];
+  var Aq = dx * dx - r * r;
+  var Pint = isInt(P[0]) && isInt(P[1]);
+  var ell = Math.sqrt(ell2);
+  function fromSlope(k){
+    var nA, nB, nC, eq;
+    nA = k; nB = -1; nC = P[1] - k * P[0];
+    eq = 'y \u2248 ' + k.toFixed(3) + 'x ' + (nC >= 0 ? '+ ' : '- ') + Math.abs(nC).toFixed(3);
+    return {dir:[1 / Math.hypot(1, k), k / Math.hypot(1, k)], nA:nA, nB:nB, nC:nC, eq:eq, N:null};
+  }
+  function fromSlopeExact(nu, de){
+    /* 기울기 nu/de (정수), P 정수 → 정수 직선 nu·x − de·y + (de·Py − nu·Px) = 0 */
+    var g = gcd(Math.abs(nu), Math.abs(de)) || 1;
+    nu /= g; de /= g;
+    var A = nu, B = -de, C = de * P[1] - nu * P[0];
+    var g2 = gcd(gcd(Math.abs(A), Math.abs(B)), Math.abs(C)) || 1;
+    var sg = (A < 0 || (A === 0 && B < 0)) ? -1 : 1;
+    A = A / g2 * sg; B = B / g2 * sg; C = C / g2 * sg;
+    var k = nu / de;
+    return {dir:[1 / Math.hypot(1, k), k / Math.hypot(1, k)], nA:A, nB:B, nC:C, eq:lineStr(A, B, C), N:[A, B, C]};
+  }
+  if(Math.abs(Aq) < 1e-9){
+    /* 한 접선은 수직 x = Px */
+    out.push({dir:[0, 1], nA:1, nB:0, nC:-P[0], eq:'x = ' + fmt2(P[0]), N:(Pint ? [1, 0, -Math.round(P[0])] : null)});
+    var k2 = (dy * dy - r * r) / (2 * dx * dy);
+    if(isFinite(k2)) out.push(fromSlope(k2));
+  } else {
+    var exactOK = Pint && isInt(ell);
+    var kplus = (dx * dy + r * ell) / Aq;
+    var kminus = (dx * dy - r * ell) / Aq;
+    if(exactOK){
+      var idx = Math.round(dx), idy = Math.round(dy), iA = Math.round(Aq), il = Math.round(ell);
+      out.push(fromSlopeExact(idx * idy + r * il, iA));
+      out.push(fromSlopeExact(idx * idy - r * il, iA));
+    } else {
+      out.push(fromSlope(kplus));
+      out.push(fromSlope(kminus));
+    }
+  }
+  return out;
+}
+function parallelTangents(){
+  var dx = S2.a - S1.a, dy = S2.b - S1.b;
+  var d = Math.hypot(dx, dy);
+  if(d < 1e-9) return [];
+  var r = S1.r;
+  var out = [];
+  [1, -1].forEach(function(sg){
+    if(isInt(d)){
+      var A = -dy, B = dx, C = -(A * S1.a + B * S1.b) - sg * r * Math.round(d);
+      var g = gcd(gcd(Math.abs(A), Math.abs(B)), Math.abs(C)) || 1;
+      var s2 = (A < 0 || (A === 0 && B < 0)) ? -1 : 1;
+      A = A / g * s2; B = B / g * s2; C = C / g * s2;
+      out.push({dir:[dx / d, dy / d], nA:A, nB:B, nC:C, eq:lineStr(A, B, C), N:[A, B, C]});
+    } else {
+      var nx = -dy / d, ny = dx / d;
+      var A2 = nx, B2 = ny, C2 = -(nx * S1.a + ny * S1.b) - sg * r;
+      var eq = (Math.abs(B2) < 1e-9) ? ('x \u2248 ' + (-C2 / A2).toFixed(2))
+             : ('y \u2248 ' + (-A2 / B2).toFixed(3) + 'x ' + ((-C2 / B2) >= 0 ? '+ ' : '- ') + Math.abs(-C2 / B2).toFixed(3));
+      out.push({dir:[dx / d, dy / d], nA:A2, nB:B2, nC:C2, eq:eq, N:null});
+    }
+  });
+  return out;
+}
+function analyze(){
+  var dx = S2.a - S1.a, dy = S2.b - S1.b;
+  var d2 = dx * dx + dy * dy;
+  var d = Math.sqrt(d2);
+  var sum = S1.r + S2.r, dif = Math.abs(S1.r - S2.r);
+  var m = {d2:d2, d:d, sum:sum, dif:dif, mode:MODE, parallel:false, exists:false, one:false, P:null, lines:[]};
+  if(MODE === 'ext'){
+    if(S1.r === S2.r){
+      m.parallel = true;
+      m.exists = d2 > 0;
+      if(m.exists) m.lines = parallelTangents();
+      return m;
+    }
+    if(d2 < dif * dif) return m;
+    if(d2 === dif * dif){ m.one = true; return m; }
+    m.exists = true;
+    m.P = [(S1.r * S2.a - S2.r * S1.a) / (S1.r - S2.r), (S1.r * S2.b - S2.r * S1.b) / (S1.r - S2.r)];
+  } else {
+    if(d2 < sum * sum) return m;
+    if(d2 === sum * sum){ m.one = true; return m; }
+    m.exists = true;
+    m.P = [(S1.r * S2.a + S2.r * S1.a) / (S1.r + S2.r), (S1.r * S2.b + S2.r * S1.b) / (S1.r + S2.r)];
+  }
+  m.pc1 = Math.hypot(m.P[0] - S1.a, m.P[1] - S1.b);
+  m.pc2 = Math.hypot(m.P[0] - S2.a, m.P[1] - S2.b);
+  m.l1 = Math.sqrt(Math.max(0, m.pc1 * m.pc1 - S1.r * S1.r));
+  m.l2 = Math.sqrt(Math.max(0, m.pc2 * m.pc2 - S2.r * S2.r));
+  m.lines = tangentLinesFrom(m.P, [S1.a, S1.b], S1.r);
+  return m;
+}
+function footOf(c, ln){
+  var den = ln.nA * ln.nA + ln.nB * ln.nB;
+  var t = (ln.nA * c[0] + ln.nB * c[1] + ln.nC) / den;
+  return [c[0] - t * ln.nA, c[1] - t * ln.nB];
+}
+function distTo(c, ln){
+  return Math.abs(ln.nA * c[0] + ln.nB * c[1] + ln.nC) / Math.hypot(ln.nA, ln.nB);
+}
+</script>
+<script>
+/* ===================== 그리기 ===================== */
+function setC(el, x, y){ el.setAttribute('cx', x); el.setAttribute('cy', -y); }
+function setL(el, x1, y1, x2, y2){
+  el.setAttribute('x1', x1); el.setAttribute('y1', -y1);
+  el.setAttribute('x2', x2); el.setAttribute('y2', -y2);
+}
+function setT(el, x, y, txt){
+  el.setAttribute('x', x); el.setAttribute('y', -y);
+  if(txt !== undefined) el.textContent = txt;
+}
+function showEl(el, on){ el.setAttribute('display', on ? 'inline' : 'none'); }
+function lineOn(el, ln){
+  showEl(el, true);
+  var p0;
+  if(Math.abs(ln.nB) < 1e-9) p0 = [-ln.nC / ln.nA, 0];
+  else p0 = [0, -ln.nC / ln.nB];
+  setL(el, p0[0] - ln.dir[0] * 40, p0[1] - ln.dir[1] * 40, p0[0] + ln.dir[0] * 40, p0[1] + ln.dir[1] * 40);
+}
+function raPath(el, F, e1, e2){
+  var k = 0.38;
+  showEl(el, true);
+  el.setAttribute('d',
+    'M ' + (F[0] + e1[0]*k) + ' ' + (-(F[1] + e1[1]*k)) +
+    ' L ' + (F[0] + (e1[0]+e2[0])*k) + ' ' + (-(F[1] + (e1[1]+e2[1])*k)) +
+    ' L ' + (F[0] + e2[0]*k) + ' ' + (-(F[1] + e2[1]*k)));
+}
+function tpDot(x, y){
+  var c = document.createElementNS(SVGNS, 'circle');
+  c.setAttribute('cx', x); c.setAttribute('cy', -y);
+  c.setAttribute('r', 0.15);
+  c.setAttribute('fill', '#4ade80');
+  c.setAttribute('stroke', '#0a1322');
+  c.setAttribute('stroke-width', '0.05');
+  els.tpG.appendChild(c);
+}
+function renderPlane(m){
+  setC(els.c1El, S1.a, S1.b); els.c1El.setAttribute('r', S1.r);
+  setC(els.c2El, S2.a, S2.b); els.c2El.setAttribute('r', S2.r);
+  setC(els.c1Dot, S1.a, S1.b); setC(els.hitC1, S1.a, S1.b);
+  setC(els.c2Dot, S2.a, S2.b); setC(els.hitC2, S2.a, S2.b);
+  setT(els.c1Lbl, S1.a, S1.b + 0.55, 'C\u2081(' + S1.a + ', ' + S1.b + ')');
+  setT(els.c2Lbl, S2.a, S2.b + 0.55, 'C\u2082(' + S2.a + ', ' + S2.b + ')');
+  setC(els.h1El, S1.a + S1.r, S1.b); setC(els.hitR1, S1.a + S1.r, S1.b);
+  setC(els.h2El, S2.a + S2.r, S2.b); setC(els.hitR2, S2.a + S2.r, S2.b);
+  while(els.tpG.firstChild) els.tpG.removeChild(els.tpG.firstChild);
+  ['tanA','tanB','axisLine','perp1','perp2','ra1','ra2','rL1','rL2','pc1Lbl','pc2Lbl','pDot','pLbl'
+  ].forEach(function(id){ showEl(els[id], false); });
+  if(!m.exists) return;
+  if(m.lines[0]) lineOn(els.tanA, m.lines[0]);
+  if(m.lines[1]) lineOn(els.tanB, m.lines[1]);
+  m.lines.forEach(function(ln){
+    var f1 = footOf([S1.a, S1.b], ln), f2 = footOf([S2.a, S2.b], ln);
+    tpDot(f1[0], f1[1]);
+    tpDot(f2[0], f2[1]);
+  });
+  if(m.lines[0]){
+    var ln = m.lines[0];
+    var f1 = footOf([S1.a, S1.b], ln), f2 = footOf([S2.a, S2.b], ln);
+    showEl(els.perp1, true); setL(els.perp1, S1.a, S1.b, f1[0], f1[1]);
+    showEl(els.perp2, true); setL(els.perp2, S2.a, S2.b, f2[0], f2[1]);
+    var n1 = [(f1[0] - S1.a) / S1.r, (f1[1] - S1.b) / S1.r];
+    raPath(els.ra1, f1, [-n1[0], -n1[1]], ln.dir);
+    var n2 = [(f2[0] - S2.a) / S2.r, (f2[1] - S2.b) / S2.r];
+    raPath(els.ra2, f2, [-n2[0], -n2[1]], ln.dir);
+    showEl(els.rL1, true); setT(els.rL1, (S1.a + f1[0]) / 2 + 0.45, (S1.b + f1[1]) / 2, 'r\u2081=' + S1.r);
+    showEl(els.rL2, true); setT(els.rL2, (S2.a + f2[0]) / 2 + 0.45, (S2.b + f2[1]) / 2, 'r\u2082=' + S2.r);
+  }
+  if(m.P){
+    showEl(els.pDot, true); setC(els.pDot, m.P[0], m.P[1]);
+    showEl(els.pLbl, true); setT(els.pLbl, m.P[0], m.P[1] - 0.85, 'P(' + fmt2(m.P[0]) + ', ' + fmt2(m.P[1]) + ')');
+    showEl(els.axisLine, true);
+    var ux = (S2.a - m.P[0]), uy = (S2.b - m.P[1]);
+    var ul = Math.hypot(ux, uy) || 1;
+    ux /= ul; uy /= ul;
+    setL(els.axisLine, m.P[0] - ux * 1.2, m.P[1] - uy * 1.2, S2.a + ux * (S2.r + 1), S2.b + uy * (S2.r + 1));
+    showEl(els.pc1Lbl, true);
+    setT(els.pc1Lbl, (m.P[0] + S1.a) / 2, (m.P[1] + S1.b) / 2 + 0.45, 'PC\u2081=' + fmt2(m.pc1));
+    showEl(els.pc2Lbl, true);
+    setT(els.pc2Lbl, (S1.a + S2.a) / 2, (S1.b + S2.b) / 2 - 0.75, 'PC\u2082=' + fmt2(m.pc2));
+  }
+}
+
+/* ===================== 카드 ===================== */
+function bigEq(box, cls, txt){
+  var d = document.createElement('div');
+  d.className = 'eqbig ' + cls;
+  d.textContent = txt;
+  box.appendChild(d);
+}
+function mline(box, lab, txt, cls){
+  var d = document.createElement('div');
+  d.className = 'mline' + (cls ? ' ' + cls : '');
+  if(lab){
+    var l = document.createElement('span');
+    l.className = 'lab';
+    l.textContent = lab;
+    d.appendChild(l);
+  }
+  d.appendChild(document.createTextNode(txt));
+  box.appendChild(d);
+}
+function clearBox(box){ while(box.firstChild) box.removeChild(box.firstChild); }
+function ratioStr(){
+  var g = gcd(S1.r, S2.r);
+  return (S1.r / g) + ' : ' + (S2.r / g);
+}
+function renderCenterCard(m){
+  clearBox(els.centerBox);
+  bigEq(els.centerBox, 'e1', '원1: ' + stdEq(S1));
+  bigEq(els.centerBox, 'e2', '원2: ' + stdEq(S2));
+  mline(els.centerBox, '중심거리', 'd = C\u2081C\u2082 = \u221a' + m.d2 + ' = ' + sqrtStr(m.d2) + (isInt(m.d) ? '' : ' \u2248 ' + m.d.toFixed(2)));
+  if(m.mode === 'ext'){
+    if(m.parallel){
+      mline(els.centerBox, '닮음의 중심', 'r\u2081 = r\u2082 \u2192 외부 공통접선이 서로 평행! 만나는 점 P가 없습니다(무한원점).', 'warn');
+      if(!m.exists) mline(els.centerBox, null, '두 원의 중심이 같아 접선을 그릴 수 없습니다.', 'warn');
+      return;
+    }
+    if(m.one){
+      mline(els.centerBox, '존재 조건', 'd = |r\u2081 - r\u2082| (내접) \u2192 외부 공통접선은 접점에서의 1개뿐입니다.', 'warn');
+      return;
+    }
+    if(!m.exists){
+      mline(els.centerBox, '존재 조건', 'd \u003c |r\u2081 - r\u2082| (한 원이 안에) \u2192 외부 공통접선이 없습니다.', 'warn');
+      return;
+    }
+    mline(els.centerBox, '닮음의 중심 P — 선분 C\u2081C\u2082를 r\u2081 : r\u2082로 외분',
+      'P = (r\u2081C\u2082 - r\u2082C\u2081)/(r\u2081 - r\u2082) = ((' + S1.r + '\u00b7' + par(S2.a) + ' - ' + S2.r + '\u00b7' + par(S1.a) + ')/(' + S1.r + ' - ' + S2.r + '), (' + S1.r + '\u00b7' + par(S2.b) + ' - ' + S2.r + '\u00b7' + par(S1.b) + ')/(' + S1.r + ' - ' + S2.r + ')) = (' + fmt2(m.P[0]) + ', ' + fmt2(m.P[1]) + ')');
+  } else {
+    if(m.one){
+      mline(els.centerBox, '존재 조건', 'd = r\u2081 + r\u2082 (외접) \u2192 내부 공통접선은 접점에서의 1개뿐입니다.', 'warn');
+      return;
+    }
+    if(!m.exists){
+      mline(els.centerBox, '존재 조건', 'd \u003c r\u2081 + r\u2082 \u2192 두 원이 겹치거나 만나 내부 공통접선이 없습니다. 원을 더 떨어뜨려 보세요!', 'warn');
+      return;
+    }
+    mline(els.centerBox, '닮음의 중심 P — 선분 C\u2081C\u2082를 r\u2081 : r\u2082로 내분',
+      'P = (r\u2081C\u2082 + r\u2082C\u2081)/(r\u2081 + r\u2082) = ((' + S1.r + '\u00b7' + par(S2.a) + ' + ' + S2.r + '\u00b7' + par(S1.a) + ')/' + (S1.r + S2.r) + ', (' + S1.r + '\u00b7' + par(S2.b) + ' + ' + S2.r + '\u00b7' + par(S1.b) + ')/' + (S1.r + S2.r) + ') = (' + fmt2(m.P[0]) + ', ' + fmt2(m.P[1]) + ')');
+  }
+  mline(els.centerBox, null, 'P, C\u2081, C\u2082는 언제나 한 직선(중심선) 위에 있습니다 — 분홍 점선으로 확인!', 'note');
+}
+function renderRatioCard(m){
+  clearBox(els.ratioBox);
+  if(!m.exists || !m.P){
+    mline(els.ratioBox, null, m.parallel ? '평행한 경우 P가 없어 거리 비율 대신 "두 접선 사이 간격 = 2r"이 성립합니다.' : '접선이 존재할 때 비율이 표시됩니다.', 'note');
+    return;
+  }
+  var pc1s = isInt(m.pc1) ? String(Math.round(m.pc1)) : m.pc1.toFixed(2);
+  var pc2s = isInt(m.pc2) ? String(Math.round(m.pc2)) : m.pc2.toFixed(2);
+  mline(els.ratioBox, 'P에서 두 원의 중심까지의 거리', 'PC\u2081 = ' + pc1s + '   \u00b7   PC\u2082 = ' + pc2s);
+  mline(els.ratioBox, '거리의 비 = 반지름의 비 (닮음!)', 'PC\u2081 : PC\u2082 = ' + pc1s + ' : ' + pc2s + ' = ' + ratioStr() + ' = r\u2081 : r\u2082 \u2714', 'ratio');
+  var l1e = m.l1 * m.l1, l2e = m.l2 * m.l2;
+  var l1s = isInt(m.l1) ? String(Math.round(m.l1)) : (isInt(l1e) ? sqrtStr(l1e) + ' \u2248 ' + m.l1.toFixed(2) : m.l1.toFixed(2));
+  var l2s = isInt(m.l2) ? String(Math.round(m.l2)) : (isInt(l2e) ? sqrtStr(l2e) + ' \u2248 ' + m.l2.toFixed(2) : m.l2.toFixed(2));
+  mline(els.ratioBox, '접선의 길이 \u2113 = \u221a(PC\u00b2 - r\u00b2)', '\u2113\u2081 = \u221a(' + fmt2(m.pc1 * m.pc1) + ' - ' + (S1.r * S1.r) + ') = ' + l1s + '   \u00b7   \u2113\u2082 = ' + l2s);
+  mline(els.ratioBox, '접선 길이의 비도 반지름의 비', '\u2113\u2081 : \u2113\u2082 = ' + ratioStr() + ' = r\u2081 : r\u2082 \u2714 (직각삼각형 PT\u2081C\u2081 \u223d PT\u2082C\u2082)', 'ratio');
+}
+function distVerify(ln, s, name, rname){
+  if(ln.N){
+    var A = ln.N[0], B = ln.N[1], C = ln.N[2];
+    var num = Math.abs(A * s.a + B * s.b + C);
+    var s2 = A * A + B * B;
+    var dv = num / Math.sqrt(s2);
+    var mid = '|' + A + '\u00b7' + par(s.a) + ' ' + (B >= 0 ? '+ ' + B : '- ' + (-B)) + '\u00b7' + par(s.b) + ' ' + (C >= 0 ? '+ ' + C : '- ' + (-C)) + '|/\u221a' + s2;
+    if(isInt(Math.sqrt(s2)) && isInt(dv)) return 'd(' + name + ') = ' + mid + ' = ' + num + '/' + Math.round(Math.sqrt(s2)) + ' = ' + Math.round(dv) + ' = ' + rname + ' \u2714';
+    return 'd(' + name + ') = ' + mid + ' \u2248 ' + dv.toFixed(3) + ' = ' + rname + ' \u2714';
+  }
+  return 'd(' + name + ') \u2248 ' + distTo([s.a, s.b], ln).toFixed(3) + ' = ' + rname + ' = ' + s.r + ' \u2714';
+}
+function renderTanCard(m){
+  clearBox(els.tanBox);
+  if(!m.exists){
+    mline(els.tanBox, null, '이 배치에서는 표시할 접선이 없습니다. 원을 옮기거나 모드를 바꿔 보세요.', 'note');
+    return;
+  }
+  if(m.lines[0]) bigEq(els.tanBox, 'tl1', '접선\u2081: ' + m.lines[0].eq);
+  if(m.lines[1]) bigEq(els.tanBox, 'tl2', '접선\u2082: ' + m.lines[1].eq);
+  if(m.lines[0]){
+    mline(els.tanBox, '접선\u2081과 원 중심 사이의 거리 (접선의 판정!)', distVerify(m.lines[0], S1, 'C\u2081, 접선\u2081', 'r\u2081') , 'ok');
+    mline(els.tanBox, null, distVerify(m.lines[0], S2, 'C\u2082, 접선\u2081', 'r\u2082'), 'ok');
+  }
+  mline(els.tanBox, null, '한 직선이 두 원 모두에서 "중심까지 거리 = 반지름"을 만족 \u2192 공통접선! (접선\u2082도 대칭으로 동일)', 'note');
+}
+
+function renderAll(){
+  var m = analyze();
+  renderPlane(m);
+  renderCenterCard(m);
+  renderRatioCard(m);
+  renderTanCard(m);
+  els.a1V.textContent = S1.a; els.b1V.textContent = S1.b; els.r1V.textContent = S1.r;
+  els.a2V.textContent = S2.a; els.b2V.textContent = S2.b; els.r2V.textContent = S2.r;
+  window.state = {mode:MODE, a1:S1.a, b1:S1.b, r1:S1.r, a2:S2.a, b2:S2.b, r2:S2.r,
+                  exists:m.exists, parallel:m.parallel,
+                  P:(m.P ? [Math.round(m.P[0] * 100) / 100, Math.round(m.P[1] * 100) / 100] : null),
+                  eq1:(m.lines[0] ? m.lines[0].eq : ''), eq2:(m.lines[1] ? m.lines[1].eq : '')};
+}
+function clampAll(){
+  S1.a = Math.max(-C_LIM, Math.min(C_LIM, S1.a));
+  S1.b = Math.max(-C_LIM, Math.min(C_LIM, S1.b));
+  S2.a = Math.max(-C_LIM, Math.min(C_LIM, S2.a));
+  S2.b = Math.max(-C_LIM, Math.min(C_LIM, S2.b));
+  S1.r = Math.max(R_MIN, Math.min(R_MAX, S1.r));
+  S2.r = Math.max(R_MIN, Math.min(R_MAX, S2.r));
+}
+
+/* ===================== 입력 ===================== */
+var EXAMPLES = [
+  {name:'\u2460 기본 — 전부 정수! (1:2)', mode:'ext', v:[-2,0,3, 3,0,6]},
+  {name:'\u2461 내부 공통접선 (1:2)', mode:'int', v:[-5,0,2, 4,0,4]},
+  {name:'\u2462 반지름이 같으면? (평행)', mode:'ext', v:[-4,0,3, 3,0,3]},
+  {name:'\u2463 기울어진 배치', mode:'ext', v:[-4,-2,2, 2,1,4]},
+  {name:'\u2464 기본으로', mode:'ext', v:[-2,0,3, 3,0,6]}
+];
+EXAMPLES.forEach(function(ex){
+  var b = document.createElement('button');
+  b.textContent = ex.name;
+  b.addEventListener('click', function(){
+    S1.a = ex.v[0]; S1.b = ex.v[1]; S1.r = ex.v[2];
+    S2.a = ex.v[3]; S2.b = ex.v[4]; S2.r = ex.v[5];
+    setMode(ex.mode);
+  });
+  els.exChips.appendChild(b);
+});
+function setMode(mo){
+  MODE = mo;
+  els.modeExt.className = mo === 'ext' ? 'active' : '';
+  els.modeInt.className = mo === 'int' ? 'active' : '';
+  clampAll();
+  renderAll();
+}
+els.modeExt.addEventListener('click', function(){ setMode('ext'); });
+els.modeInt.addEventListener('click', function(){ setMode('int'); });
+[['a1M',function(){S1.a--;}],['a1P',function(){S1.a++;}],['b1M',function(){S1.b--;}],['b1P',function(){S1.b++;}],
+ ['r1M',function(){S1.r--;}],['r1P',function(){S1.r++;}],['a2M',function(){S2.a--;}],['a2P',function(){S2.a++;}],
+ ['b2M',function(){S2.b--;}],['b2P',function(){S2.b++;}],['r2M',function(){S2.r--;}],['r2P',function(){S2.r++;}]
+].forEach(function(pr){
+  els[pr[0]].addEventListener('click', function(){ pr[1](); clampAll(); renderAll(); });
+});
+var dragMode = null;
+function svgPt(ev){
+  var r = els.planeSvg.getBoundingClientRect();
+  return {
+    x: (ev.clientX - r.left) / r.width * 21.6 - 10.8,
+    y: -((ev.clientY - r.top) / r.height * 21.6 - 10.8)
+  };
+}
+[['hitC1','c1'],['c1Dot','c1'],['hitC2','c2'],['c2Dot','c2'],
+ ['hitR1','r1'],['h1El','r1'],['hitR2','r2'],['h2El','r2']
+].forEach(function(pr){
+  els[pr[0]].addEventListener('pointerdown', function(ev){
+    ev.preventDefault();
+    dragMode = pr[1];
+    els.planeSvg.setPointerCapture(ev.pointerId);
+    ev.stopPropagation();
+  });
+});
+els.planeSvg.addEventListener('pointermove', function(ev){
+  if(!dragMode) return;
+  var p = svgPt(ev);
+  if(dragMode === 'c1'){ S1.a = Math.round(p.x); S1.b = Math.round(p.y); }
+  else if(dragMode === 'c2'){ S2.a = Math.round(p.x); S2.b = Math.round(p.y); }
+  else if(dragMode === 'r1'){ S1.r = Math.round(Math.hypot(p.x - S1.a, p.y - S1.b)); }
+  else { S2.r = Math.round(Math.hypot(p.x - S2.a, p.y - S2.b)); }
+  clampAll(); renderAll();
+});
+els.planeSvg.addEventListener('pointerup', function(){ dragMode = null; });
+els.planeSvg.addEventListener('pointercancel', function(){ dragMode = null; });
+
+/* ===================== 초기화 ===================== */
+(function init(){
+  for(var g = -10; g <= 10; g++){
+    if(g === 0) continue;
+    var lv = document.createElementNS(SVGNS, 'line');
+    lv.setAttribute('x1', g); lv.setAttribute('y1', -10.8);
+    lv.setAttribute('x2', g); lv.setAttribute('y2', 10.8);
+    if(g % 5 === 0) lv.setAttribute('stroke', '#1b3050');
+    els.gridG.appendChild(lv);
+    var lh = document.createElementNS(SVGNS, 'line');
+    lh.setAttribute('x1', -10.8); lh.setAttribute('y1', g);
+    lh.setAttribute('x2', 10.8); lh.setAttribute('y2', g);
+    if(g % 5 === 0) lh.setAttribute('stroke', '#1b3050');
+    els.gridG.appendChild(lh);
+  }
+  renderAll();
+})();
+</script>
+</body>
+</html>
