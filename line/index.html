@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>직선의 방정식 - 인터랙티브 강의자료</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .textbook-card {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .textbook-header {
+            background: #1e3a5f;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px 8px 0 0;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .textbook-label {
+            background: #f1f5f9;
+            border-left: 4px solid #3b82f6;
+            padding: 8px 16px;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 12px;
+        }
+
+        .formula-box {
+            background: #fefce8;
+            border: 1px solid #fde047;
+            border-radius: 6px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .highlight-red { color: #dc2626; font-weight: 700; }
+        .highlight-blue { color: #2563eb; font-weight: 700; }
+        .highlight-green { color: #16a34a; font-weight: 700; }
+        .highlight-purple { color: #7c3aed; font-weight: 700; }
+        .highlight-orange { color: #ea580c; font-weight: 700; }
+
+        .line-btn {
+            border: 2px solid #94a3b8;
+            background: #ffffff;
+            color: #475569;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .line-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .line-btn.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .slider-track {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+        }
+
+        .slider-track::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: 3px solid #ffffff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .param-input {
+            width: 70px;
+            padding: 6px 8px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 15px;
+            font-weight: 600;
+            transition: border-color 0.2s;
+        }
+
+        .param-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .canvas-border {
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            background: #ffffff;
+        }
+
+        .note-box {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #9a3412;
+        }
+
+        .intersection-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        table.textbook-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table.textbook-table th {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 10px 8px;
+            font-weight: 700;
+        }
+
+        table.textbook-table td {
+            border: 1px solid #cbd5e1;
+            padding: 10px 8px;
+            text-align: center;
+        }
+
+        table.textbook-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .preset-btn {
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .preset-btn:hover {
+            background: #e2e8f0;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+
+        <!-- 교과서 스타일 헤더 -->
+        <div class="textbook-card mb-6">
+            <div class="textbook-header flex items-center gap-3">
+                <span class="text-2xl">📐</span>
+                <span>직선의 방정식과 두 직선의 위치 관계</span>
+                <span class="ml-auto text-sm font-normal opacity-80">중학교 수학 2학년</span>
+            </div>
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-slate-800 mb-2">직선의 방정식</h1>
+                <p class="text-slate-600">
+                    직선의 <strong>기울기</strong>와 <strong>y절편</strong>을 조절하여 직선을 움직여 보세요. 
+                    두 직선이 <strong>만나는 점</strong>, <strong>평행</strong>, <strong>일치</strong>하는 경우를 탐구할 수 있습니다.
+                </p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+
+            <!-- 왼쪽: 좌표평면 -->
+            <div class="xl:col-span-7 space-y-4">
+
+                <!-- 좌표평면 -->
+                <div class="textbook-card">
+                    <div class="p-4 border-b border-slate-200">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <span class="font-bold text-slate-700 text-lg">[그림] 직선의 방정식과 두 직선의 교점</span>
+                            <div class="flex items-center gap-2">
+                                <span id="intersectionStatus" class="intersection-badge bg-green-100 text-green-800 border border-green-300">
+                                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                    한 점에서 만남
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="canvas-border">
+                            <canvas id="mainCanvas" width="640" height="520"></canvas>
+                        </div>
+                        <div class="mt-3 flex flex-wrap justify-center gap-4 text-sm">
+                            <span class="flex items-center gap-2">
+                                <span class="w-8 h-1 bg-red-500 rounded"></span> 
+                                <span class="text-red-700 font-semibold">직선 ①</span>
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="w-8 h-1 bg-blue-500 rounded"></span> 
+                                <span class="text-blue-700 font-semibold">직선 ②</span>
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-green-500"></span> 
+                                <span class="text-green-700 font-semibold">교점</span>
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="w-4 h-4 border-2 border-amber-500 rounded-full"></span> 
+                                <span class="text-amber-700 font-semibold">점을 드래그하여 이동</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 직선 ① 조절 -->
+                <div class="textbook-card p-5">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white font-bold text-xs">①</span>
+                        <span class="font-bold text-red-700 text-lg">직선 ① 조절</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="border-2 border-red-200 rounded-lg p-4 bg-red-50">
+                            <div class="font-bold text-red-700 mb-2">기울기 (slope) a₁</div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-mono text-sm">-5</span>
+                                <input type="range" id="slope1" min="-5" max="5" step="0.1" value="1" class="slider-track" oninput="updateFromSlider(1)">
+                                <span class="font-mono text-sm">+5</span>
+                            </div>
+                            <div class="text-center mt-2">
+                                <span class="font-mono text-xl font-bold text-red-700" id="slope1Value">1.0</span>
+                            </div>
+                            <div class="flex gap-2 mt-2 justify-center">
+                                <button class="preset-btn" onclick="setLineParam(1, 'slope', -2)">-2</button>
+                                <button class="preset-btn" onclick="setLineParam(1, 'slope', -1)">-1</button>
+                                <button class="preset-btn" onclick="setLineParam(1, 'slope', 0)">0</button>
+                                <button class="preset-btn" onclick="setLineParam(1, 'slope', 1)">1</button>
+                                <button class="preset-btn" onclick="setLineParam(1, 'slope', 2)">2</button>
+                            </div>
+                        </div>
+
+                        <div class="border-2 border-red-200 rounded-lg p-4 bg-red-50">
+                            <div class="font-bold text-red-700 mb-2">y절편 (intercept) b₁</div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-mono text-sm">-5</span>
+                                <input type="range" id="intercept1" min="-5" max="5" step="0.1" value="0" class="slider-track" oninput="updateFromSlider(1)">
+                                <span class="font-mono text-sm">+5</span>
+                            </div>
+                            <div class="text-center mt-2">
+                                <span class="font-mono text-xl font-bold text-red-700" id="intercept1Value">0.0</span>
+                            </div>
+                            <div class="flex gap-2 mt-2 justify-center">
+                                <button class="preset-btn" onclick="setLineParam(1, 'intercept', -3)">-3</button>
+                                <button class="preset-btn" onclick="setLineParam(1, 'intercept', -1)">-1</button>
+                                <button class="preset-btn" onclick="setLineParam(1, 'intercept', 0)">0</button>
+                                <button class="preset-btn" onclick="setLineParam(1, 'intercept', 1)">1</button>
+                                <button class="preset-btn" onclick="setLineParam(1, 'intercept', 3)">3</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 p-3 bg-white rounded-lg border border-red-200 text-center">
+                        <span class="font-bold text-red-700">직선 ①: </span>
+                        <span class="font-mono text-lg" id="equation1">y = 1.0x + 0.0</span>
+                    </div>
+                </div>
+
+                <!-- 직선 ② 조절 -->
+                <div class="textbook-card p-5">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs">②</span>
+                        <span class="font-bold text-blue-700 text-lg">직선 ② 조절</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="border-2 border-blue-200 rounded-lg p-4 bg-blue-50">
+                            <div class="font-bold text-blue-700 mb-2">기울기 (slope) a₂</div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-mono text-sm">-5</span>
+                                <input type="range" id="slope2" min="-5" max="5" step="0.1" value="-1" class="slider-track" oninput="updateFromSlider(2)">
+                                <span class="font-mono text-sm">+5</span>
+                            </div>
+                            <div class="text-center mt-2">
+                                <span class="font-mono text-xl font-bold text-blue-700" id="slope2Value">-1.0</span>
+                            </div>
+                            <div class="flex gap-2 mt-2 justify-center">
+                                <button class="preset-btn" onclick="setLineParam(2, 'slope', -2)">-2</button>
+                                <button class="preset-btn" onclick="setLineParam(2, 'slope', -1)">-1</button>
+                                <button class="preset-btn" onclick="setLineParam(2, 'slope', 0)">0</button>
+                                <button class="preset-btn" onclick="setLineParam(2, 'slope', 1)">1</button>
+                                <button class="preset-btn" onclick="setLineParam(2, 'slope', 2)">2</button>
+                            </div>
+                        </div>
+
+                        <div class="border-2 border-blue-200 rounded-lg p-4 bg-blue-50">
+                            <div class="font-bold text-blue-700 mb-2">y절편 (intercept) b₂</div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-mono text-sm">-5</span>
+                                <input type="range" id="intercept2" min="-5" max="5" step="0.1" value="2" class="slider-track" oninput="updateFromSlider(2)">
+                                <span class="font-mono text-sm">+5</span>
+                            </div>
+                            <div class="text-center mt-2">
+                                <span class="font-mono text-xl font-bold text-blue-700" id="intercept2Value">2.0</span>
+                            </div>
+                            <div class="flex gap-2 mt-2 justify-center">
+                                <button class="preset-btn" onclick="setLineParam(2, 'intercept', -3)">-3</button>
+                                <button class="preset-btn" onclick="setLineParam(2, 'intercept', -1)">-1</button>
+                                <button class="preset-btn" onclick="setLineParam(2, 'intercept', 0)">0</button>
+                                <button class="preset-btn" onclick="setLineParam(2, 'intercept', 1)">1</button>
+                                <button class="preset-btn" onclick="setLineParam(2, 'intercept', 3)">3</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 p-3 bg-white rounded-lg border border-blue-200 text-center">
+                        <span class="font-bold text-blue-700">직선 ②: </span>
+                        <span class="font-mono text-lg" id="equation2">y = -1.0x + 2.0</span>
+                    </div>
+                </div>
+
+                <!-- 공식 -->
+                <div class="textbook-card p-5">
+                    <div class="textbook-label mb-4">직선의 방정식</div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="formula-box">
+                            <div class="font-bold text-slate-700 mb-2">기울기-절편형</div>
+                            <div class="text-xl text-slate-800 font-mono">
+                                y = ax + b
+                            </div>
+                            <div class="text-sm text-slate-500 mt-1">
+                                a: 기울기, b: y절편
+                            </div>
+                        </div>
+                        <div class="formula-box">
+                            <div class="font-bold text-slate-700 mb-2">일반형</div>
+                            <div class="text-xl text-slate-800 font-mono">
+                                ax + by + c = 0
+                            </div>
+                            <div class="text-sm text-slate-500 mt-1">
+                                a, b, c: 계수
+                            </div>
+                        </div>
+                        <div class="formula-box">
+                            <div class="font-bold text-slate-700 mb-2">두 점을 지나는 직선</div>
+                            <div class="text-lg text-slate-800 font-mono">
+                                y - y₁ = a(x - x₁)
+                            </div>
+                            <div class="text-sm text-slate-500 mt-1">
+                                (x₁, y₁): 직선 위의 한 점
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 오른쪽: 결과 패널 -->
+            <div class="xl:col-span-5 space-y-4">
+
+                <!-- 두 직선의 위치 관계 -->
+                <div class="textbook-card">
+                    <div class="textbook-label">두 직선의 위치 관계</div>
+                    <div class="p-4 space-y-4">
+
+                        <!-- Status -->
+                        <div id="relationBox" class="border-2 border-green-200 rounded-lg p-5 bg-green-50 text-center">
+                            <div class="text-sm text-slate-500 mb-2">두 직선의 위치 관계</div>
+                            <div class="text-2xl font-bold text-green-700" id="relationText">
+                                한 점에서 만남 (교점 존재)
+                            </div>
+                            <div class="text-sm text-slate-600 mt-2" id="relationDesc">
+                                기울기가 다륯므로 두 직선은 한 점에서 만납니다.
+                            </div>
+                        </div>
+
+                        <!-- Intersection point -->
+                        <div id="intersectionBox" class="border-2 border-purple-200 rounded-lg p-4 bg-purple-50">
+                            <div class="font-bold text-purple-700 mb-2">교점 좌표</div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-purple-700 font-mono" id="intersectionPoint">
+                                    (1.00, 1.00)
+                                </div>
+                                <div class="text-sm text-slate-500 mt-1" id="intersectionCalc">
+                                    x = (2-0)/(1-(-1)) = 1.00<br>
+                                    y = 1×1 + 0 = 1.00
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Angle between lines -->
+                        <div class="border-2 border-amber-200 rounded-lg p-4 bg-amber-50">
+                            <div class="font-bold text-amber-700 mb-2">두 직선이 이루는 각</div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-amber-700 font-mono" id="angleBetween">
+                                    90.0°
+                                </div>
+                                <div class="text-sm text-slate-500 mt-1">
+                                    θ = arctan|(a₂-a₁)/(1+a₁a₂)|
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 직선 ① 정보 -->
+                <div class="textbook-card p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white font-bold text-xs">①</span>
+                        <span class="font-bold text-red-700">직선 ① 상세 정보</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center p-2 bg-red-50 rounded border border-red-200">
+                            <span class="text-slate-600">방정식</span>
+                            <span id="detailEq1" class="font-mono font-bold text-red-700">y = x</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-red-50 rounded border border-red-200">
+                            <span class="text-slate-600">기울기 a₁</span>
+                            <span id="detailSlope1" class="font-mono font-bold text-red-700">1.000</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-red-50 rounded border border-red-200">
+                            <span class="text-slate-600">y절편</span>
+                            <span id="detailIntercept1" class="font-mono font-bold text-red-700">(0, 0)</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-red-50 rounded border border-red-200">
+                            <span class="text-slate-600">x절편</span>
+                            <span id="detailXIntercept1" class="font-mono font-bold text-red-700">(0, 0)</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-red-50 rounded border border-red-200">
+                            <span class="text-slate-600">기울기 각도</span>
+                            <span id="detailAngle1" class="font-mono font-bold text-red-700">45.0°</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 직선 ② 정보 -->
+                <div class="textbook-card p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs">②</span>
+                        <span class="font-bold text-blue-700">직선 ② 상세 정보</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center p-2 bg-blue-50 rounded border border-blue-200">
+                            <span class="text-slate-600">방정식</span>
+                            <span id="detailEq2" class="font-mono font-bold text-blue-700">y = -x + 2</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-blue-50 rounded border border-blue-200">
+                            <span class="text-slate-600">기울기 a₂</span>
+                            <span id="detailSlope2" class="font-mono font-bold text-blue-700">-1.000</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-blue-50 rounded border border-blue-200">
+                            <span class="text-slate-600">y절편</span>
+                            <span id="detailIntercept2" class="font-mono font-bold text-blue-700">(0, 2)</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-blue-50 rounded border border-blue-200">
+                            <span class="text-slate-600">x절편</span>
+                            <span id="detailXIntercept2" class="font-mono font-bold text-blue-700">(2, 0)</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2 bg-blue-50 rounded border border-blue-200">
+                            <span class="text-slate-600">기울기 각도</span>
+                            <span id="detailAngle2" class="font-mono font-bold text-blue-700">-45.0°</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 예제 버튼 -->
+                <div class="textbook-card p-5">
+                    <div class="textbook-label mb-3">예제 바로가기</div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="loadPreset('intersect')" class="preset-btn text-left p-3">
+                            <div class="font-bold text-slate-700">✅ 교점 존재</div>
+                            <div class="text-xs text-slate-500">y=x, y=-x+2</div>
+                        </button>
+                        <button onclick="loadPreset('parallel')" class="preset-btn text-left p-3">
+                            <div class="font-bold text-slate-700">📏 평행</div>
+                            <div class="text-xs text-slate-500">y=2x+1, y=2x-1</div>
+                        </button>
+                        <button onclick="loadPreset('same')" class="preset-btn text-left p-3">
+                            <div class="font-bold text-slate-700">🔄 일치</div>
+                            <div class="text-xs text-slate-500">y=x, y=x</div>
+                        </button>
+                        <button onclick="loadPreset('perpendicular')" class="preset-btn text-left p-3">
+                            <div class="font-bold text-slate-700">⊥ 수직</div>
+                            <div class="text-xs text-slate-500">y=x, y=-x</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 두 직선의 위치 관계 정리 -->
+        <div class="textbook-card mt-6">
+            <div class="textbook-label m-4 mb-0">두 직선의 위치 관계</div>
+            <div class="p-4">
+                <div class="overflow-x-auto">
+                    <table class="textbook-table">
+                        <thead>
+                            <tr>
+                                <th>위치 관계</th>
+                                <th>조건</th>
+                                <th>기울기 관계</th>
+                                <th>y절편 관계</th>
+                                <th>교점 개수</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-bold text-green-700">한 점에서 만남</td>
+                                <td class="font-mono">a₁ ≠ a₂</td>
+                                <td>다름</td>
+                                <td>상관없음</td>
+                                <td class="font-bold text-green-700">1개</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold text-red-700">평행 (만나지 않음)</td>
+                                <td class="font-mono">a₁ = a₂, b₁ ≠ b₂</td>
+                                <td>같음</td>
+                                <td>다름</td>
+                                <td class="font-bold text-red-700">0개</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold text-blue-700">일치 (무수히 많음)</td>
+                                <td class="font-mono">a₁ = a₂, b₁ = b₂</td>
+                                <td>같음</td>
+                                <td>같음</td>
+                                <td class="font-bold text-blue-700">무수히 많음</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 교점 구하는 법 -->
+        <div class="textbook-card mt-6 p-5">
+            <div class="textbook-label mb-4">연립방정식으로 교점 구하기</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="formula-box">
+                    <div class="font-bold text-slate-700 mb-2">📐 교점의 x좌표</div>
+                    <div class="text-lg text-slate-800 font-mono">
+                        x = (b₂ - b₁) / (a₁ - a₂)
+                    </div>
+                    <div class="text-sm text-slate-500 mt-1">
+                        (a₁ ≠ a₂일 때)
+                    </div>
+                </div>
+                <div class="formula-box">
+                    <div class="font-bold text-slate-700 mb-2">📐 교점의 y좌표</div>
+                    <div class="text-lg text-slate-800 font-mono">
+                        y = a₁x + b₁
+                    </div>
+                    <div class="text-sm text-slate-500 mt-1">
+                        x값을 직선 ①에 대입
+                    </div>
+                </div>
+            </div>
+
+            <div class="note-box mt-4">
+                <strong>수직인 두 직선:</strong> 기울기의 곱이 <strong>-1</strong>이면 두 직선은 서로 수직입니다. 
+                예: y = x (기울기 1)과 y = -x (기울기 -1)은 수직입니다. (1 × (-1) = -1)
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let line1 = { a: 1, b: 0 };  // y = ax + b
+        let line2 = { a: -1, b: 2 };
+        let isDragging = null; // 'point1', 'point2', 'intercept1', 'intercept2', null
+
+        const centerX = 320;
+        const centerY = 260;
+        const scale = 40; // pixels per unit
+
+        function toCanvas(x, y) {
+            return {
+                x: centerX + x * scale,
+                y: centerY - y * scale
+            };
+        }
+
+        function toGrid(cx, cy) {
+            return {
+                x: (cx - centerX) / scale,
+                y: (centerY - cy) / scale
+            };
+        }
+
+        function drawGrid() {
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+
+            for (let i = -8; i <= 8; i++) {
+                const pos = i * scale;
+                ctx.beginPath();
+                ctx.moveTo(centerX + pos, 20);
+                ctx.lineTo(centerX + pos, canvas.height - 20);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(20, centerY - pos);
+                ctx.lineTo(canvas.width - 20, centerY - pos);
+                ctx.stroke();
+            }
+        }
+
+        function drawAxes() {
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+
+            // X axis
+            ctx.beginPath();
+            ctx.moveTo(30, centerY);
+            ctx.lineTo(canvas.width - 30, centerY);
+            ctx.stroke();
+
+            // Y axis
+            ctx.beginPath();
+            ctx.moveTo(centerX, 30);
+            ctx.lineTo(centerX, canvas.height - 30);
+            ctx.stroke();
+
+            // Arrows
+            ctx.fillStyle = '#475569';
+            ctx.beginPath();
+            ctx.moveTo(canvas.width - 30, centerY);
+            ctx.lineTo(canvas.width - 40, centerY - 5);
+            ctx.lineTo(canvas.width - 40, centerY + 5);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, 30);
+            ctx.lineTo(centerX - 5, 40);
+            ctx.lineTo(centerX + 5, 40);
+            ctx.fill();
+
+            // Labels
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillStyle = '#64748b';
+            ctx.fillText('x', canvas.width - 35, centerY + 22);
+            ctx.fillText('y', centerX + 12, 38);
+
+            // Origin
+            ctx.fillStyle = '#1e293b';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillText('O', centerX - 22, centerY + 22);
+
+            // Tick marks
+            ctx.font = '11px monospace';
+            ctx.fillStyle = '#94a3b8';
+            for (let i = -6; i <= 6; i++) {
+                if (i === 0) continue;
+                const tx = centerX + i * scale;
+                ctx.fillText(i.toString(), tx - 5, centerY + 18);
+                const ty = centerY - i * scale;
+                ctx.fillText(i.toString(), centerX - 20, ty + 4);
+            }
+        }
+
+        function getLinePoints(line) {
+            const points = [];
+            for (let x = -7; x <= 7; x += 0.1) {
+                const y = line.a * x + line.b;
+                if (y >= -6 && y <= 6) {
+                    points.push({x, y});
+                }
+            }
+            return points;
+        }
+
+        function drawLine(line, color, label, isDashed) {
+            const points = getLinePoints(line);
+            if (points.length < 2) return;
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            if (isDashed) {
+                ctx.setLineDash([8, 4]);
+            } else {
+                ctx.setLineDash([]);
+            }
+
+            ctx.beginPath();
+            const first = toCanvas(points[0].x, points[0].y);
+            ctx.moveTo(first.x, first.y);
+
+            for (let i = 1; i < points.length; i++) {
+                const pos = toCanvas(points[i].x, points[i].y);
+                ctx.lineTo(pos.x, pos.y);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Label on line
+            const labelX = 5;
+            const labelY = line.a * labelX + line.b;
+            if (labelY >= -5 && labelY <= 5) {
+                const pos = toCanvas(labelX, labelY);
+                ctx.fillStyle = color;
+                ctx.font = 'bold 13px sans-serif';
+                ctx.fillText(label, pos.x + 8, pos.y - 8);
+            }
+        }
+
+        function drawInterceptPoints() {
+            // Line 1 intercepts
+            const yInt1 = toCanvas(0, line1.b);
+            const xInt1 = line1.a !== 0 ? toCanvas(-line1.b / line1.a, 0) : null;
+
+            // Line 2 intercepts
+            const yInt2 = toCanvas(0, line2.b);
+            const xInt2 = line2.a !== 0 ? toCanvas(-line2.b / line2.a, 0) : null;
+
+            // Draw y-intercept points (draggable)
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.arc(yInt1.x, yInt1.y, 7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.fillStyle = '#3b82f6';
+            ctx.beginPath();
+            ctx.arc(yInt2.x, yInt2.y, 7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = '#ef4444';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText('b₁', yInt1.x + 12, yInt1.y);
+
+            ctx.fillStyle = '#3b82f6';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText('b₂', yInt2.x + 12, yInt2.y);
+
+            // Draw x-intercept points
+            if (xInt1) {
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(xInt1.x, xInt1.y, 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ef4444';
+                ctx.font = '11px sans-serif';
+                ctx.fillText('x₁', xInt1.x, xInt1.y + 18);
+            }
+
+            if (xInt2) {
+                ctx.fillStyle = '#3b82f6';
+                ctx.beginPath();
+                ctx.arc(xInt2.x, xInt2.y, 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#3b82f6';
+                ctx.font = '11px sans-serif';
+                ctx.fillText('x₂', xInt2.x, xInt2.y + 18);
+            }
+
+            // Draw slope triangles
+            drawSlopeTriangle(line1, '#ef4444', 2);
+            drawSlopeTriangle(line2, '#3b82f6', -2);
+        }
+
+        function drawSlopeTriangle(line, color, xBase) {
+            const yBase = line.a * xBase + line.b;
+            const xNext = xBase + 1;
+            const yNext = line.a * xNext + line.b;
+
+            const p1 = toCanvas(xBase, yBase);
+            const p2 = toCanvas(xNext, yBase);
+            const p3 = toCanvas(xNext, yNext);
+
+            // Only draw if within bounds
+            if (yBase < -5 || yBase > 5 || yNext < -5 || yNext > 5) return;
+
+            ctx.strokeStyle = color + '60';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([3, 3]);
+
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.lineTo(p3.x, p3.y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Delta labels
+            ctx.fillStyle = color + '99';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('Δx=1', (p1.x + p2.x)/2 - 15, p1.y + (line.a >= 0 ? 15 : -8));
+            ctx.fillText('Δy=' + line.a.toFixed(1), p2.x + 5, (p2.y + p3.y)/2);
+        }
+
+        function drawIntersection() {
+            const a1 = line1.a, b1 = line1.b;
+            const a2 = line2.a, b2 = line2.b;
+
+            if (Math.abs(a1 - a2) < 0.001) {
+                // Parallel or same line
+                if (Math.abs(b1 - b2) < 0.001) {
+                    // Same line - draw note
+                    ctx.fillStyle = '#3b82f6';
+                    ctx.font = 'bold 14px sans-serif';
+                    ctx.fillText('두 직선이 일치합니다', centerX - 60, centerY - 80);
+                } else {
+                    // Parallel - draw parallel markers
+                    ctx.fillStyle = '#dc2626';
+                    ctx.font = 'bold 14px sans-serif';
+                    ctx.fillText('두 직선이 평행합니다 (교점 없음)', centerX - 80, centerY - 80);
+
+                    // Draw parallel arrows
+                    const arrowY = centerY - 100;
+                    ctx.strokeStyle = '#94a3b8';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(centerX - 40, arrowY);
+                    ctx.lineTo(centerX + 40, arrowY);
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.moveTo(centerX - 40, arrowY + 15);
+                    ctx.lineTo(centerX + 40, arrowY + 15);
+                    ctx.stroke();
+                }
+                return;
+            }
+
+            const ix = (b2 - b1) / (a1 - a2);
+            const iy = a1 * ix + b1;
+
+            if (ix < -7 || ix > 7 || iy < -6 || iy > 6) return;
+
+            const pos = toCanvas(ix, iy);
+
+            // Draw intersection point
+            ctx.fillStyle = '#22c55e';
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Glow effect
+            ctx.fillStyle = 'rgba(34, 197, 94, 0.2)';
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, 16, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Label
+            ctx.fillStyle = '#15803d';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.fillText('P(' + ix.toFixed(2) + ', ' + iy.toFixed(2) + ')', pos.x + 15, pos.y - 15);
+
+            // Dotted lines to axes
+            ctx.strokeStyle = 'rgba(34, 197, 94, 0.4)';
+            ctx.setLineDash([3, 3]);
+            ctx.lineWidth = 1;
+
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            ctx.lineTo(pos.x, centerY);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            ctx.lineTo(centerX, pos.y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Axis labels
+            ctx.fillStyle = '#16a34a';
+            ctx.font = '11px sans-serif';
+            ctx.fillText(ix.toFixed(2), pos.x - 10, centerY + 18);
+            ctx.fillText(iy.toFixed(2), centerX + 8, pos.y + 4);
+        }
+
+        function drawAngleArc() {
+            const a1 = line1.a, a2 = line2.a;
+
+            if (Math.abs(a1 - a2) < 0.001) return;
+
+            const theta1 = Math.atan(a1);
+            const theta2 = Math.atan(a2);
+
+            // Draw small arc showing angle between lines
+            const arcRadius = 30;
+            const startAngle = -Math.max(theta1, theta2);
+            const endAngle = -Math.min(theta1, theta2);
+
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, arcRadius, startAngle, endAngle, startAngle > endAngle);
+            ctx.stroke();
+
+            // Angle label
+            const midAngle = (theta1 + theta2) / 2;
+            const labelRadius = 45;
+            const lx = centerX + labelRadius * Math.cos(-midAngle);
+            const ly = centerY + labelRadius * Math.sin(-midAngle);
+
+            const angleDeg = Math.abs((theta1 - theta2) * 180 / Math.PI);
+            ctx.fillStyle = '#d97706';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText(angleDeg.toFixed(1) + '°', lx - 15, ly);
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
+            drawAxes();
+
+            // Determine if parallel
+            const isParallel = Math.abs(line1.a - line2.a) < 0.001;
+            const isSame = isParallel && Math.abs(line1.b - line2.b) < 0.001;
+
+            drawLine(line1, '#ef4444', '①', false);
+            drawLine(line2, '#3b82f6', '②', isSame);
+            drawInterceptPoints();
+
+            if (!isParallel) {
+                drawIntersection();
+                drawAngleArc();
+            } else {
+                drawIntersection();
+            }
+
+            updateUI();
+        }
+
+        function updateUI() {
+            const a1 = line1.a, b1 = line1.b;
+            const a2 = line2.a, b2 = line2.b;
+
+            // Update sliders
+            document.getElementById('slope1').value = a1;
+            document.getElementById('intercept1').value = b1;
+            document.getElementById('slope2').value = a2;
+            document.getElementById('intercept2').value = b2;
+
+            // Update values
+            document.getElementById('slope1Value').textContent = a1.toFixed(1);
+            document.getElementById('intercept1Value').textContent = b1.toFixed(1);
+            document.getElementById('slope2Value').textContent = a2.toFixed(1);
+            document.getElementById('intercept2Value').textContent = b2.toFixed(1);
+
+            // Equations
+            const eq1 = 'y = ' + (a1 === 0 ? '' : (a1 === 1 ? '' : a1 === -1 ? '-' : a1.toFixed(1)) + 'x') + (b1 >= 0 && a1 !== 0 ? ' + ' : b1 < 0 ? ' - ' : '') + (b1 !== 0 ? Math.abs(b1).toFixed(1) : a1 === 0 ? '0' : '');
+            const eq2 = 'y = ' + (a2 === 0 ? '' : (a2 === 1 ? '' : a2 === -1 ? '-' : a2.toFixed(1)) + 'x') + (b2 >= 0 && a2 !== 0 ? ' + ' : b2 < 0 ? ' - ' : '') + (b2 !== 0 ? Math.abs(b2).toFixed(1) : a2 === 0 ? '0' : '');
+
+            document.getElementById('equation1').textContent = eq1;
+            document.getElementById('equation2').textContent = eq2;
+
+            // Line 1 details
+            document.getElementById('detailEq1').textContent = eq1;
+            document.getElementById('detailSlope1').textContent = a1.toFixed(3);
+            document.getElementById('detailIntercept1').textContent = '(0, ' + b1.toFixed(1) + ')';
+            const xInt1 = a1 !== 0 ? (-b1/a1).toFixed(2) : '없음 (y축과 평행)';
+            document.getElementById('detailXIntercept1').textContent = a1 !== 0 ? '(' + xInt1 + ', 0)' : xInt1;
+            document.getElementById('detailAngle1').textContent = (Math.atan(a1) * 180 / Math.PI).toFixed(1) + '°';
+
+            // Line 2 details
+            document.getElementById('detailEq2').textContent = eq2;
+            document.getElementById('detailSlope2').textContent = a2.toFixed(3);
+            document.getElementById('detailIntercept2').textContent = '(0, ' + b2.toFixed(1) + ')';
+            const xInt2 = a2 !== 0 ? (-b2/a2).toFixed(2) : '없음 (y축과 평행)';
+            document.getElementById('detailXIntercept2').textContent = a2 !== 0 ? '(' + xInt2 + ', 0)' : xInt2;
+            document.getElementById('detailAngle2').textContent = (Math.atan(a2) * 180 / Math.PI).toFixed(1) + '°';
+
+            // Relation
+            const isParallel = Math.abs(a1 - a2) < 0.001;
+            const isSame = isParallel && Math.abs(b1 - b2) < 0.001;
+
+            const statusBadge = document.getElementById('intersectionStatus');
+            const relationBox = document.getElementById('relationBox');
+            const relationText = document.getElementById('relationText');
+            const relationDesc = document.getElementById('relationDesc');
+            const intersectionBox = document.getElementById('intersectionBox');
+
+            if (isSame) {
+                statusBadge.className = 'intersection-badge bg-blue-100 text-blue-800 border border-blue-300';
+                statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-blue-500"></span>일치 (무수히 많은 교점)';
+
+                relationBox.className = 'border-2 border-blue-200 rounded-lg p-5 bg-blue-50 text-center';
+                relationText.className = 'text-2xl font-bold text-blue-700';
+                relationText.textContent = '일치 (무수히 많은 교점)';
+                relationDesc.textContent = '기울기와 y절편이 모두 같으므로 두 직선은 완전히 겹칩니다.';
+
+                intersectionBox.style.display = 'none';
+            } else if (isParallel) {
+                statusBadge.className = 'intersection-badge bg-red-100 text-red-800 border border-red-300';
+                statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500"></span>평행 (교점 없음)';
+
+                relationBox.className = 'border-2 border-red-200 rounded-lg p-5 bg-red-50 text-center';
+                relationText.className = 'text-2xl font-bold text-red-700';
+                relationText.textContent = '평행 (교점 없음)';
+                relationDesc.textContent = '기울기가 같고 y절편이 다르므로 두 직선은 만나지 않습니다.';
+
+                intersectionBox.style.display = 'none';
+            } else {
+                const ix = (b2 - b1) / (a1 - a2);
+                const iy = a1 * ix + b1;
+
+                statusBadge.className = 'intersection-badge bg-green-100 text-green-800 border border-green-300';
+                statusBadge.innerHTML = '<span class="w-2 h-2 rounded-full bg-green-500"></span>한 점에서 만남';
+
+                relationBox.className = 'border-2 border-green-200 rounded-lg p-5 bg-green-50 text-center';
+                relationText.className = 'text-2xl font-bold text-green-700';
+                relationText.textContent = '한 점에서 만남 (교점 존재)';
+                relationDesc.textContent = '기울기가 다르므로 두 직선은 정확히 한 점에서 만납니다.';
+
+                intersectionBox.style.display = 'block';
+                document.getElementById('intersectionPoint').textContent = '(' + ix.toFixed(2) + ', ' + iy.toFixed(2) + ')';
+                document.getElementById('intersectionCalc').innerHTML = 
+                    'x = (' + b2.toFixed(1) + ' - ' + b1.toFixed(1) + ') / (' + a1.toFixed(1) + ' - ' + a2.toFixed(1) + ') = ' + ix.toFixed(2) + '<br>' +
+                    'y = ' + a1.toFixed(1) + ' × ' + ix.toFixed(2) + ' + ' + b1.toFixed(1) + ' = ' + iy.toFixed(2);
+
+                // Angle between lines
+                const tanTheta = Math.abs((a2 - a1) / (1 + a1 * a2));
+                const angleDeg = Math.atan(tanTheta) * 180 / Math.PI;
+                document.getElementById('angleBetween').textContent = angleDeg.toFixed(1) + '°';
+            }
+        }
+
+        function updateFromSlider(lineNum) {
+            if (lineNum === 1) {
+                line1.a = parseFloat(document.getElementById('slope1').value);
+                line1.b = parseFloat(document.getElementById('intercept1').value);
+            } else {
+                line2.a = parseFloat(document.getElementById('slope2').value);
+                line2.b = parseFloat(document.getElementById('intercept2').value);
+            }
+            render();
+        }
+
+        function setLineParam(lineNum, param, value) {
+            if (lineNum === 1) {
+                if (param === 'slope') line1.a = value;
+                else line1.b = value;
+            } else {
+                if (param === 'slope') line2.a = value;
+                else line2.b = value;
+            }
+            render();
+        }
+
+        function loadPreset(type) {
+            switch(type) {
+                case 'intersect':
+                    line1 = {a: 1, b: 0};
+                    line2 = {a: -1, b: 2};
+                    break;
+                case 'parallel':
+                    line1 = {a: 2, b: 1};
+                    line2 = {a: 2, b: -1};
+                    break;
+                case 'same':
+                    line1 = {a: 1, b: 0};
+                    line2 = {a: 1, b: 0};
+                    break;
+                case 'perpendicular':
+                    line1 = {a: 1, b: 0};
+                    line2 = {a: -1, b: 0};
+                    break;
+            }
+            render();
+        }
+
+        // Mouse interaction for dragging intercept points
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+
+        function findNearestPoint(pos) {
+            const yInt1 = toCanvas(0, line1.b);
+            const yInt2 = toCanvas(0, line2.b);
+
+            const dist1 = Math.sqrt((pos.x - yInt1.x)**2 + (pos.y - yInt1.y)**2);
+            const dist2 = Math.sqrt((pos.x - yInt2.x)**2 + (pos.y - yInt2.y)**2);
+
+            if (dist1 < 20) return 'intercept1';
+            if (dist2 < 20) return 'intercept2';
+            return null;
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            const pos = getMousePos(e);
+            isDragging = findNearestPoint(pos);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            const pos = getMousePos(e);
+
+            if (isDragging) {
+                const grid = toGrid(pos.x, pos.y);
+                const newY = Math.round(grid.y * 2) / 2;
+
+                if (isDragging === 'intercept1') {
+                    line1.b = Math.max(-5, Math.min(5, newY));
+                } else if (isDragging === 'intercept2') {
+                    line2.b = Math.max(-5, Math.min(5, newY));
+                }
+                render();
+            }
+
+            const nearest = findNearestPoint(pos);
+            canvas.style.cursor = nearest ? 'grab' : 'default';
+        });
+
+        canvas.addEventListener('mouseup', () => isDragging = null);
+        canvas.addEventListener('mouseleave', () => isDragging = null);
+
+        // Touch support
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const pos = {x: touch.clientX - rect.left, y: touch.clientY - rect.top};
+            isDragging = findNearestPoint(pos);
+        }, {passive: false});
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!isDragging) return;
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const pos = {x: touch.clientX - rect.left, y: touch.clientY - rect.top};
+            const grid = toGrid(pos.x, pos.y);
+            const newY = Math.round(grid.y * 2) / 2;
+
+            if (isDragging === 'intercept1') {
+                line1.b = Math.max(-5, Math.min(5, newY));
+            } else if (isDragging === 'intercept2') {
+                line2.b = Math.max(-5, Math.min(5, newY));
+            }
+            render();
+        }, {passive: false});
+
+        canvas.addEventListener('touchend', () => isDragging = null);
+
+        // Initialize
+        render();
+    </script>
+</body>
+</html>
