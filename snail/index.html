@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C 이차원배열 달팽이 사각형 패턴 - 인터랙티브 강의</title>
+<style>
+:root{
+  --bg:#08141f; --bg2:#0d2033; --panel:#112a41; --panel2:#16354f;
+  --line:#1f4b6e; --text:#e8f4fb; --muted:#8fb3cc;
+  --accent:#2dd4bf; --accent-d:#0f766e; --amber:#fbbf24; --pink:#f472b6;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(1100px 600px at 12% -8%, #16405c 0%, transparent 58%),
+    radial-gradient(900px 520px at 92% 4%, #123a4d 0%, transparent 55%),
+    var(--bg);
+  color:var(--text);
+  font-family:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo",sans-serif;
+  line-height:1.6; min-height:100vh; padding:0 0 60px;
+}
+.wrap{max-width:1300px;margin:0 auto;padding:0 20px;}
+
+header{padding:34px 0 18px;text-align:center;}
+header .kicker{
+  display:inline-block;font-size:13px;letter-spacing:2px;color:var(--accent);
+  border:1px solid var(--accent-d);border-radius:999px;padding:4px 16px;margin-bottom:14px;
+  background:rgba(45,212,191,.08);
+}
+header h1{
+  margin:0 0 8px;font-size:32px;font-weight:800;letter-spacing:-.5px;
+  background:linear-gradient(92deg,#e8f4fb 0%,#7dd3fc 45%,#2dd4bf 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+header p{margin:0;color:var(--muted);font-size:15px;}
+
+.tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:22px 0 18px;}
+.tab{
+  border:1px solid var(--line);background:var(--panel);color:var(--muted);
+  padding:10px 16px;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:700;
+  font-family:inherit;transition:.16s;
+}
+.tab:hover{border-color:var(--accent-d);color:var(--text);transform:translateY(-1px);}
+.tab.on{
+  background:linear-gradient(135deg,#0f766e,#2dd4bf);border-color:#2dd4bf;color:#04202a;
+  box-shadow:0 6px 18px rgba(45,212,191,.25);
+}
+
+.panel{
+  background:linear-gradient(180deg,var(--panel) 0%,var(--bg2) 100%);
+  border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  box-shadow:0 8px 26px rgba(0,0,0,.28);
+}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 14px;background:rgba(31,75,110,.42);border-bottom:1px solid var(--line);
+  font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.4px;
+}
+.panel-head .badge{
+  font-size:11px;color:var(--muted);font-weight:600;background:rgba(0,0,0,.25);
+  padding:2px 9px;border-radius:999px;border:1px solid var(--line);
+}
+.panel-body{padding:14px;}
+
+.intro{
+  border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px;
+  background:linear-gradient(135deg,rgba(45,212,191,.09),rgba(17,42,65,.85));
+}
+.intro h2{margin:0 0 6px;font-size:19px;color:var(--accent);}
+.intro p{margin:0;color:#cfe6f3;font-size:14.5px;}
+.intro .rule{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;}
+.chip{
+  font-size:12.5px;background:rgba(0,0,0,.28);border:1px solid var(--line);
+  border-radius:999px;padding:5px 12px;color:#bcdcec;
+}
+.chip b{color:var(--amber);}
+
+.stage{display:grid;grid-template-columns:1.02fr 1fr;gap:16px;align-items:start;}
+.col{display:flex;flex-direction:column;gap:16px;}
+
+.code{
+  font-family:Consolas,"D2Coding","Courier New",monospace;
+  font-size:12.8px;line-height:1.66;background:#061019;padding:12px 0;overflow-x:auto;
+  min-height:430px;
+}
+.cl{display:flex;white-space:pre;padding:0 10px;border-left:3px solid transparent;}
+.cl .ln{
+  width:28px;flex:0 0 28px;text-align:right;padding-right:11px;color:#3d6c8c;
+  user-select:none;font-size:11.5px;
+}
+.cl .tx{color:#cfe6f3;}
+.cl.hi{background:rgba(251,191,36,.16);border-left-color:var(--amber);}
+.cl.hi .tx{color:#fff3d0;font-weight:700;}
+.cl.hi .ln{color:var(--amber);}
+.kw{color:#7dd3fc;}
+.fn{color:#c4b5fd;}
+.st{color:#86efac;}
+.cm{color:#5b83a0;font-style:italic;}
+.nm{color:#fca5a5;}
+
+.vars{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;padding:14px;}
+.vbox{background:#061019;border:1px solid var(--line);border-radius:10px;padding:9px 6px;text-align:center;}
+.vbox .k{font-size:11px;color:var(--muted);letter-spacing:.4px;}
+.vbox .v{font-family:Consolas,monospace;font-size:22px;font-weight:800;color:var(--accent);line-height:1.28;}
+.vbox.amber .v{color:var(--amber);}
+.vbox.pink .v{color:var(--pink);}
+
+.gridwrap{padding:16px;display:flex;justify-content:center;background:#040c14;min-height:400px;align-items:center;}
+.grid{display:grid;gap:3px;}
+.cell{
+  width:var(--cs);height:var(--cs);border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:Consolas,monospace;font-weight:800;
+  font-size:calc(var(--cs) * .36);
+  background:rgba(255,255,255,.03);border:1px solid rgba(31,75,110,.55);
+  color:#2c5271;transition:background .18s,color .18s;
+}
+.cell.empty{color:#2c5271;}
+.cell.on{border-color:transparent;color:#06202a;}
+.cell.cur{outline:3px solid var(--pink);outline-offset:2px;z-index:2;}
+.cell.pop{animation:pop .3s ease;}
+@keyframes pop{0%{transform:scale(.3);}62%{transform:scale(1.2);}100%{transform:scale(1);}}
+
+.narrate{padding:12px 14px;font-size:14px;color:#d9ecf7;min-height:54px;display:flex;align-items:center;gap:10px;}
+.narrate .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:0 0 9px;box-shadow:0 0 10px var(--accent);}
+
+.ctrl{padding:14px;display:flex;flex-direction:column;gap:12px;}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;}
+button.b{
+  font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;
+  border-radius:9px;padding:9px 15px;border:1px solid var(--line);
+  background:var(--panel2);color:var(--text);transition:.15s;
+}
+button.b:hover{border-color:var(--accent);transform:translateY(-1px);}
+button.b.pri{background:linear-gradient(135deg,#0f766e,#2dd4bf);border-color:#2dd4bf;color:#04202a;}
+.slider{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);}
+.slider label{flex:0 0 78px;font-weight:700;color:#bcdcec;}
+.slider input[type=range]{flex:1;accent-color:var(--accent);}
+.slider .val{flex:0 0 46px;text-align:center;font-family:Consolas,monospace;font-weight:800;color:var(--amber);font-size:15px;}
+
+pre.raw{
+  margin:0;padding:14px;background:#040c14;font-family:Consolas,monospace;
+  font-size:14px;line-height:1.5;color:#a7f3e4;min-height:92px;overflow-x:auto;white-space:pre;
+}
+
+.section-title{margin:34px 0 14px;font-size:21px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:10px;}
+.section-title span{width:5px;height:22px;background:linear-gradient(180deg,var(--accent),var(--accent-d));border-radius:3px;display:inline-block;}
+table.tb{width:100%;border-collapse:collapse;font-size:13.5px;}
+table.tb th,table.tb td{border:1px solid var(--line);padding:10px 12px;text-align:center;}
+table.tb th{background:rgba(31,75,110,.5);color:var(--accent);font-size:13px;}
+table.tb td.l{text-align:left;}
+table.tb code{font-family:Consolas,monospace;color:var(--amber);font-size:12.5px;}
+table.tb tr:nth-child(even) td{background:rgba(0,0,0,.16);}
+
+.qcard{border-bottom:1px solid var(--line);padding:16px 16px 18px;}
+.qcard:last-child{border-bottom:none;}
+.qq{font-size:15px;font-weight:700;margin-bottom:12px;color:#e8f4fb;}
+.qq .num{color:var(--accent);margin-right:8px;}
+.qopts{display:flex;flex-direction:column;gap:8px;}
+.qopt{
+  text-align:left;font-family:inherit;font-size:13.5px;cursor:pointer;
+  border:1px solid var(--line);background:#061019;color:#cfe6f3;border-radius:9px;padding:10px 13px;transition:.15s;
+}
+.qopt:hover{border-color:var(--accent);}
+.qopt.ok{background:rgba(45,212,191,.18);border-color:var(--accent);color:#c9fff6;font-weight:700;}
+.qopt.no{background:rgba(244,114,182,.15);border-color:var(--pink);color:#ffd9ec;}
+.qexp{margin-top:11px;font-size:13px;color:#bcdcec;background:rgba(45,212,191,.08);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 13px;display:none;}
+.qexp.show{display:block;}
+
+footer{text-align:center;color:#5b83a0;font-size:12.5px;margin-top:36px;}
+@media (max-width:1040px){
+  .stage{grid-template-columns:1fr;}
+  .vars{grid-template-columns:repeat(3,1fr);}
+  header h1{font-size:24px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">C LANGUAGE · 2D ARRAY · SPIRAL FILL</div>
+  <h1>이차원 배열 달팽이 사각형 6가지 패턴</h1>
+  <p>코드가 한 줄 실행될 때마다 <b>배열의 어느 칸에 어떤 값이 들어가는지</b> 실시간으로 따라가 보세요</p>
+</header>
+
+<nav class="tabs" id="tabs"></nav>
+
+<div class="intro">
+  <h2 id="ptitle">패턴 제목</h2>
+  <p id="pdesc">설명</p>
+  <div class="rule">
+    <span class="chip">배열 <b>a[r][c]</b> — r은 <b>행</b>, c는 <b>열</b></span>
+    <span class="chip">값 <b>v</b>는 1부터 <b>n×n</b>까지</span>
+    <span class="chip" id="pkey">핵심</span>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="col">
+    <div class="panel">
+      <div class="panel-head"><span>💻 C 소스 코드 — 실행 중인 줄이 강조됩니다</span><span class="badge" id="lnbadge">line —</span></div>
+      <div class="code" id="codeBox"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><span>🔎 변수 추적기</span><span class="badge">Variable Tracker</span></div>
+      <div class="vars">
+        <div class="vbox"><div class="k">n</div><div class="v" id="v_n">5</div></div>
+        <div class="vbox pink"><div class="k">v (넣을 값)</div><div class="v" id="v_v">-</div></div>
+        <div class="vbox amber"><div class="k" id="k_r">r (행)</div><div class="v" id="v_r">-</div></div>
+        <div class="vbox amber"><div class="k" id="k_c">c (열)</div><div class="v" id="v_c">-</div></div>
+        <div class="vbox"><div class="k" id="k_d">진행 방향</div><div class="v" id="v_d">-</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="panel">
+      <div class="panel-head"><span>🐌 배열 채워지는 모습</span><span class="badge" id="sizebadge">— × —</span></div>
+      <div class="gridwrap"><div class="grid" id="grid"></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><span>🗣️ 지금 무슨 일이 일어나나요?</span><span class="badge" id="stepbadge">0 / 0</span></div>
+      <div class="narrate"><span class="dot"></span><span id="narrate">시작 버튼을 눌러보세요!</span></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><span>🎮 컨트롤</span><span class="badge">Space / ← / →</span></div>
+      <div class="ctrl">
+        <div class="btnrow">
+          <button class="b pri" id="btnPlay">▶ 자동 실행</button>
+          <button class="b" id="btnStep">⏭ 한 단계</button>
+          <button class="b" id="btnBack">⏮ 뒤로</button>
+          <button class="b" id="btnEnd">⏩ 즉시 완성</button>
+          <button class="b" id="btnReset">↺ 처음으로</button>
+        </div>
+        <div class="slider"><label>진행</label><input type="range" id="seek" min="0" max="1" value="0"><div class="val" id="seekval">0%</div></div>
+        <div class="slider"><label>n (크기)</label><input type="range" id="nrange" min="3" max="8" value="5"><div class="val" id="nval">5</div></div>
+        <div class="slider"><label>속도</label><input type="range" id="speed" min="1" max="10" value="7"><div class="val" id="speedval">7</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><span>📄 printf 출력 결과 (%3d)</span><span class="badge">stdout</span></div>
+      <pre class="raw" id="rawout"></pre>
+    </div>
+  </div>
+</div>
+
+<h2 class="section-title"><span></span>📐 6가지 패턴 비교표</h2>
+<div class="panel"><div class="panel-body" style="overflow-x:auto;">
+<table class="tb">
+  <tr><th style="width:16%;">패턴</th><th style="width:17%;">이동 방식</th><th style="width:26%;">핵심 코드</th><th>기억할 점</th></tr>
+  <tr><td>① 시계 달팽이</td><td>우→하→좌→상</td><td><code>d = (d + 1) % 4;</code></td>
+      <td class="l">방향 배열 <code>dr[]/dc[]</code>를 쓰면 if문 4개가 필요 없다. 벽이거나 이미 채워진 칸이면 회전.</td></tr>
+  <tr><td>② 반시계 달팽이</td><td>하→우→상→좌</td><td><code>dr = {1,0,-1,0}</code></td>
+      <td class="l">코드는 ①과 완전히 같고 <b>방향 배열의 순서만</b> 바뀐다.</td></tr>
+  <tr><td>③ 역순 달팽이</td><td>①과 같은 경로</td><td><code>for (v = n*n; v >= 1; v--)</code></td>
+      <td class="l">이동은 밖→안이지만 큰 수부터 넣으므로, 결과는 <b>가운데가 1</b>인 안→밖 번호가 된다.</td></tr>
+  <tr><td>④ 가로 지그재그</td><td>→ ← → ← (뱀)</td><td><code>(i%2==0) ? j : n-1-j</code></td>
+      <td class="l">행 번호의 홀짝으로 열 방향을 뒤집는다. 삼항 연산자 한 줄로 해결.</td></tr>
+  <tr><td>⑤ 세로 지그재그</td><td>↓ ↑ ↓ ↑</td><td><code>(j%2==0) ? i : n-1-i</code></td>
+      <td class="l">④에서 <b>행과 열의 역할만 맞바꾼</b> 형태. 바깥 루프가 열이 된다.</td></tr>
+  <tr><td>⑥ 대각선 채우기</td><td>↗ ↙ ↗ ↙</td><td><code>s = i + j</code> 가 일정</td>
+      <td class="l">같은 대각선 위의 칸은 <code>i+j</code>가 모두 같다. s는 0부터 2n-2까지.</td></tr>
+</table>
+</div></div>
+
+<h2 class="section-title"><span></span>✅ 확인 문제</h2>
+<div class="panel"><div id="quiz"></div></div>
+
+<footer>세영코딩연구소 · C 이차원 배열 달팽이 사각형 인터랙티브 강의자료</footer>
+</div>
+
+<script type="application/json" id="DATA">
+{
+  "msgs": {
+    "assign": "a[{r}][{c}] = {v}  →  {r}행 {c}열 칸에 값 {v} 저장 완료!",
+    "next": "다음 칸을 미리 계산: nr = {nr}, nc = {nc} (현재 방향 {ar})",
+    "turnYes": "{why} 이므로 방향을 회전합니다! {ao} → {ar}",
+    "turnNo": "다음 칸 ({nr}, {nc}) 은 아직 비어 있고 격자 안이므로 회전하지 않습니다.",
+    "move": "r = {r}, c = {c} 로 갱신 → {ar} 방향으로 한 칸 이동했습니다.",
+    "row": "바깥 반복문: i = {i} → {i}행을 채울 차례입니다.",
+    "col": "바깥 반복문: j = {j} → {j}열을 채울 차례입니다.",
+    "pick": "i = {i} 는 {par}수 행이므로 열 인덱스 col = {c} (진행 방향 {ar})",
+    "pickc": "j = {j} 는 {par}수 열이므로 행 인덱스 row = {r} (진행 방향 {ar})",
+    "diag": "대각선 s = {s} 시작! (s = i + j 가 {s}인 칸들) — {par}수이므로 {ar} 방향으로 채웁니다.",
+    "end": "모든 칸이 채워졌습니다. 달팽이 완성! 🐌",
+    "ready": "▶ 자동 실행 또는 ⏭ 한 단계 버튼을 눌러 시작하세요."
+  },
+  "patterns": [
+    {
+      "tab": "① 시계 달팽이",
+      "title": "① 시계방향 달팽이 (바깥 → 안)",
+      "desc": "가장 대표적인 달팽이 배열입니다. (0,0)에서 오른쪽으로 출발해 우 → 하 → 좌 → 상 순서로 돌면서 안쪽으로 파고듭니다. 방향 배열 dr[], dc[] 를 쓰면 네 방향을 if문 없이 하나의 공식으로 처리할 수 있습니다.",
+      "key": "회전 조건 = <b>격자 밖이거나 이미 채워진 칸</b>",
+      "gen": 1,
+      "dirs": ["→", "↓", "←", "↑"],
+      "code": [
+        "#include <stdio.h>",
+        "#define N 20",
+        "int a[N][N];",
+        "",
+        "int main(void) {",
+        "    int n = {n};",
+        "    int dr[4] = {0, 1, 0, -1};      // 우 → 하 → 좌 → 상",
+        "    int dc[4] = {1, 0, -1, 0};",
+        "    int r = 0, c = 0, d = 0;        // (0,0)에서 오른쪽으로 출발",
+        "",
+        "    for (int v = 1; v <= n * n; v++) {",
+        "        a[r][c] = v;                             // 현재 칸에 값 기록",
+        "        int nr = r + dr[d], nc = c + dc[d];      // 다음 칸 미리 계산",
+        "        if (nr < 0 || nr >= n || nc < 0 || nc >= n || a[nr][nc] != 0) {",
+        "            d = (d + 1) % 4;                     // 벽/방문 → 시계 회전",
+        "            nr = r + dr[d];  nc = c + dc[d];",
+        "        }",
+        "        r = nr;  c = nc;                         // 이동",
+        "    }",
+        "",
+        "    for (int i = 0; i < n; i++) {",
+        "        for (int j = 0; j < n; j++) printf(\"%3d\", a[i][j]);",
+        "        printf(\"\\n\");",
+        "    }",
+        "    return 0;",
+        "}"
+      ]
+    },
+    {
+      "tab": "② 반시계 달팽이",
+      "title": "② 반시계방향 달팽이 (바깥 → 안)",
+      "desc": "①과 코드 구조가 완전히 똑같습니다. 방향 배열의 순서만 하 → 우 → 상 → 좌 로 바꾸면 회전 방향이 뒤집힙니다. 알고리즘의 뼈대는 그대로 두고 데이터(방향 배열)만 바꿔 동작을 바꾸는 좋은 예시입니다.",
+      "key": "방향 배열만 <b>{1,0,-1,0}</b> 으로 교체",
+      "gen": 2,
+      "dirs": ["↓", "→", "↑", "←"],
+      "code": [
+        "#include <stdio.h>",
+        "#define N 20",
+        "int a[N][N];",
+        "",
+        "int main(void) {",
+        "    int n = {n};",
+        "    int dr[4] = {1, 0, -1, 0};      // 하 → 우 → 상 → 좌",
+        "    int dc[4] = {0, 1, 0, -1};",
+        "    int r = 0, c = 0, d = 0;        // (0,0)에서 아래쪽으로 출발",
+        "",
+        "    for (int v = 1; v <= n * n; v++) {",
+        "        a[r][c] = v;                             // 현재 칸에 값 기록",
+        "        int nr = r + dr[d], nc = c + dc[d];      // 다음 칸 미리 계산",
+        "        if (nr < 0 || nr >= n || nc < 0 || nc >= n || a[nr][nc] != 0) {",
+        "            d = (d + 1) % 4;                     // 벽/방문 → 회전",
+        "            nr = r + dr[d];  nc = c + dc[d];",
+        "        }",
+        "        r = nr;  c = nc;                         // 이동",
+        "    }",
+        "",
+        "    for (int i = 0; i < n; i++) {",
+        "        for (int j = 0; j < n; j++) printf(\"%3d\", a[i][j]);",
+        "        printf(\"\\n\");",
+        "    }",
+        "    return 0;",
+        "}"
+      ]
+    },
+    {
+      "tab": "③ 역순 달팽이",
+      "title": "③ 역순 달팽이 (가운데가 1)",
+      "desc": "이동 경로는 ①과 똑같지만, 값을 n*n 부터 거꾸로 내려가며 넣습니다. 그러면 마지막에 도착하는 한가운데 칸에 1이 들어가서, 결과적으로 가운데에서 바깥으로 커지는 달팽이가 완성됩니다. 경로를 새로 짜지 않고 값만 뒤집는 아이디어를 배우는 패턴입니다.",
+      "key": "경로는 그대로, <b>v를 n*n → 1로 감소</b>",
+      "gen": 3,
+      "dirs": ["→", "↓", "←", "↑"],
+      "code": [
+        "#include <stdio.h>",
+        "#define N 20",
+        "int a[N][N];",
+        "",
+        "int main(void) {",
+        "    int n = {n};",
+        "    int dr[4] = {0, 1, 0, -1};",
+        "    int dc[4] = {1, 0, -1, 0};",
+        "    int r = 0, c = 0, d = 0;",
+        "",
+        "    for (int v = n * n; v >= 1; v--) {   // 큰 수부터 거꾸로!",
+        "        a[r][c] = v;",
+        "        int nr = r + dr[d], nc = c + dc[d];",
+        "        if (nr < 0 || nr >= n || nc < 0 || nc >= n || a[nr][nc] != 0) {",
+        "            d = (d + 1) % 4;",
+        "            nr = r + dr[d];  nc = c + dc[d];",
+        "        }",
+        "        r = nr;  c = nc;",
+        "    }",
+        "",
+        "    for (int i = 0; i < n; i++) {",
+        "        for (int j = 0; j < n; j++) printf(\"%3d\", a[i][j]);",
+        "        printf(\"\\n\");",
+        "    }",
+        "    return 0;",
+        "}"
+      ]
+    },
+    {
+      "tab": "④ 가로 지그재그",
+      "title": "④ 가로 지그재그 (뱀 배열)",
+      "desc": "0행은 왼쪽에서 오른쪽으로, 1행은 오른쪽에서 왼쪽으로 번갈아 채웁니다. 행 번호 i의 홀짝만 검사하면 되므로 삼항 연산자 한 줄로 끝납니다. 달팽이보다 훨씬 단순하지만 실전 문제에 자주 나오는 형태입니다.",
+      "key": "홀수 행은 열 번호를 <b>n - 1 - j</b> 로 뒤집기",
+      "gen": 4,
+      "dirs": ["→", "←"],
+      "code": [
+        "#include <stdio.h>",
+        "#define N 20",
+        "int a[N][N];",
+        "",
+        "int main(void) {",
+        "    int n = {n};",
+        "    int v = 1;",
+        "",
+        "    for (int i = 0; i < n; i++) {                    // 행",
+        "        for (int j = 0; j < n; j++) {                // 열",
+        "            int col = (i % 2 == 0) ? j : n - 1 - j;  // 짝수행 →, 홀수행 ←",
+        "            a[i][col] = v++;",
+        "        }",
+        "    }",
+        "",
+        "    for (int i = 0; i < n; i++) {",
+        "        for (int j = 0; j < n; j++) printf(\"%3d\", a[i][j]);",
+        "        printf(\"\\n\");",
+        "    }",
+        "    return 0;",
+        "}"
+      ]
+    },
+    {
+      "tab": "⑤ 세로 지그재그",
+      "title": "⑤ 세로 지그재그",
+      "desc": "④를 90도 돌린 형태입니다. 바깥 반복문이 열 j 가 되고, 짝수 열은 위에서 아래로, 홀수 열은 아래에서 위로 채웁니다. 이차원 배열에서 '행과 열의 역할을 바꾼다'는 감각을 익히기에 좋은 패턴입니다.",
+      "key": "홀수 열은 행 번호를 <b>n - 1 - i</b> 로 뒤집기",
+      "gen": 5,
+      "dirs": ["↓", "↑"],
+      "code": [
+        "#include <stdio.h>",
+        "#define N 20",
+        "int a[N][N];",
+        "",
+        "int main(void) {",
+        "    int n = {n};",
+        "    int v = 1;",
+        "",
+        "    for (int j = 0; j < n; j++) {                    // 열이 바깥!",
+        "        for (int i = 0; i < n; i++) {                // 행",
+        "            int row = (j % 2 == 0) ? i : n - 1 - i;  // 짝수열 ↓, 홀수열 ↑",
+        "            a[row][j] = v++;",
+        "        }",
+        "    }",
+        "",
+        "    for (int i = 0; i < n; i++) {",
+        "        for (int j = 0; j < n; j++) printf(\"%3d\", a[i][j]);",
+        "        printf(\"\\n\");",
+        "    }",
+        "    return 0;",
+        "}"
+      ]
+    },
+    {
+      "tab": "⑥ 대각선 채우기",
+      "title": "⑥ 대각선 지그재그 채우기",
+      "desc": "같은 대각선 위에 있는 칸은 i + j 값이 모두 같다는 성질을 이용합니다. s = i + j 를 0부터 2n-2까지 늘려가며, 짝수 대각선은 아래에서 위로, 홀수 대각선은 위에서 아래로 채웁니다. JPEG 압축의 지그재그 스캔과 같은 순서입니다.",
+      "key": "같은 대각선 = <b>i + j 가 일정</b>",
+      "gen": 6,
+      "dirs": ["↗", "↙"],
+      "code": [
+        "#include <stdio.h>",
+        "#define N 20",
+        "int a[N][N];",
+        "",
+        "int main(void) {",
+        "    int n = {n};",
+        "    int v = 1;",
+        "",
+        "    for (int s = 0; s <= 2 * n - 2; s++) {       // s = i + j (대각선 번호)",
+        "        if (s % 2 == 0) {                        // 짝수 대각선: 아래 → 위 ↗",
+        "            for (int i = (s < n ? s : n - 1); i >= 0 && s - i < n; i--)",
+        "                a[i][s - i] = v++;",
+        "        } else {                                 // 홀수 대각선: 위 → 아래 ↙",
+        "            for (int i = (s < n ? 0 : s - n + 1); i < n && s - i >= 0; i++)",
+        "                a[i][s - i] = v++;",
+        "        }",
+        "    }",
+        "",
+        "    for (int i = 0; i < n; i++) {",
+        "        for (int j = 0; j < n; j++) printf(\"%3d\", a[i][j]);",
+        "        printf(\"\\n\");",
+        "    }",
+        "    return 0;",
+        "}"
+      ]
+    }
+  ],
+  "quiz": [
+    {
+      "q": "n = 5 인 시계방향 달팽이(①)에서 한가운데 칸 a[2][2] 에 들어가는 값은?",
+      "opts": ["1", "13", "24", "25"],
+      "ans": 3,
+      "exp": "바깥에서 안으로 돌기 때문에 한가운데 칸이 가장 마지막에 채워집니다. 따라서 n*n = 25 가 들어갑니다."
+    },
+    {
+      "q": "달팽이 코드에서 방향을 회전시키는 조건으로 알맞은 것은?",
+      "opts": ["값 v가 짝수일 때", "다음 칸이 격자 밖이거나 이미 채워져 있을 때", "매 n번마다", "r == c 일 때"],
+      "ans": 1,
+      "exp": "벽에 부딪히거나(인덱스 범위 밖) 이미 값이 들어 있는 칸(a[nr][nc] != 0)을 만나면 회전합니다. 이 두 조건 덕분에 안쪽으로 자연스럽게 말려 들어갑니다."
+    },
+    {
+      "q": "시계 회전 d = (d + 1) % 4 를 반시계 회전으로 바꾸려면?",
+      "opts": ["d = (d - 1) % 4", "d = (d + 3) % 4", "d = (d + 2) % 4", "d = d % 4"],
+      "ans": 1,
+      "exp": "C에서 음수 나머지는 위험하므로 -1 대신 +3을 씁니다. (d + 3) % 4 는 한 칸 뒤로 가는 것과 같습니다."
+    },
+    {
+      "q": "가로 지그재그(④)에서 n = 4 일 때 a[1][0] 의 값은?",
+      "opts": ["5", "6", "7", "8"],
+      "ans": 3,
+      "exp": "0행에 1~4가 들어가고, 1행은 오른쪽부터 채워져 a[1][3]=5, a[1][2]=6, a[1][1]=7, a[1][0]=8 이 됩니다."
+    },
+    {
+      "q": "대각선 채우기(⑥)에서 같은 대각선 위에 있는 칸들의 공통점은?",
+      "opts": ["i - j 가 같다", "i + j 가 같다", "i * j 가 같다", "i 가 같다"],
+      "ans": 1,
+      "exp": "↗ 방향 대각선 위의 칸은 행이 1 줄면 열이 1 늘어나므로 i + j 가 항상 일정합니다. 그래서 s = i + j 를 대각선 번호로 씁니다."
+    },
+    {
+      "q": "세로 지그재그(⑤)의 코드가 가로 지그재그(④)와 다른 가장 큰 점은?",
+      "opts": ["삼항 연산자를 쓰지 않는다", "바깥 반복문이 열(j)이 된다", "값 v를 감소시킨다", "배열을 두 번 순회한다"],
+      "ans": 1,
+      "exp": "바깥 루프가 행에서 열로 바뀌고, 대입도 a[i][col] 에서 a[row][j] 로 바뀝니다. 행과 열의 역할이 서로 맞바뀐 것입니다."
+    },
+    {
+      "q": "역순 달팽이(③)의 결과 배열에서 값이 1인 칸의 위치는? (n이 홀수일 때)",
+      "opts": ["왼쪽 위 모서리", "오른쪽 위 모서리", "정확히 한가운데", "왼쪽 아래 모서리"],
+      "ans": 2,
+      "exp": "이동 경로는 ①과 같아 마지막 도착지가 한가운데이고, 그 마지막 칸에 가장 작은 값인 1을 넣기 때문입니다."
+    },
+    {
+      "q": "n × n 달팽이 배열을 채우는 반복문의 시간복잡도는?",
+      "opts": ["O(n)", "O(n log n)", "O(n²)", "O(n³)"],
+      "ans": 2,
+      "exp": "칸이 n² 개이고 각 칸을 정확히 한 번씩만 방문하므로 O(n²) 입니다. 회전 처리는 상수 시간입니다."
+    }
+  ]
+}
+</script>
+<script>
+(function () {
+  "use strict";
+
+  var D = JSON.parse(document.getElementById("DATA").textContent);
+  var MSG = D.msgs, PAT = D.patterns;
+
+  function $(id) { return document.getElementById(id); }
+  var codeBox = $("codeBox"), gridEl = $("grid"), rawEl = $("rawout"),
+      narEl = $("narrate"), tabsEl = $("tabs");
+
+  var S = { pi: 0, n: 5, cur: -1, playing: false, timer: null };
+  var M = null, VAL = null, CELLS = null, CLINES = null;
+
+  function el(t, c) { var e = document.createElement(t); if (c) e.className = c; return e; }
+  function txt(t) { return document.createTextNode(t); }
+  function span(c, t) { var e = el("span", c); e.textContent = t; return e; }
+  function fmt(t, o) {
+    return String(t).replace(/\{(\w+)\}/g, function (m, k) {
+      return (o && o[k] !== undefined && o[k] !== null) ? String(o[k]) : "";
+    });
+  }
+
+  /* ---------- syntax highlight ---------- */
+  var RE = /("(?:\\.|[^"\\])*")|(#include|#define)|\b(int|for|if|else|return|void)\b|\b(\d+)\b|\b(printf|main)\b/g;
+  function hl(line, parent) {
+    var ci = line.indexOf("//");
+    var code = ci >= 0 ? line.slice(0, ci) : line;
+    var cmt = ci >= 0 ? line.slice(ci) : "";
+    var last = 0, m;
+    RE.lastIndex = 0;
+    while ((m = RE.exec(code)) !== null) {
+      if (m.index > last) parent.appendChild(txt(code.slice(last, m.index)));
+      var cls = m[1] ? "st" : (m[2] || m[3]) ? "kw" : m[4] ? "nm" : "fn";
+      parent.appendChild(span(cls, m[0]));
+      last = m.index + m[0].length;
+    }
+    if (last < code.length) parent.appendChild(txt(code.slice(last)));
+    if (cmt) parent.appendChild(span("cm", cmt));
+  }
+
+  /* ---------- generators ---------- */
+  function spiral(n, dr, dc, dirs, reverse) {
+    var s = [], g = [], r = 0, c = 0, d = 0, k, total = n * n;
+    for (k = 0; k < n; k++) { g.push([]); for (var q = 0; q < n; q++) g[k].push(0); }
+    for (k = 0; k < total; k++) {
+      var v = reverse ? total - k : k + 1;
+      g[r][c] = v;
+      s.push({ line: 11, t: "assign", r: r, c: c, v: v, sr: r, sc: c, sv: v, cr: r, cc: c, ar: dirs[d] });
+      if (k === total - 1) break;
+      var nr = r + dr[d], nc = c + dc[d];
+      s.push({ line: 12, t: "next", nr: nr, nc: nc, ar: dirs[d], cr: r, cc: c, v: v, r: r, c: c });
+      var out = (nr < 0 || nr >= n || nc < 0 || nc >= n);
+      var used = (!out && g[nr][nc] !== 0);
+      if (out || used) {
+        var od = d;
+        d = (d + 1) % 4;
+        nr = r + dr[d]; nc = c + dc[d];
+        s.push({ line: 14, t: "turnYes", why: out ? "다음 칸이 격자 밖" : "다음 칸에 이미 값이 있음",
+                 ao: dirs[od], ar: dirs[d], cr: r, cc: c, v: v, r: r, c: c });
+      } else {
+        s.push({ line: 13, t: "turnNo", nr: nr, nc: nc, ar: dirs[d], cr: r, cc: c, v: v, r: r, c: c });
+      }
+      r = nr; c = nc;
+      s.push({ line: 17, t: "move", r: r, c: c, cr: r, cc: c, v: v, ar: dirs[d] });
+    }
+    s.push({ line: 18, t: "end" });
+    return { rows: n, cols: n, steps: s };
+  }
+
+  function gen1(n) { return spiral(n, [0, 1, 0, -1], [1, 0, -1, 0], ["→", "↓", "←", "↑"], false); }
+  function gen2(n) { return spiral(n, [1, 0, -1, 0], [0, 1, 0, -1], ["↓", "→", "↑", "←"], false); }
+  function gen3(n) { return spiral(n, [0, 1, 0, -1], [1, 0, -1, 0], ["→", "↓", "←", "↑"], true); }
+
+  function gen4(n) {
+    var s = [], v = 1, i, j;
+    for (i = 0; i < n; i++) {
+      s.push({ line: 8, t: "row", i: i, ar: (i % 2 === 0) ? "→" : "←" });
+      for (j = 0; j < n; j++) {
+        var col = (i % 2 === 0) ? j : n - 1 - j;
+        s.push({ line: 10, t: "pick", i: i, j: j, c: col, par: (i % 2 === 0) ? "짝" : "홀",
+                 ar: (i % 2 === 0) ? "→" : "←", cr: i, cc: col });
+        s.push({ line: 11, t: "assign", r: i, c: col, v: v, sr: i, sc: col, sv: v, cr: i, cc: col,
+                 ar: (i % 2 === 0) ? "→" : "←" });
+        v++;
+      }
+    }
+    s.push({ line: 13, t: "end" });
+    return { rows: n, cols: n, steps: s };
+  }
+
+  function gen5(n) {
+    var s = [], v = 1, i, j;
+    for (j = 0; j < n; j++) {
+      s.push({ line: 8, t: "col", j: j, ar: (j % 2 === 0) ? "↓" : "↑" });
+      for (i = 0; i < n; i++) {
+        var row = (j % 2 === 0) ? i : n - 1 - i;
+        s.push({ line: 10, t: "pickc", i: i, j: j, r: row, par: (j % 2 === 0) ? "짝" : "홀",
+                 ar: (j % 2 === 0) ? "↓" : "↑", cr: row, cc: j });
+        s.push({ line: 11, t: "assign", r: row, c: j, v: v, sr: row, sc: j, sv: v, cr: row, cc: j,
+                 ar: (j % 2 === 0) ? "↓" : "↑" });
+        v++;
+      }
+    }
+    s.push({ line: 13, t: "end" });
+    return { rows: n, cols: n, steps: s };
+  }
+
+  function gen6(n) {
+    var s = [], v = 1, sm, i;
+    for (sm = 0; sm <= 2 * n - 2; sm++) {
+      var even = (sm % 2 === 0);
+      s.push({ line: 8, t: "diag", s: sm, par: even ? "짝" : "홀", ar: even ? "↗" : "↙" });
+      if (even) {
+        for (i = (sm < n ? sm : n - 1); i >= 0 && sm - i < n; i--) {
+          s.push({ line: 11, t: "assign", r: i, c: sm - i, v: v, sr: i, sc: sm - i, sv: v,
+                   cr: i, cc: sm - i, ar: "↗", s: sm });
+          v++;
+        }
+      } else {
+        for (i = (sm < n ? 0 : sm - n + 1); i < n && sm - i >= 0; i++) {
+          s.push({ line: 14, t: "assign", r: i, c: sm - i, v: v, sr: i, sc: sm - i, sv: v,
+                   cr: i, cc: sm - i, ar: "↙", s: sm });
+          v++;
+        }
+      }
+    }
+    s.push({ line: 16, t: "end" });
+    return { rows: n, cols: n, steps: s };
+  }
+
+  var GENS = { 1: gen1, 2: gen2, 3: gen3, 4: gen4, 5: gen5, 6: gen6 };
+
+  /* ---------- build ---------- */
+  function buildTabs() {
+    while (tabsEl.firstChild) tabsEl.removeChild(tabsEl.firstChild);
+    PAT.forEach(function (p, idx) {
+      var b = el("button", "tab" + (idx === S.pi ? " on" : ""));
+      b.textContent = p.tab;
+      b.addEventListener("click", function () { S.pi = idx; buildTabs(); buildAll(); });
+      tabsEl.appendChild(b);
+    });
+  }
+
+  function buildCode() {
+    var p = PAT[S.pi];
+    while (codeBox.firstChild) codeBox.removeChild(codeBox.firstChild);
+    CLINES = [];
+    p.code.forEach(function (raw, idx) {
+      var line = raw.replace("{n}", String(S.n));
+      var d = el("div", "cl");
+      var ln = el("span", "ln"); ln.textContent = String(idx + 1);
+      var tx = el("span", "tx");
+      hl(line, tx);
+      d.appendChild(ln); d.appendChild(tx);
+      codeBox.appendChild(d);
+      CLINES.push(d);
+    });
+  }
+
+  function buildGrid() {
+    while (gridEl.firstChild) gridEl.removeChild(gridEl.firstChild);
+    var cs = Math.max(34, Math.min(64, Math.floor(430 / M.cols)));
+    gridEl.style.gridTemplateColumns = "repeat(" + M.cols + ", " + cs + "px)";
+    CELLS = []; VAL = [];
+    for (var r = 0; r < M.rows; r++) {
+      CELLS.push([]); VAL.push([]);
+      for (var c = 0; c < M.cols; c++) {
+        var e = el("div", "cell empty");
+        e.style.setProperty("--cs", cs + "px");
+        e.textContent = "·";
+        gridEl.appendChild(e);
+        CELLS[r].push(e); VAL[r].push(0);
+      }
+    }
+    $("sizebadge").textContent = M.rows + " × " + M.cols + " 배열";
+  }
+
+  function buildAll() {
+    stop();
+    var p = PAT[S.pi];
+    $("ptitle").textContent = p.title;
+    $("pdesc").textContent = p.desc;
+    var kEl = $("pkey");
+    while (kEl.firstChild) kEl.removeChild(kEl.firstChild);
+    p.key.split(/<b>|<\/b>/).forEach(function (t, k) {
+      if (!t) return;
+      if (k % 2 === 1) { var b = el("b"); b.textContent = t; kEl.appendChild(b); }
+      else kEl.appendChild(txt(t));
+    });
+    M = GENS[p.gen](S.n);
+    buildCode();
+    buildGrid();
+    var sk = $("seek");
+    sk.min = 0; sk.max = M.steps.length; sk.value = 0;
+    seekTo(0);
+  }
+
+  /* ---------- render ---------- */
+  function colorOf(v) {
+    var total = S.n * S.n;
+    var t = total > 1 ? (v - 1) / (total - 1) : 0;
+    return "hsl(" + (174 - t * 132) + ", 72%, " + (52 + t * 8) + "%)";
+  }
+
+  function clearCells() {
+    for (var r = 0; r < M.rows; r++)
+      for (var c = 0; c < M.cols; c++) {
+        CELLS[r][c].className = "cell empty";
+        CELLS[r][c].style.background = "";
+        CELLS[r][c].textContent = "·";
+        VAL[r][c] = 0;
+      }
+  }
+
+  function paint(st, animate) {
+    if (st.sv === undefined) return;
+    VAL[st.sr][st.sc] = st.sv;
+    var e = CELLS[st.sr][st.sc];
+    e.className = "cell on" + (animate ? " pop" : "");
+    e.style.background = colorOf(st.sv);
+    e.textContent = String(st.sv);
+  }
+
+  function updateRaw() {
+    var lines = [], r, c, s, x;
+    for (r = 0; r < M.rows; r++) {
+      s = "";
+      for (c = 0; c < M.cols; c++) {
+        x = VAL[r][c] === 0 ? "." : String(VAL[r][c]);
+        while (x.length < 3) x = " " + x;
+        s += x;
+      }
+      lines.push(s);
+    }
+    rawEl.textContent = lines.join("\n");
+  }
+
+  function highlight(step) {
+    CLINES.forEach(function (d) { d.className = "cl"; });
+    if (step && step.line !== undefined && CLINES[step.line]) {
+      CLINES[step.line].className = "cl hi";
+      $("lnbadge").textContent = "line " + (step.line + 1);
+    } else $("lnbadge").textContent = "line —";
+  }
+
+  function markCursor(step) {
+    for (var r = 0; r < M.rows; r++)
+      for (var c = 0; c < M.cols; c++) CELLS[r][c].classList.remove("cur");
+    if (step && step.cr !== undefined && CELLS[step.cr] && CELLS[step.cr][step.cc])
+      CELLS[step.cr][step.cc].classList.add("cur");
+  }
+
+  function refreshUI(step) {
+    $("v_n").textContent = String(S.n);
+    $("v_v").textContent = (step && step.sv !== undefined) ? String(step.sv)
+                         : (step && step.v !== undefined) ? String(step.v) : "-";
+    $("v_r").textContent = (step && step.cr !== undefined) ? String(step.cr) : "-";
+    $("v_c").textContent = (step && step.cc !== undefined) ? String(step.cc) : "-";
+    $("v_d").textContent = (step && step.ar) ? step.ar : "-";
+    $("stepbadge").textContent = (S.cur + 1) + " / " + M.steps.length;
+    $("seek").value = S.cur + 1;
+    $("seekval").textContent = Math.round((S.cur + 1) / M.steps.length * 100) + "%";
+    narEl.textContent = step ? fmt(MSG[step.t], step) : MSG.ready;
+    highlight(step);
+    markCursor(step);
+    updateRaw();
+  }
+
+  function forward() {
+    if (S.cur >= M.steps.length - 1) { stop(); return false; }
+    S.cur++;
+    var st = M.steps[S.cur];
+    paint(st, true);
+    refreshUI(st);
+    return true;
+  }
+
+  function seekTo(target) {
+    stop();
+    clearCells();
+    S.cur = -1;
+    for (var k = 0; k < target; k++) { S.cur = k; paint(M.steps[k], false); }
+    refreshUI(S.cur >= 0 ? M.steps[S.cur] : null);
+  }
+
+  /* ---------- play ---------- */
+  function delay() { return 560 - Number($("speed").value) * 50; }
+  function stop() {
+    S.playing = false;
+    if (S.timer) { clearInterval(S.timer); S.timer = null; }
+    $("btnPlay").textContent = "▶ 자동 실행";
+  }
+  function play() {
+    if (S.cur >= M.steps.length - 1) seekTo(0);
+    S.playing = true;
+    $("btnPlay").textContent = "⏸ 일시정지";
+    S.timer = setInterval(function () { if (!forward()) stop(); }, delay());
+  }
+
+  /* ---------- quiz ---------- */
+  function buildQuiz() {
+    var box = $("quiz");
+    while (box.firstChild) box.removeChild(box.firstChild);
+    D.quiz.forEach(function (q, qi) {
+      var card = el("div", "qcard");
+      var h = el("div", "qq");
+      var num = el("span", "num"); num.textContent = "Q" + (qi + 1) + ".";
+      h.appendChild(num); h.appendChild(txt(q.q));
+      card.appendChild(h);
+      var opts = el("div", "qopts");
+      var exp = el("div", "qexp"); exp.textContent = "💡 " + q.exp;
+      q.opts.forEach(function (o, oi) {
+        var b = el("button", "qopt");
+        b.textContent = String.fromCharCode(9312 + oi) + "  " + o;
+        b.addEventListener("click", function () {
+          var kids = opts.childNodes, t;
+          for (t = 0; t < kids.length; t++) kids[t].className = "qopt";
+          b.className = "qopt " + (oi === q.ans ? "ok" : "no");
+          if (oi !== q.ans) kids[q.ans].className = "qopt ok";
+          exp.className = "qexp show";
+        });
+        opts.appendChild(b);
+      });
+      card.appendChild(opts); card.appendChild(exp);
+      box.appendChild(card);
+    });
+  }
+
+  /* ---------- events ---------- */
+  $("btnPlay").addEventListener("click", function () { if (S.playing) stop(); else play(); });
+  $("btnStep").addEventListener("click", function () { stop(); forward(); });
+  $("btnBack").addEventListener("click", function () { stop(); if (S.cur >= 0) seekTo(S.cur); });
+  $("btnEnd").addEventListener("click", function () { seekTo(M.steps.length); });
+  $("btnReset").addEventListener("click", function () { seekTo(0); });
+  $("seek").addEventListener("input", function () { seekTo(Number(this.value)); });
+  $("nrange").addEventListener("input", function () {
+    S.n = Number(this.value); $("nval").textContent = String(S.n); buildAll();
+  });
+  $("speed").addEventListener("input", function () {
+    $("speedval").textContent = this.value;
+    if (S.playing) { clearInterval(S.timer); S.timer = setInterval(function () { if (!forward()) stop(); }, delay()); }
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === " ") { ev.preventDefault(); if (S.playing) stop(); else play(); }
+    else if (ev.key === "ArrowRight") { stop(); forward(); }
+    else if (ev.key === "ArrowLeft") { stop(); if (S.cur >= 0) seekTo(S.cur); }
+  });
+
+  buildTabs();
+  buildQuiz();
+  buildAll();
+})();
+</script>
+</body>
+</html>
