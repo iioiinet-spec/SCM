@@ -245,7 +245,8 @@ x = 0.<span class="ovl">27</span> 이라 하자.
       <span class="lbl" style="margin-left:14px">방향</span>
       <button class="bt on" id="dirR" onclick="PY.setDir(1)">→ 오른쪽</button>
       <button class="bt" id="dirL" onclick="PY.setDir(-1)">← 왼쪽</button>
-      <button class="bt c" id="spinBtn" onclick="PY.spin()" style="margin-left:auto">🧭 컴퍼스 돌리기</button>
+      <button class="bt c" id="spinBtn" onclick="PY.spin()" style="margin-left:auto">🧭 한쪽으로 돌리기</button>
+      <button class="bt i" id="spinBtn2" onclick="PY.spinFull()">⭕ 한 바퀴 돌려 원 그리기</button>
       <button class="bt" onclick="PY.reset()">처음부터</button>
     </div>
     <div class="pane"><svg id="pySvg"></svg></div>
@@ -258,6 +259,7 @@ x = 0.<span class="ovl">27</span> 이라 하자.
         <div class="card li" style="margin:0">
           <h4>왜 이 방법이 정확할까?</h4>
           <p class="small">컴퍼스로 원을 그리는 것은 <b>"P에서 같은 거리에 있는 점들"</b>을 모두 찍는 일입니다. 그래서 빗변의 끝점 Q와 수직선에 찍힌 점은 P에서 <b>정확히 같은 거리</b>에 있습니다. 어림한 값이 아니라 <b>정확한 무리수</b>가 수직선 위에 놓인 것이지요.</p>
+          <p class="small" style="margin-top:8px"><b class="c">한 바퀴 돌리면?</b> 원과 직선은 <b>두 점에서 만납니다.</b> 그래서 오른쪽에는 <b class="mono">P + √n</b>, 왼쪽에는 <b class="mono">P − √n</b> 이 동시에 찍혀요. 두 점은 P에서 거리가 같으므로 <b>P가 두 점의 한가운데</b>가 됩니다.</p>
         </div>
       </div>
     </div>
@@ -569,9 +571,14 @@ RAT.draw=function(){
 };
 
 /* ============ 2. 무리수 작도 ============ */
-var PY={nl:null,P:null,Q:null,dir:1,t:1,anim:null,done:false};
+var PY={nl:null,P:null,Q:null,dir:1,t:1,anim:null,done:false,full:false};
+PY.lbl=function(sign,h2){
+  var a=this.P[0],e=sqrtStr(h2);
+  if(a===0)return (sign>0?'':MIN)+e;
+  return sn(a)+' '+(sign>0?'+':MIN)+' '+e;
+};
 PY.init=function(){
-  this.nl=new NL('pySvg',{x0:-10,x1:10,y0:-2,y1:6,c:40});
+  this.nl=new NL('pySvg',{x0:-10,x1:10,y0:-4.5,y1:6,c:40});
   var self=this;
   this.nl.svg.addEventListener('pointerdown',function(e){self.click(e);});
   this.draw();
@@ -579,11 +586,11 @@ PY.init=function(){
 PY.setDir=function(d){
   this.dir=d;$('dirR').classList.toggle('on',d===1);$('dirL').classList.toggle('on',d===-1);
   $('dirR').className='bt'+(d===1?' i':'');$('dirL').className='bt'+(d===-1?' i':'');
-  this.t=1;this.done=this.Q?true:false;this.draw();
+  this.full=false;this.t=1;this.done=this.Q?true:false;this.draw();
 };
-PY.reset=function(){this.P=null;this.Q=null;this.t=1;this.done=false;if(this.anim)cancelAnimationFrame(this.anim);this.draw();};
+PY.reset=function(){this.P=null;this.Q=null;this.t=1;this.done=false;this.full=false;if(this.anim)cancelAnimationFrame(this.anim);this.draw();};
 PY.preset=function(a,m,n){
-  this.P=[a,0];this.Q=[a+m,n];this.t=0;this.done=false;this.draw();
+  this.P=[a,0];this.Q=[a+m,n];this.t=0;this.done=false;this.full=false;this.draw();
   var self=this;setTimeout(function(){self.spin();},250);
 };
 PY.click=function(e){
@@ -602,14 +609,16 @@ PY.click=function(e){
   this.draw();
 };
 PY.h2=function(){var m=this.Q[0]-this.P[0],n=this.Q[1];return m*m+n*n;};
-PY.spin=function(){
+PY.spinFull=function(){this.spin(true);};
+PY.spin=function(full){
   if(!this.P||!this.Q)return;
   var self=this,t0=null;
   if(this.anim)cancelAnimationFrame(this.anim);
-  this.t=0;this.done=false;
+  this.full=!!full;this.t=0;this.done=false;
+  var dur=this.full?2100:1200;
   function step(ts){
     if(t0===null)t0=ts;
-    var k=Math.min(1,(ts-t0)/1200);
+    var k=Math.min(1,(ts-t0)/dur);
     self.t=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
     self.draw();
     if(k<1)self.anim=requestAnimationFrame(step);
@@ -626,8 +635,9 @@ PY.draw=function(){
   else if(!this.Q){g.textContent='STEP 2';
     if($('pyTx').textContent.indexOf('클릭해 주세요')<0)
       $('pyTx').textContent='이제 수직선 위쪽의 격자점 Q를 클릭하세요. P와 Q를 잇는 선분이 빗변이 됩니다.';}
-  else if(!this.done){g.textContent='STEP 3';$('pyTx').textContent='직각삼각형이 만들어졌습니다! 🧭 컴퍼스 돌리기 버튼을 눌러 보세요.';}
-  else{g.textContent='완성';$('pyTx').textContent='수직선 위에 점이 찍혔습니다. 다른 점을 클릭하면 새로 시작합니다.';}
+  else if(!this.done){g.textContent='STEP 3';$('pyTx').textContent='직각삼각형이 만들어졌습니다! 컴퍼스를 돌려 보세요. ⭕ 한 바퀴 돌리면 점이 두 개 생깁니다.';}
+  else if(this.full){g.textContent='완성';$('pyTx').textContent='원이 수직선과 두 곳에서 만났습니다! P는 두 점의 한가운데에 있습니다.';}
+  else{g.textContent='완성';$('pyTx').textContent='수직선 위에 점이 찍혔습니다. ⭕ 한 바퀴 돌리기로 반대쪽 점도 확인해 보세요.';}
 
   if(this.P)nl.dot(this.P[0],0,'#c026d3',7);
   if(this.P&&!this.Q)nl.lab('P '+sn(this.P[0]),this.P[0],0,'#c026d3',-14,13);
@@ -644,47 +654,69 @@ PY.draw=function(){
         fill:'none',stroke:'#64748b','stroke-width':1.8},nl.svg);
     }
     nl.lab('가로 '+Math.abs(m),(P[0]+F[0])/2,0,'#2563eb',-9,12.5);
-    tx('세로 '+n,{x:nl.X(F[0])+9,y:nl.Y(n/2),'font-size':12.5,fill:'#0d9488',
+    tx('세로 '+n,{x:nl.X(F[0])+13,y:nl.Y(n/2),'font-size':12.5,fill:'#0d9488',
       'font-weight':'bold','font-family':'D2Coding,Consolas,monospace',
       stroke:'#ffffff','stroke-width':3.6,'paint-order':'stroke'},nl.svg);
-    nl.lab('빗변 '+RT+h2+(sqrtStr(h2)!==RT+h2?' = '+sqrtStr(h2):''),(P[0]+Q[0])/2,Q[1]/2,'#c026d3',-8,13);
+    nl.lab('빗변 '+RT+h2+(sqrtStr(h2)!==RT+h2?' = '+sqrtStr(h2):''),P[0]+(Q[0]-P[0])*0.42,Q[1]*0.42,'#c026d3',-9,13);
     nl.dot(Q[0],Q[1],'#c026d3',6.5);
     nl.lab('Q('+sn(Q[0])+', '+n+')',Q[0],Q[1],'#c026d3',-13,12.5);
     nl.dot(P[0],0,'#c026d3',7);
     nl.lab('P '+sn(P[0]),P[0],0,'#c026d3',44,12.5);
 
-    var th0=Math.atan2(n,m),th1=this.dir>0?0:Math.PI;
-    var cur=th0+(th1-th0)*this.t;
+    var th0=Math.atan2(n,m);
+    var span=this.full?(-2*Math.PI):((this.dir>0?0:Math.PI)-th0);
+    var cur=th0+span*this.t;
     var cx=P[0]+h*Math.cos(cur),cy=h*Math.sin(cur);
-    if(this.t>0.001){
-      var A=[nl.X(Q[0]),nl.Y(Q[1])],B=[nl.X(cx),nl.Y(cy)];
-      var sweep=(th1-th0)*this.t<0?0:1;
-      sv('path',{d:'M '+A[0]+' '+A[1]+' A '+(h*nl.c)+' '+(h*nl.c)+' 0 0 '+sweep+' '+B[0]+' '+B[1],
-        fill:'none',stroke:'#f59e0b','stroke-width':2.6,'stroke-dasharray':'7 5'},nl.svg);
+    if(this.full&&this.done){
+      sv('circle',{cx:nl.X(P[0]),cy:nl.Y(0),r:h*nl.c,fill:'none',stroke:'#f59e0b',
+        'stroke-width':2.6,'stroke-dasharray':'7 5',opacity:.95},nl.svg);
+    }else if(this.t>0.001){
+      var dd='',stp=Math.max(2,Math.ceil(Math.abs(span*this.t)/0.05)),si,a2;
+      for(si=0;si<=stp;si++){
+        a2=th0+span*this.t*si/stp;
+        dd+=(si?' L ':'M ')+nl.X(P[0]+h*Math.cos(a2))+' '+nl.Y(h*Math.sin(a2));
+      }
+      sv('path',{d:dd,fill:'none',stroke:'#f59e0b','stroke-width':2.6,'stroke-dasharray':'7 5'},nl.svg);
+    }
+    if(this.t>0.001&&!(this.full&&this.done)){
       nl.seg(P,[cx,cy],{c:'#f59e0b',w:2.6,op:.85});
       nl.dot(cx,cy,'#f59e0b',6);
     }
-    var res=P[0]+this.dir*h;
-    if(this.done){
-      var okRange=res>=-10&&res<=10;
-      if(okRange){
-        nl.dot(res,0,'#c026d3',8.5);
-        var lbl=(P[0]===0?'':sn(P[0])+(this.dir>0?' + ':' '+MIN+' '))+
-                (P[0]===0&&this.dir<0?MIN:'')+sqrtStr(h2);
-        nl.lab(lbl,res,0,'#c026d3',-15,14.5);
-        nl.lab('\u2245 '+fx(res,4).replace('-',MIN),res,0,'#a21caf',36,12.5);
-      }
+    var resR=P[0]+h,resL=P[0]-h,swept=Math.abs(span*this.t),self=this;
+    var showR=this.full?(swept>=th0-1e-9):(this.done&&this.dir>0);
+    var showL=this.full?(swept>=th0+Math.PI-1e-9):(this.done&&this.dir<0);
+    var wide=(resR-resL)>=2.6;
+    function mark(v,sign){
+      if(v<-10||v>10)return;
+      nl.dot(v,0,'#c026d3',8.5);
+      var off=0;
+      if(Math.abs(v-Q[0])<1.4){off=sign>0?1.55:-1.55;
+        if(v+off>9.4||v+off<-9.4)off=-off;}
+      nl.lab(self.lbl(sign,h2),v+off,0,'#c026d3',-15,14.5);
+      if(!self.full||wide)nl.lab('\u2245 '+fx(v,4).replace('-',MIN),v+off,0,'#a21caf',60,12.5);
     }
-    this.report(res,h2,h,m,n);
+    if(showR)mark(resR,1);
+    if(showL)mark(resL,-1);
+    if(this.full&&this.done&&resL>=-10&&resR<=10){
+      nl.seg([resL,-2.7],[resR,-2.7],{c:'#c026d3',w:2,dash:'5 4',op:.75});
+      nl.seg([resL,-2.7],[resL,-2.4],{c:'#c026d3',w:2,op:.75});
+      nl.seg([resR,-2.7],[resR,-2.4],{c:'#c026d3',w:2,op:.75});
+      nl.seg([P[0],-2.7],[P[0],-2.4],{c:'#c026d3',w:2,op:.75});
+      nl.lab('P는 두 점의 한가운데 (거리가 같음)',P[0],-2.7,'#a21caf',-9,12);
+    }
+    var res=this.full?((resR>=-10&&resR<=10)?resR:resL):(this.dir>0?resR:resL);
+    this.report(h2,h,m,n);
     this.mini(res,h2);
   }else{
     clr($('pyOut'));$('pyOut').appendChild(el('div','empty','점 P와 Q를 찍으면 계산 과정이 나타납니다.'));
     clr($('zoomMini'));$('miniTx').textContent='';
   }
 };
-PY.report=function(res,h2,h,m,n){
+PY.report=function(h2,h,m,n){
   var box=$('pyOut');clr(box);
   var P=this.P,exact=sqrtStr(h2),sq=isSquare(h2);
+  var resR=P[0]+h,resL=P[0]-h;
+  var res=this.full?resR:(this.dir>0?resR:resL);
   var s='';
   s+='① 직각삼각형 만들기\n';
   s+='   가로(밑변) = |'+sn(this.Q[0])+' '+MIN+' '+sn(P[0])+'| = '+Math.abs(m)+'\n';
@@ -694,13 +726,25 @@ PY.report=function(res,h2,h,m,n){
   s+='   빗변 = '+RT+h2+(exact!==RT+h2?' = [['+exact+']]':'')+' \u2245 '+fx(h,5)+'\n\n';
   s+='③ 컴퍼스로 옮기기\n';
   s+='   점 P('+sn(P[0])+')에 바늘을 꽂고 반지름 '+exact+'인 원을 그린다\n';
-  s+='   \u2192 수직선과 만나는 점 = '+sn(P[0])+' '+(this.dir>0?'+':MIN)+' '+exact+'\n\n';
-  s+='④ 결과\n';
-  var lbl=(P[0]===0?(this.dir>0?'':MIN)+exact:sn(P[0])+' '+(this.dir>0?'+':MIN)+' '+exact);
-  s+='   찍힌 점 = [['+lbl+']] \u2245 '+fx(res,5)+'\n\n';
+  if(this.full){
+    s+='   \u2192 컴퍼스를 한 바퀴 돌리면 원이 수직선과 [[두 곳]]에서 만난다\n\n';
+    s+='④ 결과 — 두 점\n';
+    s+='   오른쪽 : [['+this.lbl(1,h2)+']] \u2245 '+fx(resR,5).replace('-',MIN)+'\n';
+    s+='   왼쪽   : [['+this.lbl(-1,h2)+']] \u2245 '+fx(resL,5).replace('-',MIN)+'\n\n';
+    s+='   두 점은 모두 P에서 거리가 '+exact+' 로 같습니다.\n';
+    s+='   그래서 P는 두 점의 [[한가운데(중점)]]입니다.\n';
+    s+='   ('+fx(resL,4).replace('-',MIN)+' + '+fx(resR,4).replace('-',MIN)+') \u00f7 2 = '+
+       fx((resL+resR)/2,4).replace('-',MIN)+' = '+sn(P[0])+'\n\n';
+  }else{
+    s+='   \u2192 수직선과 만나는 점 = '+sn(P[0])+' '+(this.dir>0?'+':MIN)+' '+exact+'\n\n';
+    s+='④ 결과\n';
+    s+='   찍힌 점 = [['+this.lbl(this.dir,h2)+']] \u2245 '+fx(res,5).replace('-',MIN)+'\n\n';
+  }
   if(sq)s+='\u26a0 '+RT+h2+' = '+Math.sqrt(h2)+' 는 [[유리수]]입니다!\n   근호 안이 제곱수이면 근호가 벗겨져 정수가 됩니다.';
   else s+='\u2713 '+exact+' 는 분수로 나타낼 수 없는 [[무리수]]입니다.\n   소수로 쓰면 끝없이 이어지고 순환하지도 않습니다.';
-  if(res<-10||res>10)s+='\n\n\u26a0 결과가 수직선 범위(\u221210 ~ 10)를 벗어났습니다. 방향을 바꾸거나 P를 옮겨 보세요.';
+  if(this.full){
+    if(resR>10||resL<-10)s+='\n\n\u26a0 두 점 중 하나가 수직선 범위(\u221210 ~ 10) 밖이라 화면에 보이지 않습니다. P를 가운데로 옮겨 보세요.';
+  }else if(res<-10||res>10)s+='\n\n\u26a0 결과가 수직선 범위(\u221210 ~ 10)를 벗어났습니다. 방향을 바꾸거나 P를 옮겨 보세요.';
   box.appendChild(stepEl(s));
 };
 PY.mini=function(v,h2){
