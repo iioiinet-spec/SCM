@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공간과 입체 — 쌓기나무 3D 실습판</title>
+<style>
+:root{
+  --bg:#eef2f9; --card:#fff; --line:#dce4f0; --ink:#1a2436; --sub:#5b6b85; --pale:#94a2ba;
+  --top:#2563eb;   /* 위 */
+  --front:#059669; /* 앞 */
+  --side:#7c3aed;  /* 옆 */
+  --act:#ea580c;   /* 조작 */
+  --wood:#c98d4e;
+  --red:#dc2626;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);
+  background-image:radial-gradient(circle at 12% 0%,rgba(37,99,235,.07),transparent 42%),
+                   radial-gradient(circle at 88% 4%,rgba(234,88,12,.07),transparent 42%);
+  color:var(--ink);font-family:'Pretendard','Malgun Gothic','맑은 고딕',system-ui,sans-serif;
+  line-height:1.78;font-size:16px;padding-bottom:60px}
+.wrap{max-width:1380px;margin:0 auto;padding:0 18px}
+code,pre,.mono{font-family:'D2Coding','Consolas','Menlo',monospace}
+
+header{background:linear-gradient(120deg,#1a2436,#1e3a8a 50%,#b45309);color:#fff;
+  padding:36px 0 26px;text-align:center}
+.kick{font-size:12.5px;letter-spacing:3.5px;font-weight:800;color:#93c5fd}
+h1{font-size:34px;font-weight:800;margin:9px 0 8px;letter-spacing:-1px}
+h1 .g{background:linear-gradient(90deg,#fcd34d,#fdba74);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+header p{opacity:.92;font-size:15px}
+.tags{display:flex;gap:7px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.tg{font-size:12.5px;padding:3px 12px;border-radius:20px;background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.3);font-family:'D2Coding',Consolas,monospace}
+
+nav{position:sticky;top:0;z-index:70;background:rgba(238,242,249,.96);backdrop-filter:blur(8px);
+  border-bottom:2px solid var(--line);padding:10px 0;margin-bottom:24px}
+.tabs{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
+.tab{background:#fff;border:2px solid var(--line);color:var(--sub);padding:8px 16px;border-radius:11px;
+  cursor:pointer;font-size:14.5px;font-weight:700;font-family:inherit;transition:.13s}
+.tab:hover{border-color:var(--top);color:var(--top)}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+section.sec{display:none;animation:fd .26s ease}
+section.sec.on{display:block}
+@keyframes fd{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+h2{font-size:26px;font-weight:800;margin:4px 0 14px;padding-left:14px;border-left:6px solid var(--act)}
+h3{font-size:19px;font-weight:800;margin:24px 0 10px;color:var(--top)}
+h4{font-size:12.5px;font-weight:800;letter-spacing:1.2px;color:var(--sub);margin-bottom:8px}
+p{margin:8px 0;color:#2c3849}
+.small{font-size:14px;color:var(--sub)}
+b.t{color:var(--top)}b.f{color:var(--front)}b.s{color:var(--side)}b.a{color:var(--act)}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:17px 20px;margin:13px 0;
+  box-shadow:0 1px 3px rgba(26,36,54,.05)}
+.card.lt{border-left:5px solid var(--top)}
+.card.lf{border-left:5px solid var(--front)}
+.card.ls{border-left:5px solid var(--side)}
+.card.la{border-left:5px solid var(--act)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+ul.li{list-style:none;margin:7px 0}
+ul.li li{padding-left:20px;position:relative;margin:6px 0;color:#2c3849}
+ul.li li::before{content:'▪';position:absolute;left:3px;color:var(--act);font-weight:800}
+
+.eq{background:#161f2e;color:#e9eefb;border-radius:11px;padding:12px 18px;margin:10px 0;
+  font-family:'D2Coding',Consolas,monospace;font-size:16px;text-align:center}
+.eq b{color:#fcd34d}
+
+/* 실습판 */
+.lab{background:#fff;border:2px solid var(--line);border-radius:16px;padding:15px;margin:14px 0;
+  box-shadow:0 2px 8px rgba(26,36,54,.07)}
+.bar{display:flex;gap:7px;align-items:center;flex-wrap:wrap;background:#eef3fb;
+  border:1px solid var(--line);border-radius:11px;padding:9px 11px;margin-bottom:11px}
+.bt{background:#fff;border:2px solid var(--line);color:var(--ink);padding:7px 13px;border-radius:9px;
+  cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;transition:.12s}
+.bt:hover{border-color:var(--top);color:var(--top)}
+.bt.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.bt.t{background:var(--top);color:#fff;border-color:var(--top)}
+.bt.f{background:var(--front);color:#fff;border-color:var(--front)}
+.bt.s{background:var(--side);color:#fff;border-color:var(--side)}
+.bt.a{background:var(--act);color:#fff;border-color:var(--act)}
+.lbl{font-size:12.8px;font-weight:800;color:var(--sub)}
+.viewport{background:linear-gradient(180deg,#f8fbff,#e8eefa);border:1px solid var(--line);
+  border-radius:14px;overflow:hidden}
+.viewport svg{width:100%;height:auto;display:block;touch-action:none;cursor:grab}
+.viewport svg.grabbing{cursor:grabbing}
+.splitv{display:grid;grid-template-columns:1fr 330px;gap:14px;align-items:start}
+.box{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:11px}
+.box .hd{padding:7px 13px;font-weight:800;font-size:13.5px;color:#fff;background:var(--ink)}
+.box.t .hd{background:var(--top)} .box.f .hd{background:var(--front)}
+.box.s .hd{background:var(--side)} .box.a .hd{background:var(--act)}
+.box .bd{padding:11px 13px;background:#fff}
+.st{font-family:'D2Coding',Consolas,monospace;font-size:13.4px;line-height:1.9;color:#2c3849;white-space:pre-wrap}
+.hl{background:#fef3c7;border-radius:4px;padding:1px 6px;font-weight:800}
+
+/* 격자 뷰 */
+.views{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:12px}
+.vcard{background:#fff;border:2px solid var(--line);border-radius:12px;padding:9px;text-align:center}
+.vcard .vt{font-size:13px;font-weight:800;margin-bottom:6px}
+.gwrap{display:flex;justify-content:center}
+.gg{display:grid;gap:2px;background:#cfd8e8;padding:2px;border-radius:6px}
+.gg .c{width:24px;height:24px;background:#f4f7fc;border-radius:3px;display:grid;place-items:center;
+  font-size:12px;font-weight:800;font-family:'D2Coding',Consolas,monospace;color:#fff}
+.gg .c.on{background:var(--wood);box-shadow:inset 0 -3px 0 rgba(0,0,0,.12)}
+.gg .c.n{background:#3b82f6}
+.layers{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;justify-content:center}
+.lcard{background:#fff;border:2px solid var(--line);border-radius:12px;padding:9px 11px;text-align:center}
+.lcard .lt{font-size:12.5px;font-weight:800;color:var(--sub);margin-bottom:5px}
+
+table.t{width:100%;border-collapse:collapse;margin:12px 0;font-size:14.5px}
+table.t th{background:#eef3fb;padding:10px;border:1px solid var(--line);color:var(--top);text-align:left;font-weight:800}
+table.t td{padding:10px;border:1px solid var(--line);color:#2c3849}
+td.m{font-family:'D2Coding',Consolas,monospace;color:#b45309}
+
+.q{background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px 18px;margin:11px 0}
+.qq{font-weight:800;margin-bottom:9px}
+.opt{background:#f7faff;border:2px solid var(--line);color:#2c3849;padding:8px 13px;border-radius:9px;
+  margin:5px 0;cursor:pointer;font-size:14.5px;font-weight:600;font-family:inherit;width:100%;text-align:left}
+.opt:hover{border-color:var(--top)}
+.opt.ok{background:#dcfce7;border-color:#16a34a;color:#15803d}
+.opt.no{background:#fee2e2;border-color:var(--red);color:#b91c1c}
+.qa{margin-top:8px;font-size:13.5px;color:var(--sub);display:none}
+.qa.show{display:block}
+
+footer{text-align:center;color:var(--pale);font-size:13.5px;padding:32px 0 8px;border-top:1px solid var(--line);margin-top:34px}
+@media(max-width:1100px){.splitv{grid-template-columns:1fr}.views{grid-template-columns:repeat(3,1fr)}
+  .grid2,.grid3{grid-template-columns:1fr}h1{font-size:26px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="kick">초등 수학 · 공간과 입체</div>
+  <h1>쌓기나무 <span class="g">3D 실습판</span></h1>
+  <p>돌려 보고, 쌓고, 빼면서 여섯 방향에서 본 모양이 어떻게 달라지는지 확인해요</p>
+  <div class="tags">
+    <span class="tg">기본 예제 5가지</span><span class="tg">위·아래·앞·뒤·좌·우</span>
+    <span class="tg">쌓기 / 빼기</span><span class="tg">층별 모양</span>
+  </div>
+</div></header>
+
+<nav><div class="wrap"><div class="tabs">
+  <button class="tab on" onclick="go(0)">0. 쌓기나무 알아보기</button>
+  <button class="tab" onclick="go(1)">1. 3D 실습판 ★</button>
+  <button class="tab" onclick="go(2)">2. 방향별로 본 모양 읽기</button>
+  <button class="tab" onclick="go(3)">3. 개수 세기</button>
+  <button class="tab" onclick="go(4)">4. 확인문제</button>
+</div></div></nav>
+
+<div class="wrap">
+<!-- ============ 0 ============ -->
+<section class="sec on" id="s0">
+  <h2>쌓기나무 알아보기</h2>
+
+  <div class="card la">
+    <p><b>쌓기나무</b>는 모든 모서리의 길이가 같은 <b>정육면체</b> 나무토막입니다. 이것을 여러 개 쌓아 만든 모양을 <b>여러 방향에서 관찰</b>하면서, 눈에 보이는 평면 그림과 실제 입체 모양을 연결하는 것이 이 단원의 목표예요.</p>
+    <ul class="li">
+      <li>쌓기나무 한 개의 부피는 <b class="mono">1 cm × 1 cm × 1 cm = 1 cm³</b> (한 모서리가 1cm일 때)</li>
+      <li>쌓기나무를 <b class="a">공중에 띄울 수는 없습니다.</b> 바닥이나 다른 나무 위에만 놓을 수 있어요.</li>
+      <li>그래서 어떤 모양이든 <b>기둥(칸)마다 몇 층인지</b>만 정하면 전부 나타낼 수 있습니다.</li>
+    </ul>
+  </div>
+
+  <h3>여섯 방향의 이름</h3>
+  <div class="grid3">
+    <div class="card lt"><h4>위 · 아래</h4><p class="small">머리 위에서 내려다본 모양이 <b class="t">위에서 본 모양</b>, 바닥 아래에서 올려다본 모양이 <b class="t">아래에서 본 모양</b>입니다. 이 둘은 <b>좌우가 뒤집혀</b> 보입니다.</p></div>
+    <div class="card lf"><h4>앞 · 뒤</h4><p class="small">정면에서 본 모양이 <b class="f">앞에서 본 모양</b>. <b class="f">뒤에서 본 모양</b>은 앞에서 본 모양과 <b>좌우가 뒤집힌</b> 관계예요.</p></div>
+    <div class="card ls"><h4>왼쪽 · 오른쪽</h4><p class="small">옆에서 본 모양입니다. 교과서에서 그냥 "옆에서 본 모양"이라고 하면 보통 <b class="s">오른쪽 옆</b>에서 본 모양을 뜻합니다.</p></div>
+  </div>
+
+  <div class="card lt">
+    <h4>가장 중요한 규칙</h4>
+    <div class="eq">어느 방향에서 보든, 그 줄에서 <b>가장 높은 것</b>만 보입니다</div>
+    <p class="small">예를 들어 앞에서 볼 때, 앞뒤로 1층·3층·2층이 나란히 있으면 <b>3층짜리</b>만 보입니다. 그래서 앞에서 본 모양만으로는 뒤에 몇 개가 숨어 있는지 알 수 없어요. 그래서 <b class="a">여러 방향에서 본 모양이 모두 필요한 것</b>입니다.</p>
+  </div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section class="sec" id="s1">
+  <h2>3D 실습판 — 돌리고, 쌓고, 빼 보기</h2>
+
+  <div class="card">
+    <p><b>사용법</b> &nbsp;① 화면을 <b>드래그</b>하면 입체가 돌아갑니다. &nbsp;② 아래 <b class="t">시점 버튼</b>으로 여섯 방향에서 정확히 볼 수 있어요. &nbsp;③ <b class="a">쌓기 모드</b>에서 면을 클릭하면 그 자리에 나무가 붙고, <b class="a">빼기 모드</b>에서 클릭하면 나무가 빠집니다.</p>
+  </div>
+
+  <div class="lab">
+    <div class="bar">
+      <span class="lbl">기본 예제</span>
+      <button class="bt" id="ex0" onclick="B.load(0)">① 계단</button>
+      <button class="bt" id="ex1" onclick="B.load(1)">② ㄱ자 기둥</button>
+      <button class="bt" id="ex2" onclick="B.load(2)">③ 정육면체</button>
+      <button class="bt" id="ex3" onclick="B.load(3)">④ 십자 탑</button>
+      <button class="bt" id="ex4" onclick="B.load(4)">⑤ 도전 모양</button>
+      <button class="bt" onclick="B.clearAll()" style="margin-left:auto">전부 지우기</button>
+    </div>
+    <div class="bar">
+      <span class="lbl">시점</span>
+      <button class="bt" onclick="B.view('iso')">🧊 비스듬히</button>
+      <button class="bt t" onclick="B.view('top')">위에서</button>
+      <button class="bt t" onclick="B.view('bottom')">아래에서</button>
+      <button class="bt f" onclick="B.view('front')">앞에서</button>
+      <button class="bt f" onclick="B.view('back')">뒤에서</button>
+      <button class="bt s" onclick="B.view('right')">오른쪽에서</button>
+      <button class="bt s" onclick="B.view('left')">왼쪽에서</button>
+      <span class="lbl" style="margin-left:14px">모드</span>
+      <button class="bt a on" id="mAdd" onclick="B.setMode('add')">➕ 쌓기</button>
+      <button class="bt" id="mDel" onclick="B.setMode('del')">➖ 빼기</button>
+    </div>
+
+    <div class="splitv">
+      <div class="viewport"><svg id="v3d"></svg></div>
+      <div>
+        <div class="box a"><div class="hd">이 모양의 정보</div><div class="bd" id="info"></div></div>
+        <div class="box t"><div class="hd">위에서 본 모양에 수 쓰기</div>
+          <div class="bd" style="text-align:center">
+            <div class="gwrap" id="numGrid"></div>
+            <div class="small" style="margin-top:8px;font-size:12.5px">각 칸에 쌓인 나무의 개수를 적은 것입니다.<br>이 표 하나로 모양 전체를 나타낼 수 있어요!</div>
+          </div></div>
+      </div>
+    </div>
+
+    <h4 style="margin-top:16px">여섯 방향에서 본 모양</h4>
+    <div class="views" id="viewGrids"></div>
+
+    <h4 style="margin-top:16px">층별로 본 모양 (위에서 내려다본 각 층)</h4>
+    <div class="layers" id="layerGrids"></div>
+
+    <div class="box" style="margin-top:14px"><div class="hd">알림</div><div class="bd" id="msg"></div></div>
+  </div>
+</section>
+<!-- ============ 2 ============ -->
+<section class="sec" id="s2">
+  <h2>방향별로 본 모양 읽기</h2>
+
+  <div class="card lt">
+    <h4>위에서 본 모양 — 바닥에 깔린 자리</h4>
+    <p class="small">위에서 내려다보면 <b class="t">나무가 놓인 칸의 자리</b>가 보입니다. 높이는 알 수 없지만 <b>어느 칸에 있는지</b>는 정확히 알 수 있어요. 그래서 위에서 본 모양이 <b>모든 문제의 출발점</b>이 됩니다.</p>
+  </div>
+  <div class="card lf">
+    <h4>앞에서 본 모양 — 각 세로줄의 가장 높은 층</h4>
+    <p class="small">앞에서 보면 왼쪽·오른쪽 자리(가로)와 높이만 보입니다. 앞뒤로 여러 개가 겹쳐 있어도 <b class="f">그중 가장 높은 것</b>만 보여요.</p>
+  </div>
+  <div class="card ls">
+    <h4>옆에서 본 모양 — 각 가로줄의 가장 높은 층</h4>
+    <p class="small">오른쪽 옆에서 보면 앞뒤 자리와 높이가 보입니다. 주의할 점은 <b class="s">앞이 왼쪽에 오는지 오른쪽에 오는지</b>예요. 오른쪽에서 보면 <b>앞이 왼쪽</b>에, 왼쪽에서 보면 <b>앞이 오른쪽</b>에 옵니다.</p>
+  </div>
+
+  <div class="card la">
+    <h4>세 방향이면 충분할까?</h4>
+    <p class="small">위·앞·옆 세 방향에서 본 모양을 알면 대부분의 모양을 알 수 있지만, <b class="a">딱 하나로 정해지지는 않습니다.</b> 예를 들어 어떤 칸이 1층인지 2층인지가 세 방향 모두에 드러나지 않는 경우가 있어요. 그래서 문제에서는 보통 <b>"쌓기나무가 가장 적을 때"</b> 또는 <b>"가장 많을 때"</b>를 함께 묻습니다.</p>
+    <p class="small">실습판에서 나무를 하나만 빼거나 더해 보고, <b>여섯 방향의 모양이 그대로인지</b> 확인해 보세요. 모양이 그대로인 나무가 있다면 그게 바로 "있어도 되고 없어도 되는" 나무입니다.</p>
+  </div>
+
+  <table class="t">
+    <tr><th style="width:22%">방향</th><th style="width:30%">보이는 것</th><th>짝이 되는 방향과의 관계</th></tr>
+    <tr><td><b class="t">위에서</b></td><td>가로 · 세로 자리</td><td>아래에서 본 모양과 <b>좌우 뒤집힘</b></td></tr>
+    <tr><td><b class="t">아래에서</b></td><td>가로 · 세로 자리</td><td>위에서 본 모양과 <b>좌우 뒤집힘</b></td></tr>
+    <tr><td><b class="f">앞에서</b></td><td>가로 자리 · 높이</td><td>뒤에서 본 모양과 <b>좌우 뒤집힘</b></td></tr>
+    <tr><td><b class="f">뒤에서</b></td><td>가로 자리 · 높이</td><td>앞에서 본 모양과 <b>좌우 뒤집힘</b></td></tr>
+    <tr><td><b class="s">오른쪽에서</b></td><td>앞뒤 자리 · 높이</td><td>왼쪽에서 본 모양과 <b>좌우 뒤집힘</b></td></tr>
+    <tr><td><b class="s">왼쪽에서</b></td><td>앞뒤 자리 · 높이</td><td>오른쪽에서 본 모양과 <b>좌우 뒤집힘</b></td></tr>
+  </table>
+  <p class="small">※ 실습판에서 <b>정육면체(예제 ③)</b>를 불러오면 여섯 방향이 모두 똑같은 정사각형으로 보입니다. 반대로 <b>도전 모양(예제 ⑤)</b>은 여섯 방향이 모두 다르게 보여요. 직접 확인해 보세요!</p>
+</section>
+
+<!-- ============ 3 ============ -->
+<section class="sec" id="s3">
+  <h2>쌓기나무 개수 세기</h2>
+
+  <div class="card lt">
+    <h4>방법 ① 위에서 본 모양에 수 쓰기 (가장 확실한 방법)</h4>
+    <p class="small">위에서 본 모양의 각 칸에 <b class="t">그 자리에 쌓인 나무의 개수</b>를 적습니다. 그 수를 모두 더하면 전체 개수예요. 이 표 하나만 있으면 여섯 방향의 모양을 전부 그릴 수 있습니다.</p>
+    <div class="eq">전체 개수 = 각 칸에 적힌 수의 <b>합</b></div>
+  </div>
+
+  <div class="card lf">
+    <h4>방법 ② 층별로 세기</h4>
+    <p class="small">1층에 몇 개, 2층에 몇 개, 3층에 몇 개인지 세어 더합니다. 위층으로 갈수록 개수가 <b>줄거나 같아야</b> 합니다 (공중에 뜰 수 없으니까요). 만약 2층이 1층보다 많다면 어딘가 잘못 센 것입니다.</p>
+  </div>
+
+  <div class="card la">
+    <h4>숨어서 보이지 않는 나무</h4>
+    <p class="small">겉에서 보이는 나무만 세면 <b class="a">안쪽에 숨은 나무</b>를 빠뜨립니다. 예를 들어 3×3×3으로 가득 채운 큰 정육면체는 27개인데, 겉에서 보이는 것은 26개뿐이고 <b>정중앙의 1개</b>는 어느 방향에서도 보이지 않아요.</p>
+    <p class="small">그래서 개수를 셀 때는 <b>보이는 것을 세는 것이 아니라</b>, 위에서 본 모양에 수를 적어 계산해야 합니다.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card ls">
+      <h4>가장 적게 쌓았을 때</h4>
+      <p class="small">위·앞·옆 모양이 주어졌을 때, 각 칸의 높이를 <b>조건을 만족하는 최소</b>로 잡습니다. 어떤 칸의 높이는 <b>(그 세로줄의 앞 모양 높이)</b>와 <b>(그 가로줄의 옆 모양 높이)</b> 중 <b class="s">작은 값</b>을 넘을 수 없어요.</p>
+    </div>
+    <div class="card ls">
+      <h4>가장 많이 쌓았을 때</h4>
+      <p class="small">반대로 각 칸을 가능한 한 높게 잡습니다. 즉 그 칸의 높이 = <b>min(앞 모양 높이, 옆 모양 높이)</b> 로 두면 최대가 됩니다. 이때도 위에서 본 모양에 없는 칸은 0이어야 해요.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>연습 방법</h4>
+    <p class="small">실습판에서 예제를 하나 불러온 뒤, <b>여섯 방향 그림만 보고</b> 개수를 예상해 보세요. 그다음 오른쪽 정보 칸의 실제 개수와 비교하면 됩니다. 나무를 하나 빼거나 더할 때마다 어느 방향의 모양이 바뀌는지 관찰하면 공간 감각이 빠르게 자랍니다.</p>
+  </div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section class="sec" id="s4">
+  <h2>확인문제</h2>
+  <div id="quiz"></div>
+  <div class="card la" style="margin-top:18px">
+    <h4>실습판으로 확인하기</h4>
+    <p class="small">문제를 풀고 나서 <b>1번 탭 실습판</b>에서 직접 그 모양을 만들어 보세요. 전부 지우기를 누르고 바닥을 클릭해 하나씩 쌓으면, 여섯 방향의 모양이 실시간으로 바뀌는 것을 볼 수 있습니다.</p>
+  </div>
+</section>
+</div>
+
+<footer>
+  <div>공간과 입체 — 쌓기나무 3D 실습판</div>
+  <div style="margin-top:5px;font-size:12.5px">쌓기나무는 바닥이나 다른 나무 위에만 놓을 수 있습니다 (공중에 뜰 수 없음)</div>
+</footer>
+<script>
+/* ============ 공통 ============ */
+var NS='http://www.w3.org/2000/svg';
+function $(i){return document.getElementById(i);}
+function sv(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function tx(t,a,p){var e=sv('text',a,p);e.textContent=t;return e;}
+function el(t,c,s){var e=document.createElement(t);if(c)e.className=c;if(s!==undefined)e.textContent=s;return e;}
+function clr(n){while(n.firstChild)n.removeChild(n.firstChild);}
+function go(i){
+  var s=document.querySelectorAll('section.sec'),t=document.querySelectorAll('.tab');
+  for(var k=0;k<s.length;k++){s[k].classList.toggle('on',k===i);t[k].classList.toggle('on',k===i);}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+var RAD=Math.PI/180;
+
+/* ============ 예제 ============ */
+var N=4, MAXH=5;
+var EX=[
+ {n:'계단',   r:['0000','1230','1230','0000']},
+ {n:'ㄱ자 기둥',r:['0000','2220','2000','2000']},
+ {n:'정육면체', r:['0000','0000','0220','0220']},
+ {n:'십자 탑', r:['0000','0100','1310','0100']},
+ {n:'도전 모양',r:['0000','2100','1310','0120']}
+];
+
+/* ============ 3D 상태 ============ */
+var B={h:null,th:-50*RAD,ph:30*RAD,mode:'add',cur:0,hover:null,anim:null,
+       drag:null,S:52,CX:340,CY:268};
+B.newH=function(){var a=[],x,y;for(x=0;x<N;x++){a.push([]);for(y=0;y<N;y++)a[x].push(0);}return a;};
+B.load=function(i){
+  this.cur=i;this.h=this.newH();
+  var r=EX[i].r,x,y;
+  for(y=0;y<N;y++)for(x=0;x<N;x++)this.h[x][y]=parseInt(r[N-1-y].charAt(x),10)||0;
+  for(var k=0;k<EX.length;k++)$('ex'+k).classList.toggle('on',k===i);
+  this.say('예제 ' + '①②③④⑤'.charAt(i) + ' 「' + EX[i].n + '」을 불러왔습니다. 드래그해서 돌려 보세요!');
+  this.draw();
+};
+B.clearAll=function(){
+  this.h=this.newH();this.cur=-1;
+  for(var k=0;k<EX.length;k++)$('ex'+k).classList.remove('on');
+  this.say('전부 지웠습니다. 바닥판을 클릭해 하나씩 쌓아 보세요.');
+  this.draw();
+};
+B.setMode=function(m){
+  this.mode=m;$('mAdd').classList.toggle('on',m==='add');$('mDel').classList.toggle('on',m==='del');
+  this.say(m==='add'?'쌓기 모드 — 나무의 면이나 바닥을 클릭하면 그 자리에 나무가 붙습니다.'
+                    :'빼기 모드 — 나무를 클릭하면 빠집니다. 맨 위에 있는 나무만 뺄 수 있어요.');
+  this.draw();
+};
+B.say=function(t){$('msg').textContent=t;};
+
+/* ---- 카메라 ---- */
+function dirV(th,ph){return [Math.cos(ph)*Math.cos(th),Math.cos(ph)*Math.sin(th),Math.sin(ph)];}
+function rightV(th){return [-Math.sin(th),Math.cos(th),0];}
+function upV(th,ph){return [-Math.sin(ph)*Math.cos(th),-Math.sin(ph)*Math.sin(th),Math.cos(ph)];}
+var VIEWS={
+  iso:{th:-50,ph:30}, top:{th:-90,ph:90}, bottom:{th:-90,ph:-90},
+  front:{th:-90,ph:0}, back:{th:90,ph:0}, right:{th:0,ph:0}, left:{th:180,ph:0}
+};
+B.view=function(k){
+  var v=VIEWS[k],self=this;
+  var t0=this.th,p0=this.ph,t1=v.th*RAD,p1=v.ph*RAD;
+  var d=t1-t0;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
+  if(this.anim)cancelAnimationFrame(this.anim);
+  var st=null;
+  function step(ts){
+    if(st===null)st=ts;
+    var k2=Math.min(1,(ts-st)/450),e=k2<.5?2*k2*k2:1-Math.pow(-2*k2+2,2)/2;
+    self.th=t0+d*e;self.ph=p0+(p1-p0)*e;self.draw();
+    if(k2<1)self.anim=requestAnimationFrame(step);
+  }
+  this.anim=requestAnimationFrame(step);
+};
+
+/* ---- 투영 ---- */
+B.proj=function(p){
+  var c=this.CX,cy=this.CY,S=this.S;
+  var r=rightV(this.th),u=upV(this.th,this.ph);
+  var q=[p[0]-N/2,p[1]-N/2,p[2]-0.9];
+  return [c+(q[0]*r[0]+q[1]*r[1]+q[2]*r[2])*S, cy-(q[0]*u[0]+q[1]*u[1]+q[2]*u[2])*S];
+};
+var FACES=[
+ {n:[1,0,0],v:[[1,0,0],[1,1,0],[1,1,1],[1,0,1]]},
+ {n:[-1,0,0],v:[[0,0,0],[0,0,1],[0,1,1],[0,1,0]]},
+ {n:[0,1,0],v:[[0,1,0],[0,1,1],[1,1,1],[1,1,0]]},
+ {n:[0,-1,0],v:[[0,0,0],[1,0,0],[1,0,1],[0,0,1]]},
+ {n:[0,0,1],v:[[0,0,1],[1,0,1],[1,1,1],[0,1,1]]},
+ {n:[0,0,-1],v:[[0,0,0],[0,1,0],[1,1,0],[1,0,0]]}
+];
+var LIGHT=[-0.36,-0.54,0.76];
+function faceColor(n,ghost){
+  var d=n[0]*LIGHT[0]+n[1]*LIGHT[1]+n[2]*LIGHT[2];
+  var k=0.60+0.40*Math.max(0,d);
+  var b=ghost?[120,190,140]:[224,166,99];
+  return 'rgb('+Math.round(b[0]*k)+','+Math.round(b[1]*k)+','+Math.round(b[2]*k)+')';
+}
+B.hasCube=function(x,y,z){
+  if(x<0||x>=N||y<0||y>=N||z<0)return false;
+  return z<this.h[x][y];
+};
+/* 그릴 폴리곤 목록 (가까운 것부터) */
+B.polys=function(){
+  var c=dirV(this.th,this.ph),list=[],x,y,z,i;
+  for(x=0;x<N;x++)for(y=0;y<N;y++)for(z=0;z<this.h[x][y];z++){
+    var ctr=[x+0.5-N/2,y+0.5-N/2,z+0.5];
+    var dep=ctr[0]*c[0]+ctr[1]*c[1]+ctr[2]*c[2];
+    for(i=0;i<6;i++){
+      var f=FACES[i];
+      if(f.n[0]*c[0]+f.n[1]*c[1]+f.n[2]*c[2]<=0.0001)continue;
+      if(this.hasCube(x+f.n[0],y+f.n[1],z+f.n[2]))continue;
+      list.push({d:dep,pts:f.v.map(function(v){return [x+v[0],y+v[1],z+v[2]];}),
+                 n:f.n,cube:[x,y,z],kind:'cube'});
+    }
+  }
+  list.sort(function(a,b){return b.d-a.d;});
+  return list;
+};
+function inPoly(px,py,pts){
+  var inside=false;
+  for(var i=0,j=pts.length-1;i<pts.length;j=i++){
+    var xi=pts[i][0],yi=pts[i][1],xj=pts[j][0],yj=pts[j][1];
+    if(((yi>py)!==(yj>py))&&(px<(xj-xi)*(py-yi)/(yj-yi)+xi))inside=!inside;
+  }
+  return inside;
+}
+B.pick=function(e){
+  var svg=$('v3d'),r=svg.getBoundingClientRect();
+  var px=(e.clientX-r.left)/r.width*680, py=(e.clientY-r.top)/r.height*470;
+  var ps=this.polys(),i;
+  for(i=0;i<ps.length;i++){
+    var sp=ps[i].pts.map(this.proj,this);
+    if(inPoly(px,py,sp))return ps[i];
+  }
+  var c=dirV(this.th,this.ph);
+  if(c[2]>0.02){
+    for(var x=0;x<N;x++)for(var y=0;y<N;y++){
+      if(this.h[x][y]>0)continue;
+      var q=[[x,y,0],[x+1,y,0],[x+1,y+1,0],[x,y+1,0]].map(this.proj,this);
+      if(inPoly(px,py,q))return {kind:'floor',cube:[x,y,0],n:[0,0,1]};
+    }
+  }
+  return null;
+};
+
+/* ---- 그리기 ---- */
+B.draw=function(){
+  var s=$('v3d'),i;clr(s);
+  s.setAttribute('viewBox','0 0 680 470');
+  var c=dirV(this.th,this.ph);
+  /* 바닥판 */
+  var fl=sv('g',{},s);
+  for(var x=0;x<N;x++)for(var y=0;y<N;y++){
+    var q=[[x,y,0],[x+1,y,0],[x+1,y+1,0],[x,y+1,0]].map(this.proj,this);
+    sv('polygon',{points:q.map(function(p){return p[0]+','+p[1];}).join(' '),
+      fill:(x+y)%2?'#e6ecf7':'#dfe7f4',stroke:'#c3cfe4','stroke-width':1,
+      opacity:c[2]<-0.05?0.32:0.9},fl);
+  }
+  /* 쌓기나무 */
+  var ps=this.polys();
+  for(i=ps.length-1;i>=0;i--){
+    var f=ps[i],sp=f.pts.map(this.proj,this);
+    var hov=this.hover&&this.hover.kind==='cube'&&this.hover.cube[0]===f.cube[0]&&
+            this.hover.cube[1]===f.cube[1]&&this.hover.cube[2]===f.cube[2]&&
+            this.hover.n[0]===f.n[0]&&this.hover.n[1]===f.n[1]&&this.hover.n[2]===f.n[2];
+    sv('polygon',{points:sp.map(function(p){return p[0]+','+p[1];}).join(' '),
+      fill:hov?(this.mode==='del'?'#f87171':'#86efac'):faceColor(f.n),
+      stroke:'#8a5a2b','stroke-width':1.5,'stroke-linejoin':'round'},s);
+  }
+  /* 미리보기 (쌓기 모드) */
+  if(this.mode==='add'&&this.hover){
+    var t=this.addTarget(this.hover);
+    if(t){
+      var gx=t[0],gy=t[1],gz=t[2];
+      for(i=0;i<6;i++){
+        var g=FACES[i];
+        if(g.n[0]*c[0]+g.n[1]*c[1]+g.n[2]*c[2]<=0.0001)continue;
+        var gp=g.v.map(function(v){return B.proj([gx+v[0],gy+v[1],gz+v[2]]);});
+        sv('polygon',{points:gp.map(function(p){return p[0]+','+p[1];}).join(' '),
+          fill:faceColor(g.n,true),stroke:'#15803d','stroke-width':1.6,
+          'stroke-dasharray':'5 4',opacity:.75},s);
+      }
+    }
+  }
+  var edges=[{p:[N/2,-0.4,0],t:'앞',c:'#059669'},{p:[N/2,N+0.4,0],t:'뒤',c:'#059669'},
+             {p:[-0.5,N/2,0],t:'왼쪽',c:'#7c3aed'},{p:[N+0.5,N/2,0],t:'오른쪽',c:'#7c3aed'}];
+  edges.forEach(function(e2){
+    var p=B.proj(e2.p);
+    tx(e2.t,{x:p[0],y:p[1]+4,'text-anchor':'middle','font-size':14,'font-weight':'bold',fill:e2.c,
+      stroke:'#fff','stroke-width':3.6,'paint-order':'stroke'},s);
+  });
+  if(this.hover&&this.hover.kind==='floor'&&this.mode==='add'){
+    var q2=[[this.hover.cube[0],this.hover.cube[1],0],[this.hover.cube[0]+1,this.hover.cube[1],0],
+            [this.hover.cube[0]+1,this.hover.cube[1]+1,0],[this.hover.cube[0],this.hover.cube[1]+1,0]]
+            .map(this.proj,this);
+    sv('polygon',{points:q2.map(function(p){return p[0]+','+p[1];}).join(' '),
+      fill:'#86efac',stroke:'#15803d','stroke-width':2,opacity:.7},s);
+  }
+  this.report();
+};
+B.addTarget=function(hit){
+  if(!hit)return null;
+  var x=hit.cube[0],y=hit.cube[1],z=hit.cube[2],n=hit.n;
+  if(hit.kind==='floor')return this.h[x][y]===0?[x,y,0]:null;
+  if(n[2]===1)return this.h[x][y]<MAXH?[x,y,this.h[x][y]]:null;
+  if(n[2]===-1)return null;
+  var tx2=x+n[0],ty=y+n[1];
+  if(tx2<0||tx2>=N||ty<0||ty>=N)return null;
+  if(this.h[tx2][ty]!==z)return null;
+  if(this.h[tx2][ty]>=MAXH)return null;
+  return [tx2,ty,z];
+};
+
+/* ---- 입력 ---- */
+B.init=function(){
+  var s=$('v3d'),self=this;
+  s.addEventListener('pointerdown',function(e){
+    self.drag={x:e.clientX,y:e.clientY,th:self.th,ph:self.ph,moved:0};
+    s.classList.add('grabbing');s.setPointerCapture(e.pointerId);
+  });
+  s.addEventListener('pointermove',function(e){
+    if(self.drag){
+      var dx=e.clientX-self.drag.x,dy=e.clientY-self.drag.y;
+      self.drag.moved=Math.max(self.drag.moved,Math.abs(dx)+Math.abs(dy));
+      if(self.drag.moved>5){
+        if(self.anim)cancelAnimationFrame(self.anim);
+        self.th=self.drag.th-dx*0.011;
+        self.ph=Math.max(-89*RAD,Math.min(89*RAD,self.drag.ph+dy*0.011));
+        self.hover=null;self.draw();
+      }
+      return;
+    }
+    var hit=self.pick(e);
+    var same=(!hit&&!self.hover)||(hit&&self.hover&&hit.kind===self.hover.kind&&
+      hit.cube[0]===self.hover.cube[0]&&hit.cube[1]===self.hover.cube[1]&&
+      hit.cube[2]===self.hover.cube[2]&&hit.n[0]===self.hover.n[0]&&
+      hit.n[1]===self.hover.n[1]&&hit.n[2]===self.hover.n[2]);
+    if(!same){self.hover=hit;self.draw();}
+  });
+  s.addEventListener('pointerup',function(e){
+    s.classList.remove('grabbing');
+    var d=self.drag;self.drag=null;
+    if(d&&d.moved<=5)self.click(e);
+  });
+  s.addEventListener('pointerleave',function(){
+    s.classList.remove('grabbing');self.drag=null;
+    if(self.hover){self.hover=null;self.draw();}
+  });
+  this.load(0);
+};
+B.click=function(e){
+  var hit=this.pick(e);
+  if(!hit){this.say('빈 곳을 클릭했어요. 나무의 면이나 바닥판을 클릭해 보세요.');return;}
+  var x=hit.cube[0],y=hit.cube[1],z=hit.cube[2];
+  if(this.mode==='add'){
+    var t=this.addTarget(hit);
+    if(!t){
+      if(hit.n[2]===1&&this.h[x][y]>=MAXH)this.say('더 이상 높이 쌓을 수 없어요. (최대 '+MAXH+'층)');
+      else if(hit.kind==='cube'&&hit.n[2]===0){
+        var tx2=x+hit.n[0],ty=y+hit.n[1];
+        if(tx2<0||tx2>=N||ty<0||ty>=N)this.say('바닥판 밖이라 놓을 수 없어요.');
+        else this.say('여기에 놓으면 나무가 공중에 뜹니다! 옆 칸을 먼저 그 높이까지 쌓아 주세요.');
+      }else this.say('그 자리에는 놓을 수 없어요.');
+      this.draw();return;
+    }
+    this.h[t[0]][t[1]]=t[2]+1;
+    this.say('쌓기나무를 ('+(t[0]+1)+'번째 칸, '+(t[1]+1)+'번째 줄) 의 '+(t[2]+1)+'층에 놓았습니다.');
+    this.cur=-1;for(var k=0;k<EX.length;k++)$('ex'+k).classList.remove('on');
+  }else{
+    if(hit.kind==='floor'){this.say('바닥판에는 뺄 나무가 없어요.');return;}
+    if(z!==this.h[x][y]-1){this.say('위에 쌓인 나무를 먼저 빼야 해요! 맨 위 나무부터 뺄 수 있습니다.');this.draw();return;}
+    this.h[x][y]--;
+    this.say('쌓기나무를 하나 뺐습니다. 어느 방향에서 본 모양이 달라졌는지 확인해 보세요.');
+    this.cur=-1;for(var k2=0;k2<EX.length;k2++)$('ex'+k2).classList.remove('on');
+  }
+  this.hover=null;this.draw();
+};
+
+/* ---- 방향별 모양 계산 ---- */
+function axisOf(v){
+  for(var i=0;i<3;i++)if(Math.abs(v[i])>0.9)return {i:i,s:v[i]>0?1:-1};
+  return {i:2,s:1};
+}
+var POSN=['오른쪽','뒤','위'],NEGN=['왼쪽','앞','아래'];
+B.maxH=function(){var m=0,x,y;for(x=0;x<N;x++)for(y=0;y<N;y++)if(this.h[x][y]>m)m=this.h[x][y];return m;};
+B.viewOf=function(key){
+  var v=VIEWS[key],th=v.th*RAD,ph=v.ph*RAD;
+  var r=axisOf(rightV(th)),u=axisOf(upV(th,ph));
+  var row={i:u.i,s:-u.s};
+  var H=Math.max(2,this.maxH());
+  var size=[N,N,H];
+  var nc=size[r.i],nr=size[row.i];
+  var cells=[],a,b,depth=3-r.i-row.i;
+  for(a=0;a<nr;a++){cells.push([]);for(b=0;b<nc;b++)cells[a].push(0);}
+  for(var x=0;x<N;x++)for(var y=0;y<N;y++)for(var z=0;z<this.h[x][y];z++){
+    var P=[x,y,z];
+    var cc=r.s>0?P[r.i]:size[r.i]-1-P[r.i];
+    var rr=row.s>0?P[row.i]:size[row.i]-1-P[row.i];
+    if(rr>=0&&rr<nr&&cc>=0&&cc<nc)cells[rr][cc]=1;
+  }
+  return {cells:cells,
+    left:(r.s>0?NEGN[r.i]:POSN[r.i]), right:(r.s>0?POSN[r.i]:NEGN[r.i]),
+    top:(row.s>0?NEGN[row.i]:POSN[row.i]), bottom:(row.s>0?POSN[row.i]:NEGN[row.i])};
+};
+function gridEl(cells,num){
+  var g=el('div','gg');
+  g.style.gridTemplateColumns='repeat('+cells[0].length+', 24px)';
+  cells.forEach(function(row){row.forEach(function(v){
+    var c=el('div','c'+(v?(num?' n':' on'):''));
+    if(num&&v)c.textContent=v;
+    g.appendChild(c);
+  });});
+  return g;
+}
+function labeled(vw){
+  var box=el('div');
+  box.appendChild(el('div','small',vw.top)).style.cssText='font-size:11px;color:#94a2ba;line-height:1.2';
+  var row=el('div');row.style.cssText='display:flex;align-items:center;gap:4px;justify-content:center';
+  var l=el('div','small',vw.left);l.style.cssText='font-size:11px;color:#94a2ba;writing-mode:vertical-rl';
+  var r=el('div','small',vw.right);r.style.cssText='font-size:11px;color:#94a2ba;writing-mode:vertical-rl';
+  row.appendChild(l);row.appendChild(gridEl(vw.cells));row.appendChild(r);
+  box.appendChild(row);
+  var b=el('div','small',vw.bottom);b.style.cssText='font-size:11px;color:#94a2ba;line-height:1.2';
+  box.appendChild(b);
+  return box;
+}
+var VNAMES=[['top','위에서','#2563eb'],['bottom','아래에서','#2563eb'],
+            ['front','앞에서','#059669'],['back','뒤에서','#059669'],
+            ['right','오른쪽에서','#7c3aed'],['left','왼쪽에서','#7c3aed']];
+B.report=function(){
+  var x,y,z,tot=0,base=0,layer=[];
+  for(z=0;z<MAXH;z++)layer.push(0);
+  for(x=0;x<N;x++)for(y=0;y<N;y++){
+    tot+=this.h[x][y];
+    if(this.h[x][y]>0)base++;
+    for(z=0;z<this.h[x][y];z++)layer[z]++;
+  }
+  var mh=this.maxH();
+  var box=$('info');clr(box);
+  var s='쌓기나무 개수 : [['+tot+'개]]\n';
+  s+='바닥에 놓인 칸 : '+base+'칸\n';
+  s+='가장 높은 곳 : '+mh+'층\n\n';
+  s+='층별 개수\n';
+  for(z=0;z<Math.max(1,mh);z++)s+='  '+(z+1)+'층 : '+layer[z]+'개\n';
+  s+='\n확인 : '+(mh?Array.prototype.slice.call(layer,0,mh).join(' + '):'0')+' = '+tot;
+  var d=el('div','st');
+  s.split(/(\[\[[^\]]*\]\])/).forEach(function(t){
+    if(/^\[\[/.test(t))d.appendChild(el('span','hl',t.slice(2,-2)));
+    else d.appendChild(document.createTextNode(t));
+  });
+  box.appendChild(d);
+  /* 위에서 본 모양에 수 쓰기 */
+  var ng=$('numGrid');clr(ng);
+  var cells=[];
+  for(y=N-1;y>=0;y--){var row=[];for(x=0;x<N;x++)row.push(this.h[x][y]);cells.push(row);}
+  ng.appendChild(gridEl(cells,true));
+  /* 여섯 방향 */
+  var vg=$('viewGrids');clr(vg);
+  var self=this;
+  VNAMES.forEach(function(v){
+    var card=el('div','vcard');
+    var t=el('div','vt',v[1]);t.style.color=v[2];card.appendChild(t);
+    var w=el('div','gwrap');w.appendChild(labeled(self.viewOf(v[0])));card.appendChild(w);
+    vg.appendChild(card);
+  });
+  /* 층별 */
+  var lg=$('layerGrids');clr(lg);
+  if(mh===0)lg.appendChild(el('div','small','쌓기나무가 없습니다.'));
+  for(z=mh-1;z>=0;z--){
+    var c2=el('div','lcard');
+    c2.appendChild(el('div','lt',(z+1)+'층 ('+layer[z]+'개)'));
+    var cc=[];
+    for(y=N-1;y>=0;y--){var rr=[];for(x=0;x<N;x++)rr.push(this.h[x][y]>z?1:0);cc.push(rr);}
+    c2.appendChild(gridEl(cc));
+    lg.appendChild(c2);
+  }
+};
+
+/* ============ 퀴즈 ============ */
+var QZ=[
+ {q:'쌓기나무로 만든 모양을 앞에서 보았습니다. 앞뒤로 1층, 3층, 2층이 나란히 있다면 앞에서는 몇 층으로 보일까요?',
+  o:['1층','2층','3층','6층'],a:2,
+  e:'어느 방향에서 보든 그 줄에서 가장 높은 것만 보입니다. 1, 3, 2 중 가장 큰 3층으로 보입니다.'},
+ {q:'위에서 본 모양의 각 칸에 3, 1, 2, 2 라고 적혀 있습니다. 쌓기나무는 모두 몇 개일까요?',
+  o:['4개','8개','12개','알 수 없다'],a:1,
+  e:'각 칸에 적힌 수는 그 자리에 쌓인 개수입니다. 3+1+2+2 = 8개입니다.'},
+ {q:'쌓기나무 27개로 만든 3×3×3 정육면체에서, 어느 방향에서도 보이지 않는 나무는 몇 개일까요?',
+  o:['0개','1개','3개','9개'],a:1,
+  e:'정중앙에 있는 1개만 여섯 면 모두가 다른 나무에 가려져 보이지 않습니다.'},
+ {q:'앞에서 본 모양과 뒤에서 본 모양은 어떤 관계일까요?',
+  o:['항상 같다','좌우가 뒤집힌다','위아래가 뒤집힌다','아무 관계 없다'],a:1,
+  e:'반대편에서 보는 것이므로 왼쪽과 오른쪽이 서로 바뀌어 보입니다.'},
+ {q:'다음 중 쌓기나무를 놓을 수 없는 자리는?',
+  o:['바닥판 위','다른 쌓기나무의 바로 위','옆에 있는 나무와 같은 높이의 빈자리(아래에 나무가 있는 곳)','아래에 아무것도 없는 공중'],a:3,
+  e:'쌓기나무는 공중에 뜰 수 없습니다. 반드시 바닥이나 다른 나무 위에 놓여야 합니다.'},
+ {q:'위·앞·옆 세 방향에서 본 모양을 알면 쌓기나무의 개수가 하나로 정해질까요?',
+  o:['항상 하나로 정해진다','정해지지 않을 수 있어서 최소·최대를 따로 구한다','절대 알 수 없다','위에서 본 모양만 있으면 된다'],a:1,
+  e:'세 방향에 드러나지 않는 칸이 있을 수 있어, 가장 적을 때와 가장 많을 때가 다를 수 있습니다.'},
+ {q:'정육면체 모양(2×2×2)으로 쌓았을 때 여섯 방향에서 본 모양은?',
+  o:['모두 다르다','모두 같은 2×2 정사각형','위만 다르다','앞뒤만 같다'],a:1,
+  e:'정육면체는 어느 면에서 보아도 같은 정사각형으로 보입니다. 실습판 예제 ③에서 확인해 보세요.'}
+];
+function buildQuiz(){
+  var box=$('quiz');
+  QZ.forEach(function(it,qi){
+    var d=el('div','q');
+    d.appendChild(el('div','qq','문제 '+(qi+1)+'. '+it.q));
+    var ans=el('div','qa','\u2192 '+it.e);
+    it.o.forEach(function(o,oi){
+      var b=el('button','opt',(oi+1)+') '+o);
+      b.onclick=function(){
+        var s=d.querySelectorAll('.opt');
+        for(var i=0;i<s.length;i++)s[i].className='opt';
+        if(oi===it.a)b.className='opt ok';else{b.className='opt no';s[it.a].className='opt ok';}
+        ans.className='qa show';
+      };
+      d.appendChild(b);
+    });
+    d.appendChild(ans);box.appendChild(d);
+  });
+}
+
+/* ============ 시작 ============ */
+(function(){B.init();buildQuiz();})();
+</script>
+</body>
+</html>
