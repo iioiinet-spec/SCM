@@ -1,1934 +1,1440 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>바이브코딩 크리에이티브 클래스 | 세영코딩연구소</title>
-<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;600;700;900&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>말로 만드는 웹 · 바이브 코딩 3회차</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
 <style>
-  :root {
-    --yellow: #FFE600;
-    --purple: #1A0A2E;
-    --coral: #FF4D6D;
-    --mint: #00E5C3;
-    --ivory: #FFF8F0;
-    --violet: #7B2FBE;
-    --orange: #FF8C42;
-    --blue: #3D9FFF;
-    --card-bg: #241550;
-    --track-h: 6px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--purple);
-    color: var(--ivory);
-    font-family: 'Noto Sans KR', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+:root{
+  --ink:#0B0F1F;
+  --ink-2:#111730;
+  --panel:#151D3B;
+  --panel-2:#1B2449;
+  --line:#2A3566;
+  --text:#EAF0FF;
+  --muted:#8A9AC4;
+  --c1:#2DE2E6;
+  --c2:#FF2E88;
+  --c3:#FFC93C;
+  --good:#4ADE80;
+  --bad:#FB7185;
+  --accent:var(--c1);
+  --font-display:'Black Han Sans','Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif;
+  --font-body:'Pretendard Variable',Pretendard,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+  --font-mono:'D2Coding','JetBrains Mono','Consolas','Nanum Gothic Coding',monospace;
+  --radius:16px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--ink);color:var(--text);
+  font-family:var(--font-body);line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(1000px 500px at 10% -10%, rgba(45,226,230,.13), transparent 60%),
+    radial-gradient(900px 480px at 95% 5%, rgba(255,46,136,.11), transparent 60%);
+  background-attachment:fixed;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
 
-  /* ── HEADER ── */
-  header {
-    background: var(--purple);
-    border-bottom: 3px solid var(--yellow);
-    padding: 18px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .logo {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 1.3rem;
-    color: var(--yellow);
-    letter-spacing: -0.5px;
-  }
-  .logo span { color: var(--mint); }
-  .header-badge {
-    background: var(--coral);
-    color: #fff;
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 20px;
-    letter-spacing: 0.5px;
-  }
+/* ---------- HERO ---------- */
+.hero{padding:72px 0 40px;position:relative;overflow:hidden}
+.eyebrow{font-family:var(--font-mono);font-size:13px;letter-spacing:.18em;color:var(--c1);text-transform:uppercase;margin:0 0 14px}
+.hero h1{
+  font-family:var(--font-display);font-weight:400;
+  font-size:clamp(38px,7.4vw,80px);line-height:1.02;margin:0 0 18px;letter-spacing:-.01em;
+  text-shadow:0 0 34px rgba(45,226,230,.28);
+}
+.hero h1 .glow{color:var(--c1)}
+.hero h1 .glow2{color:var(--c2)}
+.hero p.lead{font-size:clamp(15px,2.2vw,19px);color:var(--muted);max-width:640px;margin:0 0 28px}
+.caret{display:inline-block;width:.5em;height:1em;background:var(--c2);vertical-align:-.12em;margin-left:.08em;animation:blink 1.05s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.hero-stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.chip{
+  font-family:var(--font-mono);font-size:12.5px;padding:7px 13px;border-radius:999px;
+  border:1px solid var(--line);background:rgba(21,29,59,.7);color:var(--muted)
+}
+.chip b{color:var(--text);font-weight:600}
 
-  /* ── HERO ── */
-  .hero {
-    padding: 60px 32px 40px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -80px; left: 50%;
-    transform: translateX(-50%);
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(123,47,190,0.35) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero-eyebrow {
-    display: inline-block;
-    background: var(--yellow);
-    color: var(--purple);
-    font-size: 0.75rem;
-    font-weight: 900;
-    padding: 5px 16px;
-    border-radius: 4px;
-    letter-spacing: 2px;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-  }
-  .hero h1 {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: clamp(2.4rem, 6vw, 4.2rem);
-    line-height: 1.1;
-    margin-bottom: 16px;
-  }
-  .hero h1 em { color: var(--yellow); font-style: normal; }
-  .hero-sub {
-    font-size: 1.05rem;
-    color: rgba(255,248,240,0.7);
-    max-width: 560px;
-    margin: 0 auto 36px;
-    line-height: 1.7;
-  }
+/* ---------- NAV ---------- */
+nav{
+  position:sticky;top:0;z-index:60;backdrop-filter:blur(14px);
+  background:rgba(11,15,31,.86);border-bottom:1px solid var(--line);
+}
+.navrow{display:flex;gap:4px;overflow-x:auto;padding:10px 0;scrollbar-width:none}
+.navrow::-webkit-scrollbar{display:none}
+.tabbtn{
+  flex:0 0 auto;background:none;border:0;color:var(--muted);cursor:pointer;
+  font-family:var(--font-body);font-weight:600;font-size:14.5px;padding:9px 15px;border-radius:10px;
+  position:relative;transition:color .18s,background .18s;white-space:nowrap
+}
+.tabbtn:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.tabbtn.on{color:var(--ink);background:var(--accent);box-shadow:0 0 22px -4px var(--accent)}
+.tabbtn:focus-visible{outline:2px solid var(--c3);outline-offset:2px}
 
-  /* ── PROGRESS BAR ── */
-  .progress-wrap {
-    max-width: 700px;
-    margin: 0 auto 48px;
-  }
-  .progress-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.7rem;
-    color: rgba(255,248,240,0.5);
-    margin-bottom: 8px;
-  }
-  .progress-track {
-    height: var(--track-h);
-    background: rgba(255,255,255,0.1);
-    border-radius: 99px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--mint), var(--yellow));
-    border-radius: 99px;
-    width: 0%;
-    transition: width 0.6s ease;
-  }
+/* ---------- SECTION ---------- */
+.page{display:none;padding:44px 0 90px;animation:fade .3s ease}
+.page.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sechead{display:flex;align-items:flex-start;gap:20px;margin-bottom:10px;flex-wrap:wrap}
+.bignum{
+  font-family:var(--font-display);font-size:clamp(52px,10vw,96px);line-height:.86;
+  color:transparent;-webkit-text-stroke:2px var(--accent);opacity:.85;flex:0 0 auto
+}
+.sechead-txt h2{font-family:var(--font-display);font-weight:400;font-size:clamp(24px,4.4vw,36px);margin:6px 0 6px;letter-spacing:-.01em}
+.sechead-txt p{margin:0;color:var(--muted);max-width:640px}
+h3.blk{
+  font-size:19px;margin:44px 0 14px;display:flex;align-items:center;gap:10px;font-weight:700
+}
+h3.blk::before{content:"";width:4px;height:19px;background:var(--accent);border-radius:2px;box-shadow:0 0 14px var(--accent)}
+h4{font-size:15.5px;margin:22px 0 8px;color:var(--text)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:820px){.grid2,.grid3{grid-template-columns:1fr}}
 
-  /* ── NAV TABS ── */
-  .nav-tabs {
-    display: flex;
-    overflow-x: auto;
-    gap: 8px;
-    padding: 0 32px 24px;
-    scrollbar-width: none;
-  }
-  .nav-tabs::-webkit-scrollbar { display: none; }
-  .nav-tab {
-    flex-shrink: 0;
-    background: var(--card-bg);
-    border: 2px solid transparent;
-    border-radius: 12px;
-    padding: 12px 20px;
-    cursor: pointer;
-    transition: all 0.25s;
-    text-align: center;
-    min-width: 140px;
-  }
-  .nav-tab:hover { border-color: var(--yellow); transform: translateY(-2px); }
-  .nav-tab.active {
-    border-color: var(--yellow);
-    background: rgba(255,230,0,0.1);
-  }
-  .nav-tab .tab-icon { font-size: 1.6rem; margin-bottom: 6px; }
-  .nav-tab .tab-num {
-    font-size: 0.65rem;
-    color: var(--yellow);
-    font-weight: 900;
-    letter-spacing: 1.5px;
-    margin-bottom: 4px;
-  }
-  .nav-tab .tab-label {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--ivory);
-    line-height: 1.3;
-  }
+/* ---------- TIMELINE ---------- */
+.tl{display:grid;gap:8px}
+.tl-row{
+  display:grid;grid-template-columns:78px 1fr;gap:16px;align-items:center;
+  background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+  border-radius:12px;padding:13px 16px
+}
+.tl-time{font-family:var(--font-mono);font-size:14px;color:var(--accent);font-weight:700}
+.tl-t{font-weight:700;font-size:15px;margin:0}
+.tl-d{margin:2px 0 0;color:var(--muted);font-size:13.6px}
+@media(max-width:560px){.tl-row{grid-template-columns:1fr;gap:4px}}
 
-  /* ── MAIN CONTENT ── */
-  .content-area {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 0 24px 80px;
-  }
-  .lesson-panel { display: none; }
-  .lesson-panel.active { display: block; animation: fadeUp 0.35s ease; }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+/* ---------- CONCEPT ---------- */
+.step5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media(max-width:900px){.step5{grid-template-columns:repeat(2,1fr)}}
+.step5 .s{
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 14px;position:relative
+}
+.step5 .s .n{font-family:var(--font-mono);font-size:11.5px;color:var(--accent);letter-spacing:.1em}
+.step5 .s .t{font-weight:700;margin:5px 0 4px;font-size:15px}
+.step5 .s .e{font-size:12.8px;color:var(--muted);font-family:var(--font-mono)}
 
-  /* Lesson Header */
-  .lesson-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 20px;
-    margin-bottom: 32px;
-    padding: 28px;
-    background: var(--card-bg);
-    border-radius: 20px;
-    border-left: 5px solid var(--yellow);
-  }
-  .lesson-icon-big { font-size: 3.5rem; line-height: 1; }
-  .lesson-meta { flex: 1; }
-  .lesson-session {
-    font-size: 0.7rem;
-    font-weight: 900;
-    color: var(--yellow);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .lesson-title {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 1.7rem;
-    margin-bottom: 8px;
-  }
-  .lesson-desc {
-    font-size: 0.88rem;
-    color: rgba(255,248,240,0.7);
-    line-height: 1.7;
-  }
-  .lesson-badges {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-    flex-wrap: wrap;
-  }
-  .badge {
-    font-size: 0.68rem;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 99px;
-  }
-  .badge-time { background: rgba(0,229,195,0.2); color: var(--mint); border: 1px solid var(--mint); }
-  .badge-level { background: rgba(255,77,109,0.2); color: var(--coral); border: 1px solid var(--coral); }
-  .badge-tool { background: rgba(61,159,255,0.2); color: var(--blue); border: 1px solid var(--blue); }
+/* ---------- PROMPT CARD ---------- */
+.pc{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:18px}
+.pc-head{
+  display:flex;align-items:center;gap:12px;padding:14px 18px;
+  background:linear-gradient(90deg,rgba(255,255,255,.055),transparent);border-bottom:1px solid var(--line)
+}
+.pc-tag{font-family:var(--font-mono);font-size:12px;color:var(--ink);background:var(--accent);padding:3px 9px;border-radius:6px;font-weight:700}
+.pc-title{font-weight:700;font-size:15.5px;flex:1;min-width:0}
+.pc-body{padding:18px}
+.pbox{border-radius:12px;padding:14px 16px;margin-bottom:12px;border:1px solid var(--line);background:var(--ink-2)}
+.pbox.bad{border-color:rgba(251,113,133,.4)}
+.pbox.good{border-color:rgba(74,222,128,.45);background:rgba(74,222,128,.05)}
+.pbox .lbl{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.1em;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.pbox.bad .lbl{color:var(--bad)}
+.pbox.good .lbl{color:var(--good)}
+pre.pt{
+  margin:0;font-family:var(--font-mono);font-size:13.4px;line-height:1.75;
+  white-space:pre-wrap;word-break:break-word;color:var(--text)
+}
+.pbox.bad pre.pt{color:#C2CCE8}
+.why{display:grid;gap:7px;margin-top:4px}
+.why li{list-style:none;font-size:13.6px;color:var(--muted);padding-left:22px;position:relative}
+.why li::before{content:"→";position:absolute;left:0;color:var(--accent);font-family:var(--font-mono)}
+.why li b{color:var(--text);font-weight:600}
+.copybtn{
+  font-family:var(--font-mono);font-size:12px;border:1px solid var(--line);background:var(--panel-2);
+  color:var(--text);padding:6px 12px;border-radius:8px;cursor:pointer;transition:.18s;flex:0 0 auto
+}
+.copybtn:hover{border-color:var(--accent);color:var(--accent)}
+.copybtn.done{background:var(--good);color:var(--ink);border-color:var(--good)}
 
-  /* Time Table */
-  .timetable {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 14px;
-    overflow: hidden;
-    margin-bottom: 28px;
-  }
-  .timetable-header {
-    background: rgba(255,230,0,0.12);
-    padding: 12px 20px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: var(--yellow);
-    letter-spacing: 1px;
-  }
-  .timetable-row {
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    gap: 16px;
-  }
-  .timetable-time {
-    font-size: 0.75rem;
-    color: var(--mint);
-    font-weight: 700;
-    width: 90px;
-    flex-shrink: 0;
-  }
-  .timetable-activity {
-    font-size: 0.85rem;
-    color: var(--ivory);
-    flex: 1;
-  }
-  .timetable-tag {
-    font-size: 0.65rem;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 4px;
-    background: rgba(123,47,190,0.4);
-    color: #d4aaff;
-  }
+/* ---------- DEMO SHELL ---------- */
+.demo{
+  border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--ink-2)
+}
+.demo-bar{
+  display:flex;align-items:center;gap:8px;padding:10px 15px;background:var(--panel);border-bottom:1px solid var(--line);
+  font-family:var(--font-mono);font-size:12px;color:var(--muted)
+}
+.dot{width:10px;height:10px;border-radius:50%}
+.demo-in{padding:26px 20px}
 
-  /* Prompt Cards */
-  .section-title {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 1.15rem;
-    margin: 28px 0 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: rgba(255,255,255,0.1);
-  }
+/* ---------- NEON PROFILE CARD (1회차) ---------- */
+.np-lay{display:grid;grid-template-columns:1fr 320px;gap:26px;align-items:start}
+@media(max-width:820px){.np-lay{grid-template-columns:1fr}}
+.np-stage{display:flex;justify-content:center;perspective:1000px;padding:14px 0}
+.npcard{
+  width:300px;min-height:396px;border-radius:22px;padding:28px 24px;position:relative;
+  background:linear-gradient(160deg,#1A2350,#0E1430);
+  border:1px solid rgba(45,226,230,.45);
+  box-shadow:0 0 0 1px rgba(255,255,255,.04) inset, 0 20px 50px -18px rgba(0,0,0,.85), 0 0 34px -8px rgba(45,226,230,.5);
+  transform-style:preserve-3d;transition:box-shadow .25s, transform .12s ease-out;
+  display:flex;flex-direction:column;align-items:center;text-align:center
+}
+.npcard:hover{box-shadow:0 0 0 1px rgba(255,255,255,.06) inset,0 26px 60px -18px rgba(0,0,0,.9),0 0 60px -6px rgba(45,226,230,.8)}
+.np-av{
+  width:96px;height:96px;border-radius:50%;display:grid;place-items:center;font-size:46px;
+  background:radial-gradient(circle at 32% 28%, #2DE2E6, #1B2449 70%);
+  border:2px solid rgba(45,226,230,.7);box-shadow:0 0 26px -4px rgba(45,226,230,.9);
+  transform:translateZ(46px);margin-bottom:16px
+}
+.np-name{font-family:var(--font-display);font-weight:400;font-size:26px;margin:0;transform:translateZ(34px);letter-spacing:-.01em}
+.np-role{font-family:var(--font-mono);font-size:12.5px;color:var(--c1);letter-spacing:.08em;margin:6px 0 14px;transform:translateZ(28px)}
+.np-bio{font-size:13.6px;color:#B9C6E8;margin:0 0 18px;transform:translateZ(20px);min-height:44px}
+.np-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:18px;transform:translateZ(18px)}
+.np-tags span{font-family:var(--font-mono);font-size:11px;padding:4px 9px;border-radius:999px;border:1px solid rgba(45,226,230,.4);color:var(--c1)}
+.np-btn{
+  margin-top:auto;font-family:var(--font-body);font-weight:700;font-size:14px;cursor:pointer;
+  padding:11px 22px;border-radius:999px;border:1.5px solid var(--c2);color:var(--c2);background:transparent;
+  transform:translateZ(38px);transition:.2s
+}
+.np-btn:hover{background:var(--c2);color:#fff;box-shadow:0 0 28px -4px var(--c2)}
+.np-secret{
+  width:100%;border-radius:14px;padding:0 15px;margin:0;
+  background:rgba(255,46,136,.14);border:1px solid transparent;
+  font-size:13px;line-height:1.6;color:#FFD3E6;text-align:left;
+  max-height:0;opacity:0;overflow:hidden;transform:translateZ(26px);
+  transition:max-height .3s ease, opacity .3s ease, padding .3s ease, margin .3s ease
+}
+.np-secret.on{max-height:160px;opacity:1;padding:12px 15px;margin:0 0 14px;border-color:rgba(255,46,136,.5)}
+.form label{display:block;font-family:var(--font-mono);font-size:11.5px;color:var(--muted);letter-spacing:.08em;margin:14px 0 6px}
+.form input,.form select,.form textarea{
+  width:100%;background:var(--ink-2);border:1px solid var(--line);border-radius:10px;
+  color:var(--text);padding:10px 12px;font-family:var(--font-body);font-size:14px
+}
+.form input[type=range]{accent-color:var(--accent);background:transparent;border:0;height:26px}
+.form input:focus,.form select:focus,.form textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.emoji-row{display:flex;flex-wrap:wrap;gap:6px}
+.emoji-row button{
+  font-size:20px;width:40px;height:40px;border-radius:10px;border:1px solid var(--line);
+  background:var(--ink-2);cursor:pointer;transition:.15s
+}
+.emoji-row button:hover,.emoji-row button.on{border-color:var(--c1);box-shadow:0 0 16px -4px var(--c1)}
 
-  /* AI Tabs */
-  .ai-tabs {
-    display: flex;
-    gap: 0;
-    margin-bottom: 0;
-    border-radius: 12px 12px 0 0;
-    overflow: hidden;
-  }
-  .ai-tab {
-    flex: 1;
-    padding: 10px 16px;
-    font-size: 0.82rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-    border: none;
-    outline: none;
-  }
-  .ai-tab.gpt { background: rgba(16,163,127,0.25); color: #10a37f; }
-  .ai-tab.gemini { background: rgba(66,133,244,0.25); color: #4285f4; }
-  .ai-tab.gpt.active { background: #10a37f; color: #fff; }
-  .ai-tab.gemini.active { background: #4285f4; color: #fff; }
+/* ---------- QUIZ (2회차) ---------- */
+.qz{max-width:600px;margin:0 auto;position:relative}
+.qz-prog{height:8px;border-radius:99px;background:var(--panel-2);overflow:hidden;margin-bottom:8px}
+.qz-bar{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--c2),var(--c3));transition:width .4s cubic-bezier(.4,0,.2,1)}
+.qz-meta{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:12px;color:var(--muted);margin-bottom:22px}
+.qz-q{font-size:19px;font-weight:700;margin:0 0 18px;line-height:1.5}
+.qz-opt{
+  display:block;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);
+  color:var(--text);padding:14px 16px;border-radius:12px;cursor:pointer;margin-bottom:10px;
+  font-family:var(--font-body);font-size:14.6px;transition:.16s
+}
+.qz-opt:hover{border-color:var(--c2);transform:translateX(4px);background:var(--panel-2)}
+.qz-opt:focus-visible{outline:2px solid var(--c3);outline-offset:2px}
+.qz-res{text-align:center;padding:10px 0}
+.qz-res .em{font-size:64px;line-height:1}
+.qz-res h4{font-family:var(--font-display);font-weight:400;font-size:30px;margin:12px 0 8px;color:var(--c2)}
+.qz-res .sc{font-family:var(--font-mono);font-size:13px;color:var(--muted);margin-bottom:12px}
+.qz-res p{color:#C6D2F0;max-width:440px;margin:0 auto 20px;font-size:14.6px}
+.btn{
+  font-family:var(--font-body);font-weight:700;font-size:14px;cursor:pointer;padding:11px 24px;
+  border-radius:999px;border:1.5px solid var(--accent);color:var(--accent);background:transparent;transition:.2s
+}
+.btn:hover{background:var(--accent);color:var(--ink);box-shadow:0 0 26px -6px var(--accent)}
+.btn.solid{background:var(--accent);color:var(--ink)}
+#confetti{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 
-  .prompt-card {
-    background: var(--card-bg);
-    border-radius: 0 0 16px 16px;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-top: none;
-    margin-bottom: 20px;
-    overflow: hidden;
-  }
-  .prompt-body { display: none; padding: 20px; }
-  .prompt-body.active { display: block; }
+/* ---------- GAME (3회차) ---------- */
+.gm-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+#game{
+  border:1px solid var(--line);border-radius:14px;background:#080C1C;touch-action:none;
+  max-width:100%;height:auto;box-shadow:0 0 40px -14px rgba(255,201,60,.5)
+}
+.gm-hud{display:flex;gap:18px;font-family:var(--font-mono);font-size:13px;color:var(--muted)}
+.gm-hud b{color:var(--c3)}
+.gm-help{font-size:13px;color:var(--muted);text-align:center}
+.pad{display:none;gap:12px}
+@media(max-width:820px){.pad{display:flex}}
+.pad button{width:76px;height:52px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--text);font-size:20px}
 
-  .prompt-label {
-    font-size: 0.7rem;
-    font-weight: 900;
-    color: rgba(255,248,240,0.45);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-  .prompt-text {
-    background: rgba(0,0,0,0.35);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 10px;
-    padding: 16px;
-    font-size: 0.82rem;
-    line-height: 1.75;
-    color: #e8f4ff;
-    white-space: pre-wrap;
-    word-break: break-word;
-    position: relative;
-    margin-bottom: 12px;
-  }
-  .copy-btn {
-    position: absolute;
-    top: 10px; right: 10px;
-    background: rgba(255,230,0,0.15);
-    border: 1px solid rgba(255,230,0,0.4);
-    color: var(--yellow);
-    font-size: 0.68rem;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .copy-btn:hover { background: var(--yellow); color: var(--purple); }
-  .copy-btn.copied { background: var(--mint); color: var(--purple); border-color: var(--mint); }
+/* ---------- STEPPER (배포) ---------- */
+.stp{display:grid;gap:0}
+.stp-item{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:0 0 22px;position:relative}
+.stp-item::before{content:"";position:absolute;left:21px;top:38px;bottom:0;width:2px;background:var(--line)}
+.stp-item:last-child::before{display:none}
+.stp-n{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-mono);
+  font-weight:700;background:var(--panel);border:1px solid var(--accent);color:var(--accent);z-index:1
+}
+.stp-b h4{margin:8px 0 6px}
+.stp-b p{margin:0 0 8px;color:var(--muted);font-size:14px}
+code.k{font-family:var(--font-mono);font-size:12.8px;background:var(--ink-2);border:1px solid var(--line);padding:2px 7px;border-radius:6px;color:var(--c3)}
 
-  .prompt-tip {
-    background: rgba(0,229,195,0.08);
-    border-left: 3px solid var(--mint);
-    padding: 10px 14px;
-    border-radius: 0 8px 8px 0;
-    font-size: 0.78rem;
-    color: rgba(255,248,240,0.75);
-    line-height: 1.6;
-    margin-top: 4px;
-  }
-  .prompt-tip strong { color: var(--mint); }
+/* ---------- CHECKLIST ---------- */
+.chk{display:grid;gap:8px}
+.chk label{
+  display:flex;gap:12px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;padding:13px 16px;cursor:pointer;font-size:14.4px;transition:.16s
+}
+.chk label:hover{border-color:var(--accent)}
+.chk input{margin-top:4px;width:17px;height:17px;accent-color:var(--accent);flex:0 0 auto}
+.chk[data-chk] input:checked+span{color:var(--muted);text-decoration:line-through}
+#bActs label{padding:10px 14px;font-size:13.8px}
+#bActs input:checked+span{color:var(--c1)}
 
-  /* Example Output */
-  .example-block {
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 14px;
-    overflow: hidden;
-    margin-bottom: 20px;
-  }
-  .example-header {
-    background: rgba(255,77,109,0.12);
-    padding: 10px 18px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: var(--coral);
-  }
-  .example-body { padding: 18px; }
+/* ---------- TOOLS ---------- */
+.builder-out{
+  font-family:var(--font-mono);font-size:13.4px;white-space:pre-wrap;background:var(--ink-2);
+  border:1px solid var(--line);border-radius:12px;padding:16px;min-height:170px;line-height:1.75
+}
+.score-ring{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.ring{
+  width:104px;height:104px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;
+  background:conic-gradient(var(--c1) 0deg, var(--panel-2) 0deg);transition:background .5s
+}
+.ring i{
+  width:82px;height:82px;border-radius:50%;background:var(--ink-2);display:grid;place-items:center;
+  font-family:var(--font-mono);font-style:normal;font-size:23px;font-weight:700
+}
+.crit{display:grid;gap:6px;flex:1;min-width:230px}
+.crit div{font-family:var(--font-mono);font-size:12.8px;color:var(--muted);display:flex;gap:9px;align-items:center}
+.crit div.ok{color:var(--good)}
+.crit .mk{width:18px;text-align:center}
 
-  /* Film Frame (포스터 예시) */
-  .film-frame {
-    background: #0d0d0d;
-    border: 3px solid #333;
-    border-radius: 8px;
-    padding: 0;
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-    max-width: 100%;
-  }
-  .film-sprocket {
-    background: #1a1a1a;
-    padding: 6px 0;
-    display: flex;
-    gap: 8px;
-    padding-left: 10px;
-  }
-  .sprocket-hole {
-    width: 10px; height: 10px;
-    border-radius: 2px;
-    background: #333;
-    flex-shrink: 0;
-  }
-  .film-content {
-    padding: 16px;
-    background: linear-gradient(135deg, #1a0530 0%, #0d0520 100%);
-    min-height: 180px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-  .film-title {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 1.6rem;
-    color: #fff;
-    text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
-    margin-bottom: 4px;
-  }
-  .film-subtitle { font-size: 0.78rem; color: rgba(255,255,255,0.6); }
-  .film-year {
-    position: absolute;
-    top: 30px; right: 16px;
-    font-size: 2.5rem;
-    font-weight: 900;
-    color: rgba(255,230,0,0.15);
-    font-family: 'Black Han Sans', sans-serif;
-  }
+table.tb{width:100%;border-collapse:collapse;font-size:14px;overflow:hidden;border-radius:12px}
+table.tb th,table.tb td{border:1px solid var(--line);padding:10px 13px;text-align:left}
+table.tb th{background:var(--panel-2);font-weight:700;font-size:13.4px}
+table.tb td{background:var(--panel);color:#C6D2F0}
+.tbscroll{overflow-x:auto}
 
-  /* Game Card */
-  .game-screen {
-    background: #0a0a1a;
-    border: 2px solid var(--violet);
-    border-radius: 10px;
-    padding: 16px;
-    font-family: 'Courier New', monospace;
-    position: relative;
-    overflow: hidden;
-  }
-  .game-screen::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--coral), var(--yellow), var(--mint));
-  }
-  .pixel-row { display: flex; gap: 4px; margin-bottom: 4px; }
-  .pixel { width: 16px; height: 16px; border-radius: 2px; }
-  .game-hud {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.72rem;
-    color: var(--yellow);
-    margin-bottom: 10px;
-  }
-
-  /* Media Art canvas */
-  .art-preview {
-    background: #000;
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    min-height: 160px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .art-circles {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .art-circle {
-    position: absolute;
-    border-radius: 50%;
-    border: 2px solid;
-    animation: pulse-ring 3s ease-in-out infinite;
-  }
-  @keyframes pulse-ring {
-    0%, 100% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.08); opacity: 0.3; }
-  }
-  .art-text {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 1.2rem;
-    color: #fff;
-    position: relative;
-    z-index: 1;
-    text-shadow: 0 0 20px var(--mint);
-  }
-
-  /* Step Sequence */
-  .steps {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  .step {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 14px 18px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.07);
-    transition: all 0.2s;
-  }
-  .step:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,230,0,0.3); }
-  .step-num {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    background: var(--yellow);
-    color: var(--purple);
-    font-size: 0.75rem;
-    font-weight: 900;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-  .step-content { flex: 1; }
-  .step-title { font-size: 0.88rem; font-weight: 700; margin-bottom: 3px; }
-  .step-detail { font-size: 0.78rem; color: rgba(255,248,240,0.6); line-height: 1.5; }
-
-  /* Accordion */
-  .accordion-item {
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    overflow: hidden;
-    margin-bottom: 8px;
-  }
-  .accordion-btn {
-    width: 100%;
-    background: var(--card-bg);
-    border: none;
-    padding: 14px 18px;
-    text-align: left;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: var(--ivory);
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 700;
-    transition: background 0.2s;
-  }
-  .accordion-btn:hover { background: rgba(255,255,255,0.06); }
-  .accordion-btn .acc-icon { transition: transform 0.3s; color: var(--yellow); }
-  .accordion-btn.open .acc-icon { transform: rotate(180deg); }
-  .accordion-content {
-    display: none;
-    padding: 16px 18px;
-    background: rgba(0,0,0,0.2);
-    font-size: 0.82rem;
-    line-height: 1.75;
-    color: rgba(255,248,240,0.8);
-  }
-  .accordion-content.open { display: block; }
-
-  /* Footer */
-  footer {
-    text-align: center;
-    padding: 32px;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    font-size: 0.75rem;
-    color: rgba(255,248,240,0.35);
-  }
-  footer span { color: var(--yellow); }
-
-  /* Util */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
-
-  .highlight { color: var(--yellow); font-weight: 700; }
-  .highlight-mint { color: var(--mint); font-weight: 700; }
-  .highlight-coral { color: var(--coral); font-weight: 700; }
-
-  /* Scroll reveal */
-  .reveal { opacity: 0; transform: translateY(20px); transition: all 0.5s ease; }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
+.note{
+  border-left:3px solid var(--c3);background:rgba(255,201,60,.07);border-radius:0 12px 12px 0;
+  padding:14px 18px;font-size:14px;color:#E4DCC4;margin:16px 0
+}
+.note b{color:var(--c3)}
+footer{border-top:1px solid var(--line);padding:30px 0 60px;color:var(--muted);font-size:13px;text-align:center}
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);opacity:0;pointer-events:none;
+  background:var(--c1);color:var(--ink);font-weight:700;font-size:13.5px;padding:10px 20px;border-radius:999px;
+  transition:.25s;z-index:99
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  html{scroll-behavior:auto}
+}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">세영코딩연구소 <span>| VIBE CODING</span></div>
-  <div class="header-badge">🎬 6차시 완성 커리큘럼</div>
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">VIBE CODING / 3 SESSIONS</p>
+    <h1>말로 만드는 웹<br><span class="glow">프롬프트</span>가 <span class="glow2">코드</span>다<span class="caret"></span></h1>
+    <p class="lead">키보드로 문법을 외우는 대신, 원하는 장면을 정확한 문장으로 설명합니다. 3번의 수업으로 네온 프로필 카드 → 심리테스트 앱 → 미니 웹게임까지 만들고, 내 링크로 세상에 공개합니다.</p>
+    <div class="hero-stats">
+      <span class="chip">총 <b>3회차</b> · 회차당 <b>120분</b></span>
+      <span class="chip">실습 프롬프트 <b>9종</b></span>
+      <span class="chip">완성 작품 <b>3개</b></span>
+      <span class="chip">결과물 <b>공유 가능한 URL</b></span>
+    </div>
+  </div>
 </header>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-eyebrow">✦ 바이브코딩 크리에이티브 클래스</div>
-  <h1>AI와 함께<br><em>나만의 콘텐츠</em>를<br>만들자!</h1>
-  <p class="hero-sub">ChatGPT · Gemini 프롬프트로 영화 포스터, 미디어아트, 게임까지!<br>초·중·고 누구든 할 수 있는 2시간 × 6회 실전 수업</p>
+<nav>
+  <div class="wrap navrow" id="tabs">
+    <button class="tabbtn on" data-p="p0">수업 한눈에</button>
+    <button class="tabbtn" data-p="p1">1회차 · 네온 카드</button>
+    <button class="tabbtn" data-p="p2">2회차 · 퀴즈 앱</button>
+    <button class="tabbtn" data-p="p3">3회차 · 미니게임</button>
+    <button class="tabbtn" data-p="p4">프롬프트 연습실</button>
+  </div>
+</nav>
 
-  <!-- 수업 진도 표시 -->
-  <div class="progress-wrap">
-    <div class="progress-labels">
-      <span>수업 1</span><span>수업 2</span><span>수업 3</span>
-      <span>수업 4</span><span>수업 5</span><span>수업 6 🏁</span>
+<main class="wrap">
+
+<!-- ================= 개요 ================= -->
+<section class="page on" id="p0">
+  <div class="sechead">
+    <div class="bignum">00</div>
+    <div class="sechead-txt">
+      <h2>바이브 코딩이 뭔가요</h2>
+      <p>만들고 싶은 것을 말로 설명하면 AI가 코드로 옮깁니다. 그래서 실력은 타이핑 속도가 아니라 <b>설명의 정확도</b>에서 갈립니다. 이 수업은 그 설명법을 훈련합니다.</p>
     </div>
-    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <h3 class="blk">프롬프트를 쓰는 5단계</h3>
+  <p style="color:var(--muted);margin-top:-4px">순서대로 채우면 빠진 정보가 눈에 보입니다. 아래 순서는 그대로 문장 순서로 써도 됩니다.</p>
+  <div class="step5">
+    <div class="s"><div class="n">STEP 1</div><div class="t">대상</div><div class="e">무엇을 만들까</div></div>
+    <div class="s"><div class="n">STEP 2</div><div class="t">모양</div><div class="e">색·폰트·크기·배치</div></div>
+    <div class="s"><div class="n">STEP 3</div><div class="t">동작</div><div class="e">언제 무슨 일이</div></div>
+    <div class="s"><div class="n">STEP 4</div><div class="t">수치</div><div class="e">몇 초·몇 px·몇 개</div></div>
+    <div class="s"><div class="n">STEP 5</div><div class="t">형식</div><div class="e">파일 형태·제약</div></div>
+  </div>
+
+  <h3 class="blk">같은 요청, 다른 결과</h3>
+  <div class="grid2">
+    <div class="pbox bad">
+      <div class="lbl">✕ 정보가 빠진 요청</div>
+      <pre class="pt">빨간색 버튼 만들어줘</pre>
+      <p style="color:var(--muted);font-size:13.4px;margin:12px 0 0">AI가 크기·모양·반응을 마음대로 정합니다. 결과가 매번 달라지고, 고쳐달라는 말을 다섯 번 더 하게 됩니다.</p>
+    </div>
+    <div class="pbox good">
+      <div class="lbl">✓ 5단계를 채운 요청</div>
+      <pre class="pt">가로 200px, 세로 56px의 둥근 빨간색 버튼을 만들어줘.
+글자는 흰색 굵은 18px "시작하기".
+마우스를 올리면 0.3초에 걸쳐 빨간 빛이 번지고
+살짝 커지게 해줘. HTML 한 파일로 줘.</pre>
+      <p style="color:var(--muted);font-size:13.4px;margin:12px 0 0">첫 시도에서 원하는 화면이 나옵니다. 수정은 <b style="color:var(--text)">덧붙이는 대화</b>로 이어갑니다.</p>
+    </div>
+  </div>
+
+  <h3 class="blk">3회차 로드맵</h3>
+  <div class="tbscroll">
+  <table class="tb">
+    <tr><th style="width:78px">회차</th><th>만드는 것</th><th>배우는 개념</th><th>남는 결과물</th></tr>
+    <tr><td><b>1회차</b></td><td>네온 프로필 카드</td><td>프롬프트 5단계 · 화면 꾸미기 · 마우스 반응</td><td>나만의 자기소개 카드</td></tr>
+    <tr><td><b>2회차</b></td><td>MBTI형 미니 퀴즈</td><td>화면 전환 · 점수 누적 · 조건 분기 · 디버깅</td><td>친구에게 풀려주는 심리테스트</td></tr>
+    <tr><td><b>3회차</b></td><td>피하기 미니게임</td><td>게임 루프 · 충돌 감지 · 난이도 곡선 · 배포</td><td>접속 가능한 웹 링크</td></tr>
+  </table>
+  </div>
+
+  <div class="note"><b>준비물</b> — 크롬 브라우저, AI 대화 창, 텍스트 편집기(메모장·VS Code 무엇이든). 3회차에는 GitHub 계정이 필요하니 미리 만들어 오세요.</div>
+
+  <h3 class="blk">수업 중 지켜야 할 3가지</h3>
+  <div class="grid3">
+    <div class="card"><h4 style="margin-top:0">① 한 번에 하나씩</h4><p style="color:var(--muted);font-size:14px;margin:0">"카드 만들고 퀴즈도 넣고 게임도" 대신 기능을 하나씩 요청합니다. 오류가 나도 원인을 바로 찾습니다.</p></div>
+    <div class="card"><h4 style="margin-top:0">② 눈으로 확인 후 다음</h4><p style="color:var(--muted);font-size:14px;margin:0">받은 코드는 즉시 저장해서 브라우저로 엽니다. 확인하지 않은 코드 위에 또 요청하지 않습니다.</p></div>
+    <div class="card"><h4 style="margin-top:0">③ 오류는 그대로 복사</h4><p style="color:var(--muted);font-size:14px;margin:0">"안 돼요" 대신 화면 상태와 오류 메시지를 그대로 붙여넣습니다. 정보가 있어야 AI가 고칩니다.</p></div>
   </div>
 </section>
 
-<!-- NAV TABS -->
-<div class="nav-tabs" id="navTabs">
-  <div class="nav-tab active" onclick="switchLesson(0,this)">
-    <div class="tab-icon">🎬</div>
-    <div class="tab-num">수업 1</div>
-    <div class="tab-label">영화 포스터 & 예고편 자막</div>
+<!-- ================= 1회차 ================= -->
+<section class="page" id="p1" data-accent="#2DE2E6">
+  <div class="sechead">
+    <div class="bignum">01</div>
+    <div class="sechead-txt">
+      <h2>AI와 첫인사 — 나만의 입체 프로필 & 네온 카드</h2>
+      <p>프롬프트 전달 방식을 익히고, 마우스를 따라 기울어지며 클릭하면 비밀 메시지가 열리는 자기소개 카드를 완성합니다.</p>
+    </div>
   </div>
-  <div class="nav-tab" onclick="switchLesson(1,this)">
-    <div class="tab-icon">🎨</div>
-    <div class="tab-num">수업 2</div>
-    <div class="tab-label">미디어아트 & 인터랙티브 작품</div>
-  </div>
-  <div class="nav-tab" onclick="switchLesson(2,this)">
-    <div class="tab-icon">🕹️</div>
-    <div class="tab-num">수업 3</div>
-    <div class="tab-label">미니 게임 제작</div>
-  </div>
-  <div class="nav-tab" onclick="switchLesson(3,this)">
-    <div class="tab-icon">🎵</div>
-    <div class="tab-num">수업 4</div>
-    <div class="tab-label">뮤직 비주얼라이저</div>
-  </div>
-  <div class="nav-tab" onclick="switchLesson(4,this)">
-    <div class="tab-icon">📱</div>
-    <div class="tab-num">수업 5</div>
-    <div class="tab-label">앱·웹 UI 프로토타입</div>
-  </div>
-  <div class="nav-tab" onclick="switchLesson(5,this)">
-    <div class="tab-icon">🚀</div>
-    <div class="tab-num">수업 6</div>
-    <div class="tab-label">나만의 포트폴리오 사이트</div>
-  </div>
-</div>
 
-<!-- ====================================================
-     LESSON PANELS
-===================================================== -->
-<div class="content-area">
+  <h3 class="blk">오늘의 시간표 · 120분</h3>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-time">10분</div><div><p class="tl-t">오리엔테이션</p><p class="tl-d">바이브 코딩 개념 소개 — 아이디어를 말로 전달해 앱·웹 완성하기</p></div></div>
+    <div class="tl-row"><div class="tl-time">30분</div><div><p class="tl-t">프롬프트 기초 연습</p><p class="tl-d">"빨간색 버튼 만들어줘" vs "마우스를 올리면 빛나는 둥근 빨간색 버튼 만들어줘" 차이 체험</p></div></div>
+    <div class="tl-row"><div class="tl-time">50분</div><div><p class="tl-t">실습 · 네온 프로필 카드</p><p class="tl-d">캐릭터·좋아하는 주제 선택 → 호버 시 3D 기울기와 발광 → 버튼 클릭 시 비밀 메시지</p></div></div>
+    <div class="tl-row"><div class="tl-time">30분</div><div><p class="tl-t">디테일 다듬기 & 피드백</p><p class="tl-d">폰트, 배경 색상, 애니메이션 속도를 세부 프롬프트로 조정</p></div></div>
+  </div>
 
-<!-- ── 수업 1: 영화 포스터 ── -->
-<div class="lesson-panel active" id="panel-0">
-  <div class="lesson-header reveal">
-    <div class="lesson-icon-big">🎬</div>
-    <div class="lesson-meta">
-      <div class="lesson-session">수업 1 of 6</div>
-      <div class="lesson-title">영화 포스터 & 예고편 자막</div>
-      <div class="lesson-desc">ChatGPT / Gemini에게 영화 제목, 스토리, 포스터 구도를 지시하고<br>HTML+CSS로 멋진 영화 포스터 페이지를 직접 만들어봅니다.</div>
-      <div class="lesson-badges">
-        <span class="badge badge-time">⏱ 2시간</span>
-        <span class="badge badge-level">🎯 초·중·고</span>
-        <span class="badge badge-tool">🛠 HTML/CSS/JS</span>
+  <h3 class="blk">알고 가기 — 웹 화면의 세 겹</h3>
+  <div class="grid3">
+    <div class="card"><h4 style="margin-top:0;color:var(--c1)">HTML · 뼈대</h4><p style="color:var(--muted);font-size:14px;margin:0">무엇이 놓여 있는가. 이름, 사진, 버튼 같은 <b>내용</b>입니다.</p></div>
+    <div class="card"><h4 style="margin-top:0;color:var(--c1)">CSS · 겉모습</h4><p style="color:var(--muted);font-size:14px;margin:0">어떻게 보이는가. 색, 크기, 그림자, 둥근 정도, 발광 효과입니다.</p></div>
+    <div class="card"><h4 style="margin-top:0;color:var(--c1)">JavaScript · 반응</h4><p style="color:var(--muted);font-size:14px;margin:0">언제 무엇이 바뀌는가. 클릭, 마우스 이동에 따른 변화입니다.</p></div>
+  </div>
+  <div class="note">프롬프트에 <b>"어떻게 보이게"</b>와 <b>"언제 어떻게 반응하게"</b>를 나눠서 쓰면, AI가 CSS와 JavaScript를 정확히 나눠 작성합니다.</div>
+
+  <h3 class="blk">실습 프롬프트 3종</h3>
+
+  <article class="pc">
+    <div class="pc-head"><span class="pc-tag">1-1</span><span class="pc-title">발광 버튼 — 정보량의 차이를 몸으로 느끼기</span><button class="copybtn" data-copy="p11">복사</button></div>
+    <div class="pc-body">
+      <div class="pbox bad"><div class="lbl">✕ 먼저 이렇게 넣어보기</div><pre class="pt">빨간색 버튼 만들어줘</pre></div>
+      <div class="pbox good"><div class="lbl">✓ 그 다음 이렇게 넣어보기</div><pre class="pt" id="p11">가로 220px, 세로 60px의 모서리가 완전히 둥근 버튼을 만들어줘.
+배경은 진한 빨강(#E11D48), 글자는 흰색 굵게 18px로 "눌러보기".
+마우스를 올리면 0.3초 동안 버튼이 1.06배 커지면서
+바깥으로 빨간 빛이 번지게 해줘.
+누르는 순간에는 살짝 눌리는 느낌으로 0.96배로 줄었다가 돌아오게 해줘.
+배경은 어두운 남색으로 하고, HTML 파일 하나로 만들어줘.</pre></div>
+      <ul class="why">
+        <li><b>수치를 준다</b> — 220px, 0.3초, 1.06배. 숫자가 있으면 결과가 흔들리지 않습니다.</li>
+        <li><b>상태를 나눈다</b> — 평소 / 마우스 올릴 때 / 누를 때를 따로 적었습니다.</li>
+        <li><b>형식을 고정한다</b> — "HTML 파일 하나"로 저장과 실행이 간단해집니다.</li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="pc">
+    <div class="pc-head"><span class="pc-tag">1-2</span><span class="pc-title">네온 프로필 카드 — 마우스를 따라 기울어지는 3D</span><button class="copybtn" data-copy="p12">복사</button></div>
+    <div class="pc-body">
+      <div class="pbox good"><div class="lbl">✓ 실습 프롬프트</div><pre class="pt" id="p12">화면 한가운데에 세로형 프로필 카드를 만들어줘.
+
+[모양]
+- 크기 300x400px, 모서리 22px 둥글게
+- 배경은 남색 그라데이션, 테두리는 형광 하늘색(#2DE2E6) 1px
+- 카드 바깥으로 하늘색 네온 빛이 은은하게 퍼지게
+- 위에서부터 원형 아바타(이모지 🚀), 이름 "김세영",
+  한 줄 소개 "게임을 만드는 중학생", 관심사 태그 3개 순서로 배치
+
+[동작]
+- 마우스를 카드 위에서 움직이면 그 방향으로 최대 12도까지 기울어지게
+- 아바타와 이름은 카드보다 조금 더 앞으로 떠 보이게
+- 마우스가 카드를 벗어나면 0.4초에 걸쳐 원래 각도로 돌아오게
+
+HTML 파일 하나로, 색과 각도는 맨 위에서 쉽게 바꿀 수 있게 정리해줘.</pre></div>
+      <ul class="why">
+        <li><b>대괄호로 묶는다</b> — [모양]과 [동작]을 나누면 AI가 빠뜨리지 않습니다.</li>
+        <li><b>한계값을 정한다</b> — "최대 12도"가 없으면 카드가 과하게 꺾입니다.</li>
+        <li><b>수정 지점을 요청한다</b> — "맨 위에서 바꿀 수 있게"가 다음 단계 실습을 쉽게 만듭니다.</li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="pc">
+    <div class="pc-head"><span class="pc-tag">1-3</span><span class="pc-title">비밀 메시지 & 디테일 튜닝 — 이어서 요청하기</span><button class="copybtn" data-copy="p13">복사</button></div>
+    <div class="pc-body">
+      <div class="pbox good"><div class="lbl">✓ 앞 카드에 이어서 넣는 프롬프트</div><pre class="pt" id="p13">방금 만든 카드에 이어서 두 가지만 추가해줘.
+
+1) 카드 아래쪽에 테두리만 있는 분홍색 둥근 버튼 "비밀 열기"를 넣어줘.
+   버튼을 누르면 카드 안쪽 아래에서 비밀 메시지 상자가
+   0.3초 동안 아래에서 위로 올라오며 나타나게 해줘.
+   한 번 더 누르면 다시 사라지고, 버튼 글자는 "비밀 닫기"로 바뀌게 해줘.
+
+2) 전체 글꼴을 둥근 느낌으로 바꾸고, 이름만 28px로 키워줘.
+
+나머지 부분은 그대로 두고, 바뀐 코드 전체를 다시 줘.</pre></div>
+      <ul class="why">
+        <li><b>"이어서"라고 말한다</b> — 처음부터 다시 만들지 않고 앞 결과를 이어갑니다.</li>
+        <li><b>토글 조건을 명시한다</b> — "한 번 더 누르면"까지 써야 닫히는 기능이 생깁니다.</li>
+        <li><b>범위를 지킨다</b> — "나머지는 그대로"가 예상 밖 변경을 막습니다.</li>
+      </ul>
+    </div>
+  </article>
+
+  <h3 class="blk">완성 예시 — 직접 만져보기</h3>
+  <p style="color:var(--muted);margin-top:-4px">오른쪽 값을 바꾸면 카드가 즉시 반응합니다. 카드 위에서 마우스를 움직이고, 버튼도 눌러보세요.</p>
+  <div class="demo">
+    <div class="demo-bar"><span class="dot" style="background:#FF5F57"></span><span class="dot" style="background:#FEBC2E"></span><span class="dot" style="background:#28C840"></span><span style="margin-left:8px">neon-profile-card.html</span></div>
+    <div class="demo-in">
+      <div class="np-lay">
+        <div class="np-stage">
+          <div class="npcard" id="npcard">
+            <div class="np-av" id="npAv">🚀</div>
+            <h4 class="np-name" id="npName">김세영</h4>
+            <p class="np-role" id="npRole">GAME MAKER</p>
+            <p class="np-bio" id="npBio">게임을 만드는 중학생. 아이디어가 떠오르면 바로 만들어 봅니다.</p>
+            <div class="np-tags" id="npTags"><span>#게임</span><span>#그림</span><span>#농구</span></div>
+            <div class="np-secret" id="npSecret">사실 오늘 처음으로 코드 한 줄 없이 웹을 만들었습니다.</div>
+            <button class="np-btn" id="npBtn">비밀 열기</button>
+          </div>
+        </div>
+        <div class="form">
+          <label for="fName">이름</label>
+          <input id="fName" type="text" value="김세영" maxlength="12" />
+          <label for="fRole">한 줄 역할 (영문 대문자가 잘 어울려요)</label>
+          <input id="fRole" type="text" value="GAME MAKER" maxlength="20" />
+          <label for="fBio">소개</label>
+          <textarea id="fBio" rows="2" maxlength="60">게임을 만드는 중학생. 아이디어가 떠오르면 바로 만들어 봅니다.</textarea>
+          <label for="fTags">관심사 (쉼표로 구분)</label>
+          <input id="fTags" type="text" value="게임, 그림, 농구" maxlength="40" />
+          <label for="fSecret">비밀 메시지</label>
+          <input id="fSecret" type="text" value="사실 오늘 처음으로 코드 한 줄 없이 웹을 만들었습니다." maxlength="60" />
+          <label>아바타</label>
+          <div class="emoji-row" id="emojiRow"></div>
+          <label for="fTilt">기울기 <span id="tiltVal" style="color:var(--c1)">12</span>도</label>
+          <input id="fTilt" type="range" min="0" max="25" value="12" style="padding:0" />
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="timetable reveal">
-    <div class="timetable-header">📅 수업 타임테이블</div>
-    <div class="timetable-row"><div class="timetable-time">00:00–00:20</div><div class="timetable-activity">영화 포스터 디자인 원리 감상 + AI 소개</div><div class="timetable-tag">개념</div></div>
-    <div class="timetable-row"><div class="timetable-time">00:20–00:50</div><div class="timetable-activity">GPT/Gemini로 포스터 콘셉트·카피·배색 프롬프팅</div><div class="timetable-tag">프롬프팅</div></div>
-    <div class="timetable-row"><div class="timetable-time">00:50–01:30</div><div class="timetable-activity">AI가 짜준 HTML 코드 붙여넣기 & 수정 실습</div><div class="timetable-tag">코딩</div></div>
-    <div class="timetable-row"><div class="timetable-time">01:30–01:50</div><div class="timetable-activity">예고편 자막 애니메이션 추가하기</div><div class="timetable-tag">심화</div></div>
-    <div class="timetable-row"><div class="timetable-time">01:50–02:00</div><div class="timetable-activity">발표 & 서로 피드백</div><div class="timetable-tag">공유</div></div>
+  <h3 class="blk">마무리 체크리스트</h3>
+  <div class="chk" data-chk="1">
+    <label><input type="checkbox"><span>버튼 프롬프트를 짧은 버전과 자세한 버전으로 각각 넣어보고 차이를 말로 설명했다</span></label>
+    <label><input type="checkbox"><span>카드에 내 이름, 소개, 관심사 태그가 들어갔다</span></label>
+    <label><input type="checkbox"><span>마우스를 올리면 카드가 기울어지고 빛난다</span></label>
+    <label><input type="checkbox"><span>버튼을 누르면 비밀 메시지가 열리고 다시 누르면 닫힌다</span></label>
+    <label><input type="checkbox"><span>색·글꼴·속도 중 최소 2가지를 추가 프롬프트로 바꿔봤다</span></label>
+    <label><input type="checkbox"><span>완성 파일을 <code class="k">index.html</code>로 저장해 두었다</span></label>
+  </div>
+</section>
+
+<!-- ================= 2회차 ================= -->
+<section class="page" id="p2" data-accent="#FF2E88">
+  <div class="sechead">
+    <div class="bignum">02</div>
+    <div class="sechead-txt">
+      <h2>스토리와 로직 — 내가 만드는 MBTI · 미니 퀴즈 앱</h2>
+      <p>선택지에 따라 결과가 달라지는 앱을 설계합니다. 화면 전환, 점수 누적, 조건 분기를 프롬프트로 지시하는 법을 익힙니다.</p>
+    </div>
   </div>
 
-  <!-- PROMPTS -->
-  <div class="section-title reveal">💬 수업용 프롬프트</div>
+  <h3 class="blk">오늘의 시간표 · 120분</h3>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-time">15분</div><div><p class="tl-t">기획 및 구조화</p><p class="tl-d">퀴즈 주제 선정("나는 어떤 게임 캐릭터일까?", "수학 상식 퀴즈") 및 문항 3~4개 작성</p></div></div>
+    <div class="tl-row"><div class="tl-time">35분</div><div><p class="tl-t">화면 구성 & 흐름 생성</p><p class="tl-d">시작 화면 → 퀴즈 진행 → 결과 화면 구조 생성, 진행도(프로그레스 바) 표시</p></div></div>
+    <div class="tl-row"><div class="tl-time">50분</div><div><p class="tl-t">실습 · 로직 구현 & 연출</p><p class="tl-d">선택지 클릭 시 점수 합산, 결과별 맞춤 문구·이미지 출력, 폭죽 애니메이션 추가</p></div></div>
+    <div class="tl-row"><div class="tl-time">20분</div><div><p class="tl-t">테스트 & 오류 수정</p><p class="tl-d">점수 오류·화면 멈춤 발견 시 오류 메시지를 그대로 전달해 AI가 고치게 하기</p></div></div>
+  </div>
 
-  <!-- Prompt 1 -->
-  <div class="reveal">
-    <p style="font-size:0.82rem;color:rgba(255,248,240,0.6);margin-bottom:8px;">① 영화 설정 생성 프롬프트</p>
-    <div class="ai-tabs">
-      <button class="ai-tab gpt active" onclick="switchAI(this,'gpt','p1')">ChatGPT</button>
-      <button class="ai-tab gemini" onclick="switchAI(this,'gemini','p1')">Gemini</button>
+  <h3 class="blk">알고 가기 — 앱은 화면 세 장과 숫자 하나</h3>
+  <div class="grid3">
+    <div class="card"><h4 style="margin-top:0;color:var(--c2)">상태 · 지금 어느 화면</h4><p style="color:var(--muted);font-size:14px;margin:0">시작 / 진행 / 결과 중 하나만 보입니다. 나머지는 숨깁니다.</p></div>
+    <div class="card"><h4 style="margin-top:0;color:var(--c2)">점수 · 쌓이는 숫자</h4><p style="color:var(--muted);font-size:14px;margin:0">선택지마다 점수가 정해져 있고, 고를 때마다 더합니다.</p></div>
+    <div class="card"><h4 style="margin-top:0;color:var(--c2)">분기 · 조건에 따라</h4><p style="color:var(--muted);font-size:14px;margin:0">"8점 이상이면 A"처럼 <b>겹치지 않는 구간</b>으로 결과를 정합니다.</p></div>
+  </div>
+
+  <h4>기획표부터 채우세요 (프롬프트에 그대로 붙여넣습니다)</h4>
+  <div class="tbscroll">
+  <table class="tb">
+    <tr><th style="width:70px">문항</th><th>질문</th><th>선택지 A</th><th>선택지 B</th></tr>
+    <tr><td>Q1</td><td>새 게임을 켰다. 제일 먼저?</td><td>바로 시작 (2점)</td><td>설정부터 확인 (0점)</td></tr>
+    <tr><td>Q2</td><td>어려운 보스를 만났다</td><td>계속 도전 (2점)</td><td>공략 검색 (0점)</td></tr>
+    <tr><td>Q3</td><td>친구와 팀을 짤 때</td><td>내가 앞장선다 (2점)</td><td>뒤에서 돕는다 (0점)</td></tr>
+  </table>
+  </div>
+  <div class="note"><b>결과 구간은 반드시 겹치지 않게</b> — "4점 이상 A / 4점 이하 B"라고 쓰면 4점일 때 결과가 두 개가 됩니다. "4점 이상 A / 3점 이하 B"가 정확합니다.</div>
+
+  <h3 class="blk">실습 프롬프트 3종</h3>
+
+  <article class="pc">
+    <div class="pc-head"><span class="pc-tag">2-1</span><span class="pc-title">세 화면 구조 + 진행도 막대 만들기</span><button class="copybtn" data-copy="p21">복사</button></div>
+    <div class="pc-body">
+      <div class="pbox good"><div class="lbl">✓ 실습 프롬프트</div><pre class="pt" id="p21">"나는 어떤 게임 캐릭터일까?" 심리테스트 웹앱을 만들어줘.
+화면은 세 개이고, 한 번에 하나만 보이게 해줘.
+
+1) 시작 화면 — 큰 제목, 한 줄 설명, "테스트 시작" 버튼
+2) 질문 화면 — 위쪽에 진행도 막대, 그 아래 "3문항 중 1번" 표시,
+   질문 한 개와 선택지 버튼 2개
+3) 결과 화면 — 큰 이모지, 결과 이름, 설명, "다시 하기" 버튼
+
+진행도 막대는 답할 때마다 0.4초에 걸쳐 부드럽게 늘어나게 해줘.
+색은 어두운 남색 배경에 형광 분홍 강조색으로,
+글자는 잘 보이게 밝은 회색으로 해줘.
+질문 내용은 아직 비워두고, 화면 전환만 되는 상태로 HTML 한 파일로 줘.</pre></div>
+      <ul class="why">
+        <li><b>화면을 번호로 나눈다</b> — 각 화면에 무엇이 들어가는지 목록으로 적습니다.</li>
+        <li><b>"한 번에 하나만"</b> — 이 한마디가 화면 전환 방식을 결정합니다.</li>
+        <li><b>내용은 나중에</b> — 뼈대가 도는지 먼저 확인하고 질문을 채웁니다.</li>
+      </ul>
     </div>
-    <div class="prompt-card">
-      <div class="prompt-body active" id="p1-gpt">
-        <div class="prompt-label">ChatGPT 프롬프트</div>
-        <div class="prompt-text">나는 초등학생이야. 내가 만들 영화 포스터를 위해 아래 정보를 만들어줘:
+  </article>
 
-1. 영화 제목 (한글, 멋지고 기억에 남는 것)
-2. 한 줄 카피 (포스터 하단에 쓸 짧은 문장)
-3. 주인공 이름과 특징 1가지
-4. 포스터 배경색 추천 (어두운 톤 2가지, 밝은 톤 2가지)
-5. 포스터 분위기 설명 (예: 미래도시, 마법의 숲, 우주 등)
+  <article class="pc">
+    <div class="pc-head"><span class="pc-tag">2-2</span><span class="pc-title">점수 합산과 결과 분기 규칙 넣기</span><button class="copybtn" data-copy="p22">복사</button></div>
+    <div class="pc-body">
+      <div class="pbox good"><div class="lbl">✓ 실습 프롬프트</div><pre class="pt" id="p22">방금 만든 틀에 질문과 점수 규칙을 넣어줘.
 
-SF 어드벤처 장르로 만들어줘.
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> 장르를 바꿔보세요! "공포", "로맨스", "판타지" 등으로 변경하면 전혀 다른 포스터가 나와요.</div>
+[질문과 점수]
+Q1. 새 게임을 켰다. 제일 먼저? / 바로 시작=2점 / 설정 확인=0점
+Q2. 어려운 보스를 만났다 / 계속 도전=2점 / 공략 검색=0점
+Q3. 친구와 팀을 짤 때 / 내가 앞장선다=2점 / 뒤에서 돕는다=0점
+
+[점수 처리]
+- 선택지를 누르면 그 점수를 총점에 더하고 바로 다음 질문으로 넘어가게
+- 마지막 질문에 답하면 결과 화면으로 넘어가게
+
+[결과 분기] 구간이 겹치지 않게 정확히 지켜줘
+- 5점 이상: 🔥 돌진형 전사 / "고민보다 몸이 먼저 나가는 타입"
+- 3~4점: ⚔️ 균형형 기사 / "상황을 보고 결정하는 타입"
+- 2점 이하: 🛡️ 전략형 현자 / "정보를 모으고 움직이는 타입"
+
+결과 화면에 총점도 "6 / 6점"처럼 같이 보여줘.</pre></div>
+      <ul class="why">
+        <li><b>표를 그대로 넣는다</b> — 문장으로 풀어 쓰는 것보다 오류가 적습니다.</li>
+        <li><b>구간을 못 박는다</b> — "겹치지 않게"라고 직접 말해야 경계 오류가 없습니다.</li>
+        <li><b>검증 장치를 심는다</b> — 총점을 화면에 띄우면 점수 오류를 바로 발견합니다.</li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="pc">
+    <div class="pc-head"><span class="pc-tag">2-3</span><span class="pc-title">폭죽 연출 추가 + 오류 신고 프롬프트</span><button class="copybtn" data-copy="p23">복사</button></div>
+    <div class="pc-body">
+      <div class="pbox good"><div class="lbl">✓ 연출 추가</div><pre class="pt" id="p23">결과 화면이 나타나는 순간 폭죽이 터지게 해줘.
+- 화면 아래에서 위로 알록달록한 조각 60개가 튀어오르고
+  1.5초에 걸쳐 아래로 떨어지며 사라지게
+- 결과 이모지는 0.4초 동안 작게 시작해 통통 튀며 커지게
+- 폭죽은 결과가 나올 때 한 번만, 다시 하기를 누르면 초기화되게
+
+추가로, 움직임을 불편해하는 사람을 위해
+브라우저의 "동작 줄이기" 설정이 켜져 있으면
+폭죽과 튀는 효과는 생략하고 결과만 조용히 보이게 해줘.</pre></div>
+      <div class="pbox bad"><div class="lbl">✕ 이렇게 신고하면 못 고칩니다</div><pre class="pt">안 돼요. 고쳐주세요.</pre></div>
+      <div class="pbox good"><div class="lbl">✓ 오류 신고 프롬프트 — 4칸을 채워서 보내기</div><pre class="pt">[무엇을 했나] 2번 질문에서 "공략 검색"을 눌렀습니다.
+[기대한 것] 3번 질문으로 넘어가야 합니다.
+[실제로 일어난 것] 화면이 그대로 멈추고 진행도 막대도 안 움직입니다.
+[오류 메시지] 개발자도구 콘솔에 이렇게 떴습니다.
+Uncaught TypeError: Cannot read properties of undefined (reading 'text')
+    at showQuestion (index.html:132)
+
+이 문제만 고쳐주고, 고친 이유도 한 줄로 알려줘.</pre></div>
+      <ul class="why">
+        <li><b>재현 방법을 준다</b> — 어디서 눌렀는지가 가장 중요한 단서입니다.</li>
+        <li><b>기대와 실제를 나눈다</b> — 둘의 차이가 곧 버그의 정의입니다.</li>
+        <li><b>콘솔 메시지를 그대로</b> — <code class="k">F12</code> → Console 탭에서 빨간 글씨를 복사합니다.</li>
+      </ul>
+    </div>
+  </article>
+
+  <h3 class="blk">완성 예시 — 직접 풀어보기</h3>
+  <div class="demo">
+    <div class="demo-bar"><span class="dot" style="background:#FF5F57"></span><span class="dot" style="background:#FEBC2E"></span><span class="dot" style="background:#28C840"></span><span style="margin-left:8px">character-quiz.html</span></div>
+    <div class="demo-in">
+      <div class="qz" id="qz">
+        <canvas id="confetti"></canvas>
+        <div id="qzStart">
+          <div style="text-align:center">
+            <div style="font-size:56px">🎮</div>
+            <h4 style="font-family:var(--font-display);font-weight:400;font-size:30px;margin:10px 0 8px">나는 어떤 게임 캐릭터일까?</h4>
+            <p style="color:var(--muted);margin:0 0 22px">4문항 · 20초면 끝납니다</p>
+            <button class="btn solid" id="qzGo">테스트 시작</button>
+          </div>
+        </div>
+        <div id="qzPlay" style="display:none">
+          <div class="qz-prog"><div class="qz-bar" id="qzBar"></div></div>
+          <div class="qz-meta"><span id="qzCnt">1 / 4</span><span id="qzScore">0점</span></div>
+          <p class="qz-q" id="qzQ"></p>
+          <div id="qzOpts"></div>
+        </div>
+        <div id="qzResult" style="display:none">
+          <div class="qz-res">
+            <div class="em" id="rsEm">🔥</div>
+            <h4 id="rsName"></h4>
+            <div class="sc" id="rsScore"></div>
+            <p id="rsDesc"></p>
+            <button class="btn" id="qzAgain">다시 하기</button>
+          </div>
+        </div>
       </div>
-      <div class="prompt-body" id="p1-gemini">
-        <div class="prompt-label">Gemini 프롬프트</div>
-        <div class="prompt-text">안녕 Gemini! 나는 중학생이고 영화 포스터를 HTML로 만들 거야.
-다음 내용을 JSON 형식으로 만들어줘:
+    </div>
+  </div>
 
+  <h3 class="blk">마무리 체크리스트</h3>
+  <div class="chk" data-chk="2">
+    <label><input type="checkbox"><span>질문 3~4개와 점수를 표로 먼저 적었다</span></label>
+    <label><input type="checkbox"><span>세 화면이 한 번에 하나씩만 보인다</span></label>
+    <label><input type="checkbox"><span>진행도 막대가 답할 때마다 늘어난다</span></label>
+    <label><input type="checkbox"><span>결과 구간이 겹치지 않는지 최고점·최저점으로 확인했다</span></label>
+    <label><input type="checkbox"><span>결과 화면에 폭죽 또는 애니메이션 연출이 있다</span></label>
+    <label><input type="checkbox"><span>오류를 4칸 양식으로 신고해 한 번 이상 고쳐봤다</span></label>
+  </div>
+</section>
+
+<!-- ================= 3회차 ================= -->
+<section class="page" id="p3" data-accent="#FFC93C">
+  <div class="sechead">
+    <div class="bignum">03</div>
+    <div class="sechead-txt">
+      <h2>역동적인 플레이 — 한 화면 미니 웹게임 & 갤러리 배포</h2>
+      <p>키보드와 터치에 반응하는 미니게임을 만들고, 실제로 접속 가능한 내 링크로 세상에 공개합니다.</p>
+    </div>
+  </div>
+
+  <h3 class="blk">오늘의 시간표 · 120분</h3>
+  <div class="tl">
+    <div class="tl-row"><div class="tl-time">20분</div><div><p class="tl-t">장르 선택 & 규칙 정의</p><p class="tl-d">피하기 / 점프 / 클릭커 중 선택, 승리·패배 조건과 점수 시스템 명시</p></div></div>
+    <div class="tl-row"><div class="tl-time">50분</div><div><p class="tl-t">실습 · 미니게임 바이브 코딩</p><p class="tl-d">방향키 이동, 장애물 생성, 충돌 감지와 점수, 시간에 따른 난이도 상승</p></div></div>
+    <div class="tl-row"><div class="tl-time">30분</div><div><p class="tl-t">웹링크 생성 & 라이브 배포</p><p class="tl-d">GitHub Pages·Netlify·Vercel로 실제 접속 가능한 URL 만들기</p></div></div>
+    <div class="tl-row"><div class="tl-time">20분</div><div><p class="tl-t">작품 발표 & 서로 플레이</p><p class="tl-d">친구 링크에 접속해 플레이하고 소감 나누기</p></div></div>
+  </div>
+
+  <h3 class="blk">알고 가기 — 게임은 1초에 60번 도는 4단계</h3>
+  <div class="grid3">
+    <div class="card"><h4 style="margin-top:0;color:var(--c3)">① 입력 → ② 이동</h4><p style="color:var(--muted);font-size:14px;margin:0">지금 눌린 키를 확인하고, 캐릭터와 장애물의 위치를 조금씩 바꿉니다.</p></div>
+    <div class="card"><h4 style="margin-top:0;color:var(--c3)">③ 충돌 검사</h4><p style="color:var(--muted);font-size:14px;margin:0">두 사각형이 겹쳤는지 확인합니다. 겹치면 게임 종료, 아니면 점수 +1.</p></div>
+    <div class="card"><h4 style="margin-top:0;color:var(--c3)">④ 다시 그리기</h4><p style="color:var(--muted);font-size:14px;margin:0">화면을 지우고 새 위치에 전부 다시 그립니다. 이 네 단계의 반복이 게임입니다.</p></div>
+  </div>
+  <div class="note"><b>규칙을 먼저 문장으로</b> — "무엇을 조작하고 / 무엇을 피하고 / 언제 점수가 오르고 / 언제 끝나는가". 이 네 문장이 없으면 프롬프트를 쓸 수 없습니다.</div>
+
+  <h3 class="blk">실습 프롬프트 3종</h3>
+
+  <article class="pc">
+    <div class="pc-head"><span class="pc-tag">3-1</span><span class="pc-title">무대와 조작 — 방향키로 움직이는 플레이어</span><button class="copybtn" data-copy="p31">복사</button></div>
+    <div class="pc-body">
+      <div class="pbox good"><div class="lbl">✓ 실습 프롬프트</div><pre class="pt" id="p31">캔버스로 만드는 "별 피하기" 게임의 1단계를 만들어줘.
+지금은 플레이어 이동까지만, 장애물은 아직 넣지 마.
+
+[무대]
+- 가로 480px, 세로 560px 캔버스, 배경은 아주 어두운 남색
+- 화면 가운데 정렬, 캔버스 모서리는 14px 둥글게
+
+[플레이어]
+- 바닥에서 40px 위에 있는 가로 44px, 세로 44px 노란 사각형
+- 왼쪽·오른쪽 방향키를 누르고 있는 동안 1초에 320px 속도로 이동
+- 벽 밖으로는 나가지 못하게
+
+[중요]
+- 키를 누르는 순간에만 한 칸 움직이지 말고,
+  누르고 있는 동안 계속 부드럽게 움직이게 해줘
+- 화면 갱신은 requestAnimationFrame으로 하고,
+  기기가 달라도 속도가 같도록 시간 간격을 반영해줘
+
+HTML 파일 하나로 만들어줘.</pre></div>
+      <ul class="why">
+        <li><b>단계를 자른다</b> — "장애물은 아직"이 한 번에 확인 가능한 크기를 만듭니다.</li>
+        <li><b>속도를 초 단위로</b> — "1초에 320px"은 프레임 수와 무관한 정확한 표현입니다.</li>
+        <li><b>흔한 실수를 미리 막는다</b> — 눌린 상태 유지 이동을 콕 집어 요구합니다.</li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="pc">
+    <div class="pc-head"><span class="pc-tag">3-2</span><span class="pc-title">장애물 · 충돌 · 점수 — 게임이 되는 순간</span><button class="copybtn" data-copy="p32">복사</button></div>
+    <div class="pc-body">
+      <div class="pbox good"><div class="lbl">✓ 실습 프롬프트</div><pre class="pt" id="p32">이어서 2단계로 장애물과 점수를 넣어줘.
+
+[장애물]
+- 0.7초마다 화면 맨 위 임의의 x 위치에서 별 하나가 생김
+- 지름 26px 정도, 아래로 1초에 220px 속도로 떨어짐
+- 화면 아래로 완전히 나가면 목록에서 지워서 쌓이지 않게
+
+[점수]
+- 별이 플레이어에 닿지 않고 바닥을 지나가면 1점
+- 점수는 캔버스 왼쪽 위에 20px 글씨로 표시
+
+[충돌]
+- 별과 플레이어의 사각형이 겹치면 즉시 게임 오버
+- 게임 오버 화면에 최종 점수와 "다시 하기" 안내를 띄우고
+  스페이스바를 누르면 처음부터 다시 시작
+
+한 번에 화면에 있는 별이 30개를 넘지 않게 제한해줘.</pre></div>
+      <ul class="why">
+        <li><b>생성·소멸을 같이 적는다</b> — 지우는 규칙이 없으면 게임이 점점 느려집니다.</li>
+        <li><b>점수 조건을 정확히</b> — "닿지 않고 지나가면"이 판정 시점을 정합니다.</li>
+        <li><b>상한을 둔다</b> — 최대 개수 제한은 성능 사고를 막는 안전장치입니다.</li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="pc">
+    <div class="pc-head"><span class="pc-tag">3-3</span><span class="pc-title">난이도 곡선 · 최고 점수 · 모바일 조작</span><button class="copybtn" data-copy="p33">복사</button></div>
+    <div class="pc-body">
+      <div class="pbox good"><div class="lbl">✓ 실습 프롬프트</div><pre class="pt" id="p33">마지막 3단계로 게임을 완성해줘.
+
+[난이도]
+- 10초마다 별의 낙하 속도가 12% 빨라지게
+- 생성 간격도 10초마다 0.05초씩 짧아지되, 0.25초보다는 짧아지지 않게
+- 현재 단계를 "LV.3"처럼 오른쪽 위에 표시
+
+[기록]
+- 최고 점수를 화면에 같이 표시하고, 새 기록이면
+  게임 오버 화면에 "신기록!"을 노란색으로 띄워줘
+
+[모바일]
+- 화면 폭이 좁으면 캔버스 아래에 왼쪽·오른쪽 버튼을 보여주고
+  누르고 있는 동안 이동하게
+- 캔버스를 터치해도 화면이 스크롤되지 않게
+
+[마무리]
+- 게임 시작 전 "방향키로 이동, 별을 피하세요" 안내 화면 넣기
+- 코드 맨 위에 속도·간격 같은 숫자를 한곳에 모아 주석과 함께 정리</pre></div>
+      <ul class="why">
+        <li><b>상승과 하한을 함께</b> — 하한이 없으면 몇 분 뒤 게임이 불가능해집니다.</li>
+        <li><b>기록은 동기를 만든다</b> — 발표 시간에 친구들끼리 기록 경쟁이 붙습니다.</li>
+        <li><b>설정값을 모은다</b> — 발표 직전 난이도 조정을 프롬프트 없이 직접 할 수 있습니다.</li>
+      </ul>
+    </div>
+  </article>
+
+  <h3 class="blk">완성 예시 — 직접 플레이</h3>
+  <div class="demo">
+    <div class="demo-bar"><span class="dot" style="background:#FF5F57"></span><span class="dot" style="background:#FEBC2E"></span><span class="dot" style="background:#28C840"></span><span style="margin-left:8px">star-dodge.html</span></div>
+    <div class="demo-in">
+      <div class="gm-wrap">
+        <div class="gm-hud"><span>점수 <b id="gScore">0</b></span><span>최고 <b id="gBest">0</b></span><span>난이도 <b id="gLv">LV.1</b></span></div>
+        <canvas id="game" width="480" height="520"></canvas>
+        <div class="pad"><button id="padL" aria-label="왼쪽">◀</button><button id="padR" aria-label="오른쪽">▶</button></div>
+        <p class="gm-help">캔버스를 한 번 클릭한 뒤 <b style="color:var(--c3)">← →</b> 방향키로 이동하세요. 게임 오버 후에는 <b style="color:var(--c3)">스페이스바</b>로 다시 시작합니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="blk">내 링크 만들기 — GitHub Pages 5단계</h3>
+  <div class="stp">
+    <div class="stp-item"><div class="stp-n">1</div><div class="stp-b">
+      <h4>파일 이름을 index.html로 바꾸기</h4>
+      <p>이름이 <code class="k">index.html</code>이어야 주소만 입력해도 바로 열립니다. 파일은 폴더 맨 바깥에 둡니다.</p></div></div>
+    <div class="stp-item"><div class="stp-n">2</div><div class="stp-b">
+      <h4>GitHub에서 새 저장소 만들기</h4>
+      <p>이름은 영문 소문자와 하이픈으로 (예: <code class="k">star-dodge</code>). 공개 범위는 <b>Public</b>으로 두어야 친구가 접속할 수 있습니다.</p></div></div>
+    <div class="stp-item"><div class="stp-n">3</div><div class="stp-b">
+      <h4>파일 올리기</h4>
+      <p>저장소 화면에서 <code class="k">Add file</code> → <code class="k">Upload files</code>를 누르고 index.html을 끌어다 놓은 뒤 <code class="k">Commit changes</code>를 누릅니다.</p></div></div>
+    <div class="stp-item"><div class="stp-n">4</div><div class="stp-b">
+      <h4>Pages 켜기</h4>
+      <p><code class="k">Settings</code> → 왼쪽 메뉴 <code class="k">Pages</code> → Branch를 <code class="k">main</code> / <code class="k">/(root)</code>로 지정하고 저장합니다.</p></div></div>
+    <div class="stp-item"><div class="stp-n">5</div><div class="stp-b">
+      <h4>1~2분 뒤 주소 확인</h4>
+      <p>같은 화면 위쪽에 <code class="k">https://아이디.github.io/저장소이름/</code> 주소가 나타납니다. 휴대폰으로도 열어보세요.</p></div></div>
+  </div>
+  <div class="note"><b>더 빠른 방법</b> — 계정 만들기가 부담되면 Netlify Drop에 폴더를 끌어다 놓기만 해도 즉시 링크가 생깁니다. 다만 주소가 무작위이고 관리가 어려우니, 오래 남길 작품은 GitHub Pages를 권합니다.</div>
+
+  <h4>배포 후 안 열릴 때 확인 순서</h4>
+  <div class="tbscroll">
+  <table class="tb">
+    <tr><th style="width:34%">증상</th><th>가장 흔한 원인</th></tr>
+    <tr><td>404 페이지가 뜬다</td><td>파일 이름이 <code class="k">Index.html</code>이거나 폴더 안에 들어가 있음 (대소문자 구분)</td></tr>
+    <tr><td>흰 화면만 나온다</td><td>이미지·소리 파일 경로가 내 컴퓨터 경로로 되어 있음</td></tr>
+    <tr><td>수정했는데 그대로다</td><td>브라우저 캐시 — <code class="k">Ctrl+Shift+R</code>로 새로고침</td></tr>
+    <tr><td>휴대폰에서 깨진다</td><td><code class="k">&lt;meta name="viewport"&gt;</code> 한 줄이 빠짐</td></tr>
+  </table>
+  </div>
+
+  <h3 class="blk">마무리 체크리스트</h3>
+  <div class="chk" data-chk="3">
+    <label><input type="checkbox"><span>게임 규칙 네 문장(조작·회피·득점·종료)을 먼저 적었다</span></label>
+    <label><input type="checkbox"><span>방향키를 누르고 있는 동안 부드럽게 움직인다</span></label>
+    <label><input type="checkbox"><span>충돌하면 게임이 끝나고 다시 시작할 수 있다</span></label>
+    <label><input type="checkbox"><span>시간이 지날수록 난이도가 올라간다</span></label>
+    <label><input type="checkbox"><span>휴대폰에서도 조작할 수 있다</span></label>
+    <label><input type="checkbox"><span>내 링크를 친구에게 보내 실제로 접속되는 것을 확인했다</span></label>
+  </div>
+</section>
+
+<!-- ================= 도구 ================= -->
+<section class="page" id="p4" data-accent="#A78BFA">
+  <div class="sechead">
+    <div class="bignum">+</div>
+    <div class="sechead-txt">
+      <h2>프롬프트 연습실</h2>
+      <p>회차와 상관없이 언제든 쓰는 두 가지 도구입니다. 조립기로 문장을 만들고, 점검기로 빠진 정보를 확인하세요.</p>
+    </div>
+  </div>
+
+  <h3 class="blk">프롬프트 조립기</h3>
+  <div class="grid2">
+    <div class="card">
+      <div class="form">
+        <label for="bWhat">① 무엇을 만들까</label>
+        <select id="bWhat">
+          <option>자기소개 카드</option><option>버튼</option><option>심리테스트 앱</option>
+          <option>퀴즈 게임</option><option>피하기 미니게임</option><option>클릭커 게임</option>
+        </select>
+        <label for="bMood">② 분위기</label>
+        <select id="bMood">
+          <option value="어두운 남색 배경에 형광 하늘색 강조색의 네온 느낌">네온 · 사이버</option>
+          <option value="파스텔 하늘색과 크림색을 쓴 부드럽고 둥근 느낌">파스텔 · 말랑</option>
+          <option value="검정과 흰색만 쓰고 직각 모서리를 유지한 단정한 느낌">모노크롬 · 단정</option>
+          <option value="8비트 게임처럼 각진 픽셀 폰트와 원색을 쓴 레트로 느낌">레트로 · 픽셀</option>
+        </select>
+        <label>③ 동작 (원하는 것 모두)</label>
+        <div class="chk" id="bActs" style="margin-top:4px"></div>
+        <label for="bSpeed">④ 애니메이션 속도 <span id="bSpeedV" style="color:var(--c1)">0.3</span>초</label>
+        <input id="bSpeed" type="range" min="0.1" max="1.2" step="0.1" value="0.3" style="padding:0" />
+        <label for="bExtra">⑤ 추가로 꼭 지킬 조건</label>
+        <input id="bExtra" type="text" placeholder="예: 휴대폰에서도 잘 보이게" />
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <h4 style="margin:0">완성된 프롬프트</h4>
+        <button class="copybtn" id="bCopy">복사</button>
+      </div>
+      <div class="builder-out" id="bOut"></div>
+      <p style="color:var(--muted);font-size:13px;margin:12px 0 0">그대로 붙여넣은 뒤, 결과를 보고 한 가지씩만 바꿔 다시 요청하세요.</p>
+    </div>
+  </div>
+
+  <h3 class="blk">프롬프트 점검기</h3>
+  <p style="color:var(--muted);margin-top:-4px">직접 쓴 프롬프트를 붙여넣으면 5단계 중 무엇이 빠졌는지 알려줍니다.</p>
+  <div class="card">
+    <div class="form"><textarea id="scIn" rows="5" placeholder="여기에 내가 쓴 프롬프트를 붙여넣으세요"></textarea></div>
+    <div class="score-ring" style="margin-top:18px">
+      <div class="ring" id="scRing"><i id="scNum">0</i></div>
+      <div class="crit" id="scCrit"></div>
+    </div>
+    <p id="scMsg" style="color:var(--muted);font-size:13.6px;margin:16px 0 0"></p>
+  </div>
+
+  <h3 class="blk">막혔을 때 쓰는 문장</h3>
+  <div class="tbscroll">
+  <table class="tb">
+    <tr><th style="width:30%">상황</th><th>그대로 쓰는 문장</th></tr>
+    <tr><td>결과가 마음에 안 들 때</td><td>지금 결과에서 색과 크기는 그대로 두고, ○○만 바꿔줘.</td></tr>
+    <tr><td>코드가 너무 길어졌을 때</td><td>기능은 그대로 두고, 중복된 부분을 정리해서 짧게 다시 써줘.</td></tr>
+    <tr><td>무엇을 고칠지 모를 때</td><td>이 코드에서 초보자가 이해하기 어려운 부분 3곳을 골라 주석을 달아줘.</td></tr>
+    <tr><td>기능을 더 넣고 싶을 때</td><td>지금 동작하는 상태를 유지한 채로 ○○ 기능 하나만 추가해줘.</td></tr>
+    <tr><td>처음으로 되돌리고 싶을 때</td><td>방금 추가한 변경은 취소하고, 그 직전 버전 전체를 다시 줘.</td></tr>
+  </table>
+  </div>
+</section>
+
+</main>
+
+<footer class="wrap">세영코딩연구소 · 바이브 코딩 3회차 프로그램 · 프롬프트가 곧 설계도입니다</footer>
+<div class="toast" id="toast">복사했습니다</div>
+
+<script type="application/json" id="data-quiz">
 {
-  "title": "영화 제목 (강렬하고 짧게)",
-  "tagline": "포스터 카피 (20자 이내)",
-  "hero": "주인공 이름과 능력",
-  "palette": {
-    "bg_dark": "헥스 코드",
-    "bg_light": "헥스 코드",
-    "accent": "포인트 컬러 헥스 코드",
-    "text": "#ffffff"
-  },
-  "mood": "분위기 키워드 3개"
+  "questions": [
+    {"q":"새 게임을 켰다. 제일 먼저 하는 일은?","a":[["설명을 건너뛰고 바로 시작한다",2],["설정 화면부터 전부 확인한다",0]]},
+    {"q":"도저히 못 깨는 보스를 만났다.","a":[["될 때까지 계속 도전한다",2],["공략 영상을 찾아본다",0]]},
+    {"q":"친구와 팀을 짤 때 나는?","a":[["내가 앞장서서 길을 연다",2],["뒤에서 회복과 지원을 맡는다",0]]},
+    {"q":"새 아이템을 얻었다.","a":[["일단 써보고 판단한다",2],["능력치를 비교해보고 쓴다",0]]}
+  ],
+  "results": [
+    {"min":7,"em":"🔥","name":"돌진형 전사","desc":"고민보다 몸이 먼저 나가는 타입. 일단 만들어 보고 고치는 바이브 코딩과 잘 맞습니다."},
+    {"min":4,"em":"⚔️","name":"균형형 기사","desc":"상황을 보고 결정하는 타입. 계획과 실행의 균형이 좋아 팀 작업에서 빛납니다."},
+    {"min":0,"em":"🛡️","name":"전략형 현자","desc":"정보를 모으고 움직이는 타입. 프롬프트를 꼼꼼히 설계해 한 번에 성공시킵니다."}
+  ],
+  "avatars": ["🚀","🎮","🎨","🎧","🐱","🦊","⚡","🌙","🍀","🛹","📚","🏀"],
+  "actions": [
+    "마우스를 올리면 빛나게",
+    "클릭하면 숨은 내용이 나타나게",
+    "화면에 나타날 때 부드럽게 떠오르게",
+    "방향키로 움직이게",
+    "점수가 올라가게",
+    "휴대폰 화면에서도 잘 보이게"
+  ]
 }
-
-장르: 사이버펑크 액션
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> JSON 형식으로 받으면 HTML 코드에 바로 변수로 넣기 쉬워요!</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Prompt 2 -->
-  <div class="reveal">
-    <p style="font-size:0.82rem;color:rgba(255,248,240,0.6);margin-bottom:8px;">② HTML 포스터 코드 생성 프롬프트</p>
-    <div class="ai-tabs">
-      <button class="ai-tab gpt active" onclick="switchAI(this,'gpt','p2')">ChatGPT</button>
-      <button class="ai-tab gemini" onclick="switchAI(this,'gemini','p2')">Gemini</button>
-    </div>
-    <div class="prompt-card">
-      <div class="prompt-body active" id="p2-gpt">
-        <div class="prompt-label">ChatGPT 프롬프트</div>
-        <div class="prompt-text">위에서 만든 설정으로 HTML 파일 하나를 만들어줘.
-
-조건:
-- 외부 라이브러리 없이 순수 HTML + CSS + JS만 사용
-- 포스터 크기: 세로형 (width: 400px, height: 600px)
-- 배경: CSS linear-gradient로 영화 분위기 표현
-- 제목 텍스트: 크고 두꺼운 폰트 (Google Fonts 사용 가능)
-- 포스터 하단에 카피 문구 배치
-- 마우스를 올리면 글자가 빛나는 효과 추가
-- 코드 전체를 하나의 HTML 파일로 작성해줘
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> "마우스 올리면 글자가 빛나는 효과" 같은 인터랙션 조건을 추가할수록 더 멋진 결과가 나와요!</div>
-      </div>
-      <div class="prompt-body" id="p2-gemini">
-        <div class="prompt-label">Gemini 프롬프트</div>
-        <div class="prompt-text">앞에서 만든 영화 설정을 이용해서 완성된 HTML 영화 포스터 페이지를 만들어줘.
-
-요구사항:
-1. 파일 하나 (index.html)로 완성
-2. 세로형 포스터 (400×600px) 중앙 배치
-3. CSS animation으로 제목 타이핑 효과 넣기
-4. 포스터 아래에 "예매하기" 버튼 (클릭 시 alert)
-5. 반응형 (모바일에서도 보기 좋게)
-6. 다크 테마 배경
-
-영화 제목: [앞에서 만든 제목]
-카피: [앞에서 만든 카피]
-배색: [앞에서 받은 팔레트]
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> 앞 단계에서 받은 제목·카피·색상을 [ ] 안에 직접 채워 넣어요!</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Example Output -->
-  <div class="section-title reveal">🖼️ 예시 결과물 — 직접 체험해보세요!</div>
-  <div class="example-block reveal">
-    <div class="example-header">🎬 AI가 만들어준 영화 포스터 — 마우스를 올려보세요!</div>
-    <div class="example-body" style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;">
-
-      <!-- 포스터 1 -->
-      <div class="poster-demo" id="poster1" style="
-        width:200px;height:300px;border-radius:12px;overflow:hidden;
-        position:relative;cursor:pointer;flex-shrink:0;
-        background:linear-gradient(160deg,#0d0030 0%,#1a004d 50%,#000820 100%);
-        border:2px solid #7B2FBE;transition:transform 0.3s,box-shadow 0.3s;
-        box-shadow:0 4px 20px rgba(123,47,190,0.4);">
-        <!-- 배경 별빛 효과 -->
-        <div style="position:absolute;inset:0;overflow:hidden;" id="stars1"></div>
-        <!-- 스캔라인 오버레이 -->
-        <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);pointer-events:none;"></div>
-        <!-- 연도 -->
-        <div style="position:absolute;top:14px;right:14px;font-family:'Black Han Sans',sans-serif;font-size:2rem;color:rgba(255,230,0,0.12);line-height:1;">2087</div>
-        <!-- 장르 -->
-        <div style="position:absolute;top:14px;left:14px;font-size:0.55rem;color:#00E5C3;letter-spacing:2px;font-weight:900;">CYBERPUNK</div>
-        <!-- 메인 제목 영역 -->
-        <div style="position:absolute;bottom:0;left:0;right:0;padding:14px;background:linear-gradient(0deg,rgba(0,0,0,0.9) 0%,transparent 100%);">
-          <div id="poster1-title" style="font-family:'Black Han Sans',sans-serif;font-size:1.3rem;color:#fff;text-shadow:0 0 15px #7B2FBE;line-height:1.2;margin-bottom:6px;overflow:hidden;white-space:nowrap;border-right:2px solid #FFE600;"></div>
-          <div style="font-size:0.6rem;color:#FFE600;margin-bottom:6px;opacity:0.9;">"기억을 팔면 자유를 살 수 있다"</div>
-          <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);letter-spacing:1px;">KIM JISOO · PARK MINJUN</div>
-        </div>
-        <!-- 호버 오버레이 -->
-        <div class="poster-hover-overlay" style="position:absolute;inset:0;background:rgba(255,230,0,0.06);opacity:0;transition:opacity 0.3s;pointer-events:none;"></div>
-      </div>
-
-      <!-- 포스터 2 -->
-      <div class="poster-demo" style="
-        width:200px;height:300px;border-radius:12px;overflow:hidden;
-        position:relative;cursor:pointer;flex-shrink:0;
-        background:linear-gradient(135deg,#001a00 0%,#003300 40%,#0d1a00 100%);
-        border:2px solid #00E5C3;transition:transform 0.3s,box-shadow 0.3s;
-        box-shadow:0 4px 20px rgba(0,229,195,0.3);">
-        <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);pointer-events:none;"></div>
-        <div style="position:absolute;top:14px;right:14px;font-family:'Black Han Sans',sans-serif;font-size:2rem;color:rgba(0,229,195,0.12);line-height:1;">2099</div>
-        <div style="position:absolute;top:14px;left:14px;font-size:0.55rem;color:#FFE600;letter-spacing:2px;font-weight:900;">SCI-FI THRILLER</div>
-        <!-- 중간 아이콘 -->
-        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);font-size:3.5rem;filter:drop-shadow(0 0 12px #00E5C3);">🌿</div>
-        <div style="position:absolute;bottom:0;left:0;right:0;padding:14px;background:linear-gradient(0deg,rgba(0,0,0,0.92) 0%,transparent 100%);">
-          <div style="font-family:'Black Han Sans',sans-serif;font-size:1.3rem;color:#00E5C3;text-shadow:0 0 15px #00E5C3;line-height:1.2;margin-bottom:6px;">정글의<br>마지막 씨앗</div>
-          <div style="font-size:0.6rem;color:rgba(255,255,255,0.6);margin-bottom:6px;">"지구의 마지막 숲을 지켜라"</div>
-          <div style="font-size:0.5rem;color:rgba(255,255,255,0.3);letter-spacing:1px;">LEE SOYEON · CHOI JUNHO</div>
-        </div>
-        <div class="poster-hover-overlay" style="position:absolute;inset:0;background:rgba(0,229,195,0.06);opacity:0;transition:opacity 0.3s;pointer-events:none;"></div>
-      </div>
-
-      <!-- 포스터 3 -->
-      <div class="poster-demo" style="
-        width:200px;height:300px;border-radius:12px;overflow:hidden;
-        position:relative;cursor:pointer;flex-shrink:0;
-        background:linear-gradient(160deg,#1a0008 0%,#3d0015 50%,#0a0010 100%);
-        border:2px solid #FF4D6D;transition:transform 0.3s,box-shadow 0.3s;
-        box-shadow:0 4px 20px rgba(255,77,109,0.4);">
-        <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);pointer-events:none;"></div>
-        <div style="position:absolute;top:14px;right:14px;font-family:'Black Han Sans',sans-serif;font-size:2rem;color:rgba(255,77,109,0.15);line-height:1;">2031</div>
-        <div style="position:absolute;top:14px;left:14px;font-size:0.55rem;color:#FF8C42;letter-spacing:2px;font-weight:900;">HORROR</div>
-        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);font-size:3.5rem;filter:drop-shadow(0 0 12px #FF4D6D);">🌙</div>
-        <div style="position:absolute;bottom:0;left:0;right:0;padding:14px;background:linear-gradient(0deg,rgba(0,0,0,0.92) 0%,transparent 100%);">
-          <div style="font-family:'Black Han Sans',sans-serif;font-size:1.3rem;color:#FF4D6D;text-shadow:0 0 15px #FF4D6D;line-height:1.2;margin-bottom:6px;">붉은<br>달이 뜨면</div>
-          <div style="font-size:0.6rem;color:rgba(255,255,255,0.6);margin-bottom:6px;">"그날 밤, 아무도 살아남지 못했다"</div>
-          <div style="font-size:0.5rem;color:rgba(255,255,255,0.3);letter-spacing:1px;">PARK HYUN · OH JIYOUNG</div>
-        </div>
-        <div class="poster-hover-overlay" style="position:absolute;inset:0;background:rgba(255,77,109,0.06);opacity:0;transition:opacity 0.3s;pointer-events:none;"></div>
-      </div>
-
-    </div>
-    <p style="font-size:0.75rem;color:rgba(255,248,240,0.4);text-align:center;margin-top:12px;">👆 포스터에 마우스를 올려보세요! — AI 프롬프트로 생성된 콘셉트를 HTML로 구현한 예시</p>
-  </div>
-
-  <!-- FAQ -->
-  <div class="section-title reveal">❓ 자주 묻는 질문</div>
-  <div class="reveal">
-    <div class="accordion-item">
-      <button class="accordion-btn" onclick="toggleAcc(this)">
-        이미지 없이도 포스터처럼 만들 수 있나요? <span class="acc-icon">▼</span>
-      </button>
-      <div class="accordion-content">CSS gradient, box-shadow, text-shadow만으로도 충분히 영화 포스터 느낌을 낼 수 있어요! AI에게 "이미지 없이 CSS만으로 영화 분위기 표현해줘"라고 하면 창의적인 코드를 만들어줍니다.</div>
-    </div>
-    <div class="accordion-item">
-      <button class="accordion-btn" onclick="toggleAcc(this)">
-        AI가 만든 코드가 작동 안 할 때 어떻게 하나요? <span class="acc-icon">▼</span>
-      </button>
-      <div class="accordion-content">오류 메시지를 그대로 AI에게 복사해서 붙여넣고 "이 오류를 고쳐줘"라고 하면 됩니다. AI는 자기가 만든 코드의 오류를 잘 수정해줘요!</div>
-    </div>
-    <div class="accordion-item">
-      <button class="accordion-btn" onclick="toggleAcc(this)">
-        실제 영화 제목을 써도 되나요? <span class="acc-icon">▼</span>
-      </button>
-      <div class="accordion-content">학습 목적으로는 괜찮지만, 저작권 문제가 있을 수 있으니 <strong>완전히 새로운 가상의 영화</strong>를 만드는 것을 추천해요. AI가 훨씬 창의적인 아이디어를 만들어줍니다!</div>
-    </div>
-  </div>
-</div>
-
-<!-- ── 수업 2: 미디어아트 ── -->
-<div class="lesson-panel" id="panel-1">
-  <div class="lesson-header reveal">
-    <div class="lesson-icon-big">🎨</div>
-    <div class="lesson-meta">
-      <div class="lesson-session">수업 2 of 6</div>
-      <div class="lesson-title">미디어아트 & 인터랙티브 작품</div>
-      <div class="lesson-desc">Canvas API와 AI 프롬프팅으로 움직이는 미디어아트를 만듭니다.<br>마우스·키보드 인터랙션을 가진 나만의 디지털 작품을 완성해요.</div>
-      <div class="lesson-badges">
-        <span class="badge badge-time">⏱ 2시간</span>
-        <span class="badge badge-level">🎯 초·중·고</span>
-        <span class="badge badge-tool">🛠 Canvas / P5.js</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="timetable reveal">
-    <div class="timetable-header">📅 수업 타임테이블</div>
-    <div class="timetable-row"><div class="timetable-time">00:00–00:15</div><div class="timetable-activity">유명 미디어아트 작품 감상 (팀랩, 백남준)</div><div class="timetable-tag">감상</div></div>
-    <div class="timetable-row"><div class="timetable-time">00:15–00:45</div><div class="timetable-activity">Canvas 기초 + AI로 파티클 코드 생성</div><div class="timetable-tag">프롬프팅</div></div>
-    <div class="timetable-row"><div class="timetable-time">00:45–01:30</div><div class="timetable-activity">마우스 인터랙션 추가 실습</div><div class="timetable-tag">코딩</div></div>
-    <div class="timetable-row"><div class="timetable-time">01:30–01:50</div><div class="timetable-activity">색상 테마 & 이펙트 커스터마이징</div><div class="timetable-tag">심화</div></div>
-    <div class="timetable-row"><div class="timetable-time">01:50–02:00</div><div class="timetable-activity">갤러리 발표</div><div class="timetable-tag">공유</div></div>
-  </div>
-
-  <div class="section-title reveal">💬 수업용 프롬프트</div>
-
-  <div class="reveal">
-    <p style="font-size:0.82rem;color:rgba(255,248,240,0.6);margin-bottom:8px;">① 파티클 아트 기본 코드 생성</p>
-    <div class="ai-tabs">
-      <button class="ai-tab gpt active" onclick="switchAI(this,'gpt','p3')">ChatGPT</button>
-      <button class="ai-tab gemini" onclick="switchAI(this,'gemini','p3')">Gemini</button>
-    </div>
-    <div class="prompt-card">
-      <div class="prompt-body active" id="p3-gpt">
-        <div class="prompt-label">ChatGPT 프롬프트</div>
-        <div class="prompt-text">HTML Canvas를 사용해서 인터랙티브 미디어아트를 만들어줘.
-
-기능:
-- 화면에 100개의 작은 원(파티클)이 떠다님
-- 마우스를 움직이면 파티클들이 마우스를 피해서 도망감
-- 파티클이 화면 가장자리에서 튕겨나옴
-- 파티클 색상은 무지개 그라디언트 (hsl 사용)
-- 클릭하면 파티클이 마우스 위치로 폭발처럼 모임
-- 배경: 검은색
-
-외부 라이브러리 없이 순수 JS Canvas로 만들어줘.
-단일 HTML 파일로 완성해줘.
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> 파티클 수(100)를 바꾸거나 "도망감" 대신 "따라옴"으로 바꿔보세요!</div>
-      </div>
-      <div class="prompt-body" id="p3-gemini">
-        <div class="prompt-label">Gemini 프롬프트</div>
-        <div class="prompt-text">안녕! 나는 미디어아트 작품을 만들고 싶어.
-HTML + Canvas로 아름다운 인터랙티브 작품을 만들어줘.
-
-테마: 별빛 은하수
-요소:
-1. 배경에 별들이 천천히 반짝임 (투명도 애니메이션)
-2. 마우스를 움직이면 별똥별 궤적이 생김
-3. 마우스 클릭 시 별이 폭발하는 파티클 이펙트
-4. 화면 중앙에 "MY UNIVERSE"라는 텍스트가 별빛과 함께 빛남
-5. 스페이스바를 누르면 색상 테마 변경 (파랑→보라→초록)
-
-코드는 주석과 함께 깔끔하게 작성해줘.
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> 테마를 "바다 속", "불꽃", "봄 꽃잎" 등으로 바꿔보세요!</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="reveal">
-    <p style="font-size:0.82rem;color:rgba(255,248,240,0.6);margin-bottom:8px;">② 타이포그래피 아트 프롬프트</p>
-    <div class="ai-tabs">
-      <button class="ai-tab gpt active" onclick="switchAI(this,'gpt','p4')">ChatGPT</button>
-      <button class="ai-tab gemini" onclick="switchAI(this,'gemini','p4')">Gemini</button>
-    </div>
-    <div class="prompt-card">
-      <div class="prompt-body active" id="p4-gpt">
-        <div class="prompt-label">ChatGPT 프롬프트</div>
-        <div class="prompt-text">Canvas로 타이포그래피 미디어아트를 만들어줘.
-
-효과:
-- 화면 중앙에 큰 텍스트 "VIBE"를 표시
-- 텍스트가 파티클(점)들로 이루어져 있음
-- 처음에는 파티클들이 흩어져 있다가 모여서 글자 모양 완성
-- 마우스를 올리면 파티클들이 다시 흩어짐
-- 파티클 색상: 청록색 계열
-- 폰트: 굵은 산세리프
-
-단계별 설명 주석 포함해서 작성해줘.
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> "VIBE" 대신 자기 이름, 학교 이름, 좋아하는 단어로 바꿔보세요!</div>
-      </div>
-      <div class="prompt-body" id="p4-gemini">
-        <div class="prompt-label">Gemini 프롬프트</div>
-        <div class="prompt-text">HTML Canvas로 인터랙티브 타이포그래피 아트를 만들어줘.
-
-작품 개념: "내 이름이 살아움직인다"
-
-구체적 효과:
-1. 이름 "김민준"을 픽셀/파티클로 표현
-2. 배경음악 없이 시각적으로만 '리듬감' 표현 (파티클이 파도처럼 출렁임)
-3. 마우스 위치에 따라 글자가 물결처럼 변형됨
-4. 더블클릭 시 폭발 → 재조합 애니메이션
-5. 색상 그라디언트: 코랄 → 황금색
-
-완전한 single HTML 파일로 만들어줘.
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> "김민준" 부분에 자신의 이름을 넣어요!</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-title reveal">🖼️ 예시 결과물 — 직접 체험해보세요!</div>
-  <div class="example-block reveal">
-    <div class="example-header">🎨 인터랙티브 파티클 아트 — 캔버스 위에서 마우스를 움직이거나 클릭해보세요!</div>
-    <div class="example-body" style="padding:8px;">
-      <canvas id="artCanvas" style="width:100%;height:280px;border-radius:10px;cursor:crosshair;display:block;background:#000;"></canvas>
-      <p style="font-size:0.75rem;color:rgba(255,248,240,0.4);text-align:center;margin-top:8px;">🖱️ 마우스 이동 → 파티클이 도망침 &nbsp;|&nbsp; 클릭 → 폭발 이펙트 &nbsp;|&nbsp; 이것이 바이브코딩 결과물!</p>
-    </div>
-  </div>
-
-  <div class="section-title reveal">🎯 레벨별 목표</div>
-  <div class="grid-2 reveal">
-    <div style="background:rgba(0,229,195,0.08);border:1px solid rgba(0,229,195,0.3);border-radius:12px;padding:16px;">
-      <div style="color:var(--mint);font-weight:700;margin-bottom:8px;">🌱 초등 (기본)</div>
-      <ul style="font-size:0.8rem;line-height:2;color:rgba(255,248,240,0.75);padding-left:16px;">
-        <li>파티클 색상 바꾸기</li>
-        <li>속도 조절하기</li>
-        <li>마우스 따라다니기</li>
-      </ul>
-    </div>
-    <div style="background:rgba(255,77,109,0.08);border:1px solid rgba(255,77,109,0.3);border-radius:12px;padding:16px;">
-      <div style="color:var(--coral);font-weight:700;margin-bottom:8px;">🔥 중·고등 (심화)</div>
-      <ul style="font-size:0.8rem;line-height:2;color:rgba(255,248,240,0.75);padding-left:16px;">
-        <li>타이포그래피 파티클</li>
-        <li>물리 시뮬레이션 추가</li>
-        <li>소리 반응 비주얼</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<!-- ── 수업 3: 미니 게임 ── -->
-<div class="lesson-panel" id="panel-2">
-  <div class="lesson-header reveal">
-    <div class="lesson-icon-big">🕹️</div>
-    <div class="lesson-meta">
-      <div class="lesson-session">수업 3 of 6</div>
-      <div class="lesson-title">미니 게임 제작</div>
-      <div class="lesson-desc">AI에게 게임 로직과 코드를 맡기고, 나는 기획자가 됩니다.<br>클리커, 피하기, 퀴즈 게임 중 하나를 선택해서 완성!
-      </div>
-      <div class="lesson-badges">
-        <span class="badge badge-time">⏱ 2시간</span>
-        <span class="badge badge-level">🎯 초·중·고</span>
-        <span class="badge badge-tool">🛠 HTML/CSS/JS</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="timetable reveal">
-    <div class="timetable-header">📅 수업 타임테이블</div>
-    <div class="timetable-row"><div class="timetable-time">00:00–00:20</div><div class="timetable-activity">게임 기획서 작성 (장르·규칙·레벨)</div><div class="timetable-tag">기획</div></div>
-    <div class="timetable-row"><div class="timetable-time">00:20–00:50</div><div class="timetable-activity">AI로 게임 기본 코드 생성 & 실행</div><div class="timetable-tag">프롬프팅</div></div>
-    <div class="timetable-row"><div class="timetable-time">00:50–01:30</div><div class="timetable-activity">점수·레벨·사운드 기능 추가 요청</div><div class="timetable-tag">코딩</div></div>
-    <div class="timetable-row"><div class="timetable-time">01:30–01:50</div><div class="timetable-activity">친구와 교환 테스트 & 버그 수정</div><div class="timetable-tag">테스트</div></div>
-    <div class="timetable-row"><div class="timetable-time">01:50–02:00</div><div class="timetable-activity">게임 발표 & 최고점수 경쟁</div><div class="timetable-tag">공유</div></div>
-  </div>
-
-  <div class="section-title reveal">💬 수업용 프롬프트</div>
-
-  <div class="reveal">
-    <p style="font-size:0.82rem;color:rgba(255,248,240,0.6);margin-bottom:8px;">① 피하기 게임 만들기</p>
-    <div class="ai-tabs">
-      <button class="ai-tab gpt active" onclick="switchAI(this,'gpt','p5')">ChatGPT</button>
-      <button class="ai-tab gemini" onclick="switchAI(this,'gemini','p5')">Gemini</button>
-    </div>
-    <div class="prompt-card">
-      <div class="prompt-body active" id="p5-gpt">
-        <div class="prompt-label">ChatGPT 프롬프트</div>
-        <div class="prompt-text">HTML Canvas로 간단한 피하기 게임을 만들어줘.
-
-게임 규칙:
-- 플레이어: 파란 사각형, 마우스로 이동
-- 적: 빨간 원들이 위에서 아래로 떨어짐
-- 닿으면 게임 오버
-- 살아남은 시간이 점수 (초 단위)
-- 시간이 지날수록 적이 빠르고 많아짐
-- 스페이스바로 시작/재시작
-
-UI 포함:
-- 점수판 (상단)
-- 게임오버 화면 (최고점수 표시)
-- 귀여운 픽셀 스타일 디자인
-
-전체 코드를 HTML 파일 하나로 작성해줘.
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> "파란 사각형"을 "캐릭터 이모지 🐱"로 바꿔달라고 추가 요청해보세요!</div>
-      </div>
-      <div class="prompt-body" id="p5-gemini">
-        <div class="prompt-label">Gemini 프롬프트</div>
-        <div class="prompt-text">안녕! 재미있는 게임을 HTML로 만들고 싶어.
-
-게임 이름: 별 먹기 대작전
-게임 방식:
-1. 캐릭터(🚀)를 방향키로 움직임
-2. 화면에 나타나는 ⭐를 먹으면 +10점
-3. 💣을 맞으면 목숨 1개 감소 (총 3개)
-4. 별을 10개 먹을 때마다 레벨업 (속도 증가)
-5. 목숨이 0이 되면 게임오버
-
-필요한 것:
-- 점수판, 목숨 표시
-- 레벨업 이펙트 (화면 잠깐 번쩍)
-- 게임오버 시 순위 저장 (localStorage)
-- 귀여운 UI 디자인
-
-완전한 HTML 파일로 만들어줘!
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> 이모지를 바꿔서 완전히 다른 테마의 게임을 만들 수 있어요!</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="reveal">
-    <p style="font-size:0.82rem;color:rgba(255,248,240,0.6);margin-bottom:8px;">② 퀴즈 게임 만들기</p>
-    <div class="ai-tabs">
-      <button class="ai-tab gpt active" onclick="switchAI(this,'gpt','p6')">ChatGPT</button>
-      <button class="ai-tab gemini" onclick="switchAI(this,'gemini','p6')">Gemini</button>
-    </div>
-    <div class="prompt-card">
-      <div class="prompt-body active" id="p6-gpt">
-        <div class="prompt-label">ChatGPT 프롬프트</div>
-        <div class="prompt-text">재미있는 퀴즈 게임 HTML을 만들어줘.
-
-퀴즈 주제: 한국 역사 (초등학교 수준)
-문제 수: 10문제
-형식: 4지선다
-
-기능:
-- 제한 시간 15초 (타이머 바 표시)
-- 정답 시 초록 효과, 오답 시 빨간 효과
-- 점수 누적 표시
-- 마지막에 총점 & 등급 (100점=S, 80점=A, 60점=B, 그 이하=C)
-- 틀린 문제 복습 기능
-
-디자인: 밝고 귀여운 게임 스타일
-(문제는 직접 넣어줘, 한국사 기초 내용으로)
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> 주제를 "수학 구구단", "영어 단어", "과학 상식"으로 바꾸면 공부 게임이 돼요!</div>
-      </div>
-      <div class="prompt-body" id="p6-gemini">
-        <div class="prompt-label">Gemini 프롬프트</div>
-        <div class="prompt-text">나만의 퀴즈 게임을 만들어줘!
-
-주제: 내가 좋아하는 아이돌 (예시: BTS)
-문제 유형 혼합:
-- 객관식 4지선다 (7문제)
-- OX 퀴즈 (3문제)
-
-게임 특징:
-1. 오프닝 화면 (게임 제목 + 시작 버튼)
-2. 콤보 시스템 (연속 정답 시 보너스 점수)
-3. 정답 후 짧은 해설 표시
-4. 배경음: Web Audio API로 간단한 비프음
-5. 결과 화면에 SNS 공유 텍스트 생성
-
-HTML 파일 하나로 완성해줘.
-퀴즈 내용도 BTS 관련으로 직접 만들어줘.
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> 좋아하는 주제로 바꾸면 친구들이 더 재미있게 즐겨요!</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-title reveal">🖼️ 예시 결과물 — 직접 플레이해보세요!</div>
-  <div class="example-block reveal">
-    <div class="example-header">🕹️ 미니 피하기 게임 — 실제로 플레이 가능!</div>
-    <div class="example-body" style="padding:8px;">
-      <div style="position:relative;text-align:center;">
-        <canvas id="gameCanvas" style="width:100%;max-width:500px;height:260px;border-radius:10px;cursor:none;display:block;margin:0 auto;background:#0a0a1a;border:2px solid #7B2FBE;"></canvas>
-        <div style="font-size:0.75rem;color:rgba(255,248,240,0.4);margin-top:8px;">🖱️ 마우스로 🚀를 조종해 💣을 피하고 ⭐를 먹어요! &nbsp;|&nbsp; 클릭으로 시작</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── 수업 4: 뮤직 비주얼라이저 ── -->
-<div class="lesson-panel" id="panel-3">
-  <div class="lesson-header reveal">
-    <div class="lesson-icon-big">🎵</div>
-    <div class="lesson-meta">
-      <div class="lesson-session">수업 4 of 6</div>
-      <div class="lesson-title">뮤직 비주얼라이저</div>
-      <div class="lesson-desc">Web Audio API를 활용해 음악에 반응하는 비주얼 아트를 만듭니다.<br>마이크 입력이나 파일을 넣으면 소리에 맞춰 시각화가 반응해요.</div>
-      <div class="lesson-badges">
-        <span class="badge badge-time">⏱ 2시간</span>
-        <span class="badge badge-level">🎯 중·고등</span>
-        <span class="badge badge-tool">🛠 Web Audio API</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="timetable reveal">
-    <div class="timetable-header">📅 수업 타임테이블</div>
-    <div class="timetable-row"><div class="timetable-time">00:00–00:20</div><div class="timetable-activity">Web Audio API 개념 설명 (주파수, 파형)</div><div class="timetable-tag">개념</div></div>
-    <div class="timetable-row"><div class="timetable-time">00:20–00:50</div><div class="timetable-activity">AI로 막대 비주얼라이저 코드 생성</div><div class="timetable-tag">프롬프팅</div></div>
-    <div class="timetable-row"><div class="timetable-time">00:50–01:30</div><div class="timetable-activity">원형/파형 비주얼라이저로 업그레이드</div><div class="timetable-tag">심화</div></div>
-    <div class="timetable-row"><div class="timetable-time">01:30–01:50</div><div class="timetable-activity">배경 & 색상 테마 개인화</div><div class="timetable-tag">디자인</div></div>
-    <div class="timetable-row"><div class="timetable-time">01:50–02:00</div><div class="timetable-activity">음악 틀고 비주얼 감상회</div><div class="timetable-tag">공유</div></div>
-  </div>
-
-  <div class="section-title reveal">💬 수업용 프롬프트</div>
-
-  <div class="reveal">
-    <p style="font-size:0.82rem;color:rgba(255,248,240,0.6);margin-bottom:8px;">① 막대 비주얼라이저</p>
-    <div class="ai-tabs">
-      <button class="ai-tab gpt active" onclick="switchAI(this,'gpt','p7')">ChatGPT</button>
-      <button class="ai-tab gemini" onclick="switchAI(this,'gemini','p7')">Gemini</button>
-    </div>
-    <div class="prompt-card">
-      <div class="prompt-body active" id="p7-gpt">
-        <div class="prompt-label">ChatGPT 프롬프트</div>
-        <div class="prompt-text">HTML + Web Audio API로 뮤직 비주얼라이저를 만들어줘.
-
-기능:
-- mp3 파일을 업로드하면 재생되면서 시각화 시작
-- 주파수 분석(AnalyserNode)으로 막대 그래프 표시
-- 막대 수: 64개
-- 막대 색상: 낮은 주파수=파랑, 높은 주파수=빨강 (hsl로 그라디언트)
-- 배경: 검은색
-- 막대가 비트에 맞춰 위아래로 통통 튀는 느낌
-- 재생/일시정지 버튼 포함
-
-깔끔한 UI 디자인 포함해서 단일 HTML 파일로 만들어줘.
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> 막대 수를 128개로 늘리면 더 세밀한 시각화가 돼요!</div>
-      </div>
-      <div class="prompt-body" id="p7-gemini">
-        <div class="prompt-label">Gemini 프롬프트</div>
-        <div class="prompt-text">Web Audio API를 이용한 뮤직 비주얼라이저 HTML을 만들어줘.
-
-시각화 스타일: 원형 비주얼라이저
-- 화면 중앙에 원이 있고 주변에 막대들이 방사형으로 뻗어나옴
-- 비트가 강할수록 막대가 길어지고 중앙 원이 커짐
-- 컬러 테마: 네온 사이버펑크 (핑크, 청록, 보라)
-- 마이크 입력도 지원 (버튼으로 전환)
-- 파티클 이펙트: 강한 비트에서 반짝임
-
-추가 UI:
-- 상단에 노래 제목 표시 (파일명에서 추출)
-- 볼륨 조절 슬라이더
-- 풀스크린 버튼
-
-완전한 HTML 파일로 작성해줘.
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> "마이크 입력 지원" 기능으로 목소리나 악기 소리도 시각화할 수 있어요!</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-title reveal">📝 수업 포인트</div>
-  <div class="steps reveal">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-content">
-        <div class="step-title">Web Audio API 이해하기</div>
-        <div class="step-detail">소리를 데이터로 바꿔주는 AnalyserNode의 개념. 주파수란 무엇인지, 어떻게 숫자로 표현되는지 체험해봐요.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-content">
-        <div class="step-title">AI가 만든 코드 읽어보기</div>
-        <div class="step-detail">requestAnimationFrame, FFT, Uint8Array 등 낯선 코드지만 주석을 보며 흐름을 파악해요. 이해 못해도 OK!</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-content">
-        <div class="step-title">색상과 모양 바꿔보기</div>
-        <div class="step-detail">막대 색상의 hsl 값만 바꿔도 완전히 다른 작품이 돼요. 숫자를 바꾸며 어떻게 변하는지 실험해요.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-content">
-        <div class="step-title">나만의 테마로 개인화</div>
-        <div class="step-detail">좋아하는 가수 이름, 좋아하는 색상으로 나만의 시그니처 비주얼라이저를 완성해요.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── 수업 5: 앱·웹 UI ── -->
-<div class="lesson-panel" id="panel-4">
-  <div class="lesson-header reveal">
-    <div class="lesson-icon-big">📱</div>
-    <div class="lesson-meta">
-      <div class="lesson-session">수업 5 of 6</div>
-      <div class="lesson-title">앱·웹 UI 프로토타입</div>
-      <div class="lesson-desc">아이디어를 말로 설명하면 AI가 앱 UI를 만들어줍니다.<br>내가 만들고 싶은 앱의 화면을 실제로 구현해보는 시간!</div>
-      <div class="lesson-badges">
-        <span class="badge badge-time">⏱ 2시간</span>
-        <span class="badge badge-level">🎯 초·중·고</span>
-        <span class="badge badge-tool">🛠 HTML/CSS/JS</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="timetable reveal">
-    <div class="timetable-header">📅 수업 타임테이블</div>
-    <div class="timetable-row"><div class="timetable-time">00:00–00:20</div><div class="timetable-activity">앱 아이디어 스케치 (종이에 손으로 그리기)</div><div class="timetable-tag">기획</div></div>
-    <div class="timetable-row"><div class="timetable-time">00:20–00:50</div><div class="timetable-activity">AI로 메인 화면 HTML 생성</div><div class="timetable-tag">프롬프팅</div></div>
-    <div class="timetable-row"><div class="timetable-time">00:50–01:30</div><div class="timetable-activity">화면 전환, 버튼 기능 추가</div><div class="timetable-tag">코딩</div></div>
-    <div class="timetable-row"><div class="timetable-time">01:30–01:50</div><div class="timetable-activity">실제 앱처럼 보이게 다듬기</div><div class="timetable-tag">디자인</div></div>
-    <div class="timetable-row"><div class="timetable-time">01:50–02:00</div><div class="timetable-activity">앱 피칭 (1분 소개)</div><div class="timetable-tag">발표</div></div>
-  </div>
-
-  <div class="section-title reveal">💬 수업용 프롬프트</div>
-
-  <div class="reveal">
-    <p style="font-size:0.82rem;color:rgba(255,248,240,0.6);margin-bottom:8px;">① 앱 UI 기본 프레임 생성</p>
-    <div class="ai-tabs">
-      <button class="ai-tab gpt active" onclick="switchAI(this,'gpt','p8')">ChatGPT</button>
-      <button class="ai-tab gemini" onclick="switchAI(this,'gemini','p8')">Gemini</button>
-    </div>
-    <div class="prompt-card">
-      <div class="prompt-body active" id="p8-gpt">
-        <div class="prompt-label">ChatGPT 프롬프트</div>
-        <div class="prompt-text">내가 기획한 앱의 UI를 HTML로 만들어줘.
-
-앱 이름: 급식 평점 앱 "맛있냥"
-앱 설명: 학교 급식을 먹고 별점과 한마디를 남기는 앱
-
-필요한 화면 (탭으로 구분):
-1. 오늘의 급식 (메뉴 목록 + 사진 이모지)
-2. 평가하기 (별점 1~5 + 코멘트 입력)
-3. 랭킹 (역대 최고/최악 급식)
-
-디자인 조건:
-- 모바일 앱 느낌 (width: 390px 중앙 배치)
-- 귀여운 고양이 캐릭터 이모지 활용
-- 하단 탭 네비게이션
-- 파스텔 컬러 테마
-- 데이터는 localStorage에 저장
-
-완전한 HTML 파일로 만들어줘.
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> "급식 평점 앱" 대신 자신이 만들고 싶은 앱으로 바꿔보세요!</div>
-      </div>
-      <div class="prompt-body" id="p8-gemini">
-        <div class="prompt-label">Gemini 프롬프트</div>
-        <div class="prompt-text">안녕! 내 아이디어로 앱 UI를 만들어줘.
-
-앱 컨셉: 친구와 함께하는 독서 기록 앱
-앱 이름: "북클럽 📚"
-
-화면 구성:
-1. 홈 - 읽고 있는 책 카드, 오늘의 독서 목표
-2. 탐색 - 친구들의 독서 현황 피드
-3. 기록하기 - 책 이름 + 페이지 + 한줄 감상
-4. 내 서재 - 읽은 책 목록 & 통계
-
-UI 요구사항:
-- 모바일 앱 스타일 (iPhone 느낌)
-- 따뜻한 크림색 + 갈색 테마
-- 둥글둥글한 카드 디자인
-- 탭 전환 애니메이션
-- 샘플 데이터 3~5개 미리 넣어줘
-
-단일 HTML로 완성해줘.
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> "샘플 데이터 미리 넣어줘" → AI가 더 그럴듯한 데이터를 채워서 실제처럼 보여줘요!</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-title reveal">🎯 앱 아이디어 뱅크</div>
-  <div class="grid-2 reveal">
-    <div style="background:var(--card-bg);border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.08);">
-      <div style="color:var(--yellow);font-weight:700;font-size:0.85rem;margin-bottom:10px;">🌱 초등 추천 앱</div>
-      <div style="font-size:0.8rem;color:rgba(255,248,240,0.75);line-height:2.2;">
-        🐾 반려동물 일기<br>
-        🌤️ 날씨 기분 일기<br>
-        🎮 포켓몬 도감 (커스텀)<br>
-        📝 숙제 체크리스트<br>
-        🎵 좋아하는 노래 모음
-      </div>
-    </div>
-    <div style="background:var(--card-bg);border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.08);">
-      <div style="color:var(--mint);font-weight:700;font-size:0.85rem;margin-bottom:10px;">🔥 중·고등 추천 앱</div>
-      <div style="font-size:0.8rem;color:rgba(255,248,240,0.75);line-height:2.2;">
-        📚 스터디 그룹 매칭<br>
-        🏃 운동 루틴 트래커<br>
-        💬 고민 익명 상담함<br>
-        🎬 영화/드라마 평점<br>
-        📸 여행 스팟 공유
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── 수업 6: 포트폴리오 사이트 ── -->
-<div class="lesson-panel" id="panel-5">
-  <div class="lesson-header reveal">
-    <div class="lesson-icon-big">🚀</div>
-    <div class="lesson-meta">
-      <div class="lesson-session">수업 6 of 6</div>
-      <div class="lesson-title">나만의 포트폴리오 사이트</div>
-      <div class="lesson-desc">지금까지 만든 5개의 작품을 한 곳에 담는 포트폴리오 사이트를 완성합니다.<br>이 사이트 하나로 나의 바이브코딩 여정을 세상에 보여주세요!</div>
-      <div class="lesson-badges">
-        <span class="badge badge-time">⏱ 2시간</span>
-        <span class="badge badge-level">🎯 초·중·고</span>
-        <span class="badge badge-tool">🛠 HTML/CSS/JS</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="timetable reveal">
-    <div class="timetable-header">📅 수업 타임테이블</div>
-    <div class="timetable-row"><div class="timetable-time">00:00–00:20</div><div class="timetable-activity">포트폴리오 콘셉트 결정 & 자기소개 작성</div><div class="timetable-tag">기획</div></div>
-    <div class="timetable-row"><div class="timetable-time">00:20–01:00</div><div class="timetable-activity">AI로 포트폴리오 메인 페이지 생성</div><div class="timetable-tag">프롬프팅</div></div>
-    <div class="timetable-row"><div class="timetable-time">01:00–01:40</div><div class="timetable-activity">작품 카드 & 링크 연결 작업</div><div class="timetable-tag">코딩</div></div>
-    <div class="timetable-row"><div class="timetable-time">01:40–01:50</div><div class="timetable-activity">GitHub Pages 또는 Netlify로 배포</div><div class="timetable-tag">배포</div></div>
-    <div class="timetable-row"><div class="timetable-time">01:50–02:00</div><div class="timetable-activity">🎉 수료식 & 포트폴리오 URL 공유</div><div class="timetable-tag">완성</div></div>
-  </div>
-
-  <div class="section-title reveal">💬 수업용 프롬프트</div>
-
-  <div class="reveal">
-    <p style="font-size:0.82rem;color:rgba(255,248,240,0.6);margin-bottom:8px;">① 포트폴리오 사이트 생성</p>
-    <div class="ai-tabs">
-      <button class="ai-tab gpt active" onclick="switchAI(this,'gpt','p9')">ChatGPT</button>
-      <button class="ai-tab gemini" onclick="switchAI(this,'gemini','p9')">Gemini</button>
-    </div>
-    <div class="prompt-card">
-      <div class="prompt-body active" id="p9-gpt">
-        <div class="prompt-label">ChatGPT 프롬프트</div>
-        <div class="prompt-text">나만의 포트폴리오 웹사이트 HTML을 만들어줘.
-
-내 정보:
-- 이름: [이름 입력]
-- 소개: 바이브코딩으로 AI와 함께 작품을 만드는 [나이]살
-- 좋아하는 것: [관심사 2~3가지]
-
-작품 목록 (카드로 표시):
-1. 영화 포스터 - "내가 만든 첫 번째 영화"
-2. 미디어아트 - "움직이는 파티클 아트"
-3. 미니 게임 - "피하기 게임"
-4. 뮤직 비주얼라이저 - "음악이 그림이 되는 순간"
-5. 앱 UI - "내가 만든 앱 아이디어"
-
-사이트 기능:
-- 스크롤 시 요소가 나타나는 애니메이션
-- 작품 카드 hover 시 확대 효과
-- 다크/라이트 모드 전환 버튼
-- 연락처 섹션 (이메일 또는 SNS)
-- 반응형 디자인
-
-나만의 개성 있는 디자인으로 만들어줘!
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> [이름], [나이], [관심사]를 꼭 채워서 나만의 포트폴리오를 만들어요!</div>
-      </div>
-      <div class="prompt-body" id="p9-gemini">
-        <div class="prompt-label">Gemini 프롬프트</div>
-        <div class="prompt-text">안녕 Gemini! 나의 바이브코딩 포트폴리오 사이트를 만들어줘.
-
-페이지 구조:
-1. 히어로 섹션: 이름 + 한 줄 소개 + 멋진 배경 애니메이션
-2. 어바웃: 나의 코딩 여정 (바이브코딩 6주 수업 이야기)
-3. 작품들: 5개 프로젝트 카드 그리드
-4. 스킬: 내가 사용한 도구들 (HTML, CSS, AI 등)
-5. 연락처: SNS 링크
-
-디자인 방향: [원하는 스타일 - 예: 미니멀, 네온, 귀여운, 전문적]
-
-특별 기능:
-- 타이핑 애니메이션 (소개 문구)
-- 스크롤 진행바 (상단)
-- 작품 필터 버튼 (전체/게임/아트/앱)
-- 페이지 하단에 "Made with ❤️ and AI" 표시
-
-완전한 HTML 파일로 만들어줘.
-<button class="copy-btn" onclick="copyPrompt(this)">복사</button></div>
-        <div class="prompt-tip">💡 <strong>팁:</strong> 디자인 방향을 구체적으로 쓸수록 더 나다운 포트폴리오가 탄생해요!</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-title reveal">🚀 무료 배포 방법</div>
-  <div class="steps reveal">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-content">
-        <div class="step-title">GitHub 계정 만들기</div>
-        <div class="step-detail">github.com에서 무료 계정 생성. 이메일만 있으면 바로 가입 가능!</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-content">
-        <div class="step-title">파일 업로드</div>
-        <div class="step-detail">새 저장소(repository) 만들고 index.html 파일 드래그&드롭으로 업로드.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-content">
-        <div class="step-title">GitHub Pages 켜기</div>
-        <div class="step-detail">Settings → Pages → Source를 main 브랜치로 설정하면 자동으로 웹사이트 생성!</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-content">
-        <div class="step-title">링크 공유!</div>
-        <div class="step-detail">username.github.io/repository-name 형태의 URL로 전세계에 공유 가능!</div>
-      </div>
-    </div>
-  </div>
-
-  <div style="background:linear-gradient(135deg,rgba(255,230,0,0.12),rgba(0,229,195,0.08));border:1px solid rgba(255,230,0,0.3);border-radius:16px;padding:24px;text-align:center;margin-top:20px;" class="reveal">
-    <div style="font-size:2.5rem;margin-bottom:12px;">🎉</div>
-    <div style="font-family:'Black Han Sans',sans-serif;font-size:1.4rem;color:var(--yellow);margin-bottom:8px;">6주 과정 완성!</div>
-    <div style="font-size:0.88rem;color:rgba(255,248,240,0.75);line-height:1.8;">
-      AI와 함께 6개의 작품을 만들며<br>
-      <span style="color:var(--mint);font-weight:700;">바이브코딩의 진짜 힘</span>을 경험했습니다.<br>
-      이제 세상에 없던 것을 만들 차례예요! 🚀
-    </div>
-  </div>
-</div>
-
-</div><!-- /content-area -->
-
-<footer>
-  <p>세영코딩연구소 <span>바이브코딩 크리에이티브 클래스</span> · ph.D Kim · 2025</p>
-  <p style="margin-top:6px;">Made with ❤️ and AI · ChatGPT · Gemini · Claude</p>
-</footer>
-
-<style>
-  /* 포스터 호버 */
-  .poster-demo:hover { transform: translateY(-6px) scale(1.03); }
-  .poster-demo:hover .poster-hover-overlay { opacity: 1 !important; }
-</style>
+</script>
 
 <script>
-// ══════════════════════════════════════════
-//  탭 전환
-// ══════════════════════════════════════════
-function switchLesson(idx, el) {
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.lesson-panel').forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('panel-' + idx).classList.add('active');
-  const pct = Math.round(((idx + 1) / 6) * 100);
-  document.getElementById('progressFill').style.width = pct + '%';
-  setTimeout(triggerReveal, 100);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+(function(){
+  "use strict";
+  var DATA = JSON.parse(document.getElementById("data-quiz").textContent);
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var $ = function(id){ return document.getElementById(id); };
 
-  // 해당 패널의 canvas 초기화
-  if (idx === 0) setTimeout(initPoster, 200);
-  if (idx === 1) setTimeout(initArtCanvas, 200);
-  if (idx === 2) setTimeout(initGame, 200);
-}
-
-// ── AI 탭 전환 ──
-function switchAI(btn, aiType, prefix) {
-  const card = btn.closest('.prompt-card');
-  const tabs = btn.parentElement;
-  tabs.querySelectorAll('.ai-tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  card.querySelectorAll('.prompt-body').forEach(b => b.classList.remove('active'));
-  const target = card.querySelector('#' + prefix + '-' + aiType);
-  if (target) target.classList.add('active');
-}
-
-// ── 프롬프트 복사 ──
-function copyPrompt(btn) {
-  const text = btn.parentElement.innerText.replace('복사', '').replace('복사됨!', '').trim();
-  navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = '복사됨!'; btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = '복사'; btn.classList.remove('copied'); }, 2000);
-  }).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = text; document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); document.body.removeChild(ta);
-    btn.textContent = '복사됨!'; btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = '복사'; btn.classList.remove('copied'); }, 2000);
-  });
-}
-
-// ── 아코디언 ──
-function toggleAcc(btn) {
-  btn.classList.toggle('open');
-  btn.nextElementSibling.classList.toggle('open');
-}
-
-// ── Scroll Reveal ──
-function triggerReveal() {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
-  }, { threshold: 0.05 });
-  document.querySelectorAll('.reveal:not(.visible)').forEach(el => observer.observe(el));
-}
-
-// ══════════════════════════════════════════
-//  수업1 — 포스터 타이핑 애니메이션
-// ══════════════════════════════════════════
-function initPoster() {
-  const el = document.getElementById('poster1-title');
-  if (!el) return;
-  const text = '네오 서울\nZERO DAY';
-  let i = 0;
-  el.textContent = '';
-  el.style.whiteSpace = 'pre';
-  const iv = setInterval(() => {
-    if (i < text.length) { el.textContent += text[i++]; }
-    else { clearInterval(iv); el.style.borderRight = 'none'; }
-  }, 80);
-
-  // 별빛 생성
-  const container = document.getElementById('stars1');
-  if (container && container.children.length === 0) {
-    for (let s = 0; s < 40; s++) {
-      const star = document.createElement('div');
-      const size = Math.random() * 2 + 1;
-      star.style.cssText = `position:absolute;width:${size}px;height:${size}px;border-radius:50%;
-        background:#fff;top:${Math.random()*100}%;left:${Math.random()*100}%;
-        opacity:${Math.random()*0.7+0.1};
-        animation:twinkle ${Math.random()*3+2}s ease-in-out infinite;
-        animation-delay:${Math.random()*3}s;`;
-      container.appendChild(star);
-    }
-    // twinkle 키프레임 (한 번만)
-    if (!document.getElementById('twinkleStyle')) {
-      const st = document.createElement('style');
-      st.id = 'twinkleStyle';
-      st.textContent = `@keyframes twinkle{0%,100%{opacity:0.1}50%{opacity:0.9}}`;
-      document.head.appendChild(st);
-    }
+  /* ---------- toast ---------- */
+  var toastEl = $("toast"), toastT = null;
+  function toast(msg){
+    toastEl.textContent = msg; toastEl.classList.add("on");
+    clearTimeout(toastT); toastT = setTimeout(function(){ toastEl.classList.remove("on"); }, 1500);
   }
-}
 
-// ══════════════════════════════════════════
-//  수업2 — 파티클 아트 Canvas
-// ══════════════════════════════════════════
-let artAnimId = null;
+  /* ---------- tabs ---------- */
+  var tabs = document.querySelectorAll(".tabbtn");
+  var pages = document.querySelectorAll(".page");
+  function show(id){
+    for (var i=0;i<tabs.length;i++){ tabs[i].classList.toggle("on", tabs[i].dataset.p === id); }
+    for (var j=0;j<pages.length;j++){ pages[j].classList.toggle("on", pages[j].id === id); }
+    var pg = $(id);
+    var ac = pg && pg.dataset.accent ? pg.dataset.accent : "#2DE2E6";
+    document.documentElement.style.setProperty("--accent", ac);
+    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+  }
+  for (var t=0;t<tabs.length;t++){
+    tabs[t].addEventListener("click", function(){ show(this.dataset.p); });
+  }
 
-function initArtCanvas() {
-  const canvas = document.getElementById('artCanvas');
-  if (!canvas) return;
-  if (artAnimId) cancelAnimationFrame(artAnimId);
-
-  // 실제 픽셀 크기 설정
-  const rect = canvas.getBoundingClientRect();
-  canvas.width  = rect.width  * (window.devicePixelRatio || 1);
-  canvas.height = rect.height * (window.devicePixelRatio || 1);
-
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  const dpr = window.devicePixelRatio || 1;
-
-  const NUM = 120;
-  const particles = Array.from({ length: NUM }, (_, i) => ({
-    x: Math.random() * W, y: Math.random() * H,
-    vx: (Math.random() - 0.5) * 1.2, vy: (Math.random() - 0.5) * 1.2,
-    r: Math.random() * 3 + 1.5,
-    hue: (i / NUM) * 360,
-    alpha: Math.random() * 0.5 + 0.5,
-    exploding: false, ex: 0, ey: 0
-  }));
-
-  let mouseX = W / 2, mouseY = H / 2;
-  let bursting = false, burstX = 0, burstY = 0, burstTimer = 0;
-
-  // 마우스 이벤트 — CSS 좌표 → canvas 좌표 변환
-  canvas.addEventListener('mousemove', e => {
-    const r = canvas.getBoundingClientRect();
-    mouseX = (e.clientX - r.left) * dpr;
-    mouseY = (e.clientY - r.top) * dpr;
-  });
-  canvas.addEventListener('click', e => {
-    const r = canvas.getBoundingClientRect();
-    burstX = (e.clientX - r.left) * dpr;
-    burstY = (e.clientY - r.top) * dpr;
-    bursting = true; burstTimer = 0;
-    particles.forEach(p => {
-      const angle = Math.atan2(p.y - burstY, p.x - burstX);
-      const dist = Math.random() * 8 + 4;
-      p.vx = Math.cos(angle) * dist;
-      p.vy = Math.sin(angle) * dist;
-    });
-  });
-  canvas.addEventListener('mouseleave', () => { mouseX = W / 2; mouseY = H / 2; });
-
-  function draw() {
-    ctx.fillStyle = 'rgba(0,0,0,0.18)';
-    ctx.fillRect(0, 0, W, H);
-
-    if (bursting) burstTimer++;
-    if (burstTimer > 40) bursting = false;
-
-    particles.forEach(p => {
-      // 마우스 반발
-      const dx = p.x - mouseX, dy = p.y - mouseY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 80 * dpr && !bursting) {
-        const force = (80 * dpr - dist) / (80 * dpr) * 2.5;
-        p.vx += (dx / dist) * force;
-        p.vy += (dy / dist) * force;
+  /* ---------- copy buttons ---------- */
+  function copyText(txt, btn){
+    var done = function(){
+      if (btn){
+        var old = btn.textContent; btn.textContent = "완료"; btn.classList.add("done");
+        setTimeout(function(){ btn.textContent = old; btn.classList.remove("done"); }, 1200);
       }
-
-      // 속도 제한 & 감쇠
-      const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-      if (speed > 7) { p.vx *= 7 / speed; p.vy *= 7 / speed; }
-      p.vx *= 0.96; p.vy *= 0.96;
-      p.vx += (Math.random() - 0.5) * 0.15;
-      p.vy += (Math.random() - 0.5) * 0.15;
-
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0) { p.x = 0; p.vx *= -1; }
-      if (p.x > W) { p.x = W; p.vx *= -1; }
-      if (p.y < 0) { p.y = 0; p.vy *= -1; }
-      if (p.y > H) { p.y = H; p.vy *= -1; }
-
-      p.hue = (p.hue + 0.5) % 360;
-
-      // 연결선
-      particles.forEach(q => {
-        const ddx = p.x - q.x, ddy = p.y - q.y;
-        const dd = Math.sqrt(ddx * ddx + ddy * ddy);
-        if (dd < 80 * dpr) {
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = `hsla(${p.hue},100%,65%,${0.12 * (1 - dd / (80 * dpr))})`;
-          ctx.lineWidth = 1;
-          ctx.stroke();
-        }
-      });
-
-      // 파티클 원
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r * dpr, 0, Math.PI * 2);
-      ctx.fillStyle = `hsla(${p.hue},100%,65%,${p.alpha})`;
-      ctx.shadowBlur = 8; ctx.shadowColor = `hsl(${p.hue},100%,65%)`;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    });
-
-    // 중앙 텍스트
-    const fontSize = Math.max(18, W * 0.042);
-    ctx.font = `900 ${fontSize}px 'Black Han Sans', sans-serif`;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = `rgba(255,255,255,${0.12 + Math.sin(Date.now() / 800) * 0.05})`;
-    ctx.fillText('✦ VIBE CODING ✦', W / 2, H / 2);
-
-    artAnimId = requestAnimationFrame(draw);
+      toast("프롬프트를 복사했습니다");
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done, function(){ fallback(txt, done); });
+    } else { fallback(txt, done); }
   }
-  draw();
-}
-
-// ══════════════════════════════════════════
-//  수업3 — 미니 게임
-// ══════════════════════════════════════════
-let gameAnimId = null;
-
-function initGame() {
-  const canvas = document.getElementById('gameCanvas');
-  if (!canvas) return;
-  if (gameAnimId) { cancelAnimationFrame(gameAnimId); gameAnimId = null; }
-
-  const rect = canvas.getBoundingClientRect();
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width  = rect.width  * dpr;
-  canvas.height = rect.height * dpr;
-
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  const FS = dpr * 22; // 이모지 폰트 크기
-
-  let state = 'idle'; // idle | playing | over
-  let score = 0, lives = 3, level = 1, frameCount = 0;
-  let player = { x: W / 2, y: H * 0.78 };
-  let enemies = [], stars = [], particles = [];
-
-  // 마우스/터치 추적
-  let targetX = W / 2;
-  canvas.addEventListener('mousemove', e => {
-    const r = canvas.getBoundingClientRect();
-    targetX = (e.clientX - r.left) * dpr;
-  });
-  canvas.addEventListener('touchmove', e => {
-    e.preventDefault();
-    const r = canvas.getBoundingClientRect();
-    targetX = (e.touches[0].clientX - r.left) * dpr;
-  }, { passive: false });
-  canvas.addEventListener('click', () => {
-    if (state === 'idle' || state === 'over') startGame();
-  });
-
-  function startGame() {
-    score = 0; lives = 3; level = 1; frameCount = 0;
-    enemies = []; stars = []; particles = [];
-    player.x = W / 2; targetX = W / 2;
-    state = 'playing';
+  function fallback(txt, cb){
+    var ta = document.createElement("textarea");
+    ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); cb(); } catch(e){ toast("복사에 실패했습니다"); }
+    document.body.removeChild(ta);
   }
-
-  function spawnEnemy() {
-    enemies.push({
-      x: Math.random() * (W - FS * 2) + FS,
-      y: -FS,
-      speed: (1.5 + level * 0.4 + Math.random() * 1.5) * dpr
+  var cbs = document.querySelectorAll(".copybtn[data-copy]");
+  for (var c=0;c<cbs.length;c++){
+    cbs[c].addEventListener("click", function(){
+      var src = $(this.dataset.copy);
+      if (src) copyText(src.textContent.trim(), this);
     });
   }
-  function spawnStar() {
-    stars.push({ x: Math.random() * (W - FS * 2) + FS, y: -FS, speed: (1.2 + Math.random()) * dpr });
+
+  /* ================= 1회차 : neon card ================= */
+  var card = $("npcard"), maxTilt = 12;
+  if (card){
+    card.addEventListener("mousemove", function(e){
+      if (reduce) return;
+      var r = card.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width - 0.5;
+      var py = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform = "rotateY(" + (px * maxTilt * 2).toFixed(2) + "deg) rotateX(" + (-py * maxTilt * 2).toFixed(2) + "deg)";
+    });
+    card.addEventListener("mouseleave", function(){
+      card.style.transition = "transform .4s ease, box-shadow .25s";
+      card.style.transform = "rotateY(0deg) rotateX(0deg)";
+      setTimeout(function(){ card.style.transition = "box-shadow .25s, transform .12s ease-out"; }, 400);
+    });
+  }
+  var secret = $("npSecret"), npBtn = $("npBtn");
+  if (npBtn){
+    npBtn.addEventListener("click", function(){
+      var on = secret.classList.toggle("on");
+      npBtn.textContent = on ? "비밀 닫기" : "비밀 열기";
+    });
+  }
+  function bindText(inputId, targetId){
+    var el = $(inputId); if (!el) return;
+    el.addEventListener("input", function(){ $(targetId).textContent = el.value; });
+  }
+  bindText("fName", "npName");
+  bindText("fRole", "npRole");
+  bindText("fBio", "npBio");
+  bindText("fSecret", "npSecret");
+  var fTags = $("fTags");
+  if (fTags){
+    fTags.addEventListener("input", function(){
+      var box = $("npTags"); box.innerHTML = "";
+      var arr = fTags.value.split(",");
+      for (var i=0;i<arr.length && i<5;i++){
+        var v = arr[i].trim(); if (!v) continue;
+        var s = document.createElement("span"); s.textContent = "#" + v; box.appendChild(s);
+      }
+    });
+  }
+  var erow = $("emojiRow");
+  if (erow){
+    DATA.avatars.forEach(function(em, i){
+      var b = document.createElement("button");
+      b.type = "button"; b.textContent = em;
+      if (i === 0) b.classList.add("on");
+      b.addEventListener("click", function(){
+        var all = erow.querySelectorAll("button");
+        for (var k=0;k<all.length;k++) all[k].classList.remove("on");
+        b.classList.add("on"); $("npAv").textContent = em;
+      });
+      erow.appendChild(b);
+    });
+  }
+  var fTilt = $("fTilt");
+  if (fTilt){
+    fTilt.addEventListener("input", function(){
+      maxTilt = parseInt(fTilt.value, 10);
+      $("tiltVal").textContent = fTilt.value;
+    });
   }
 
-  function drawEmoji(emoji, x, y, size) {
-    ctx.font = `${size}px serif`;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(emoji, x, y);
+  /* ================= 2회차 : quiz ================= */
+  var qi = 0, qs = 0;
+  var qzStart = $("qzStart"), qzPlay = $("qzPlay"), qzResult = $("qzResult");
+  function renderQ(){
+    var item = DATA.questions[qi];
+    $("qzCnt").textContent = (qi + 1) + " / " + DATA.questions.length;
+    $("qzScore").textContent = qs + "점";
+    $("qzBar").style.width = (qi / DATA.questions.length * 100) + "%";
+    $("qzQ").textContent = item.q;
+    var box = $("qzOpts"); box.innerHTML = "";
+    item.a.forEach(function(pair){
+      var b = document.createElement("button");
+      b.className = "qz-opt"; b.type = "button"; b.textContent = pair[0];
+      b.addEventListener("click", function(){ pick(pair[1]); });
+      box.appendChild(b);
+    });
+  }
+  function pick(v){
+    qs += v; qi += 1;
+    $("qzBar").style.width = (qi / DATA.questions.length * 100) + "%";
+    if (qi < DATA.questions.length){ setTimeout(renderQ, 180); }
+    else { setTimeout(finish, 320); }
+  }
+  function finish(){
+    qzPlay.style.display = "none";
+    qzResult.style.display = "block";
+    var max = DATA.questions.length * 2, r = DATA.results[DATA.results.length - 1];
+    for (var i=0;i<DATA.results.length;i++){ if (qs >= DATA.results[i].min){ r = DATA.results[i]; break; } }
+    $("rsEm").textContent = r.em;
+    $("rsName").textContent = r.name;
+    $("rsDesc").textContent = r.desc;
+    $("rsScore").textContent = qs + " / " + max + "점";
+    if (!reduce){
+      $("rsEm").animate(
+        [{transform:"scale(.4)",opacity:0},{transform:"scale(1.18)",opacity:1},{transform:"scale(1)"}],
+        {duration:520, easing:"cubic-bezier(.34,1.56,.64,1)"}
+      );
+      confetti();
+    }
+  }
+  if ($("qzGo")){
+    $("qzGo").addEventListener("click", function(){
+      qi = 0; qs = 0;
+      qzStart.style.display = "none"; qzResult.style.display = "none";
+      qzPlay.style.display = "block"; renderQ();
+    });
+  }
+  if ($("qzAgain")){
+    $("qzAgain").addEventListener("click", function(){
+      qzResult.style.display = "none"; qzStart.style.display = "block";
+      var cc = $("confetti"), cx = cc.getContext("2d");
+      cx.clearRect(0, 0, cc.width, cc.height);
+    });
+  }
+  function confetti(){
+    var cv = $("confetti"); if (!cv) return;
+    var host = $("qz");
+    cv.width = host.clientWidth; cv.height = host.clientHeight;
+    var ctx = cv.getContext("2d");
+    var cols = ["#2DE2E6","#FF2E88","#FFC93C","#4ADE80","#A78BFA"];
+    var ps = [], n = 60;
+    for (var i=0;i<n;i++){
+      ps.push({
+        x: cv.width/2 + (Math.random()-0.5)*160,
+        y: cv.height*0.55,
+        vx: (Math.random()-0.5)*7,
+        vy: -Math.random()*11 - 5,
+        s: 4 + Math.random()*6,
+        c: cols[i % cols.length],
+        rot: Math.random()*6.28,
+        vr: (Math.random()-0.5)*0.3,
+        life: 1
+      });
+    }
+    var t0 = performance.now();
+    function step(now){
+      var dt = Math.min((now - t0)/1000, 0.05); t0 = now;
+      ctx.clearRect(0,0,cv.width,cv.height);
+      var alive = false;
+      for (var i=0;i<ps.length;i++){
+        var p = ps[i];
+        p.vy += 26 * dt * 60 * 0.016;
+        p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+        p.life -= 0.012;
+        if (p.life > 0 && p.y < cv.height + 40){
+          alive = true;
+          ctx.save();
+          ctx.globalAlpha = Math.max(p.life, 0);
+          ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+          ctx.fillStyle = p.c;
+          ctx.fillRect(-p.s/2, -p.s/2, p.s, p.s*0.6);
+          ctx.restore();
+        }
+      }
+      if (alive) requestAnimationFrame(step);
+      else ctx.clearRect(0,0,cv.width,cv.height);
+    }
+    requestAnimationFrame(step);
   }
 
-  function loop() {
-    ctx.clearRect(0, 0, W, H);
+  /* ================= 3회차 : star dodge ================= */
+  var cvs = $("game");
+  if (cvs){
+    var g = cvs.getContext("2d");
+    var W = cvs.width, H = cvs.height;
+    var CFG = { speed: 320, fall: 200, spawn: 0.75, up: 10, mul: 1.12, minSpawn: 0.25 };
+    var keys = { left:false, right:false };
+    var st, best = 0;
 
-    // 배경 그라디언트
-    const bg = ctx.createLinearGradient(0, 0, 0, H);
-    bg.addColorStop(0, '#0a0a1a');
-    bg.addColorStop(1, '#120030');
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
+    function reset(){
+      st = { x: W/2 - 22, score: 0, stars: [], t: 0, acc: 0, lv: 1, over: false, started: false, record: false };
+      $("gScore").textContent = "0"; $("gLv").textContent = "LV.1";
+    }
+    reset();
 
-    // 상단 스캔라인
-    ctx.fillStyle = `linear-gradient(90deg,#FF4D6D,#FFE600,#00E5C3)`;
-    ctx.fillStyle = '#7B2FBE';
-    ctx.fillRect(0, 0, W, dpr * 2);
+    function fallSpeed(){ return CFG.fall * Math.pow(CFG.mul, st.lv - 1); }
+    function spawnGap(){ return Math.max(CFG.minSpawn, CFG.spawn - (st.lv - 1) * 0.05); }
 
-    if (state === 'idle') {
-      ctx.fillStyle = '#FFE600';
-      ctx.font = `bold ${FS * 1.1}px 'Noto Sans KR', sans-serif`;
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText('클릭해서 게임 시작!', W / 2, H / 2 - FS * 1.5);
-      ctx.font = `${FS * 0.8}px serif`;
-      ctx.fillText('🖱️ 마우스로 🚀를 조종하세요', W / 2, H / 2);
-      ctx.font = `${FS * 0.75}px serif`;
-      ctx.fillStyle = 'rgba(255,248,240,0.5)';
-      ctx.fillText('💣 피하기 · ⭐ 먹기', W / 2, H / 2 + FS * 1.4);
+    function update(dt){
+      if (!st.started || st.over) return;
+      st.t += dt;
+      var lv = Math.floor(st.t / CFG.up) + 1;
+      if (lv !== st.lv){ st.lv = lv; $("gLv").textContent = "LV." + lv; }
+      if (keys.left) st.x -= CFG.speed * dt;
+      if (keys.right) st.x += CFG.speed * dt;
+      if (st.x < 0) st.x = 0;
+      if (st.x > W - 44) st.x = W - 44;
 
-    } else if (state === 'playing') {
-      frameCount++;
-      level = Math.floor(score / 5) + 1;
-
-      // 플레이어 이동
-      player.x += (targetX - player.x) * 0.12;
-      player.x = Math.max(FS, Math.min(W - FS, player.x));
-
-      // 스폰
-      const spawnRate = Math.max(40, 90 - level * 8);
-      if (frameCount % spawnRate === 0) spawnEnemy();
-      if (frameCount % (spawnRate + 25) === 0) spawnStar();
-
-      // 이동 & 충돌
-      enemies = enemies.filter(e => {
-        e.y += e.speed;
-        const hit = Math.abs(e.x - player.x) < FS * 0.9 && Math.abs(e.y - player.y) < FS * 0.9;
-        if (hit) {
-          lives--;
-          // 폭발 파티클
-          for (let i = 0; i < 12; i++) particles.push({
-            x: player.x, y: player.y,
-            vx: (Math.random()-0.5)*6*dpr, vy: (Math.random()-0.5)*6*dpr,
-            life: 30, color: `hsl(${Math.random()*60},100%,65%)`
-          });
-          if (lives <= 0) state = 'over';
-          return false;
+      st.acc += dt;
+      if (st.acc >= spawnGap() && st.stars.length < 30){
+        st.acc = 0;
+        st.stars.push({ x: 16 + Math.random() * (W - 58), y: -26, r: 13 });
+      }
+      var py = H - 40 - 44;
+      for (var i = st.stars.length - 1; i >= 0; i--){
+        var s = st.stars[i];
+        s.y += fallSpeed() * dt;
+        if (s.x + s.r > st.x && s.x - s.r < st.x + 44 && s.y + s.r > py && s.y - s.r < py + 44){
+          st.over = true;
+          if (st.score > best){ best = st.score; st.record = true; $("gBest").textContent = best; }
         }
-        return e.y < H + FS;
-      });
-
-      stars = stars.filter(s => {
-        s.y += s.speed;
-        const hit = Math.abs(s.x - player.x) < FS * 0.9 && Math.abs(s.y - player.y) < FS * 0.9;
-        if (hit) {
-          score++;
-          for (let i = 0; i < 8; i++) particles.push({
-            x: s.x, y: s.y,
-            vx: (Math.random()-0.5)*5*dpr, vy: (Math.random()-0.5)*5*dpr,
-            life: 20, color: '#FFE600'
-          });
-          return false;
-        }
-        return s.y < H + FS;
-      });
-
-      // 파티클
-      particles = particles.filter(p => {
-        p.x += p.vx; p.y += p.vy; p.life--;
-        ctx.globalAlpha = p.life / 30;
-        ctx.fillStyle = p.color;
-        ctx.fillRect(p.x - dpr * 2, p.y - dpr * 2, dpr * 4, dpr * 4);
-        ctx.globalAlpha = 1;
-        return p.life > 0;
-      });
-
-      // 그리기
-      enemies.forEach(e => drawEmoji('💣', e.x, e.y, FS));
-      stars.forEach(s => drawEmoji('⭐', s.x, s.y, FS));
-      drawEmoji('🚀', player.x, player.y, FS * 1.2);
-
-      // HUD
-      const hudY = FS * 0.9;
-      ctx.font = `bold ${FS * 0.75}px 'Noto Sans KR', monospace`;
-      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-      ctx.fillStyle = '#FFE600';
-      ctx.fillText(`⭐ ${score}`, FS * 0.4, hudY * 0.3);
-      ctx.textAlign = 'center';
-      ctx.fillStyle = '#00E5C3';
-      ctx.fillText(`Lv.${level}`, W / 2, hudY * 0.3);
-      ctx.textAlign = 'right';
-      ctx.fillStyle = '#FF4D6D';
-      ctx.fillText('❤️'.repeat(lives), W - FS * 0.4, hudY * 0.3);
-
-    } else if (state === 'over') {
-      ctx.fillStyle = 'rgba(0,0,0,0.6)';
-      ctx.fillRect(0, 0, W, H);
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#FF4D6D';
-      ctx.font = `bold ${FS * 1.2}px 'Black Han Sans', sans-serif`;
-      ctx.fillText('GAME OVER', W / 2, H / 2 - FS * 1.8);
-      ctx.fillStyle = '#FFE600';
-      ctx.font = `bold ${FS}px 'Noto Sans KR', sans-serif`;
-      ctx.fillText(`최종 점수: ${score}점`, W / 2, H / 2 - FS * 0.4);
-      ctx.fillStyle = 'rgba(255,248,240,0.6)';
-      ctx.font = `${FS * 0.8}px sans-serif`;
-      ctx.fillText('클릭하면 다시 시작!', W / 2, H / 2 + FS * 1.2);
+        if (s.y - s.r > H){ st.stars.splice(i, 1); st.score += 1; $("gScore").textContent = st.score; }
+      }
     }
 
-    gameAnimId = requestAnimationFrame(loop);
-  }
-  loop();
-}
+    function star(cx, cy, r){
+      g.beginPath();
+      for (var i = 0; i < 10; i++){
+        var rad = (i % 2 === 0) ? r : r * 0.45;
+        var a = -Math.PI/2 + i * Math.PI/5;
+        var px = cx + Math.cos(a) * rad, py2 = cy + Math.sin(a) * rad;
+        if (i === 0) g.moveTo(px, py2); else g.lineTo(px, py2);
+      }
+      g.closePath(); g.fill();
+    }
 
-// ══════════════════════════════════════════
-//  init
-// ══════════════════════════════════════════
-window.addEventListener('load', () => {
-  triggerReveal();
-  document.getElementById('progressFill').style.width = '16.6%';
-  // 수업1 패널이 active 상태이므로 포스터 애니메이션 바로 시작
-  setTimeout(initPoster, 400);
-});
+    function draw(){
+      g.clearRect(0, 0, W, H);
+      g.fillStyle = "#080C1C"; g.fillRect(0, 0, W, H);
+      g.fillStyle = "rgba(255,255,255,.06)";
+      for (var i = 0; i < 26; i++){
+        g.fillRect((i * 97) % W, (i * 61 + (st.t * 12) % H) % H, 2, 2);
+      }
+      var py = H - 40 - 44;
+      g.fillStyle = "#FFC93C";
+      g.shadowColor = "#FFC93C"; g.shadowBlur = 16;
+      g.fillRect(st.x, py, 44, 44);
+      g.shadowBlur = 0;
+      g.fillStyle = "#0B0F1F";
+      g.fillRect(st.x + 11, py + 15, 7, 9); g.fillRect(st.x + 26, py + 15, 7, 9);
+
+      g.fillStyle = "#2DE2E6";
+      g.shadowColor = "#2DE2E6"; g.shadowBlur = 12;
+      for (var k = 0; k < st.stars.length; k++){ star(st.stars[k].x, st.stars[k].y, st.stars[k].r); }
+      g.shadowBlur = 0;
+
+      g.fillStyle = "#EAF0FF"; g.font = "700 20px monospace";
+      g.fillText("SCORE " + st.score, 16, 32);
+      g.textAlign = "right"; g.fillStyle = "#FFC93C";
+      g.fillText("LV." + st.lv, W - 16, 32); g.textAlign = "left";
+
+      if (!st.started || st.over){
+        g.fillStyle = "rgba(8,12,28,.82)"; g.fillRect(0, 0, W, H);
+        g.textAlign = "center";
+        if (st.over){
+          g.fillStyle = "#FF2E88"; g.font = "700 34px sans-serif";
+          g.fillText("GAME OVER", W/2, H/2 - 26);
+          g.fillStyle = "#EAF0FF"; g.font = "600 19px sans-serif";
+          g.fillText("\uCD5C\uC885 \uC810\uC218 " + st.score + "\uC810", W/2, H/2 + 10);
+          if (st.record){
+            g.fillStyle = "#FFC93C"; g.font = "700 17px sans-serif";
+            g.fillText("\uC2E0\uAE30\uB85D!", W/2, H/2 + 38);
+          }
+          g.fillStyle = "#8A9AC4"; g.font = "500 15px sans-serif";
+          g.fillText("SPACE \uB610\uB294 \uD074\uB9AD\uC73C\uB85C \uB2E4\uC2DC \uC2DC\uC791", W/2, H/2 + 70);
+        } else {
+          g.fillStyle = "#FFC93C"; g.font = "700 30px sans-serif";
+          g.fillText("STAR DODGE", W/2, H/2 - 24);
+          g.fillStyle = "#EAF0FF"; g.font = "600 17px sans-serif";
+          g.fillText("\uBC29\uD5A5\uD0A4\uB85C \uC774\uB3D9, \uBCC4\uC744 \uD53C\uD558\uC138\uC694", W/2, H/2 + 12);
+          g.fillStyle = "#8A9AC4"; g.font = "500 15px sans-serif";
+          g.fillText("SPACE \uB610\uB294 \uD074\uB9AD\uC73C\uB85C \uC2DC\uC791", W/2, H/2 + 46);
+        }
+        g.textAlign = "left";
+      }
+    }
+
+    var last = performance.now();
+    function loop(now){
+      var dt = Math.min((now - last) / 1000, 0.05); last = now;
+      update(dt); draw(); requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    function go(){
+      if (st.over || !st.started){ reset(); st.started = true; }
+    }
+    cvs.addEventListener("click", go);
+    cvs.setAttribute("tabindex", "0");
+    document.addEventListener("keydown", function(e){
+      if (!$("p3").classList.contains("on")) return;
+      if (e.key === "ArrowLeft"){ keys.left = true; e.preventDefault(); }
+      if (e.key === "ArrowRight"){ keys.right = true; e.preventDefault(); }
+      if (e.key === " " || e.code === "Space"){ go(); e.preventDefault(); }
+    });
+    document.addEventListener("keyup", function(e){
+      if (e.key === "ArrowLeft") keys.left = false;
+      if (e.key === "ArrowRight") keys.right = false;
+    });
+    function hold(btn, which){
+      if (!btn) return;
+      var on = function(ev){ ev.preventDefault(); keys[which] = true; go(); };
+      var off = function(ev){ ev.preventDefault(); keys[which] = false; };
+      btn.addEventListener("touchstart", on, {passive:false});
+      btn.addEventListener("touchend", off, {passive:false});
+      btn.addEventListener("mousedown", on);
+      btn.addEventListener("mouseup", off);
+      btn.addEventListener("mouseleave", off);
+    }
+    hold($("padL"), "left");
+    hold($("padR"), "right");
+  }
+
+  /* ================= 도구 : builder ================= */
+  var actsBox = $("bActs");
+  if (actsBox){
+    DATA.actions.forEach(function(txt, i){
+      var lab = document.createElement("label");
+      var inp = document.createElement("input");
+      inp.type = "checkbox"; inp.value = txt; if (i < 2) inp.checked = true;
+      var sp = document.createElement("span"); sp.textContent = txt;
+      lab.appendChild(inp); lab.appendChild(sp); actsBox.appendChild(lab);
+      inp.addEventListener("change", build);
+    });
+  }
+  function build(){
+    var what = $("bWhat"), mood = $("bMood"), speed = $("bSpeed"), extra = $("bExtra");
+    if (!what) return;
+    var picks = [];
+    var ins = actsBox.querySelectorAll("input");
+    for (var i=0;i<ins.length;i++){ if (ins[i].checked) picks.push(ins[i].value); }
+    $("bSpeedV").textContent = speed.value;
+    var lines = [];
+    lines.push(what.value + "\uB97C \uB9CC\uB4E4\uC5B4\uC918.");
+    lines.push("");
+    lines.push("[\uBAA8\uC591]");
+    lines.push("- " + mood.value + "\uC73C\uB85C \uB9CC\uB4E4\uC5B4\uC918.");
+    lines.push("- \uD654\uBA74 \uAC00\uC6B4\uB370 \uC815\uB82C\uD558\uACE0, \uAE00\uC790\uB294 \uBC30\uACBD\uACFC \uC798 \uAD6C\uBCC4\uB418\uAC8C \uD574\uC918.");
+    lines.push("");
+    lines.push("[\uB3D9\uC791]");
+    if (picks.length === 0){ lines.push("- (\uB3D9\uC791\uC744 \uD558\uB098 \uC774\uC0C1 \uACE8\uB77C\uC8FC\uC138\uC694)"); }
+    for (var k=0;k<picks.length;k++){ lines.push("- " + picks[k]); }
+    lines.push("");
+    lines.push("[\uC218\uCE58]");
+    lines.push("- \uBAA8\uB4E0 \uC560\uB2C8\uBA54\uC774\uC158\uC740 " + speed.value + "\uCD08 \uB3D9\uC548 \uBD80\uB4DC\uB7FD\uAC8C \uC9C4\uD589\uD558\uAC8C \uD574\uC918.");
+    if (extra.value.trim()){ lines.push("- " + extra.value.trim()); }
+    lines.push("");
+    lines.push("[\uD615\uC2DD]");
+    lines.push("- HTML \uD30C\uC77C \uD558\uB098\uB85C \uB9CC\uB4E4\uACE0, \uC0C9\uACFC \uC18D\uB3C4 \uAC19\uC740 \uC22B\uC790\uB294 \uB9E8 \uC704\uC5D0 \uBAA8\uC544 \uC8FC\uC11D\uACFC \uD568\uAED8 \uC815\uB9AC\uD574\uC918.");
+    $("bOut").textContent = lines.join("\n");
+  }
+  ["bWhat","bMood","bSpeed","bExtra"].forEach(function(id){
+    var el = $(id); if (el) el.addEventListener("input", build);
+  });
+  if ($("bCopy")) $("bCopy").addEventListener("click", function(){ copyText($("bOut").textContent, this); });
+  build();
+
+  /* ================= 도구 : scorer ================= */
+  var CRIT = [
+    { key:"\u2460 \uB300\uC0C1", re:/(\uB9CC\uB4E4|\uCE74\uB4DC|\uBC84\uD2BC|\uAC8C\uC784|\uD034\uC988|\uD398\uC774\uC9C0|\uD654\uBA74|\uC571|\uD3FC|\uBAA9\uB85D|\uD14C\uC2A4\uD2B8)/ },
+    { key:"\u2461 \uBAA8\uC591", re:/(\uC0C9|\uBC30\uACBD|\uD3F0\uD2B8|\uAE00\uAF34|\uB465\uADFC|\uADF8\uB9BC\uC790|\uD06C\uAE30|\uC815\uB82C|\uD14C\uB450\uB9AC|\uB124\uC628|\uADF8\uB77C\uB370\uC774\uC158|px)/ },
+    { key:"\u2462 \uB3D9\uC791", re:/(\uD074\uB9AD|\uB204\uB974|\uD638\uBC84|\uB9C8\uC6B0\uC2A4|\uC62C\uB9AC|\uC6C0\uC9C1|\uC774\uB3D9|\uB098\uD0C0\uB098|\uC0AC\uB77C\uC9C0|\uC560\uB2C8\uBA54\uC774\uC158|\uC804\uD658|\uBC14\uB00C)/ },
+    { key:"\u2463 \uC218\uCE58", re:/\d/ },
+    { key:"\u2464 \uD615\uC2DD", re:/(HTML|html|\uD30C\uC77C|\uD558\uB098|\uD55C \uAC1C|\uCF54\uB4DC|\uC8FC\uC11D|\uC815\uB9AC)/ }
+  ];
+  var scIn = $("scIn");
+  if (scIn){
+    var critBox = $("scCrit");
+    CRIT.forEach(function(c, i){
+      var d = document.createElement("div");
+      d.innerHTML = '<span class="mk">·</span><span>' + c.key + '</span>';
+      d.id = "crit" + i; critBox.appendChild(d);
+    });
+    var score = function(){
+      var v = scIn.value, hit = 0;
+      CRIT.forEach(function(c, i){
+        var ok = c.re.test(v) && v.trim().length > 4;
+        if (ok) hit++;
+        var d = $("crit" + i);
+        d.classList.toggle("ok", ok);
+        d.querySelector(".mk").textContent = ok ? "\u2713" : "\u00B7";
+      });
+      var pct = hit * 20;
+      $("scNum").textContent = pct;
+      var col = pct >= 80 ? "#4ADE80" : (pct >= 40 ? "#FFC93C" : "#FB7185");
+      $("scRing").style.background = "conic-gradient(" + col + " " + (pct * 3.6) + "deg, var(--panel-2) 0deg)";
+      $("scNum").style.color = col;
+      var msg;
+      if (!v.trim()) msg = "\uD504\uB86C\uD504\uD2B8\uB97C \uBD99\uC5EC\uB123\uC73C\uBA74 \uBE60\uC9C4 \uD56D\uBAA9\uC744 \uCC3E\uC544\uB4DC\uB9BD\uB2C8\uB2E4.";
+      else if (pct >= 80) msg = "\uBC14\uB85C \uC368\uB3C4 \uC88B\uC740 \uD504\uB86C\uD504\uD2B8\uC785\uB2C8\uB2E4. \uACB0\uACFC\uB97C \uBCF4\uACE0 \uD55C \uAC00\uC9C0\uC529\uB9CC \uACE0\uCCD0 \uB098\uAC00\uC138\uC694.";
+      else if (pct >= 40) msg = "\uC808\uBC18\uC740 \uCC44\uC6E0\uC2B5\uB2C8\uB2E4. \uCCB4\uD06C\uAC00 \uC548 \uB41C \uD56D\uBAA9\uC744 \uD55C \uBB38\uC7A5\uC529 \uB367\uBD99\uC5EC \uBCF4\uC138\uC694.";
+      else msg = "\uC815\uBCF4\uAC00 \uB108\uBB34 \uC801\uC2B5\uB2C8\uB2E4. AI\uAC00 \uC784\uC758\uB85C \uC815\uD558\uBA74 \uACB0\uACFC\uAC00 \uB9E4\uBC88 \uB2EC\uB77C\uC9d1\uB2C8\uB2E4.";
+      $("scMsg").textContent = msg;
+    };
+    scIn.addEventListener("input", score);
+    score();
+  }
+
+  /* ---------- checklist count ---------- */
+  var chks = document.querySelectorAll(".chk[data-chk] input");
+  for (var q=0;q<chks.length;q++){
+    chks[q].addEventListener("change", function(){
+      if (this.checked) toast("좋습니다, 하나 완료");
+    });
+  }
+})();
 </script>
 </body>
 </html>
