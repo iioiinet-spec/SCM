@@ -1,0 +1,580 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>중등 정보올림피아드 C 커리큘럼</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+/* Layout: single-column scroll document, sticky part nav, chapter rows as a 4-track grid that stacks on phones. Committed dark navy/teal house style (KOI series). */
+:root{
+  --bg:#0a111e;
+  --surface:#111c2e;
+  --surface-2:#16243a;
+  --line:#1e3251;
+  --line-soft:#182742;
+  --fg:#e9eff8;
+  --muted:#92a6c3;
+  --faint:#67799a;
+  --accent:#2dd4bf;
+  --accent-soft:rgba(45,212,191,.13);
+  --p1:#2dd4bf;
+  --p2:#d08b4a;
+  --p3:#b9c8dc;
+  --p4:#f0b429;
+  --font-display:"Nanum Myeongjo",Georgia,"Apple SD Gothic Neo",serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--font-body);
+  font-size:15px;
+  line-height:1.72;
+  font-weight:300;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1020px;margin:0 auto;padding-inline:20px;padding-block:0}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;text-wrap:balance;margin:0;line-height:1.3}
+p{margin:0}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+
+/* ---------- masthead ---------- */
+.masthead{border-bottom:1px solid var(--line);background:
+  radial-gradient(900px 340px at 18% -40%,rgba(45,212,191,.16),transparent 70%),
+  var(--surface);}
+.masthead .wrap{padding-block:52px 40px;display:flex;flex-direction:column;gap:22px}
+.rule-top{height:3px;width:62px;background:var(--accent);border-radius:2px}
+h1{font-size:clamp(28px,5.4vw,46px);letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:16px;max-width:62ch}
+.byline{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:baseline;padding-top:8px;border-top:1px solid var(--line-soft)}
+.byline .name{font-family:var(--font-mono);font-size:12.5px;letter-spacing:.04em;color:var(--accent)}
+.byline .meta{font-family:var(--font-mono);font-size:12px;color:var(--faint)}
+
+/* ---------- stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line-soft);border:1px solid var(--line-soft);border-radius:10px;overflow:hidden}
+.stat{background:var(--surface-2);padding:16px 18px;min-width:0}
+.stat .k{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.stat .v{font-family:var(--font-mono);font-size:22px;font-weight:600;color:var(--fg);font-variant-numeric:tabular-nums;line-height:1.5}
+.stat .v small{font-size:12px;font-weight:400;color:var(--muted);margin-left:3px}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(10,17,30,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;gap:4px;overflow-x:auto;padding-block:9px;scrollbar-width:thin}
+.nav a{flex:0 0 auto;font-family:var(--font-mono);font-size:12px;color:var(--muted);text-decoration:none;padding:5px 11px;border-radius:999px;border:1px solid transparent;white-space:nowrap}
+.nav a:hover{color:var(--fg);border-color:var(--line)}
+.nav a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- sections ---------- */
+section{padding-block:46px;border-bottom:1px solid var(--line-soft)}
+.sec-head{display:flex;flex-direction:column;gap:10px;margin-bottom:26px}
+.sec-head h2{font-size:clamp(21px,3.4vw,27px)}
+.sec-head p{color:var(--muted);max-width:68ch}
+
+/* ---------- principle cards ---------- */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line-soft);border-radius:10px;padding:18px 20px;min-width:0}
+.card h4{font-family:var(--font-body);font-weight:600;font-size:14.5px;color:var(--fg);margin-bottom:6px;letter-spacing:-.005em}
+.card p{color:var(--muted);font-size:13.5px;line-height:1.68}
+
+/* ---------- roadmap ---------- */
+.road{display:grid;grid-template-columns:repeat(auto-fit,minmax(222px,1fr));gap:14px}
+.road-item{background:var(--surface);border:1px solid var(--line-soft);border-top:3px solid var(--pc);border-radius:10px;padding:18px 20px;min-width:0;display:flex;flex-direction:column;gap:9px}
+.road-item .tag{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--pc)}
+.road-item h4{font-family:var(--font-body);font-weight:600;font-size:16px}
+.road-item p{color:var(--muted);font-size:13.5px;line-height:1.65}
+.road-item .fig{font-family:var(--font-mono);font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums;margin-top:auto;padding-top:6px;border-top:1px dashed var(--line-soft)}
+
+/* ---------- part blocks ---------- */
+.part{border-bottom:1px solid var(--line-soft);padding-block:50px}
+.part-head{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 24px;margin-bottom:8px}
+.part-no{font-family:var(--font-mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--pc);border:1px solid var(--pc);border-radius:4px;padding:3px 9px}
+.part-head h2{font-size:clamp(22px,3.8vw,30px)}
+.part-lede{color:var(--muted);max-width:70ch;margin-bottom:22px}
+.part-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.chip{font-family:var(--font-mono);font-size:11.5px;color:var(--muted);background:var(--surface-2);border:1px solid var(--line-soft);border-radius:999px;padding:4px 11px;font-variant-numeric:tabular-nums}
+.chip b{color:var(--fg);font-weight:600}
+
+.chapters{display:flex;flex-direction:column;border:1px solid var(--line-soft);border-radius:10px;overflow:hidden;background:var(--surface)}
+.ch{display:grid;grid-template-columns:52px minmax(0,1.15fr) minmax(0,1.5fr) 56px;gap:0 16px;padding:14px 18px;border-top:1px solid var(--line-soft);align-items:start}
+.ch:first-child{border-top:none}
+.ch:nth-child(even){background:var(--surface-2)}
+.ch .n{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--pc);font-variant-numeric:tabular-nums;padding-top:1px}
+.ch .t{font-weight:500;font-size:14.5px;color:var(--fg);min-width:0;line-height:1.55}
+.ch .t span{display:block;font-weight:300;font-size:12.5px;color:var(--faint);line-height:1.6;margin-top:3px}
+.ch .d{font-size:13px;color:var(--muted);min-width:0;line-height:1.65}
+.ch .h{font-family:var(--font-mono);font-size:12px;color:var(--faint);text-align:right;font-variant-numeric:tabular-nums;padding-top:2px}
+.ch-head{display:grid;grid-template-columns:52px minmax(0,1.15fr) minmax(0,1.5fr) 56px;gap:0 16px;padding:9px 18px;background:var(--surface-2);border-bottom:1px solid var(--line)}
+.ch-head div{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.ch-head div:last-child{text-align:right}
+
+.outcome{margin-top:20px;background:var(--surface-2);border:1px solid var(--line-soft);border-left:3px solid var(--pc);border-radius:8px;padding:16px 20px}
+.outcome h4{font-family:var(--font-body);font-weight:600;font-size:13.5px;color:var(--fg);margin-bottom:8px}
+.outcome ul{margin:0;padding-left:18px;color:var(--muted);font-size:13.5px;line-height:1.75}
+.outcome li::marker{color:var(--pc)}
+
+/* ---------- plain lists & tables ---------- */
+.tablewrap{overflow-x:auto;border:1px solid var(--line-soft);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:13.5px}
+th,td{text-align:left;padding:11px 16px;border-top:1px solid var(--line-soft);vertical-align:top}
+thead th{border-top:none;background:var(--surface-2);font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:500}
+tbody tr{background:var(--surface)}
+tbody tr:nth-child(even){background:var(--surface-2)}
+td strong{font-weight:600;color:var(--fg)}
+td{color:var(--muted)}
+.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+ol.steps{margin:0;padding-left:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:12px}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:30px minmax(0,1fr);gap:14px;color:var(--muted);font-size:14px}
+ol.steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--font-mono);font-size:12px;color:var(--accent);padding-top:3px}
+ol.steps b{color:var(--fg);font-weight:600}
+ol.steps .step-content{min-width:0;display:block;overflow-wrap:break-word}
+ol.steps .step-detail{color:var(--muted);margin-left:.3em}
+@media (max-width:520px){ol.steps li{grid-template-columns:26px minmax(0,1fr);gap:10px}ol.steps .step-detail{display:block;margin-left:0;margin-top:2px}}
+@media print{#format ol.steps li{break-inside:avoid;page-break-inside:avoid}#format .card{break-inside:avoid;page-break-inside:avoid}}
+
+/* ---------- footer ---------- */
+footer{padding-block:34px 44px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:10px 20px;justify-content:space-between;align-items:baseline}
+footer .name{font-family:var(--font-mono);font-size:12.5px;color:var(--accent);letter-spacing:.04em}
+footer .meta{font-family:var(--font-mono);font-size:11.5px;color:var(--faint)}
+
+@media (max-width:720px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .ch,.ch-head{grid-template-columns:40px minmax(0,1fr);gap:0 12px}
+  .ch .d{grid-column:2;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line-soft)}
+  .ch .h{grid-column:2;text-align:left;margin-top:5px}
+  .ch-head div:nth-child(3),.ch-head div:nth-child(4){display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="rule-top"></div>
+    <div>
+      <p class="eyebrow">Curriculum Design · KOI Secondary Division</p>
+      <h1>중등 정보올림피아드 C 교재 커리큘럼</h1>
+    </div>
+    <p class="sub">C11 단일 언어로 문법 기초부터 골드 난도 알고리즘까지 잇는 4파트 교재 설계서입니다. 각 파트는 독립 권으로 집필하되, 앞 파트의 산출물이 다음 파트의 전제 기술이 되도록 종적으로 연결했습니다.</p>
+    <div class="byline">
+      <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+      <span class="meta">설계 v1.0 · 2026-10-12</span>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">Parts</div><div class="v">4<small>개 파트</small></div></div>
+      <div class="stat"><div class="k">Chapters</div><div class="v">60<small>개 장</small></div></div>
+      <div class="stat"><div class="k">Sessions</div><div class="v">200<small>차시</small></div></div>
+      <div class="stat"><div class="k">Language</div><div class="v">C11<small>표준</small></div></div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="wrap">
+    <a href="#design">설계 원칙</a>
+    <a href="#roadmap">전체 로드맵</a>
+    <a href="#part1">PART 1 · 문법</a>
+    <a href="#part2">PART 2 · 브론즈</a>
+    <a href="#part3">PART 3 · 실버</a>
+    <a href="#part4">PART 4 · 골드</a>
+    <a href="#format">교재 구성</a>
+    <a href="#problems">문제 출처</a>
+    <a href="#assess">평가·진급</a>
+    <a href="#ops">운영 일정</a>
+  </div>
+</nav>
+
+<main>
+
+<section id="design">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">01 — Design Principles</p>
+      <h2>설계 원칙</h2>
+      <p>중등부 1차 대비는 C11로 통일합니다. STL이 없는 환경을 제약이 아니라 자료구조를 직접 만들어 보는 기회로 삼아, 라이브러리 사용법이 아니라 내부 동작을 아는 학생을 기릅니다.</p>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h4>문법은 알고리즘의 도구로 가르친다</h4>
+        <p>PART 1의 모든 문법 항목은 뒤에서 쓰일 자리를 미리 지정합니다. 포인터는 스택·연결 리스트를 위해, 구조체는 간선 목록과 qsort 비교 함수를 위해, 2차원 배열은 격자 BFS를 위해 배웁니다.</p>
+      </div>
+      <div class="card">
+        <h4>STL 없이 직접 구현한다</h4>
+        <p>정렬은 qsort와 직접 구현을 함께, 스택·큐·덱은 배열로, 우선순위 큐는 이진 힙으로, 집합은 비트마스크와 유니온 파인드로 만듭니다. 2차 진출 이후 C++20을 별도 보충 과정으로 둡니다.</p>
+      </div>
+      <div class="card">
+        <h4>난도는 티어 라벨로 관리한다</h4>
+        <p>브론즈·실버·골드는 문제 출처가 아니라 난도 기준으로 씁니다. 각 파트의 문제는 자체 제작을 원칙으로 하고, 티어는 요구 알고리즘·제약 조건·구현량으로 정의한 내부 기준표를 따릅니다.</p>
+      </div>
+      <div class="card">
+        <h4>모든 코드는 기준 정답으로 검증한다</h4>
+        <p>예제·연습·평가의 모든 코드는 gcc로 컴파일해 실행 결과를 확보하고, 파이썬 독립 구현과 대조해 기준 정답을 확정합니다. 검증되지 않은 코드는 교재에 싣지 않습니다.</p>
+      </div>
+      <div class="card">
+        <h4>시간복잡도를 1장부터 말한다</h4>
+        <p>PART 2 초반에 "1초 ≈ 1억 연산"을 도입하고, 이후 모든 장에서 제약 조건(N의 범위)을 먼저 읽고 알고리즘을 고르는 절차를 반복 훈련합니다. 티어가 오를수록 이 판단이 정답률을 가릅니다.</p>
+      </div>
+      <div class="card">
+        <h4>오답은 유형으로 분류해 되돌린다</h4>
+        <p>각 파트 마지막 장은 실전 모의와 오답 유형 정리입니다. 틀린 이유를 개념 미흡·구현 실수·시간 초과·경계 처리 네 범주로 나누고, 범주별로 돌아갈 장을 지정해 둡니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">02 — Roadmap</p>
+      <h2>전체 로드맵</h2>
+      <p>주 2회 90분 수업 기준 약 100주 과정입니다. 학생의 출발점에 따라 PART 1을 축약하거나 PART 2에서 시작할 수 있도록 각 파트 앞에 진단 평가를 둡니다.</p>
+    </div>
+    <div class="road">
+      <div class="road-item" style="--pc:var(--p1)">
+        <span class="tag">Part 1</span>
+        <h4>C11 문법 기초</h4>
+        <p>입출력·연산·제어문에서 포인터·함수·구조체까지. 알고리즘을 작성할 수 있는 최소 문법 체계를 완성합니다.</p>
+        <p class="fig">16장 · 48차시 · 약 24주</p>
+      </div>
+      <div class="road-item" style="--pc:var(--p2)">
+        <span class="tag">Part 2</span>
+        <h4>브론즈 해결 스킬</h4>
+        <p>문제를 읽고 입출력 형식을 설계하는 힘, 완전탐색과 배열 집계로 끝까지 푸는 구현력을 기릅니다.</p>
+        <p class="fig">12장 · 36차시 · 약 18주</p>
+      </div>
+      <div class="road-item" style="--pc:var(--p3)">
+        <span class="tag">Part 3</span>
+        <h4>실버 알고리즘</h4>
+        <p>자료구조 직접 구현, 탐색(DFS·BFS), 이분 탐색, 누적합, 그리디, 기본 DP까지 표준 도구를 갖춥니다.</p>
+        <p class="fig">16장 · 56차시 · 약 28주</p>
+      </div>
+      <div class="road-item" style="--pc:var(--p4)">
+        <span class="tag">Part 4</span>
+        <h4>골드 심화</h4>
+        <p>DP 심화, 최단 경로, MST, 구간 질의 자료구조, 문자열·기하까지. KOI 기출 수준의 문제를 설계합니다.</p>
+        <p class="fig">16장 · 60차시 · 약 30주</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="part" id="part1" style="--pc:var(--p1)">
+  <div class="wrap">
+    <div class="part-head">
+      <span class="part-no">Part 1</span>
+      <h2>C11 문법 기초 — 입출력에서 구조체까지</h2>
+    </div>
+    <p class="part-lede">목표는 "문법을 아는 것"이 아니라 "머릿속 절차를 C 코드로 옮길 수 있는 것"입니다. 각 장의 연습은 문법 확인 문제가 아니라, 그 문법이 없으면 풀 수 없는 작은 문제로 구성합니다.</p>
+    <div class="part-meta">
+      <span class="chip">장 수 <b>16</b></span>
+      <span class="chip">차시 <b>48</b></span>
+      <span class="chip">장당 <b>3차시</b></span>
+      <span class="chip">선수 지식 <b>없음</b></span>
+      <span class="chip">컴파일 <b>gcc -std=c11 -O2 -Wall</b></span>
+    </div>
+    <div class="chapters">
+      <div class="ch-head"><div>No.</div><div>장 제목 / 핵심 개념</div><div>대표 과제</div><div>차시</div></div>
+      <div class="ch"><div class="n">01</div><div class="t">개발 환경과 첫 프로그램<span>gcc 컴파일 과정, main의 반환값, 표준 입력·출력 스트림, 세미콜론과 블록</span></div><div class="d">입력받은 두 수를 더해 출력하는 프로그램을 컴파일·실행해 보고, 오타별 컴파일 오류 메시지를 읽는다</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">02</div><div class="t">변수와 자료형, 오버플로<span>int·long long·double·char, 비트 수와 표현 범위, limits.h, 오버플로가 나는 지점</span></div><div class="d">1부터 N까지의 합을 int로 계산해 틀리는 N을 직접 찾고 long long으로 고친다</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">03</div><div class="t">서식 입출력<span>printf·scanf 서식 지정자, %d·%lld·%lf·%c·%s, 공백과 개행 처리, scanf 반환값과 EOF</span></div><div class="d">개수를 모르는 입력을 EOF까지 읽어 합을 출력한다</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">04</div><div class="t">연산자와 형변환<span>산술·관계·논리·비트 연산, 정수 나눗셈과 음수 나머지, 암시적·명시적 형변환, 연산자 우선순위</span></div><div class="d">초 단위 시간을 시·분·초로 분해하고, 음수 나머지 함정을 보정하는 함수를 만든다</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">05</div><div class="t">조건문<span>if·else if·else, switch-case와 fall-through, 삼항 연산자, 조건의 단락 평가</span></div><div class="d">세 변의 길이로 삼각형 종류를 판정하고, 성립하지 않는 경우를 먼저 거른다</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">06</div><div class="t">반복문<span>for·while·do-while, break와 continue, 루프 불변식, 무한 루프와 종료 조건</span></div><div class="d">입력 수의 자릿수 합을 구하고, 한 자리가 될 때까지 반복하는 과정을 추적 출력한다</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">07</div><div class="t">중첩 반복과 격자 패턴<span>이중·삼중 루프, 행과 열의 관계식, 루프 횟수 계산과 복잡도 감각의 출발</span></div><div class="d">직각·역삼각·마름모 별 패턴과 N×N 나선 채우기를 좌표 규칙으로 유도한다</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">08</div><div class="t">1차원 배열<span>선언·초기화·인덱스 범위, 배열 순회, 최댓값·합·개수 세기, 카운팅 배열의 아이디어</span></div><div class="d">점수 분포를 카운팅 배열로 집계하고 최빈값을 찾는다</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">09</div><div class="t">2차원 배열과 델타 이동<span>행·열 인덱싱, 전치·회전, 경계 검사, dx·dy 델타 배열로 상하좌우 이동 표현</span></div><div class="d">격자에서 한 칸의 이웃 8방향 값을 세는 함수를 만들어 지뢰 찾기 판을 완성한다</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">10</div><div class="t">함수<span>정의와 선언, 프로토타입, 값에 의한 전달, 반환값, 지역 변수와 전역 변수, 함수 분해 기준</span></div><div class="d">소수 판정·최대공약수·자릿수 합을 각각 함수로 분리해 재사용한다</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">11</div><div class="t">재귀 함수 기초<span>종료 조건과 재귀 호출, 호출 스택의 모양, 재귀와 반복의 상호 변환, 재귀 깊이의 한계</span></div><div class="d">팩토리얼·피보나치·하노이 탑을 재귀로 쓰고 호출 횟수를 세어 비효율을 관찰한다</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">12</div><div class="t">포인터<span>주소 연산자와 역참조, 포인터 변수의 크기, 널 포인터, 포인터 연산, 흔한 세그먼트 오류</span></div><div class="d">두 변수를 바꾸는 swap 함수를 포인터로 구현하고, 값 전달 버전과 비교한다</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">13</div><div class="t">포인터·배열·함수의 연결<span>배열 이름과 포인터, 배열을 함수 인자로 넘기기, 2차원 배열 전달, 포인터로 여러 값 반환</span></div><div class="d">배열의 최댓값과 최솟값을 한 번의 호출로 함께 돌려주는 함수를 만든다</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">14</div><div class="t">문자열과 문자 처리<span>char 배열과 널 종료 문자, string.h 주요 함수, fgets와 sscanf, ctype.h, 아스키 코드 연산</span></div><div class="d">한 줄 문장을 공백 기준으로 단어 분리하고 가장 긴 단어를 찾는다</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">15</div><div class="t">구조체와 사용자 정의 자료형<span>struct 정의와 멤버 접근, 구조체 배열, 구조체 포인터와 화살표, typedef, enum</span></div><div class="d">학생 구조체 배열을 성적순으로 정렬하는 qsort 비교 함수를 작성한다</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">16</div><div class="t">동적 메모리·디버깅·테스트<span>malloc·calloc·free, 가변 크기 배열, 메모리 누수, freopen 입력 테스트, 경계값 점검 습관</span></div><div class="d">N을 입력받아 크기 N의 배열을 동적 할당하고, 자체 테스트 입력 파일로 반복 검증한다</div><div class="h">3</div></div>
+    </div>
+    <div class="outcome">
+      <h4>수료 기준</h4>
+      <ul>
+        <li>표준 입력 형식을 보고 입력 코드를 즉석에서 작성할 수 있다</li>
+        <li>2차원 배열과 델타 배열로 격자 문제의 틀을 세울 수 있다</li>
+        <li>포인터로 함수 바깥의 값을 바꾸는 코드를 쓰고 이유를 설명할 수 있다</li>
+        <li>구조체 배열을 qsort로 정렬할 수 있다</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="part" id="part2" style="--pc:var(--p2)">
+  <div class="wrap">
+    <div class="part-head">
+      <span class="part-no">Part 2</span>
+      <h2>브론즈급 해결 스킬 — 끝까지 푸는 구현력</h2>
+    </div>
+    <p class="part-lede">브론즈 구간에서 막히는 원인은 알고리즘 지식이 아니라 문제 해석과 구현 마무리입니다. 이 파트는 새로운 알고리즘을 거의 도입하지 않고, 아는 문법으로 완결된 프로그램을 만드는 절차를 훈련합니다.</p>
+    <div class="part-meta">
+      <span class="chip">장 수 <b>12</b></span>
+      <span class="chip">차시 <b>36</b></span>
+      <span class="chip">장당 <b>3차시</b></span>
+      <span class="chip">목표 복잡도 <b>O(N)~O(N²)</b></span>
+      <span class="chip">선수 <b>PART 1</b></span>
+    </div>
+    <div class="chapters">
+      <div class="ch-head"><div>No.</div><div>장 제목 / 핵심 개념</div><div>대표 유형</div><div>차시</div></div>
+      <div class="ch"><div class="n">01</div><div class="t">문제 읽는 법과 입출력 형식 설계<span>조건·제약·입출력 명세를 분리해 읽기, 테스트케이스 T개 처리, 출력 형식 오류 방지</span></div><div class="d">같은 문제를 단일 입력판과 T개 반복판 두 형태로 작성해 비교</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">02</div><div class="t">제약 조건과 시간복잡도 감각<span>1초 ≈ 1억 연산, N의 범위로 알고리즘 고르기, 자료형 선택과 오버플로 예방</span></div><div class="d">N의 범위별로 허용되는 루프 깊이를 표로 정리하고 적용</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">03</div><div class="t">조건 분기형 문제<span>경우 나누기의 빠짐없음과 겹침없음, 경계값, 예외 입력 우선 처리</span></div><div class="d">사분면 판정, 윤년, 등급 분류, 세 수의 중앙값</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">04</div><div class="t">누적·집계형 문제<span>합·평균·최대·최소·개수, 누적 변수 초기화, 평균의 반올림과 실수 출력</span></div><div class="d">성적 통계, 조건을 만족하는 원소 개수 세기</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">05</div><div class="t">약수·배수·소수와 유클리드 호제법<span>√N 소수 판정, 약수 쌍의 대칭성, 최대공약수·최소공배수, 에라토스테네스 입문</span></div><div class="d">약수의 개수와 합, 두 수의 기약분수 만들기</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">06</div><div class="t">진법 변환과 자릿수 처리<span>10진↔N진 변환, 나머지 누적과 역순 출력, 자릿수 분해·결합</span></div><div class="d">진법 변환, 회문 수 판정, 자릿수 합 반복</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">07</div><div class="t">배열 카운팅과 체크 배열<span>값을 인덱스로 쓰기, 방문·사용 표시 배열, 등장 횟수와 중복 제거</span></div><div class="d">빈도수 집계, 중복 없는 숫자 찾기, 간단한 해싱 대체</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">08</div><div class="t">문자열 기초 처리<span>아스키 연산, 대소문자 변환, 문자 빈도, 부분 문자열 비교, 단어 단위 처리</span></div><div class="d">알파벳 개수 세기, 단어 뒤집기, 암호문 시프트</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">09</div><div class="t">2차원 격자 시뮬레이션<span>격자 상태 갱신, 경계 검사, 이동 명령 해석, 회전·반사</span></div><div class="d">색종이 붙이기, 로봇 이동, 지뢰 찾기 판 생성</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">10</div><div class="t">완전탐색 입문<span>가능한 모든 경우를 세는 루프 설계, 중복 제거, 조기 종료, 탐색량 추정</span></div><div class="d">세 수의 조합 찾기, 좌표쌍 완전탐색, 부분합 만들기</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">11</div><div class="t">qsort와 정렬 기반 문제<span>qsort 사용법, 비교 함수의 반환 규칙, 다중 기준 정렬, 정렬 후 스캔</span></div><div class="d">좌표 정렬, 나이·이름 다중 기준 정렬, 정렬로 중복 세기</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">12</div><div class="t">브론즈 실전 모의와 오답 유형 정리<span>60분 4문항 모의, 오답을 개념·구현·시간·경계 네 범주로 분류</span></div><div class="d">모의 2세트 + 범주별 복습 장 지정표 작성</div><div class="h">3</div></div>
+    </div>
+    <div class="outcome">
+      <h4>수료 기준</h4>
+      <ul>
+        <li>처음 보는 브론즈 난도 문제를 30분 내 완결된 코드로 제출할 수 있다</li>
+        <li>N의 범위만 보고 허용 복잡도를 말할 수 있다</li>
+        <li>qsort 비교 함수를 다중 기준으로 작성할 수 있다</li>
+        <li>출력 형식 오류와 경계값 실수를 제출 전 점검표로 걸러낸다</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="part" id="part3" style="--pc:var(--p3)">
+  <div class="wrap">
+    <div class="part-head">
+      <span class="part-no">Part 3</span>
+      <h2>실버급 스킬과 알고리즘 — 표준 도구 갖추기</h2>
+    </div>
+    <p class="part-lede">여기서부터 자료구조를 직접 만듭니다. 스택·큐·덱·연결 리스트를 배열과 구조체로 구현한 뒤 그 위에 DFS·BFS를 올리고, 이분 탐색과 기본 DP로 완전탐색의 한계를 넘습니다.</p>
+    <div class="part-meta">
+      <span class="chip">장 수 <b>16</b></span>
+      <span class="chip">차시 <b>56</b></span>
+      <span class="chip">장당 <b>3~4차시</b></span>
+      <span class="chip">목표 복잡도 <b>O(N log N)</b></span>
+      <span class="chip">선수 <b>PART 2</b></span>
+    </div>
+    <div class="chapters">
+      <div class="ch-head"><div>No.</div><div>장 제목 / 핵심 개념</div><div>대표 유형</div><div>차시</div></div>
+      <div class="ch"><div class="n">01</div><div class="t">복잡도 분석과 자료구조 선택<span>빅오 표기, 평균과 최악, 공간복잡도, 연산별 비용으로 자료구조 고르기</span></div><div class="d">같은 문제를 세 자료구조로 풀고 실행 시간을 측정 비교</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">02</div><div class="t">정렬 알고리즘 구현과 qsort 심화<span>선택·삽입·버블의 한계, 병합 정렬과 퀵 정렬 구현, 안정 정렬, 좌표 압축</span></div><div class="d">병합 정렬로 역전 쌍 세기, 좌표 압축 후 집계</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">03</div><div class="t">이분 탐색과 매개변수 탐색<span>정렬 전제, lower·upper bound 직접 구현, 경계 조건, 답을 이분하는 결정 문제화</span></div><div class="d">값 찾기, 랜선 자르기형 최대화, 조건 만족 최소 K</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">04</div><div class="t">배열 기반 스택·큐·덱<span>top·front·rear 관리, 원형 큐, 오버플로 검사, 괄호 검사와 후위 표기</span></div><div class="d">괄호 짝 검사, 에디터 커서, 원형 큐로 요세푸스</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">05</div><div class="t">연결 리스트와 포인터 자료구조<span>노드 구조체, 삽입·삭제, 단일·이중 연결, 배열 인덱스 기반 링크 기법</span></div><div class="d">정렬 상태 유지 삽입, 인덱스 링크로 메모리 절약 구현</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">06</div><div class="t">재귀 심화와 분할 정복<span>재귀 트리 분석, 분할·정복·결합 구조, 거듭제곱 분할, 재귀를 반복으로 바꾸기</span></div><div class="d">빠른 거듭제곱, 쿼드 트리 압축, 종이 자르기</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">07</div><div class="t">백트래킹: 순열·조합·N-Queen<span>상태 배열과 방문 표시, 가지치기 조건, 중복 순열과 조합의 구분, 탐색량 추정</span></div><div class="d">N과 M 유형 전 계열, N-Queen, 부분집합 합</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">08</div><div class="t">그래프 표현<span>인접 행렬과 인접 리스트, 배열 기반 인접 리스트(head·next), 방향·가중치·중복 간선</span></div><div class="d">같은 그래프를 두 표현으로 저장하고 메모리·순회 비용 비교</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">09</div><div class="t">DFS: 연결 요소와 플러드 필<span>재귀 DFS와 명시적 스택 DFS, 방문 배열, 연결 요소 번호 매기기, 재귀 깊이 대비</span></div><div class="d">섬의 개수, 영역 크기 구하기, 단지 번호 붙이기</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">10</div><div class="t">BFS: 최단 거리와 다중 시작점<span>큐 기반 레벨 탐색, 거리 배열, 가중치 1 그래프의 최단 경로, 다중 시작점 동시 확산</span></div><div class="d">미로 최단 거리, 토마토 익히기형 확산, 벽 부수기 상태 확장</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">11</div><div class="t">트리 기초와 순회<span>트리의 정의와 성질, 부모·자식 배열, 전위·중위·후위 순회, 깊이와 서브트리 크기</span></div><div class="d">트리 지름, 서브트리 노드 수 계산, 순회 복원</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">12</div><div class="t">누적합과 차분 배열<span>1차원·2차원 누적합, 구간 합 질의, 차분 배열로 구간 갱신, 전처리와 질의의 분리</span></div><div class="d">구간 합 질의, 부분 직사각형 합, 구간 덧셈 후 최종 배열</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">13</div><div class="t">투 포인터와 슬라이딩 윈도우<span>단조성 조건, 두 포인터 이동 규칙, 고정·가변 윈도우, 정렬과의 결합</span></div><div class="d">부분합 조건 구간, 중복 없는 최장 구간, 두 수의 합</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">14</div><div class="t">그리디와 교환 논증<span>탐욕적 선택 속성, 정렬 기준 설계, 반례 찾기, 그리디가 틀리는 경우 식별</span></div><div class="d">회의실 배정, 동전 거스름, 로프 묶기, 센서 설치</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">15</div><div class="t">기본 DP: 점화식 세우기<span>메모이제이션과 타뷸레이션, 상태 정의와 전이, 1차원·2차원 DP, 초기값과 순서</span></div><div class="d">계단 오르기, 2×N 타일링, 1로 만들기, LIS O(N²), 0-1 배낭 입문</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">16</div><div class="t">실버 실전 모의와 시간 초과 진단<span>120분 4문항 모의, 시간 초과 원인 분류, 입력 크기별 알고리즘 교체 훈련</span></div><div class="d">모의 2세트 + 복잡도 개선 리팩터링 과제</div><div class="h">4</div></div>
+    </div>
+    <div class="outcome">
+      <h4>수료 기준</h4>
+      <ul>
+        <li>스택·큐·덱·연결 리스트를 참고 없이 구현할 수 있다</li>
+        <li>격자와 그래프 문제를 DFS·BFS 중 적합한 쪽으로 골라 푼다</li>
+        <li>문제를 결정 문제로 바꿔 이분 탐색을 적용할 수 있다</li>
+        <li>상태와 전이를 말로 정의한 뒤 DP 점화식으로 옮길 수 있다</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="part" id="part4" style="--pc:var(--p4)">
+  <div class="wrap">
+    <div class="part-head">
+      <span class="part-no">Part 4</span>
+      <h2>골드급 심화 — 알고리즘 설계와 구현 최적화</h2>
+    </div>
+    <p class="part-lede">알고리즘을 아는 단계에서 조합하고 변형하는 단계로 넘어갑니다. 우선순위 큐와 구간 질의 자료구조를 직접 만들어 쓰고, 기출 문제를 구성 요소로 분해하는 훈련을 반복합니다.</p>
+    <div class="part-meta">
+      <span class="chip">장 수 <b>16</b></span>
+      <span class="chip">차시 <b>60</b></span>
+      <span class="chip">장당 <b>3~5차시</b></span>
+      <span class="chip">목표 복잡도 <b>O(N log N)~O(N√N)</b></span>
+      <span class="chip">선수 <b>PART 3</b></span>
+    </div>
+    <div class="chapters">
+      <div class="ch-head"><div>No.</div><div>장 제목 / 핵심 개념</div><div>대표 유형</div><div>차시</div></div>
+      <div class="ch"><div class="n">01</div><div class="t">골드 진입 점검과 입출력 최적화<span>getchar 기반 빠른 입력, 출력 버퍼링, 메모리 제한 계산, 전역 배열 설계</span></div><div class="d">대용량 입력 10⁶줄 읽기 속도 비교, 메모리 사용량 산정</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">02</div><div class="t">DP 심화 1: 배낭과 그 변형<span>0-1·무한·개수 제한 배낭, 1차원 압축, 역순 순회의 이유, 부분합 판정</span></div><div class="d">평범한 배낭, 동전 조합 수, 부분집합 합 판정</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">03</div><div class="t">DP 심화 2: 문자열·수열 DP<span>LCS와 역추적, 편집 거리, LIS O(N log N), 경로 복원</span></div><div class="d">LCS 문자열 출력, 편집 거리, 가장 긴 증가 부분 수열 복원</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">04</div><div class="t">DP 심화 3: 구간 DP와 트리 DP<span>구간 분할 점화식, 행렬 곱셈 순서, 트리 위의 DP와 후위 순회 누적</span></div><div class="d">파일 합치기, 트리 독립 집합, 서브트리 비용 최소화</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">05</div><div class="t">비트마스크와 집합 DP<span>비트로 집합 표현, 부분집합 순회, 외판원 순회 DP, 상태 압축의 한계</span></div><div class="d">외판원 순회, 스티커 붙이기, 집합 분할 최소 비용</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">06</div><div class="t">유니온 파인드<span>경로 압축과 랭크 합치기, 집합 크기 관리, 사이클 판정, 오프라인 질의</span></div><div class="d">친구 네트워크, 사이클 존재 판정, 집합 병합 질의</div><div class="h">3</div></div>
+      <div class="ch"><div class="n">07</div><div class="t">최소 신장 트리<span>크루스칼과 간선 정렬, 프림과 인접 리스트, MST의 성질과 유일성</span></div><div class="d">도시 연결, 최소 비용 네트워크, 간선 제거 후 재구성</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">08</div><div class="t">이진 힙 직접 구현<span>배열 기반 완전 이진 트리, 상향·하향 이동, 삽입·삭제 O(log N), 비교 기준 일반화</span></div><div class="d">우선순위 큐 구현 후 중앙값 유지, K번째 수 찾기</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">09</div><div class="t">다익스트라 최단 경로<span>우선순위 큐 기반 구현, 거리 갱신 조건, 경로 복원, 상태 확장 다익스트라</span></div><div class="d">최단 경로 출력, 특정 정점 경유, 비용·시간 이중 기준</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">10</div><div class="t">벨만-포드와 플로이드-워셜<span>음수 간선과 음수 사이클 판정, 완화 반복, 모든 쌍 최단 경로, 경로 행렬 복원</span></div><div class="d">시간 여행형 음수 사이클, 전체 쌍 거리표, 경유 도시 복원</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">11</div><div class="t">위상 정렬과 DAG 위의 DP<span>진입 차수와 큐, 사이클 검출, 선행 조건 문제, DAG 최장 경로</span></div><div class="d">줄 세우기, 작업 순서와 최소 완료 시간, 임계 경로</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">12</div><div class="t">펜윅 트리(BIT)<span>부분합 구조, 인덱스 비트 연산, 점 갱신·구간 합, 역전 쌍과 좌표 압축 결합</span></div><div class="d">동적 구간 합, 역전 쌍 세기, 순위 질의</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">13</div><div class="t">세그먼트 트리와 지연 전파 입문<span>재귀 구축, 구간 최솟값·합 질의, 점 갱신, 지연 전파로 구간 갱신</span></div><div class="d">구간 최솟값 질의, 구간 덧셈 후 구간 합</div><div class="h">5</div></div>
+      <div class="ch"><div class="n">14</div><div class="t">문자열 알고리즘<span>KMP 실패 함수, 문자열 해싱과 충돌, 트라이 구조와 삽입·검색</span></div><div class="d">패턴 매칭, 부분 문자열 개수, 접두사 집합 질의</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">15</div><div class="t">계산 기하 기초<span>CCW 외적 부호, 선분 교차 판정, 다각형 넓이, 볼록 껍질, 정수 좌표와 오버플로</span></div><div class="d">선분 교차, 다각형 면적, 볼록 껍질 구성</div><div class="h">4</div></div>
+      <div class="ch"><div class="n">16</div><div class="t">골드 실전 모의와 기출 분석<span>180분 4문항 모의, 기출 문제를 구성 알고리즘으로 분해, 부분 점수 전략</span></div><div class="d">KOI 기출 분해표 작성 + 모의 2세트 + 복기 리포트</div><div class="h">5</div></div>
+    </div>
+    <div class="outcome">
+      <h4>수료 기준</h4>
+      <ul>
+        <li>이진 힙·펜윅 트리·세그먼트 트리를 직접 구현해 문제에 적용한다</li>
+        <li>그래프 문제에서 다익스트라·벨만-포드·플로이드 중 제약에 맞는 것을 고른다</li>
+        <li>처음 보는 문제를 2~3개의 알려진 알고리즘 조합으로 분해해 설명한다</li>
+        <li>시간·메모리 제한을 먼저 계산하고 구현 방식을 결정한다</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="format">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">03 — Chapter Format</p>
+      <h2>교재 구성 표준</h2>
+      <p>모든 장은 아래 7개 블록을 같은 순서로 갖습니다. 분량은 장당 본문 12~16쪽, 문제 20문항을 기준으로 합니다.</p>
+    </div>
+    <ol class="steps">
+      <li><div class="step-content"><b>도입 문제</b><span class="step-detail">— 이 장의 도구가 없으면 풀기 번거로운 작은 문제를 먼저 던져 필요를 만든다</span></div></li>
+      <li><div class="step-content"><b>개념 정리</b><span class="step-detail">— 정의, 동작 원리, 그림 또는 표로 표현한 내부 상태 변화</span></div></li>
+      <li><div class="step-content"><b>표준 코드</b><span class="step-detail">— 그대로 외워 쓸 수 있는 기준 구현 1개. gcc 검증 완료본만 수록</span></div></li>
+      <li><div class="step-content"><b>단계 예제</b><span class="step-detail">— 표준 코드를 조금씩 변형하는 예제 4~5개, 각 예제마다 실행 결과 명시</span></div></li>
+      <li><div class="step-content"><b>흔한 오류</b><span class="step-detail">— 이 장에서 학생이 실제로 내는 실수 3~4가지와 증상·원인·수정</span></div></li>
+      <li><div class="step-content"><b>연습 문제</b><span class="step-detail">— 20문항(기본 8 · 응용 8 · 심화 4). 문제 본문을 교재에 전문 수록</span></div></li>
+      <li><div class="step-content"><b>확인 평가와 해설</b><span class="step-detail">— 별책 해설지에 기준 정답 코드, 복잡도 분석, 대안 풀이 수록</span></div></li>
+    </ol>
+    <div class="grid2" style="margin-top:26px">
+      <div class="card">
+        <h4>두 가지 판본으로 분리</h4>
+        <p>교사용 통합본은 정답 코드·해설·채점 기준·수업 진행 노트를 포함하고, 학생 배부용은 문제와 개념만 싣습니다. 본문은 같은 원고에서 생성해 두 판본이 어긋나지 않게 합니다.</p>
+      </div>
+      <div class="card">
+        <h4>판정 사이트에 의존하지 않는다</h4>
+        <p>연습 문제는 본문에 전문 수록하고, 기준 정답 코드와 자체 채점 스크립트를 부록으로 제공합니다. 외부 사이트가 바뀌어도 교재만으로 학습과 채점이 끝납니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="problems">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">04 — Problem Sourcing</p>
+      <h2>문제 출처와 검증 절차</h2>
+      <p>파트별 문제 구성 비율과, 교재에 싣기 전 거치는 검증 단계입니다.</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>구분</th><th>자체 제작</th><th>정올 연계</th><th>KOI 기출</th><th>총 문항</th></tr></thead>
+        <tbody>
+          <tr><td><strong>PART 1</strong> 문법</td><td class="num">100%</td><td class="num">—</td><td class="num">—</td><td class="num">320</td></tr>
+          <tr><td><strong>PART 2</strong> 브론즈</td><td class="num">80%</td><td class="num">20%</td><td class="num">—</td><td class="num">240</td></tr>
+          <tr><td><strong>PART 3</strong> 실버</td><td class="num">65%</td><td class="num">25%</td><td class="num">10%</td><td class="num">320</td></tr>
+          <tr><td><strong>PART 4</strong> 골드</td><td class="num">50%</td><td class="num">20%</td><td class="num">30%</td><td class="num">320</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid2" style="margin-top:22px">
+      <div class="card">
+        <h4>1단계 · 기준 정답 작성</h4>
+        <p>출제 즉시 C11 기준 정답 코드를 작성하고 <span class="mono">gcc -std=c11 -O2 -Wall</span>로 경고 없이 컴파일합니다.</p>
+      </div>
+      <div class="card">
+        <h4>2단계 · 독립 구현 대조</h4>
+        <p>동일 문제를 파이썬으로 독립 구현해 두 결과를 비교합니다. 불일치가 나오면 문제 서술 자체를 다시 봅니다.</p>
+      </div>
+      <div class="card">
+        <h4>3단계 · 경계 테스트 생성</h4>
+        <p>최소·최대 입력, 동일값, 음수, 단일 원소 등 경계 케이스를 자동 생성해 돌리고 실행 시간을 기록합니다.</p>
+      </div>
+      <div class="card">
+        <h4>4단계 · 조판 검증</h4>
+        <p>HTML 학습지는 Playwright 헤드리스로 렌더링을 확인하고, 수식·코드 블록 깨짐과 콘솔 오류를 점검합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="assess">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">05 — Assessment</p>
+      <h2>평가와 진급 기준</h2>
+      <p>파트 이동은 수업 진도가 아니라 성취 기준으로 결정합니다. 기준 미달 시 지정된 복습 장으로 되돌아갑니다.</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>평가</th><th>시점</th><th>형식</th><th>통과 기준</th></tr></thead>
+        <tbody>
+          <tr><td><strong>진단 평가</strong></td><td>각 파트 시작 전</td><td>10문항 · 40분</td><td class="num">70% 이상이면 해당 파트 축약 진행</td></tr>
+          <tr><td><strong>장별 확인 평가</strong></td><td>매 장 종료</td><td>20문항 과제</td><td class="num">기본 8문항 전부 정답</td></tr>
+          <tr><td><strong>중간 점검</strong></td><td>파트 중반</td><td>3문항 · 90분</td><td class="num">2문항 이상 완전 정답</td></tr>
+          <tr><td><strong>파트 수료 평가</strong></td><td>파트 종료</td><td>4문항 · 120~180분</td><td class="num">3문항 이상 + 수료 기준 전 항목 충족</td></tr>
+          <tr><td><strong>실전 모의</strong></td><td>PART 3·4 진행 중 격주</td><td>KOI 형식 4문항</td><td class="num">기록 누적, 통과·미통과 판정 없음</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid2" style="margin-top:22px">
+      <div class="card">
+        <h4>오답 범주별 복귀 지점</h4>
+        <p>개념 미흡은 해당 장 개념 정리로, 구현 실수는 그 장 표준 코드 재작성으로, 시간 초과는 PART 2-02와 PART 3-01로, 경계 처리 오류는 PART 1-16 테스트 습관으로 되돌립니다.</p>
+      </div>
+      <div class="card">
+        <h4>2차 대비 분기</h4>
+        <p>1차 통과 이후에는 PART 4를 마친 학생을 대상으로 C++20 보충 과정을 별도 편성합니다. 본 커리큘럼 범위는 C11로 한정합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ops">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">06 — Schedule</p>
+      <h2>운영 일정</h2>
+      <p>주 2회 90분 기준 표준 일정입니다. 주 3회 편성 시 약 67주로 단축됩니다.</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>파트</th><th>장 수</th><th>차시</th><th>주차(주 2회)</th><th>누적 주차</th><th>집필 우선순위</th></tr></thead>
+        <tbody>
+          <tr><td><strong>PART 1</strong> C11 문법 기초</td><td class="num">16</td><td class="num">48</td><td class="num">24</td><td class="num">24</td><td>1순위</td></tr>
+          <tr><td><strong>PART 2</strong> 브론즈 해결 스킬</td><td class="num">12</td><td class="num">36</td><td class="num">18</td><td class="num">42</td><td>2순위</td></tr>
+          <tr><td><strong>PART 3</strong> 실버 알고리즘</td><td class="num">16</td><td class="num">56</td><td class="num">28</td><td class="num">70</td><td>3순위</td></tr>
+          <tr><td><strong>PART 4</strong> 골드 심화</td><td class="num">16</td><td class="num">60</td><td class="num">30</td><td class="num">100</td><td>4순위</td></tr>
+          <tr><td><strong>합계</strong></td><td class="num">60</td><td class="num">200</td><td class="num">100</td><td class="num">—</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="outcome" style="--pc:var(--accent);margin-top:24px">
+      <h4>다음 단계</h4>
+      <ul>
+        <li>PART 1 1장 상세 원고와 20문항 확인 평가를 표준 양식 검증용으로 먼저 집필</li>
+        <li>장별 HTML 학습지 템플릿 확정(교사용·학생용 2판본 분기 구조 포함)</li>
+        <li>티어 기준표 작성 — 요구 알고리즘·제약 조건·구현량으로 브론즈·실버·골드 정의</li>
+        <li>자체 채점 스크립트와 경계 케이스 생성기 공통 모듈 제작</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+    <span class="meta">중등 정보올림피아드 C 교재 커리큘럼 설계서 v1.0 · 2026-10-12</span>
+  </div>
+</footer>
+
+</body></html>
