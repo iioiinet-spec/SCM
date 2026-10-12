@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 1 · 16장 동적 메모리·디버깅·테스트 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#0d7a6f;
+  --accent-soft:#e3f1ef;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#8fd8cd}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+<header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 1 · C11 문법 기초 — 16 / 16</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">16</span>
+    <h1>동적 메모리·디버깅·테스트</h1>
+  </div>
+  <p class="lede">PART 1의 마지막 장이다. 크기를 미리 모를 때 메모리를 얻는 방법을 배우고, 지금까지 열다섯 장에서 쌓인 모든 함정을 <strong>제출 전에 스스로 걸러 내는 절차</strong>를 완성한다. 틀린 코드를 자동으로 잡아내는 도구가 이 장의 진짜 주제다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li><code>malloc</code>·<code>calloc</code>·<code>free</code>로 크기가 정해지지 않은 배열을 만들 수 있다</li>
+    <li>할당 실패와 메모리 누수, <code>free</code> 후 사용의 위험을 안다</li>
+    <li>올림피아드에서 전역 배열과 동적 할당 중 무엇을 쓸지 판단할 수 있다</li>
+    <li><code>freopen</code>으로 테스트 입력을 파일에서 읽어 반복 검증할 수 있다</li>
+    <li><code>-fsanitize=address</code>와 <code>valgrind</code>로 메모리 오류를 자동 검출할 수 있다</li>
+    <li><strong>기준 정답과 대조하는 스트레스 테스트</strong>로 반례를 스스로 찾을 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 문제 · malloc과 free · 할당 실패 · 누수</div>
+  <div><b>2차시</b>freopen 테스트 · 디버깅 도구 · 표준 코드</div>
+  <div><b>3차시</b>스트레스 테스트 · 제출 전 점검표 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>크기를 미리 모를 때</h2>
+  <p>8장부터 배열을 쓸 때마다 "최대 크기"를 미리 잡아 왔다.</p>
+  <figure>
+    <figcaption><span class="fn">지금까지의 방법</span><span>문제의 최댓값만큼 넉넉히</span></figcaption>
+<pre><code>#define MAXN 100000
+int a[MAXN];        // N이 3이어도 10만 칸을 쓴다</code></pre>
+  </figure>
+  <p>대부분의 문제에서는 이것으로 충분하다. 하지만 두 가지 경우에 곤란해진다.</p>
+  <table>
+    <thead><tr><th style="width:36%">상황</th><th>문제</th></tr></thead>
+    <tbody>
+      <tr><td>최댓값이 매우 클 때</td><td>N ≤ 10<sup>8</sup>이면 전역 배열이 400 MB로 <strong>메모리 초과</strong></td></tr>
+      <tr><td>크기가 입력에 따라 달라질 때</td><td>N×M 격자인데 N과 M의 곱만 제한되는 경우</td></tr>
+    </tbody>
+  </table>
+  <p>이럴 때는 <strong>입력을 읽은 뒤 필요한 만큼만</strong> 메모리를 얻는다. 그것이 동적 할당이다.</p>
+  <p>그리고 이 장에는 더 중요한 주제가 하나 있다. 지금까지 열다섯 장 동안 <strong>"경고 없는 오류"</strong>를 수없이 만났다. 오버플로, 범위 밖 접근, 초기화 누락, 정렬 기준 실수. 이것들을 사람 눈으로 찾는 것은 한계가 있다.</p>
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> 크기를 모를 때 어떻게 배열을 만드는가?<br>
+    <b>②</b> 범위 밖 접근을 자동으로 잡아낼 수 있는가?<br>
+    <b>③</b> <b>내 코드가 틀렸다는 것을 컴퓨터가 알려 주게</b> 할 수 있는가?
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">16.1</span>malloc과 free</h3>
+  <figure>
+    <figcaption><span class="fn">기본형</span><span>stdlib.h 가 필요하다</span></figcaption>
+<pre><code>#include &lt;stdlib.h&gt;
+
+int *a = (int *)malloc(sizeof(int) * n);
+if (a == NULL) { return 1; }        // 실패 검사
+
+a[0] = 10;                          // 보통 배열처럼 쓴다
+
+free(a);                            // 다 쓰면 돌려준다</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:30%">항목</th><th>설명</th></tr></thead>
+    <tbody>
+      <tr><td><code>sizeof(int) * n</code></td><td><strong>바이트 수</strong>를 넘긴다. 개수가 아니다.</td></tr>
+      <tr><td><code>(int *)</code></td><td><code>malloc</code>은 <code>void*</code>를 돌려주므로 받을 자료형으로 바꾼다(15장 <code>qsort</code>와 같다).</td></tr>
+      <tr><td>반환값</td><td>실패하면 <code>NULL</code>이다. <strong>반드시 검사</strong>한다(12장).</td></tr>
+      <tr><td><code>free(a)</code></td><td>돌려준다. 안 하면 누수다.</td></tr>
+    </tbody>
+  </table>
+  <h4>malloc과 calloc의 차이</h4>
+  <div class="io">
+    <div><div class="lbl">두 번째 malloc 직후</div><pre>1645166323 5 0 0 115
+← 앞서 쓰던 값이 남아 있다</pre></div>
+    <div><div class="lbl">calloc 직후</div><pre>0 0 0 0 0
+← 항상 0으로 채워진다</pre></div>
+  </div>
+  <p><code>malloc</code>으로 받은 자리에는 <strong>쓰레기값</strong>이 들어 있다. 위 출력은 같은 자리를 <code>free</code>했다가 다시 받은 결과인데, 이전에 쓴 값이 그대로 보인다. 8장 오류 2(초기화 누락)가 동적 할당에서도 똑같이 적용된다.</p>
+  <figure>
+    <figcaption><span class="fn">calloc</span><span>개수와 크기를 따로 넘긴다</span></figcaption>
+<pre><code>int *b = (int *)calloc(n, sizeof(int));   // 전부 0으로</code></pre>
+  </figure>
+  <p>카운팅 배열처럼 0부터 시작해야 하면 <code>calloc</code>을 쓴다. 0으로 채우는 시간이 들지만 안전하다.</p>
+
+  <h3><span class="tag">16.2</span>할당은 실패할 수 있다</h3>
+  <div class="io">
+    <div><div class="lbl">CODE</div><pre>size_t huge = (size_t)1000000000 * 1000;
+int *p = (int *)malloc(huge);
+printf("%s\n", p == NULL ? "NULL" : "성공");</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>NULL</pre></div>
+  </div>
+  <p>메모리가 모자라면 <code>NULL</code>을 돌려준다. 검사하지 않고 쓰면 <strong><code>NULL</code> 역참조로 즉시 죽는다</strong>(12장). 다행히 확실히 죽으므로 원인을 찾기는 쉽다.</p>
+
+  <h3><span class="tag">16.3</span>누수와 free 후 사용</h3>
+  <h4>메모리 누수</h4>
+  <p><code>free</code>하지 않고 끝내면 그 메모리는 회수되지 않는다. <code>valgrind</code>로 확인할 수 있다.</p>
+  <figure>
+    <figcaption><span class="fn">terminal</span><span>400바이트를 free하지 않은 프로그램</span></figcaption>
+    <pre class="term"><span class="c">$ valgrind --leak-check=full ./leak</span>
+<span class="o">    in use at exit: 400 bytes in 1 blocks
+    400 bytes in 1 blocks are definitely lost
+    definitely lost: 400 bytes in 1 blocks
+ERROR SUMMARY: 1 errors from 1 contexts</span></pre>
+  </figure>
+  <div class="note">
+    <span class="h">올림피아드에서 누수는 보통 문제가 안 된다</span>
+    프로그램이 끝나면 운영체제가 전부 회수하기 때문이다. 다만 <b>반복해서 할당하는</b> 코드에서는 실행 중에 메모리가 계속 늘어 초과가 날 수 있다. 습관적으로 <code>free</code>를 쓰되, 못 썼다고 당황할 필요는 없다.
+  </div>
+  <h4>free 후 사용</h4>
+  <p>이쪽이 훨씬 위험하다. <code>free</code>한 자리를 계속 쓰는 것이다.</p>
+  <figure>
+    <figcaption><span class="fn">gcc와 sanitizer가 모두 잡는다</span><span></span></figcaption>
+<pre><code>free(p);
+printf("%d\n", p[0]);
+
+warning: pointer 'p' used after 'free' [-Wuse-after-free]
+
+AddressSanitizer: heap-use-after-free
+READ of size 4 at 0x503000000040</code></pre>
+  </figure>
+  <p><code>free</code> 뒤에는 <code>p = NULL;</code>을 넣어 두면 실수로 썼을 때 확실히 죽는다. 조용히 틀린 값을 쓰는 것보다 낫다.</p>
+
+  <h3><span class="tag">16.4</span>전역 배열과 동적 할당 — 무엇을 쓸까</h3>
+  <table>
+    <thead><tr><th style="width:26%">상황</th><th style="width:28%">권장</th><th>이유</th></tr></thead>
+    <tbody>
+      <tr><td>최댓값이 적당함<br>(N ≤ 10<sup>6</sup> 정도)</td><td><strong>전역 배열</strong></td><td>코드가 짧고 자동으로 0이며 실수할 여지가 없다</td></tr>
+      <tr><td>최댓값이 너무 큼</td><td><strong>동적 할당</strong></td><td>전역으로는 메모리 초과</td></tr>
+      <tr><td>크기가 입력에 따라 결정</td><td><strong>동적 할당</strong></td><td>최악의 경우로 잡으면 낭비가 크다</td></tr>
+      <tr><td>연결 리스트·트리</td><td><strong>동적 할당</strong></td><td>노드를 필요할 때마다 만든다(PART 3)</td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">솔직한 지침</span>
+    PART 2에서 푸는 문제의 <b>대부분은 전역 배열로 충분하다</b>. 동적 할당은 코드가 길어지고 <code>free</code>·<code>NULL</code> 검사 같은 실수 지점이 늘어난다.<br>
+    그럼에도 이 장에서 배우는 이유는 <b>PART 3의 연결 리스트와 트리</b> 때문이다. 거기서는 동적 할당이 필수다. 지금은 원리만 익혀 둔다.
+  </div>
+
+  <h3><span class="tag">16.5</span>freopen — 테스트를 반복하기 쉽게</h3>
+  <p>터미널에 매번 입력을 치는 것은 느리고 오타가 난다. 입력을 파일에 적어 두고 읽게 하면 <strong>한 번의 실행으로 끝난다</strong>.</p>
+  <figure>
+    <figcaption><span class="fn">조건부 컴파일로 전환</span><span>제출할 때는 자동으로 빠진다</span></figcaption>
+<pre><code>#ifdef LOCAL
+    freopen("input.txt", "r", stdin);
+#endif</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">집에서 — 파일에서 읽는다</div><pre>$ gcc -DLOCAL -o sol sol.c
+$ ./sol
+60</pre></div>
+    <div><div class="lbl">제출용 — 표준 입력</div><pre>$ gcc -o sol sol.c
+$ echo "2
+5 7" | ./sol
+12</pre></div>
+  </div>
+  <p><code>-DLOCAL</code>을 붙여 컴파일하면 <code>freopen</code> 줄이 살아나고, 안 붙이면 사라진다. <strong>같은 소스를 고치지 않고</strong> 두 방식으로 쓸 수 있다.</p>
+  <p>물론 1장에서 배운 <code>./sol &lt; input.txt</code>로도 같은 일을 할 수 있다. 통합 개발 환경에서 실행 버튼만 누르는 경우에 <code>freopen</code>이 편하다.</p>
+
+  <h3><span class="tag">16.6</span>디버깅 도구 네 가지</h3>
+  <table>
+    <thead><tr><th style="width:30%">도구</th><th style="width:30%">잡아내는 것</th><th>쓰는 법</th></tr></thead>
+    <tbody>
+      <tr><td><code>-Wall</code> (1장부터)</td><td>서식 불일치, 초기화 누락, 우선순위, 반환 누락</td><td>항상 켠다</td></tr>
+      <tr><td><code>-O2 -Wall</code></td><td>범위 밖 상수 인덱스, 루프 밖 접근</td><td>제출 전 한 번 더</td></tr>
+      <tr><td><code>-fsanitize=address</code></td><td><strong>실행 중</strong>의 범위 밖 접근, <code>free</code> 후 사용</td><td>버그가 안 보일 때</td></tr>
+      <tr><td><code>valgrind</code></td><td>메모리 누수, 초기화 안 된 값 사용</td><td>동적 할당을 쓸 때</td></tr>
+    </tbody>
+  </table>
+  <figure>
+    <figcaption><span class="fn">sanitizer 출력 예</span><span>8장 오류 4를 실행 중에 잡는다</span></figcaption>
+    <pre class="term"><span class="c">$ gcc -std=c11 -Wall -fsanitize=address -g -o san san.c</span>
+<span class="c">$ ./san</span>
+<span class="o">ERROR: AddressSanitizer: stack-buffer-overflow
+READ of size 4 at 0x7fe73000003c
+    #0 in main san.c:2</span></pre>
+  </figure>
+  <p><strong>몇 번째 줄에서 났는지 정확히 알려 준다.</strong> <code>-g</code>를 함께 붙여야 줄 번호가 나온다. 변수 인덱스라도 잡아내므로, <code>-Wall</code>이 못 잡는 것을 메운다.</p>
+  <div class="note warn">
+    <span class="h">sanitizer는 느리다</span>
+    실행 속도가 몇 배 느려지므로 <b>제출용 빌드에는 쓰지 않는다</b>. 버그를 찾을 때만 켜고, 찾은 뒤에는 끈다.
+  </div>
+  <p>그리고 12장에서 배운 것 하나. <strong>디버깅 출력은 <code>stderr</code>로</strong> 보낸다. 프로그램이 죽어도 메시지가 남고, 채점 결과에 섞이지 않는다.</p>
+
+  <h3><span class="tag">16.7</span>스트레스 테스트 — 반례를 자동으로 찾기</h3>
+  <p>이 장에서 가장 중요한 절이다. <strong>느리지만 확실히 맞는 코드</strong>와 <strong>빠르지만 의심스러운 코드</strong>를 만들어, 무작위 입력으로 둘을 비교한다.</p>
+  <table>
+    <thead><tr><th style="width:24%">준비물</th><th>설명</th></tr></thead>
+    <tbody>
+      <tr><td><code>gen</code></td><td>무작위 입력을 만드는 프로그램. <strong>작은 크기로</strong> 만든다</td></tr>
+      <tr><td><code>sol</code></td><td>확실히 맞는 코드(느려도 됨)</td></tr>
+      <tr><td><code>bad</code></td><td>검사할 코드</td></tr>
+      <tr><td>비교 스크립트</td><td>둘의 출력이 다르면 멈추고 그 입력을 보여 준다</td></tr>
+    </tbody>
+  </table>
+  <figure>
+    <figcaption><span class="fn">stress.sh</span><span>200번 돌려 보는 스크립트</span></figcaption>
+<pre><code>for i in $(seq 1 200); do
+  ./gen $i &gt; t.in
+  ./sol &lt; t.in &gt; a.out
+  ./bad &lt; t.in &gt; b.out
+  if ! diff -q a.out b.out &gt; /dev/null; then
+    echo "=== 반례 발견 (seed $i) ==="
+    cat t.in
+    echo "기준: $(cat a.out)   내 코드: $(cat b.out)"
+    exit 0
+  fi
+done
+echo "200개 테스트 모두 통과"</code></pre>
+  </figure>
+  <p>실제로 돌려 보자. 최댓값을 구하는 코드에서 <code>mx = 0</code>으로 시작한 것(8장 오류 5)을 <code>bad</code>로 두었다.</p>
+  <figure>
+    <figcaption><span class="fn">terminal</span><span>세 번째 시도에서 잡혔다</span></figcaption>
+    <pre class="term"><span class="c">$ ./stress.sh</span>
+<span class="o">=== 반례 발견 (seed 3) ===
+3
+-5 -2 -10
+기준: -2   내 코드: 0</span></pre>
+  </figure>
+  <div class="note">
+    <span class="h">이것이 PART 2의 핵심 기술이다</span>
+    "어디가 틀렸는지 모르겠다"는 상황에서 <b>구체적인 반례를 손에 쥐는 것</b>만큼 강력한 도구는 없다. 반례가 작으면(원소 3개) 손으로 추적할 수 있다. <b>입력을 작게 만드는 것</b>이 요령이다.<br>
+    PART 2·3에서 빠른 알고리즘을 배울 때마다 "느린 완전탐색"을 기준으로 삼아 이 방법으로 검증한다.
+  </div>
+
+  <h3><span class="tag">16.8</span>제출 전 점검표 — PART 1 결산</h3>
+  <p>열다섯 장에서 만난 "경고 없는 오류"를 한 장에 모았다. 3장 연습 20번에서 학생이 만들기 시작한 표의 완성본이다.</p>
+  <table>
+    <thead><tr><th style="width:14%">장</th><th style="width:36%">확인할 것</th><th>어기면</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td>경고가 0개인가</td><td>모든 사고의 출발점</td></tr>
+      <tr><td class="num">2</td><td>최악의 경우 값을 계산했는가 — <strong>중간값 포함</strong></td><td>오버플로, 조용히 틀림</td></tr>
+      <tr><td class="num">2</td><td><code>long long</code>을 <code>%lld</code>로 쓰는가</td><td>엉뚱한 값</td></tr>
+      <tr><td class="num">3</td><td>출력에 군더더기가 없는가</td><td>오답</td></tr>
+      <tr><td class="num">3</td><td>끝 판정을 <code>== 1</code>로 했는가</td><td>시간 초과</td></tr>
+      <tr><td class="num">4</td><td>나눗셈 양쪽이 모두 정수인가</td><td>소수 소실</td></tr>
+      <tr><td class="num">4</td><td>음수가 들어올 수 있는 <code>%</code>인가</td><td>음수 인덱스</td></tr>
+      <tr><td class="num">5</td><td>거르는 조건이 맨 앞인가</td><td>엉뚱한 분류</td></tr>
+      <tr><td class="num">5</td><td>범위 분기가 극단부터인가</td><td>영원히 안 걸리는 분기</td></tr>
+      <tr><td class="num">6</td><td>반복 횟수를 세었는가 (1억 기준)</td><td>시간 초과</td></tr>
+      <tr><td class="num">6</td><td>0회 도는 입력을 시험했는가</td><td>출력 누락</td></tr>
+      <tr><td class="num">8</td><td>배열 크기가 <strong>최댓값 + 1</strong>인가</td><td>범위 밖 쓰기</td></tr>
+      <tr><td class="num">8</td><td>최댓값 초기값이 <code>a[0]</code>인가</td><td>음수 입력에서 틀림</td></tr>
+      <tr><td class="num">9</td><td><strong>직사각형 입력</strong>으로 시험했는가</td><td><code>n</code>/<code>m</code> 혼동</td></tr>
+      <tr><td class="num">11</td><td>재귀 깊이와 호출 횟수를 계산했는가</td><td>스택 초과, 시간 초과</td></tr>
+      <tr><td class="num">13</td><td>함수가 배열을 고치는가 읽는가</td><td>원본 훼손</td></tr>
+      <tr><td class="num">14</td><td>문자열 배열에 <strong>+1</strong>을 했는가</td><td>종료 문자가 밖으로</td></tr>
+      <tr><td class="num">15</td><td>비교 함수에 뺄셈을 썼는가</td><td>큰 값에서 정렬 실패</td></tr>
+      <tr><td class="num">15</td><td>동점 자료로 정렬을 확인했는가</td><td>2·3순위 미작동</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <span class="h">쓰는 법</span>
+    전부 매번 확인하라는 뜻이 아니다. <b>문제를 읽을 때 해당하는 줄에만 표시</b>해 두고, 제출 직전에 그 줄들만 본다. 보통 서너 개다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드: 동적 배열과 테스트 틀</h2>
+  <figure>
+    <figcaption><span class="fn">dyn.c</span><span>표준 코드 · gcc 검증 완료</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+#ifdef LOCAL
+    freopen("input.txt", "r", stdin);
+#endif
+
+    int n;
+    if (scanf("%d", &amp;n) != 1) return 1;
+    if (n &lt;= 0) { printf("0\n"); return 0; }      // 거르기 먼저
+
+    int *a = (int *)malloc(sizeof(int) * (size_t)n);
+    if (a == NULL) {
+        fprintf(stderr, "allocation failed\n");
+        return 1;
+    }
+
+    for (int i = 0; i &lt; n; i++) {
+        if (scanf("%d", &amp;a[i]) != 1) { free(a); return 1; }
+    }
+
+    long long sum = 0;
+    int mx = a[0];
+    for (int i = 0; i &lt; n; i++) {
+        sum += a[i];
+        if (a[i] &gt; mx) { mx = a[i]; }
+    }
+
+    printf("%lld %d\n", sum, mx);
+
+    free(a);
+    return 0;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:34%">요소</th><th>설계 의도</th></tr></thead>
+    <tbody>
+      <tr><td><code>#ifdef LOCAL</code></td><td>집에서는 파일, 제출 시에는 표준 입력. <strong>소스를 고치지 않는다.</strong></td></tr>
+      <tr><td><code>if (n &lt;= 0)</code></td><td>5장의 거르기 먼저. <code>a[0]</code>을 읽기 전에 막는다(13장 표준 코드의 약점 보완).</td></tr>
+      <tr><td><code>sizeof(int) * (size_t)n</code></td><td>바이트 수. n이 크면 곱셈이 넘칠 수 있으므로 <code>size_t</code>로 변환한다(2장).</td></tr>
+      <tr><td><code>if (a == NULL)</code></td><td>할당 실패 검사. 메시지는 <code>stderr</code>로(3·12장).</td></tr>
+      <tr><td><code>free(a); return 1;</code></td><td>중간에 끝낼 때도 돌려준다.</td></tr>
+      <tr><td><code>long long sum</code> / <code>mx = a[0]</code></td><td>2장과 8장의 교훈이 그대로 들어 있다.</td></tr>
+    </tbody>
+  </table>
+  <div class="io">
+    <div><div class="lbl">input.txt</div><pre>3
+10 20 30</pre></div>
+    <div><div class="lbl">실행</div><pre>$ gcc -DLOCAL -o dyn dyn.c
+$ ./dyn
+60 30</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">제출 전에 반드시 일반 빌드로 확인한다</span>
+    <code>-DLOCAL</code>로만 시험하고 제출하면, 채점 서버에 <code>input.txt</code>가 없어도 <code>freopen</code>이 실패할 뿐 프로그램은 돈다. 다만 <b><code>#ifdef</code>를 빠뜨리고 <code>freopen</code>을 그냥 넣으면</b> 표준 입력이 끊겨 전부 틀린다. 제출 직전 <code>-DLOCAL</code> 없이 한 번 돌려 본다.
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+
+  <h3><span class="tag">예제 1</span>malloc과 calloc의 차이</h3>
+  <figure>
+    <figcaption><span class="fn">ex1.c</span><span>같은 자리를 다시 받아 본다</span></figcaption>
+<pre><code>int *a = (int *)malloc(sizeof(int) * 5);
+for (int i = 0; i &lt; 5; i++) { a[i] = 111 + i; }
+free(a);
+
+int *b = (int *)malloc(sizeof(int) * 5);   // 같은 자리일 수 있다
+for (int i = 0; i &lt; 5; i++) { printf("%d ", b[i]); }
+free(b);
+
+int *c = (int *)calloc(5, sizeof(int));
+for (int i = 0; i &lt; 5; i++) { printf("%d ", c[i]); }
+free(c);</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT (한 예)</div><pre>1645166323 5 0 0 115
+0 0 0 0 0</pre></div>
+    <div><div class="lbl">해석</div><pre>malloc은 쓰레기값.
+실행할 때마다 다르다.
+calloc은 항상 0.</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 2</span>sanitizer로 범위 밖 잡기</h3>
+  <figure>
+    <figcaption><span class="fn">ex2.c</span><span>8장 오류 4를 다시 본다</span></figcaption>
+<pre><code>int a[5] = {0};
+printf("%d\n", a[7]);     // 범위 밖</code></pre>
+  </figure>
+  <figure>
+    <figcaption><span class="fn">terminal</span><span>줄 번호까지 알려 준다</span></figcaption>
+    <pre class="term"><span class="c">$ gcc -std=c11 -Wall -fsanitize=address -g -o ex2 ex2.c</span>
+<span class="c">$ ./ex2</span>
+<span class="o">ERROR: AddressSanitizer: stack-buffer-overflow
+READ of size 4 at 0x7fe73000003c
+    #0 in main ex2.c:2</span></pre>
+  </figure>
+  <p>8장에서는 "실행이 되니까 맞다"가 위험하다고만 배웠다. 이제 <strong>자동으로 잡는 방법</strong>이 생겼다.</p>
+
+  <h3><span class="tag">예제 3</span>valgrind로 누수 찾기</h3>
+  <figure>
+    <figcaption><span class="fn">ex3.c</span><span>free를 빠뜨린 코드</span></figcaption>
+<pre><code>int *p = (int *)malloc(400);
+p[0] = 1;
+return 0;        // free 없음</code></pre>
+  </figure>
+  <figure>
+    <figcaption><span class="fn">terminal</span><span></span></figcaption>
+    <pre class="term"><span class="c">$ valgrind --leak-check=full ./ex3</span>
+<span class="o">    400 bytes in 1 blocks are definitely lost
+    definitely lost: 400 bytes in 1 blocks
+ERROR SUMMARY: 1 errors from 1 contexts</span></pre>
+  </figure>
+  <p><code>free(p);</code>를 추가하면 <code>ERROR SUMMARY: 0 errors</code>가 된다.</p>
+
+  <h3><span class="tag">예제 4</span>free 후 사용</h3>
+  <figure>
+    <figcaption><span class="fn">ex4.c</span><span>gcc와 sanitizer가 모두 잡는다</span></figcaption>
+<pre><code>int *p = (int *)malloc(sizeof(int) * 5);
+p[0] = 7;
+free(p);
+printf("%d\n", p[0]);      // 이미 돌려준 자리</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">gcc 경고</div><pre>warning: pointer 'p' used
+after 'free' [-Wuse-after-free]</pre></div>
+    <div><div class="lbl">sanitizer</div><pre>ERROR: heap-use-after-free
+READ of size 4 at 0x503...</pre></div>
+  </div>
+  <p>예방책은 간단하다. <code>free(p); p = NULL;</code>로 두면 실수로 썼을 때 <strong>확실히 죽는다</strong>(12장).</p>
+
+  <h3><span class="tag">예제 5</span>스트레스 테스트로 반례 찾기</h3>
+  <figure>
+    <figcaption><span class="fn">gen.c</span><span>작은 무작위 입력 생성</span></figcaption>
+<pre><code>int main(int argc, char **argv)
+{
+    srand((unsigned)atoi(argv[1]));
+    int n = rand() % 8 + 1;              // 1~8개만
+    printf("%d\n", n);
+    for (int i = 0; i &lt; n; i++) {
+        printf("%d ", rand() % 20 - 10); // -10 ~ 9
+    }
+    printf("\n");
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">sol.c — 기준 (맞음)</div><pre>if (i == 0 || x &gt; mx) { mx = x; }</pre></div>
+    <div><div class="lbl">bad.c — 검사 대상 (틀림)</div><pre>int mx = 0;
+if (x &gt; mx) { mx = x; }</pre></div>
+  </div>
+  <figure>
+    <figcaption><span class="fn">terminal</span><span>200번 중 3번째에서 잡혔다</span></figcaption>
+    <pre class="term"><span class="c">$ ./stress.sh</span>
+<span class="o">=== 반례 발견 (seed 3) ===
+3
+-5 -2 -10
+기준: -2   내 코드: 0</span></pre>
+  </figure>
+  <p>반례가 <strong>원소 세 개</strong>다. 손으로 추적하면 1분 만에 원인이 보인다. 입력을 작게 만든 덕분이다.</p>
+  <p>음수만 있는 입력은 사람이 잘 떠올리지 못한다. <strong>무작위 생성기는 사람이 생각하지 못한 입력을 만든다</strong>는 것이 이 방법의 진짜 가치다.</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 1</span><span class="t">malloc에 개수를 넘겼다</span></div>
+    <div class="body">
+      <pre>int *a = (int *)malloc(n);               // n 바이트 — 너무 작다
+int *a = (int *)malloc(sizeof(int) * n); // 올바름</pre>
+      <p>경고가 없다. n이 10이면 10바이트, 즉 <code>int</code> 두 개 반밖에 안 된다. 나머지 칸을 쓰는 순간 범위 밖이다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>malloc</code>은 항상 <b>바이트 수</b>를 받는다. <code>sizeof(자료형) * 개수</code>로 쓴다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 2</span><span class="t">NULL 검사를 생략했다</span></div>
+    <div class="body">
+      <pre>int *a = (int *)malloc(sizeof(int) * n);
+a[0] = 1;        // 실패했으면 NULL 역참조</pre>
+      <p>대부분의 경우 할당이 성공하므로 평소엔 문제가 없다. 큰 메모리를 요구하는 문제에서만 <strong><code>Segmentation fault</code></strong>가 난다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>if (a == NULL) { return 1; }</code>를 바로 다음 줄에 둔다. 한 줄이면 된다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 3</span><span class="t">malloc 받은 메모리를 초기화하지 않았다</span></div>
+    <div class="body">
+      <pre>int *cnt = (int *)malloc(sizeof(int) * 101);
+cnt[x]++;        // 쓰레기 + 1</pre>
+      <p>8장 오류 2의 동적 할당 버전이다. 전역 배열은 자동으로 0이지만 <code>malloc</code>은 아니다. <strong>운 좋게 0이 들어 있어 통과하다가 어느 날 틀린다.</strong></p>
+      <div class="fix"><b>고치는 법</b> — 0부터 시작해야 하면 <code>calloc</code>을 쓴다. 또는 루프로 직접 채운다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 4</span><span class="t">free한 포인터를 다시 썼다</span></div>
+    <div class="body">
+      <pre>warning: pointer 'p' used after 'free' [-Wuse-after-free]
+AddressSanitizer: heap-use-after-free</pre>
+      <p>gcc가 간단한 경우는 잡아 주지만, 함수를 건너뛰면 못 잡는다. 그때는 sanitizer가 필요하다. <strong>이미 다른 용도로 쓰이는 메모리를 건드리므로</strong> 엉뚱한 곳이 망가진다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>free(p); p = NULL;</code>을 한 묶음으로 쓴다. 두 번 <code>free</code>하는 사고도 함께 막힌다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 5</span><span class="t">freopen을 #ifdef 없이 남겨 두었다</span></div>
+    <div class="body">
+      <pre>freopen("input.txt", "r", stdin);     // 제출 코드에 그대로</pre>
+      <p>채점 서버에는 그 파일이 없다. <code>freopen</code>이 실패하면 <code>stdin</code>이 쓸 수 없는 상태가 되어 <strong>입력을 하나도 못 읽는다</strong>. 모든 테스트가 틀린다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>#ifdef LOCAL</code>로 감싼다. 제출 직전 <b><code>-DLOCAL</code> 없이</b> 한 번 실행해 확인한다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 6</span><span class="t">큰 입력으로만 테스트했다</span></div>
+    <div class="body">
+      <p>도구 이야기가 아니라 습관 이야기다. 문제의 최대 입력으로 시험해 통과하면 안심하기 쉽다. 그러나 이 교재에서 만난 오류의 대부분은 <strong>작고 특수한 입력</strong>에서만 드러났다.</p>
+      <table style="margin:6px 0">
+        <thead><tr><th style="width:40%">반드시 넣어 볼 입력</th><th>잡히는 오류</th></tr></thead>
+        <tbody>
+          <tr><td>N = 0, N = 1</td><td>반복 0회, <code>a[0]</code> 읽기</td></tr>
+          <tr><td>모두 음수</td><td>최댓값 초기값(8장)</td></tr>
+          <tr><td>모두 같은 값</td><td>정렬 2·3순위(15장)</td></tr>
+          <tr><td>직사각형(n ≠ m)</td><td>행·열 혼동(9장)</td></tr>
+          <tr><td>최댓값 그 자체</td><td>오버플로(2장), 배열 크기(8·14장)</td></tr>
+        </tbody>
+      </table>
+      <div class="fix"><b>고치는 법</b> — 문제를 읽자마자 <b>이 다섯 가지 중 해당하는 것</b>을 테스트 파일로 만들어 둔다. 코드를 다 쓴 뒤가 아니라 <b>쓰기 전에</b> 만든다.</div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">PART 1 전체의 가장 중요한 교훈</span>
+    열다섯 장 동안 만난 오류의 <b>절반 이상은 컴파일러가 아무 말도 하지 않았다</b>. 그것들을 잡아낸 것은 언제나 <b>경계 입력</b>과 <b>기준 정답과의 대조</b>였다.<br>
+    코드를 잘 쓰는 능력만큼 <b>자기 코드를 의심하고 검증하는 능력</b>이 중요하다. PART 2는 그 전제 위에서 시작한다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>동적 할당을 쓸 때는 <code>NULL</code> 검사와 <code>free</code>를 빠뜨리지 않는다. 모든 문제에서 <strong>경계 입력</strong>을 직접 만들어 시험한다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>동적 배열 기본</b> — N을 입력받아 크기 N의 배열을 <code>malloc</code>으로 만들고, N개의 정수를 읽어 그대로 출력한 뒤 <code>free</code>하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3
+10 20 30</pre></div><div><span>OUTPUT</span><pre>10 20 30</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>합과 최댓값</b> — 표준 코드를 작성하라. N = 1과 모두 음수인 입력을 반드시 시험하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4
+-7 -3 -1 -5</pre></div><div><span>OUTPUT</span><pre>-16 -1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>malloc vs calloc</b> — 같은 크기를 <code>malloc</code>과 <code>calloc</code>으로 각각 받아 초기 내용을 출력해 비교하라. 두 번 실행해 결과가 달라지는지도 확인하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>할당 실패</b> — 아주 큰 크기를 <code>malloc</code>으로 요청해 <code>NULL</code>이 돌아오는 것을 확인하고, 검사 없이 쓰면 어떻게 되는지도 시험해 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>freopen 틀</b> — <code>#ifdef LOCAL</code>로 감싼 <code>freopen</code>을 넣은 프로그램을 만들고, <code>-DLOCAL</code>을 붙인 빌드와 안 붙인 빌드를 각각 실행해 동작을 비교하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>sanitizer 체험</b> — 범위 밖 접근이 있는 코드를 만들어 ① 그냥 실행 ② <code>-O2 -Wall</code> ③ <code>-fsanitize=address -g</code> 세 가지로 각각 돌려 결과를 비교하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>누수 확인</b> — <code>free</code>를 빠뜨린 코드와 넣은 코드를 각각 <code>valgrind</code>로 검사해 출력을 비교하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>free 후 NULL</b> — <code>free(p);</code> 뒤에 <code>p = NULL;</code>을 넣은 경우와 안 넣은 경우 각각 <code>p[0]</code>에 접근해 결과를 비교하라.</p>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>동적 2차원 배열</b> — N과 M을 입력받아 N×M 격자를 동적으로 만들고(1차원 배열에 <code>i*m+j</code>로 접근), 모든 값을 입력받아 행별 합을 출력하라(N×M ≤ 10<sup>6</sup>).</p>
+    <div class="sample"><div><span>INPUT</span><pre>2 3
+1 2 3
+4 5 6</pre></div><div><span>OUTPUT</span><pre>6
+15</pre></div></div>
+    <p class="spec">※ 13장 2차원 배열 전달에서 "1차원처럼 다루기"를 다시 본다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>동적 카운팅 배열</b> — 값의 범위 V와 N개의 정수(0 ~ V)를 입력받아 가장 많이 나온 값을 출력하라. 카운팅 배열을 동적으로 만든다(V ≤ 10<sup>6</sup>). 초기화에 주의하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>100 5
+90 85 90 100 85</pre></div><div><span>OUTPUT</span><pre>85</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>정렬 후 출력</b> — N개의 정수를 동적 배열에 받아 <code>qsort</code>로 정렬해 출력하라(각 수의 절댓값 2×10<sup>9</sup> 이하). 비교 함수는 15장의 안전한 형태를 쓴다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>입력 생성기</b> — 시드를 인자로 받아 무작위 입력을 만드는 <code>gen</code>을 작성하라. ① 원소 수는 1~8 ② 값은 −10~9. 시드를 바꾸면 다른 입력이 나오는지 확인하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>스트레스 테스트</b> — 예제 5를 그대로 재현하라. <code>gen</code>, <code>sol</code>(기준), <code>bad</code>(<code>mx = 0</code> 버그)를 만들고 비교 스크립트로 반례를 찾아라. 찾은 반례를 적고 왜 그 입력에서 틀리는지 설명하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>자신의 버그로 스트레스 테스트</b> — 2장(오버플로), 8장(최댓값 초기값), 15장(비교 함수 뺄셈) 중 <strong>하나를 골라</strong> 버그가 있는 코드와 기준 코드를 만들고, 스트레스 테스트로 반례를 찾아라. 생성기의 값 범위를 어떻게 잡아야 반례가 나오는지도 함께 고민하라.</p>
+    <p class="spec">※ 오버플로 버그를 잡으려면 생성기가 <strong>큰 값</strong>을 만들어야 한다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>경계 입력 파일 만들기</b> — 02번 문제에 대해 오류 6의 다섯 가지 경계 입력을 각각 <code>t1.txt</code> ~ <code>t5.txt</code>로 만들고, 모두 실행해 기대 출력과 비교하는 스크립트를 작성하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>메모리 사용량 계산</b> — 아래 각 상황에서 ① 전역 배열로 할 때의 메모리 ② 동적 할당으로 할 때의 메모리 ③ 메모리 제한 256 MB를 넘는지 판정하고 ④ 어느 쪽을 써야 하는지 결정하라.</p>
+    <p class="spec">⑴ N ≤ 10<sup>5</sup>인 <code>int</code> 배열 ⑵ N ≤ 10<sup>8</sup>인 <code>int</code> 배열 ⑶ N·M ≤ 10<sup>6</sup>이지만 N, M 각각은 10<sup>6</sup>까지인 2차원 격자 ⑷ N ≤ 10<sup>5</sup>인 구조체(28바이트) 배열</p>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>세 도구 비교</b> — 아래 세 가지 버그가 있는 코드를 각각 만들고, <code>-Wall</code> / <code>-O2 -Wall</code> / <code>-fsanitize=address</code> / <code>valgrind</code> 네 가지로 모두 검사해 <strong>어느 도구가 무엇을 잡는지 표로</strong> 정리하라.</p>
+    <p class="spec">⑴ 상수 인덱스로 배열 범위 밖 읽기 ⑵ <strong>변수</strong> 인덱스로 범위 밖 쓰기 ⑶ <code>free</code> 후 사용 ⑷ 초기화하지 않은 지역 변수 사용 ⑸ 메모리 누수</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>반례를 작게 줄이기</b> — 13번에서 찾은 반례가 원소 8개였다고 하자. 그것을 <strong>더 작게</strong> 만드는 절차를 설계하라. ① 원소를 하나씩 빼 보면서 여전히 틀리는지 확인 ② 값을 0에 가깝게 바꿔 보기. 이 과정을 자동화하는 스크립트를 작성하라.</p>
+    <p class="spec">※ 작은 반례일수록 원인을 찾기 쉽다. 이 기법을 델타 디버깅이라고 한다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>점검표 개인화</b> — 16.8절의 점검표를 바탕으로 <strong>자신이 실제로 저지른 실수</strong>를 기록한 개인 점검표를 만들어라. PART 1의 연습 문제를 풀면서 틀렸던 것을 돌아보고, ① 어느 장의 어느 오류였는지 ② 몇 번 반복했는지 ③ 어떤 테스트로 잡을 수 있었는지를 적는다. 가장 자주 틀린 세 가지를 맨 위에 둔다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>PART 1 종합</b> — 아래 문제를 풀되, <strong>PART 1에서 배운 모든 절차를 밟아</strong> 제출까지 간다. 각 단계에서 한 일을 기록하라.</p>
+    <p class="spec"><b>문제</b> — N명의 학생 정보(이름 20자 이내, 점수 0~100, 나이)가 주어진다(N ≤ 10<sup>5</sup>). ① 전체 평균을 소수점 둘째 자리까지 ② 평균 이상인 학생을 점수 내림차순 → 나이 오름차순 → 이름 사전순으로 출력하라.</p>
+    <p class="spec"><b>밟아야 할 절차</b> — ⑴ N과 값의 범위로 최악의 경우 계산(2·6장) ⑵ 자료형과 배열 크기 결정(2·8·14·15장) ⑶ 메모리 계산(8·16장) ⑷ 경계 입력 5종 미리 작성(16장) ⑸ 코드 작성 ⑹ 경고 0개 확인 ⑺ 경계 입력 전부 통과 ⑻ 동점 자료로 정렬 기준 확인(15장) ⑼ 점검표의 해당 줄 확인(16.8절)</p>
+  </div></div>
+
+  </div>
+</section>
+
+<section class="pagebreak answers">
+  <span class="sec-no">07 — 확인 평가 해설</span>
+  <h2>정답과 해설</h2>
+  <p class="spec" style="color:var(--ink-faint);font-size:9pt">※ 이 절은 교사용 통합본에만 수록한다. 학생 배부용에서는 제거한다.</p>
+
+  <div class="ans"><span class="an">01</span><div class="ab"><code>int *a = (int*)malloc(sizeof(int) * (size_t)n);</code> 후 <code>NULL</code> 검사, 입력, 출력, <code>free(a)</code>. 네 단계를 한 묶음으로 익히게 한다.</div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab">표준 코드와 동일. <b>모두 음수</b> 입력에서 <code>mx</code>가 음수로 나오는지가 핵심이다. <code>mx = 0</code>으로 시작한 답안은 여기서 걸린다(8장 오류 5). N = 1도 확인시킨다.</div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab">예제 1과 동일. <code>malloc</code>의 내용은 <b>실행할 때마다 다를 수 있다</b>. 운영체제가 새 메모리를 줄 때는 0으로 채워 주기도 해서, 처음 한 번은 0이 나올 수도 있다. <b>그래서 더 위험하다</b>는 점을 강조한다.</div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab"><code>malloc((size_t)1000000000 * 1000)</code> → <code>NULL</code>. 검사 없이 <code>a[0] = 1;</code>을 하면 <b><code>Segmentation fault</code></b>로 죽는다(종료 코드 139). 12장의 <code>NULL</code> 역참조와 같다.</div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab"><code>-DLOCAL</code>이면 <code>input.txt</code>에서, 없으면 표준 입력에서 읽는다. <b>지도 포인트</b> — <code>#ifdef</code>를 빼고 제출했을 때 어떤 일이 생기는지(오류 5) 실제로 재현시킨다. <code>input.txt</code>를 지우고 실행하면 입력을 못 읽는다.</div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab">
+    ① 그냥 실행 → 아무 일 없이 쓰레기값 출력(또는 운 나쁘면 죽음)<br>
+    ② <code>-O2 -Wall</code> → 상수 인덱스면 <code>array subscript ... is above array bounds</code> 경고<br>
+    ③ sanitizer → <b>실행 중에 정확한 줄 번호와 함께</b> 중단<br>
+    <b>지도 포인트</b> — 세 결과를 나란히 놓고 보면 도구를 왜 여러 개 쓰는지 바로 이해한다.
+  </div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab"><code>free</code> 없으면 <code>definitely lost: 400 bytes</code>, 넣으면 <code>ERROR SUMMARY: 0 errors</code>. <b>보충</b> — 올림피아드에서는 누수가 보통 문제가 되지 않지만, 반복 할당하는 코드에서는 실행 중 메모리가 계속 늘어난다는 점을 짚는다.</div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab"><code>p = NULL</code>을 넣으면 <b>확실히 죽는다</b>(<code>NULL</code> 역참조). 안 넣으면 엉뚱한 값이 나오거나 우연히 멀쩡해 보인다. <b>"확실히 죽는 것이 낫다"</b>는 판단을 설명한다 — 조용히 틀리는 것보다 즉시 드러나는 편이 디버깅에 유리하다.</div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab">
+<pre><code>int *g = (int*)malloc(sizeof(int) * (size_t)n * (size_t)m);
+// 접근: g[i * m + j]</code></pre>
+    <b>주의</b> — <code>sizeof(int) * n * m</code>에서 <code>n * m</code>이 <code>int</code>로 계산되면 넘칠 수 있다. <code>(size_t)</code> 변환을 앞에 둔다(2장 형변환 위치).<br>
+    <b>지도 포인트</b> — 7장 연습 13번에서 손으로 계산한 <code>i*M+j</code>가 여기서 실제로 쓰인다.
+  </div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab">
+    <code>int *cnt = (int*)calloc((size_t)v + 1, sizeof(int));</code> — <b>크기는 V+1</b>(8장 오류 1), <b><code>calloc</code>으로 0 초기화</b>(오류 3). 두 함정이 한 줄에 모여 있다.<br>
+    <code>malloc</code>을 썼다면 루프로 0을 채워야 한다. 안 채우면 쓰레기값에 <code>++</code>를 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab">15장 예제 5의 <code>cmp_int</code>를 쓴다. 절댓값 2×10<sup>9</sup>이므로 <b>뺄셈을 쓰면 틀린다</b>. 동적 배열이라는 점만 다르고 나머지는 15장 그대로다.</div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">예제 5의 <code>gen.c</code>. <code>srand(시드)</code>로 시작해야 <b>같은 시드에 같은 입력</b>이 나와 재현이 가능하다. 재현성이 없으면 반례를 다시 만들 수 없다는 점을 강조한다.</div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab">
+    교재 환경에서는 <b>seed 3</b>에서 <code>3 / -5 -2 -10</code>이 나왔다. 기준은 −2, 버그 코드는 0.<br>
+    <b>이유</b> — <code>mx = 0</code>으로 시작했는데 모든 값이 음수라 한 번도 갱신되지 않았다. 0은 입력에 없는 값인데도 답으로 나왔다.<br>
+    <b>지도 포인트</b> — 학생마다 시드와 반례가 다를 수 있다. 중요한 것은 <b>"모두 음수"라는 패턴</b>을 무작위 생성기가 알아서 만들어 냈다는 점이다.
+  </div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab">
+    <b>오버플로 버그를 고를 경우</b> — 생성기가 10<sup>9</sup> 근처의 값을 만들어야 한다. <code>rand() % 20 - 10</code> 같은 작은 값으로는 <b>영원히 반례가 안 나온다</b>.<br>
+    <b>비교 함수 뺄셈 버그</b> — 양수와 음수 모두 20억 근처가 나와야 한다.<br>
+    <b>최댓값 초기값 버그</b> — 음수만 나오는 경우가 필요하므로 값 범위를 음수 쪽으로 치우치게 한다.<br>
+    <b>지도 포인트</b> — 이것이 이 문제의 핵심 교훈이다. <b>생성기가 버그를 드러낼 수 있는 입력을 만들어야 한다.</b> 작은 값만 만드는 생성기는 오버플로를 절대 못 잡는다. 테스트 설계도 설계라는 것을 가르친다.
+  </div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab">
+    다섯 파일과 기대 출력 예: <code>t1</code>(N=1) → 그 값 두 번, <code>t2</code>(모두 음수) → 음수 최댓값, <code>t3</code>(모두 같은 값), <code>t4</code>(최댓값 10<sup>9</sup> 여러 개) → 합이 <code>int</code>를 넘음, <code>t5</code>(N=0) → 0.<br>
+    스크립트는 <code>for f in t*.txt; do ./sol &lt; $f; done</code> 형태면 충분하다.<br>
+    <b>지도 포인트</b> — 한 번 만들어 두면 코드를 고칠 때마다 1초 만에 전부 재검증된다. 이 투자 대비 효과를 체감시키는 것이 목적이다.
+  </div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">
+    ⑴ 400 KB — 전역으로 충분. <b>전역 권장</b>.<br>
+    ⑵ 400 MB — <b>256 MB 초과</b>. 전역도 동적도 불가능하다. <code>int</code> 대신 더 작은 자료형을 쓰거나, 배열에 다 담지 않고 <b>읽으면서 처리</b>하는 방식으로 알고리즘을 바꿔야 한다.<br>
+    ⑶ 전역으로 10<sup>6</sup>×10<sup>6</sup>을 잡을 수는 없다. <b>동적 할당 필수</b>. 실제 필요한 것은 N·M ≤ 10<sup>6</sup>이므로 4 MB면 된다.<br>
+    ⑷ 10<sup>5</sup> × 28 = 2.8 MB — <b>전역 권장</b>.<br>
+    <b>지도 포인트</b> — ⑵처럼 <b>둘 다 안 되는 경우</b>가 있다는 것이 중요하다. 그때는 자료구조가 아니라 알고리즘을 바꿔야 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    교재 환경 기준 정리.
+    <table style="margin:6px 0">
+      <thead><tr><th style="width:30%">버그</th><th style="width:14%">-Wall</th><th style="width:16%">-O2 -Wall</th><th style="width:18%">sanitizer</th><th>valgrind</th></tr></thead>
+      <tbody>
+        <tr><td>⑴ 상수 인덱스 범위 밖</td><td>못 잡음</td><td><strong>잡음</strong></td><td><strong>잡음</strong></td><td>잡음</td></tr>
+        <tr><td>⑵ 변수 인덱스 범위 밖</td><td>못 잡음</td><td>대개 못 잡음</td><td><strong>잡음</strong></td><td>잡음</td></tr>
+        <tr><td>⑶ free 후 사용</td><td><strong>간단하면 잡음</strong></td><td>잡음</td><td><strong>잡음</strong></td><td><strong>잡음</strong></td></tr>
+        <tr><td>⑷ 초기화 안 된 변수</td><td><strong>잡음</strong></td><td>잡음</td><td>경우에 따라</td><td><strong>잡음</strong></td></tr>
+        <tr><td>⑸ 메모리 누수</td><td>못 잡음</td><td>못 잡음</td><td>잡음</td><td><strong>잡음</strong></td></tr>
+      </tbody>
+    </table>
+    <b>결론</b> — <code>-Wall</code>은 기본, 제출 전 <code>-O2</code>로 한 번 더, 안 보이는 버그는 <b>sanitizer</b>, 동적 할당을 썼으면 <b>valgrind</b>. 네 도구가 서로 다른 영역을 덮는다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    절차: ① 반례의 원소를 하나 빼고 다시 두 코드를 돌려 여전히 다른지 본다 ② 다르면 그 작은 입력을 새 반례로 삼고 ①로 돌아간다 ③ 더 뺄 수 없으면 값을 하나씩 0에 가깝게 바꿔 같은 과정을 반복한다.<br>
+    스크립트는 입력 파일을 읽어 한 줄씩 줄여 보며 <code>diff</code>를 확인하는 반복문으로 구현한다.<br>
+    <b>지도 포인트</b> — 원소 8개짜리 반례보다 2~3개짜리가 훨씬 낫다. 손으로 추적할 수 있기 때문이다. PART 3·4의 복잡한 알고리즘에서 이 기법이 실제로 필요해진다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    정답이 없는 문제다. 다만 <b>반드시 쓰게</b> 한다. 학생마다 자주 틀리는 유형이 뚜렷하게 다르며, 본인이 그것을 인식하는 것만으로 오답률이 크게 줄어든다.<br>
+    <b>교사용 운영법</b> — 수업에서 수집해 반 전체의 빈도표를 만들면, PART 2 초반에 어느 장을 복습해야 할지가 데이터로 나온다. 개인 점검표는 PART 2 내내 갱신하게 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    <b>⑴ 최악의 경우</b> — 합은 10<sup>5</sup> × 100 = 10<sup>7</sup>로 <code>int</code>로도 되지만 <code>long long</code>을 쓴다. 정렬은 N log N ≈ 1.7×10<sup>6</sup>으로 여유.<br>
+    <b>⑵ 자료형·크기</b> — <code>char name[21]</code>(14장 +1), <code>int score, age</code>. 구조체 28바이트.<br>
+    <b>⑶ 메모리</b> — 10<sup>5</sup> × 28 = 2.8 MB. 전역 배열로 충분하다.<br>
+    <b>⑷ 경계 입력</b> — N=1 / 모두 같은 점수(정렬 2·3순위 확인) / 모든 점수가 100 / 평균과 정확히 같은 점수가 있는 경우 / 이름이 20자인 경우.<br>
+    <b>⑸~⑼</b> — 평균 비교는 <code>(double)sum / n</code>(4장). "평균 이상"이므로 <code>&gt;=</code>를 쓴다. 비교 함수는 15장 표준 코드 그대로.<br>
+    <b>지도 포인트</b> — 이 문제는 난이도가 높지 않다. 목적은 <b>절차를 밟는 연습</b>이다. 코드를 먼저 쓰고 나중에 점검하는 학생과, 절차대로 간 학생의 소요 시간을 비교해 보면 후자가 더 빠르다는 것을 알게 된다. PART 2의 작업 방식을 여기서 정착시킨다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>PART 1을 마치며</h2>
+  <ul class="check">
+    <li><code>malloc</code>은 바이트 수를 받고, <code>NULL</code>을 검사하고, <code>free</code>로 돌려준다</li>
+    <li>0부터 시작해야 하면 <code>calloc</code>을 쓴다</li>
+    <li><code>freopen</code>은 <code>#ifdef LOCAL</code>로 감싼다</li>
+    <li>버그가 안 보이면 <code>-fsanitize=address -g</code>로 돌려 본다</li>
+    <li>동적 할당을 썼으면 <code>valgrind</code>로 한 번 확인한다</li>
+    <li>경계 입력 다섯 가지를 코드 쓰기 <strong>전에</strong> 만든다</li>
+    <li>의심스러우면 기준 코드와 대조하는 스트레스 테스트를 돌린다</li>
+    <li>제출 전에 점검표의 해당 줄을 확인한다</li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">PART 1에서 얻은 것</span>
+    문법 열여섯 장을 지나며 <b>도구 다섯 가지</b>를 손에 넣었다. 수학 함수(10장), 출력 매개변수(12장), 배열 함수(13장), 문자열 함수(14장), 구조체와 비교 함수(15장). 그리고 그것들을 <b>검증하는 절차</b>(16장).<br>
+    PART 2는 이 도구들을 들고 시작한다. 새 문법은 거의 나오지 않는다. 대신 <b>문제를 읽고, 제약 조건에서 알고리즘을 고르고, 끝까지 구현해 내는 힘</b>을 기른다.
+  </div>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 — PART 2 브론즈급 해결 스킬</span>
+    첫 수업에서 할 일은 하나다. 10·12·13·14·15장에서 만든 함수 모음 파일을 열어 놓는 것. 그리고 16.8절의 점검표를 벽에 붙이는 것.<br>
+    PART 2의 12장은 새로운 알고리즘을 거의 가르치지 않는다. <strong>아는 것으로 완결된 프로그램을 만드는 절차</strong>를 훈련한다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 1 · 16장 · 2026-10-12 · 전 코드 gcc 13.3.0 검증 · PART 1 완결</span>
+</footer>
+
+</div>
+</body>
+</html>
