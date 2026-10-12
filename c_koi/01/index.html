@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 1 · 01장 개발 환경과 첫 프로그램 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#0d7a6f;
+  --accent-soft:#e3f1ef;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--font-body);font-weight:300;
+  font-size:10.6pt;line-height:1.72;
+}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+/* ---- running head ---- */
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+/* ---- goal box ---- */
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+/* ---- sections ---- */
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+/* ---- code ---- */
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;color:var(--ink-faint);letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#8fd8cd}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+/* ---- note boxes ---- */
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+/* ---- table ---- */
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+
+/* ---- error cards ---- */
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+/* ---- problems ---- */
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint);font-family:var(--font-mono)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+/* ---- answers ---- */
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+/* ---- checklist ---- */
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2{break-after:avoid}
+  h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 1 · C11 문법 기초 — 01 / 16</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">01</span>
+    <h1>개발 환경과 첫 프로그램</h1>
+  </div>
+  <p class="lede">컴파일러가 소스 파일을 실행 파일로 바꾸는 과정, <code>main</code>이 돌려주는 값의 의미, 표준 입력과 표준 출력이라는 두 통로, 그리고 세미콜론과 중괄호가 코드의 뼈대를 만드는 방식을 다룬다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li>소스 파일을 gcc로 컴파일하고 실행 파일을 만들어 실행할 수 있다</li>
+    <li><code>int main(void)</code>와 <code>return 0;</code>이 무엇을 뜻하는지 설명할 수 있다</li>
+    <li>표준 입력으로 받은 두 정수의 합을 표준 출력으로 내보내는 프로그램을 작성할 수 있다</li>
+    <li>세미콜론 누락, 헤더 누락, 오타, 중괄호 불일치가 만드는 컴파일 메시지를 읽고 고칠 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 문제 · 컴파일 과정 · 첫 출력 프로그램</div>
+  <div><b>2차시</b>표준 입출력 · 표준 코드 · 단계 예제 1~5</div>
+  <div><b>3차시</b>흔한 오류 6종 · 연습 문제 · 확인 평가</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>왜 컴파일부터 배우는가</h2>
+  <p>정보올림피아드 1차 시험은 종이에 쓴 코드가 아니라 <strong>실제로 돌아가는 프로그램</strong>으로 평가한다. 아무리 알고리즘을 잘 떠올려도 컴파일이 되지 않으면 0점이다. 그래서 첫 수업의 목표는 알고리즘이 아니라, 머릿속 생각을 실행 파일까지 옮기는 통로를 뚫는 것이다.</p>
+  <p>다음 질문에 지금 답해 보자. 답을 모르는 채로 이 장을 시작해도 좋다.</p>
+  <div class="note">
+    <span class="h">생각해 볼 질문</span>
+    <b>①</b> 우리가 작성한 <code>.c</code> 파일을 컴퓨터는 그대로 실행할 수 있을까?<br>
+    <b>②</b> <code>return 0;</code>의 0은 누구에게 돌려주는 값일까?<br>
+    <b>③</b> 화면에 글자를 쓰는 것과 파일에 글자를 쓰는 것은 프로그램 입장에서 얼마나 다를까?<br>
+    <b>④</b> 세미콜론 하나를 빠뜨리면 컴파일러는 <em>몇 번째 줄</em>을 지목할까?
+  </div>
+  <p>④번은 특히 중요하다. 컴파일러가 알려 주는 줄 번호는 <strong>실수한 줄이 아니라 실수를 알아챈 줄</strong>인 경우가 많다. 이 차이를 모르면 멀쩡한 줄을 몇 분씩 노려보게 된다. 이 장의 마지막 절에서 실제 메시지로 확인한다.</p>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">2.1</span>gcc가 하는 네 단계</h3>
+  <p>소스 파일 <code>add.c</code>는 사람이 읽는 글자일 뿐이다. CPU가 실행하는 것은 기계어다. gcc는 그 사이를 네 단계로 잇는다.</p>
+  <table>
+    <thead><tr><th style="width:17%">단계</th><th style="width:25%">하는 일</th><th style="width:26%">결과물</th><th>직접 보려면</th></tr></thead>
+    <tbody>
+      <tr><td><strong>전처리</strong><br>preprocess</td><td><code>#include</code>를 실제 내용으로 바꾸고 주석을 제거</td><td>확장된 소스 <code>.i</code></td><td><code>gcc -E add.c</code></td></tr>
+      <tr><td><strong>컴파일</strong><br>compile</td><td>C 문법을 검사하고 어셈블리로 번역</td><td>어셈블리 <code>.s</code></td><td><code>gcc -S add.c</code></td></tr>
+      <tr><td><strong>어셈블</strong><br>assemble</td><td>어셈블리를 기계어로 변환</td><td>목적 파일 <code>.o</code></td><td><code>gcc -c add.c</code></td></tr>
+      <tr><td><strong>링크</strong><br>link</td><td><code>printf</code> 같은 라이브러리 함수를 연결</td><td>실행 파일</td><td><code>gcc -o add add.c</code></td></tr>
+    </tbody>
+  </table>
+  <p>오류 메시지를 읽을 때 이 구분이 바로 쓸모가 있다. <code>error:</code>로 시작하고 줄 번호가 붙어 있으면 컴파일 단계의 문법 오류이고, <code>/usr/bin/ld:</code>나 <code>undefined reference to</code>가 보이면 링크 단계의 문제다. 둘은 고치는 방법이 다르다.</p>
+
+  <h3><span class="tag">2.2</span>수업에서 쓸 컴파일 명령</h3>
+  <figure>
+    <figcaption><span class="fn">terminal</span><span>컴파일과 실행</span></figcaption>
+    <pre class="term"><span class="c">$ gcc -std=c11 -Wall -o add add.c</span>
+<span class="c">$ ./add</span></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:22%">옵션</th><th>의미</th></tr></thead>
+    <tbody>
+      <tr><td><code>-std=c11</code></td><td>C11 표준으로 해석한다. 이 교재의 모든 코드는 C11 기준이다.</td></tr>
+      <tr><td><code>-Wall</code></td><td>경고를 폭넓게 켠다. 경고는 오류가 아니지만, <strong>대부분의 실전 실수는 경고에서 먼저 드러난다</strong>.</td></tr>
+      <tr><td><code>-o add</code></td><td>실행 파일 이름을 <code>add</code>로 지정한다. 생략하면 <code>a.out</code>이 된다.</td></tr>
+      <tr><td><code>./add</code></td><td>현재 폴더의 <code>add</code>를 실행한다. 앞의 <code>./</code>를 빼면 찾지 못한다.</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <span class="h">최적화 옵션은 나중에</span>
+    실전 채점 환경에서는 <code>-O2</code>를 함께 쓴다. 다만 <code>-O2</code>를 켜면 <code>scanf</code>의 반환값을 쓰지 않았다는 경고가 추가로 나온다. 그 경고의 의미와 처리 방법은 <b>3장 서식 입출력</b>에서 다루므로, 1장에서는 <code>-O2</code> 없이 연습한다.
+  </div>
+
+  <h3><span class="tag">2.3</span>main의 반환값</h3>
+  <p><code>main</code>은 우리가 부르는 함수가 아니라 <strong>운영체제가 부르는 함수</strong>다. 그래서 <code>main</code>이 돌려주는 값은 프로그램을 실행시킨 쪽, 즉 운영체제나 채점 프로그램에게 간다. 이 값을 <strong>종료 코드</strong>라고 한다.</p>
+  <table>
+    <thead><tr><th style="width:22%">반환값</th><th>뜻</th></tr></thead>
+    <tbody>
+      <tr><td><code>return 0;</code></td><td>정상 종료. 올림피아드 제출 코드는 반드시 0으로 끝나야 한다.</td></tr>
+      <tr><td><code>return 1;</code> 등</td><td>비정상 종료. 채점기는 이것을 <strong>런타임 오류</strong>로 처리한다.</td></tr>
+    </tbody>
+  </table>
+  <figure>
+    <figcaption><span class="fn">terminal</span><span>종료 코드 확인 · ex3.c는 return 7</span></figcaption>
+    <pre class="term"><span class="c">$ ./ex3</span>
+<span class="o">program start</span>
+<span class="c">$ echo $?</span>
+<span class="o">7</span></pre>
+  </figure>
+  <div class="note warn">
+    <span class="h">종료 코드는 0~255만 전달된다</span>
+    <code>return 300;</code>으로 끝낸 프로그램의 종료 코드를 확인하면 <b>44</b>가 나온다. 300을 256으로 나눈 나머지이기 때문이다. 종료 코드는 1바이트만 전달되므로, 계산 결과를 <code>return</code>으로 내보내려는 시도는 통하지 않는다. 답은 반드시 <code>printf</code>로 출력한다.
+  </div>
+
+  <h3><span class="tag">2.4</span>표준 입력과 표준 출력</h3>
+  <p>C 프로그램은 시작할 때 세 개의 통로를 자동으로 가진다. 이 세 통로를 묶어 <strong>표준 스트림</strong>이라고 한다.</p>
+  <table>
+    <thead><tr><th style="width:17%">스트림</th><th style="width:20%">기본 연결 대상</th><th style="width:25%">쓰는 함수</th><th>용도</th></tr></thead>
+    <tbody>
+      <tr><td><code>stdin</code><br>표준 입력</td><td>키보드</td><td><code>scanf</code>, <code>getchar</code></td><td>문제의 입력 데이터를 받는다</td></tr>
+      <tr><td><code>stdout</code><br>표준 출력</td><td>화면</td><td><code>printf</code>, <code>putchar</code></td><td><strong>정답을 출력한다. 채점 대상은 이것뿐이다.</strong></td></tr>
+      <tr><td><code>stderr</code><br>표준 오류</td><td>화면</td><td><code>fprintf(stderr, ...)</code></td><td>디버깅용 메시지. 채점에 포함되지 않는다</td></tr>
+    </tbody>
+  </table>
+  <p>핵심은 <strong>통로가 어디에 연결되는지는 프로그램이 정하지 않는다</strong>는 점이다. 같은 프로그램이라도 실행할 때 연결을 바꿀 수 있다.</p>
+  <figure>
+    <figcaption><span class="fn">terminal</span><span>입력을 파일에서, 출력을 파일로</span></figcaption>
+    <pre class="term"><span class="c">$ echo "12 25" | ./add</span>
+<span class="o">37</span>
+<span class="c">$ ./add &lt; input.txt &gt; output.txt</span></pre>
+  </figure>
+  <p>채점 프로그램이 하는 일도 정확히 이것이다. 우리 프로그램의 <code>stdin</code>에 입력 파일을 연결하고, <code>stdout</code>으로 나온 내용을 정답 파일과 글자 단위로 비교한다. 그래서 <strong>"숫자를 입력하세요" 같은 안내문을 <code>printf</code>로 찍으면 틀린다</strong>. 안내문이 필요하면 <code>stderr</code>로 보낸다.</p>
+
+  <h3><span class="tag">2.5</span>세미콜론과 블록</h3>
+  <p>C는 줄바꿈을 문장의 끝으로 보지 않는다. 문장의 끝은 오직 세미콜론이다. 그래서 다음 두 코드는 컴파일러에게 완전히 같다.</p>
+  <div class="io">
+    <div><div class="lbl">A</div><pre>int a, b;
+scanf("%d %d", &amp;a, &amp;b);
+printf("%d\n", a + b);</pre></div>
+    <div><div class="lbl">B — 같은 프로그램</div><pre>int a,b;scanf("%d %d",&amp;a,&amp;b);printf(
+"%d\n",a+b);</pre></div>
+  </div>
+  <p>B처럼 써도 돌아가지만 쓰지 않는다. 줄바꿈과 들여쓰기는 컴퓨터가 아니라 <strong>세 시간 뒤의 자신</strong>을 위한 것이다. 시험장에서 자기 코드를 못 읽어 시간을 날리는 일이 실제로 일어난다.</p>
+  <p>중괄호 <code>{ }</code>는 여러 문장을 하나의 덩어리로 묶는 <strong>블록</strong>을 만든다. <code>main</code>의 몸통도 블록이고, 뒤에서 배울 조건문·반복문·함수도 모두 블록을 쓴다. 여는 중괄호와 닫는 중괄호는 반드시 짝을 이루며, 짝이 맞지 않으면 컴파일러는 <strong>파일의 맨 끝</strong>에서 오류를 보고한다.</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드: 두 수의 합</h2>
+  <p>아래 코드는 이 교재에서 수백 번 변형될 뼈대다. 통째로 외워서 빈 화면에 바로 쓸 수 있어야 한다.</p>
+  <figure>
+    <figcaption><span class="fn">add.c</span><span>표준 코드 · gcc 검증 완료</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b;
+    scanf("%d %d", &amp;a, &amp;b);
+    printf("%d\n", a + b);
+    return 0;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:38%">줄</th><th>읽는 법</th></tr></thead>
+    <tbody>
+      <tr><td><code>#include &lt;stdio.h&gt;</code></td><td><code>printf</code>와 <code>scanf</code>를 쓰겠다고 미리 알린다. 이 줄이 없으면 경고가 난다.</td></tr>
+      <tr><td><code>int main(void)</code></td><td>정수를 돌려주고 인자를 받지 않는 시작 함수. <code>void</code>를 빼지 않는다.</td></tr>
+      <tr><td><code>int a, b;</code></td><td>정수 변수 두 개를 만든다. 아직 값은 들어 있지 않다.</td></tr>
+      <tr><td><code>scanf("%d %d", &amp;a, &amp;b);</code></td><td>공백으로 구분된 정수 두 개를 읽어 <code>a</code>와 <code>b</code>에 넣는다. <strong><code>&amp;</code>를 빠뜨리지 않는다.</strong></td></tr>
+      <tr><td><code>printf("%d\n", a + b);</code></td><td>합을 출력하고 줄을 바꾼다. 마지막 줄바꿈은 관례적으로 항상 넣는다.</td></tr>
+      <tr><td><code>return 0;</code></td><td>정상 종료를 알린다.</td></tr>
+    </tbody>
+  </table>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>12 25</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>37</pre></div>
+  </div>
+  <div class="note">
+    <span class="h">왜 scanf에만 &amp;가 붙는가</span>
+    <code>printf</code>는 값을 <b>가져다 쓰기만</b> 하므로 값을 넘긴다. <code>scanf</code>는 변수에 값을 <b>넣어야</b> 하므로 그 변수가 있는 위치, 즉 주소를 넘긴다. <code>&amp;</code>는 "이 변수의 주소"라는 뜻이다. 자세한 원리는 <b>12장 포인터</b>에서 다룬다. 지금은 "읽을 때는 <code>&amp;</code>, 쓸 때는 안 붙임"으로 외워 둔다.
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+  <p>표준 코드를 한 군데씩만 바꿔 가며 다섯 번 변형한다. 모든 실행 결과는 실제로 컴파일해 확인한 값이다.</p>
+
+  <h3><span class="tag">예제 1</span>합과 차를 한 줄에</h3>
+  <figure>
+    <figcaption><span class="fn">ex1.c</span><span>printf의 인자를 늘린다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b;
+    scanf("%d %d", &amp;a, &amp;b);
+    printf("%d %d\n", a + b, a - b);
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>12 25</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>37 -13</pre></div>
+  </div>
+  <p>서식 문자열 안의 <code>%d</code> 개수와 뒤에 오는 값의 개수가 같아야 한다. 이 둘이 어긋나는 것이 초보자 오류 1위다.</p>
+
+  <h3><span class="tag">예제 2</span>세 수를 나눠서 읽기</h3>
+  <figure>
+    <figcaption><span class="fn">ex2.c</span><span>scanf를 세 번 호출해도 결과는 같다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b, c;
+    scanf("%d", &amp;a);
+    scanf("%d", &amp;b);
+    scanf("%d", &amp;c);
+    printf("%d\n", a + b + c);
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>3 4 5</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>12</pre></div>
+  </div>
+  <p>입력이 <code>3 4 5</code>처럼 한 줄에 있든 세 줄에 나뉘어 있든 결과는 같다. <code>%d</code>는 숫자 앞의 공백과 줄바꿈을 알아서 건너뛰기 때문이다. <strong>입력 데이터의 줄 구분에 신경 쓰지 않아도 되는 것</strong>이 정수 입력의 큰 장점이다.</p>
+
+  <h3><span class="tag">예제 3</span>종료 코드를 바꿔 보기</h3>
+  <figure>
+    <figcaption><span class="fn">ex3.c</span><span>return 값이 밖으로 나가는 것을 확인</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    printf("program start\n");
+    return 7;
+}</code></pre>
+  </figure>
+  <figure>
+    <figcaption><span class="fn">terminal</span><span>실행 결과</span></figcaption>
+    <pre class="term"><span class="c">$ ./ex3</span>
+<span class="o">program start</span>
+<span class="c">$ echo $?</span>
+<span class="o">7</span></pre>
+  </figure>
+  <p>화면에는 아무 차이가 없다. 종료 코드는 사람이 아니라 프로그램을 실행시킨 쪽이 읽는 값이기 때문이다. 확인한 뒤에는 반드시 <code>return 0;</code>으로 되돌려 놓는다.</p>
+
+  <h3><span class="tag">예제 4</span>안내문은 stderr로</h3>
+  <figure>
+    <figcaption><span class="fn">ex4.c</span><span>두 출력 통로를 분리한다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b;
+    fprintf(stderr, "input two numbers: ");
+    scanf("%d %d", &amp;a, &amp;b);
+    fprintf(stdout, "%d\n", a + b);
+    return 0;
+}</code></pre>
+  </figure>
+  <figure>
+    <figcaption><span class="fn">terminal</span><span>stderr를 버리면 정답만 남는다</span></figcaption>
+    <pre class="term"><span class="c">$ echo "10 20" | ./ex4</span>
+<span class="o">input two numbers: 30</span>
+<span class="c">$ echo "10 20" | ./ex4 2&gt;/dev/null</span>
+<span class="o">30</span></pre>
+  </figure>
+  <p><code>2&gt;/dev/null</code>은 표준 오류를 버리라는 뜻이다. 안내문이 사라지고 정답만 남는 것으로, 두 통로가 실제로 다르다는 것을 눈으로 확인할 수 있다. <code>fprintf(stdout, ...)</code>는 <code>printf(...)</code>와 완전히 같다.</p>
+
+  <h3><span class="tag">예제 5</span>실수 입력과 자릿수 지정</h3>
+  <figure>
+    <figcaption><span class="fn">ex5.c</span><span>double은 읽을 때 %lf, 쓸 때 %f</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    double x, y;
+    scanf("%lf %lf", &amp;x, &amp;y);
+    printf("%.2f\n", x + y);
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>1.5 2.25</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>3.75</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">읽기와 쓰기의 서식이 다르다</span>
+    <code>double</code>은 <code>scanf</code>에서 <b><code>%lf</code></b>, <code>printf</code>에서 <b><code>%f</code></b>를 쓴다. 바꿔 쓰면 컴파일은 되지만 값이 엉뚱하게 나온다. <code>%.2f</code>의 <code>.2</code>는 소수점 아래 두 자리까지 반올림해 출력하라는 뜻이다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+  <p>아래 메시지는 모두 <code>gcc 13.3.0</code>에서 실제로 출력된 것을 그대로 옮긴 것이다. 메시지를 외울 필요는 없다. <strong>어느 줄을 보라고 하는지, 그리고 그 줄이 진짜 범인인지</strong>를 판단하는 연습을 한다.</p>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 1</span><span class="t">세미콜론 누락</span></div>
+    <div class="body">
+      <p>6번 줄 <code>scanf(...)</code> 뒤의 세미콜론을 빠뜨렸다.</p>
+      <pre>err1.c:6:27: error: expected ';' before 'printf'
+    6 |     scanf("%d %d", &amp;a, &amp;b)
+      |                           ^
+      |                           ;
+    7 |     printf("%d\n", a + b);</pre>
+      <p>컴파일러는 <code>printf</code>를 만나고 나서야 "앞에 세미콜론이 있어야 했다"고 깨닫는다. 그래서 지목 위치가 6번 줄 <strong>끝</strong>이고, 친절하게 <code>;</code>를 넣을 자리까지 표시해 준다.</p>
+      <div class="fix"><b>고치는 법</b> — 지목된 위치보다 <b>앞쪽</b>을 본다. 오류 줄 번호의 바로 윗줄 끝을 먼저 의심한다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 2</span><span class="t">헤더 파일 누락</span></div>
+    <div class="body">
+      <p><code>#include &lt;stdio.h&gt;</code>를 쓰지 않고 <code>printf</code>를 썼다.</p>
+      <pre>err2.c:3:5: warning: implicit declaration of function 'printf'
+            [-Wimplicit-function-declaration]
+    3 |     printf("Hello, KOI!\n");
+      |     ^~~~~~
+err2.c:1:1: note: include '&lt;stdio.h&gt;' or provide a declaration of 'printf'</pre>
+      <p>주목할 점은 이것이 <code>error</code>가 아니라 <strong><code>warning</code></strong>이라는 사실이다. 실행 파일은 만들어지고 프로그램은 <code>Hello, KOI!</code>를 정상 출력한다. 그래서 <code>-Wall</code> 없이 컴파일하면 이 실수를 전혀 눈치채지 못한다.</p>
+      <div class="fix"><b>고치는 법</b> — 맨 위에 <code>#include &lt;stdio.h&gt;</code>를 추가한다. 그리고 <b>경고를 무시하지 않는 습관</b>을 들인다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 3</span><span class="t">선언하지 않은 변수</span></div>
+    <div class="body">
+      <p><code>int a;</code>만 쓰고 <code>b</code>를 선언하지 않았다.</p>
+      <pre>err3.c:6:25: error: 'b' undeclared (first use in this function)
+    6 |     scanf("%d %d", &amp;a, &amp;b);
+      |                         ^
+err3.c:6:25: note: each undeclared identifier is reported only once
+            for each function it appears in</pre>
+      <p>이 메시지는 정직하다. 지목한 그 자리가 정확히 문제의 자리다. 두 번째 줄의 <code>note</code>는 "같은 이름은 한 번만 알려 준다"는 안내이므로, <strong><code>b</code>를 쓴 다른 줄에서는 오류가 더 나오지 않는다</strong>는 뜻이다.</p>
+      <div class="fix"><b>고치는 법</b> — 선언을 <code>int a, b;</code>로 고친다. 변수 이름 오타도 같은 메시지를 낸다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 4</span><span class="t">중괄호 짝 불일치</span></div>
+    <div class="body">
+      <p>마지막 닫는 중괄호 <code>}</code>를 빠뜨렸다.</p>
+      <pre>err4.c:8:5: error: expected declaration or statement at end of input
+    8 |     return 0;
+      |     ^~~~~~</pre>
+      <p>지목된 8번 줄 <code>return 0;</code>에는 아무 잘못이 없다. <code>at end of input</code>, 즉 <strong>파일이 끝나 버렸는데 블록이 안 닫혔다</strong>는 뜻이다. 중괄호 오류는 거의 항상 파일 맨 끝을 가리킨다.</p>
+      <div class="fix"><b>고치는 법</b> — 파일 끝이 지목되면 줄 번호를 보지 말고 <b>중괄호 짝</b>부터 센다. 들여쓰기를 맞춰 두면 눈으로 바로 찾을 수 있다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 5</span><span class="t">함수 이름 오타 — 링크 단계 오류</span></div>
+    <div class="body">
+      <p><code>printf</code>를 <code>pritnf</code>로 잘못 썼다.</p>
+      <pre>err5.c:5:5: warning: implicit declaration of function 'pritnf';
+            did you mean 'printf'? [-Wimplicit-function-declaration]
+    5 |     pritnf("Hello, KOI!\n");
+      |     ^~~~~~
+      |     printf
+/usr/bin/ld: err5.c:(.text.startup+0x12): undefined reference to `pritnf'
+collect2: error: ld returned 1 exit status</pre>
+      <p>메시지가 두 덩어리다. 앞쪽은 컴파일 단계의 경고이고, <code>did you mean 'printf'?</code>라고 고칠 이름까지 알려 준다. 뒤쪽 <code>/usr/bin/ld:</code>는 <strong>링크 단계</strong>에서 그런 함수를 찾을 수 없다는 오류다. 2.1절에서 본 네 단계 중 마지막 단계에서 막힌 것이다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>undefined reference to</code>가 보이면 함수 <b>이름 철자</b>나 파일 연결을 의심한다. 문법 오류가 아니므로 줄을 노려봐도 보이지 않는다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 6</span><span class="t">scanf에서 &amp; 누락 — 가장 위험한 실수</span></div>
+    <div class="body">
+      <p><code>scanf("%d %d", a, b);</code>처럼 <code>&amp;</code>를 빠뜨렸다.</p>
+      <pre>err6.c:6:13: warning: format '%d' expects argument of type 'int *',
+            but argument 2 has type 'int' [-Wformat=]
+    6 |     scanf("%d %d", a, b);
+      |            ~^      ~
+      |             |      |
+      |             int *  int
+err6.c:6:5: warning: 'a' is used uninitialized [-Wuninitialized]</pre>
+      <p>컴파일러가 "<code>int *</code>를 기대했는데 <code>int</code>가 왔다"고 정확히 짚어 준다. 그런데 이것 역시 <strong>경고일 뿐이라 실행 파일은 만들어진다</strong>. 실행하면 다음과 같이 끝난다.</p>
+      <pre class="term"><span class="c">$ echo "3 4" | ./err6</span>
+<span class="o">Segmentation fault</span></pre>
+      <p>엉뚱한 주소에 값을 쓰려다 운영체제에 의해 강제 종료된 것이다. 채점 결과로는 <strong>런타임 오류</strong>로 나온다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>scanf</code>를 쓸 때마다 변수 앞의 <code>&amp;</code>를 눈으로 센다. <code>-Wall</code>을 켜 두면 실행 전에 반드시 걸린다.</div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    오류 2·6에서 본 것처럼 <b>경고가 있어도 프로그램은 만들어지고 실행된다</b>. 그리고 그렇게 만들어진 프로그램은 조용히 틀린 답을 내거나 갑자기 죽는다. <b>경고 0개</b>를 제출 기준으로 삼는다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>모든 문제는 <code>gcc -std=c11 -Wall</code>로 경고 없이 컴파일되어야 하고, <code>return 0;</code>으로 끝나야 한다. 별도 지시가 없으면 출력 끝에 줄바꿈을 넣는다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>세 줄 자기소개</b> — 이름, 학년, 좋아하는 과목을 각각 한 줄씩 출력하는 프로그램을 작성하라. 입력은 없다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>고정 도형</b> — 입력 없이 아래 모양을 정확히 출력하라.</p>
+    <div class="sample"><div><span>OUTPUT</span><pre>*
+**
+***
+****
+*****</pre></div><div><span>HINT</span><pre>printf 다섯 번이면 충분하다.
+반복문은 6장에서 배운다.</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>특수 문자 출력</b> — 입력 없이 다음 한 줄을 그대로 출력하라. 큰따옴표와 역슬래시를 출력하는 방법을 찾아야 한다.</p>
+    <div class="sample"><div><span>OUTPUT</span><pre>He said "C:\temp" twice.</pre></div><div><span>HINT</span><pre>\" 와 \\ 를 사용한다.</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>두 수의 합</b> — 두 정수를 입력받아 합을 출력하라. 표준 코드를 보지 말고 작성한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>14 29</pre></div><div><span>OUTPUT</span><pre>43</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>합·차·곱</b> — 두 정수를 입력받아 합, 차, 곱을 공백으로 구분해 한 줄에 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>7 3</pre></div><div><span>OUTPUT</span><pre>10 4 21</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>세 수의 합</b> — 세 정수를 입력받아 합을 출력하라. <code>scanf</code>를 한 번만 호출해서 해결하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>11 22 33</pre></div><div><span>OUTPUT</span><pre>66</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>순서 바꾸기</b> — 두 정수를 입력받아 순서를 바꿔 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5 9</pre></div><div><span>OUTPUT</span><pre>9 5</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>두 줄 출력</b> — 정수 하나를 입력받아 첫 줄에 그 수의 2배, 둘째 줄에 10배를 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>6</pre></div><div><span>OUTPUT</span><pre>12
+60</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>몫과 나머지</b> — 두 양의 정수를 입력받아 첫 수를 둘째 수로 나눈 몫과 나머지를 공백으로 구분해 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>17 5</pre></div><div><span>OUTPUT</span><pre>3 2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>두 실수의 평균</b> — 두 실수를 입력받아 평균을 소수점 아래 둘째 자리까지 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3.5 4.0</pre></div><div><span>OUTPUT</span><pre>3.75</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>직사각형</b> — 가로와 세로를 정수로 입력받아 넓이와 둘레를 두 줄에 걸쳐 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4 7</pre></div><div><span>OUTPUT</span><pre>28
+22</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>시간 변환</b> — 초 단위 정수를 입력받아 <code>분:초</code> 형식으로 출력하라. 초가 한 자리여도 그대로 출력한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>185</pre></div><div><span>OUTPUT</span><pre>3:5</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>종료 코드 만들기</b> — 아무것도 출력하지 않고 종료 코드만 42로 끝나는 프로그램을 작성하라. 그리고 터미널에서 종료 코드를 확인하는 명령을 함께 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>통로 분리</b> — 두 정수를 입력받아, <code>stderr</code>로 <code>sum:</code> 이라는 안내를 쓰고 <code>stdout</code>으로 합만 출력하라. 그다음 <code>2&gt;/dev/null</code>을 붙여 실행했을 때 화면에 무엇이 남는지 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>정수 나눗셈과 실수 나눗셈</b> — 두 정수를 입력받아 첫 줄에 정수 나눗셈 결과를, 둘째 줄에 실수 나눗셈 결과를 소수점 아래 셋째 자리까지 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>7 2</pre></div><div><span>OUTPUT</span><pre>3
+3.500</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>쉼표로 구분된 입력</b> — 입력이 <code>17,25</code>처럼 쉼표로 붙어 들어온다. 두 수의 합을 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>17,25</pre></div><div><span>OUTPUT</span><pre>42</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>오류 메시지 예측</b> — 아래 코드를 <code>gcc -std=c11 -Wall</code>로 컴파일하면 어떤 메시지가 나올지 예측하고, 실제로 컴파일해 확인한 뒤 고쳐라. 컴파일 단계의 오류인지 링크 단계의 오류인지도 밝혀라.</p>
+<pre><code>#include &lt;stdio.h&gt;
+int main(void)
+{
+    int a, b
+    scnaf("%d %d", &amp;a, &amp;b);
+    printf("%d\n", a + b)
+    return 0;
+}</code></pre>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>같은 프로그램 찾기</b> — 아래 세 코드 중 컴파일러가 <strong>완전히 같다고 보는 것</strong>은 어느 것과 어느 것인가? 이유를 세미콜론과 블록의 규칙으로 설명하라.</p>
+<pre><code>(가) int main(void){int a;scanf("%d",&amp;a);printf("%d\n",a);return 0;}
+
+(나) int main(void)
+     {
+         int a; scanf("%d", &amp;a);
+         printf("%d\n", a); return 0;
+     }
+
+(다) int main(void)
+     {
+         int a;
+         scanf("%d", &amp;a)
+         printf("%d\n", a);
+         return 0;
+     }</code></pre>
+    <p class="spec">※ <code>#include &lt;stdio.h&gt;</code>는 세 코드 모두 맨 위에 있다고 가정한다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>종료 코드의 한계</b> — 두 정수를 입력받아 그 합을 <code>printf</code> 대신 <code>return</code>으로 돌려주는 프로그램을 작성했다. 입력이 <code>100 200</code>일 때 <code>echo $?</code>의 결과를 예측하고, 실제로 확인한 뒤 그 이유를 설명하라. 그리고 이 방식으로 답을 제출하면 안 되는 이유를 쓰라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>&amp; 누락의 결과 분석</b> — <code>scanf("%d", a);</code>처럼 <code>&amp;</code>를 빠뜨린 프로그램을 만들어 컴파일하라. ① 컴파일이 성공하는가 실패하는가 ② 경고 메시지는 무엇을 지적하는가 ③ 실행하면 어떻게 되는가 ④ 왜 컴파일러가 이것을 오류가 아닌 경고로 처리하는지, 세 질문에 답하라.</p>
+  </div></div>
+
+  </div>
+</section>
+
+<section class="pagebreak answers">
+  <span class="sec-no">07 — 확인 평가 해설</span>
+  <h2>정답과 해설</h2>
+  <p class="spec" style="color:var(--ink-faint);font-size:9pt">※ 이 절은 교사용 통합본에만 수록한다. 학생 배부용에서는 제거한다.</p>
+
+  <div class="ans"><span class="an">01</span><div class="ab"><code>printf</code> 세 번. 각 문자열 끝에 <code>\n</code>이 있는지 확인한다. 마지막 줄의 <code>\n</code>을 빠뜨리는 학생이 많다.</div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab"><code>printf("*\n"); printf("**\n");</code> … 다섯 번. <b>지도 포인트</b> — 여기서 "반복문 있으면 좋겠다"는 불편을 학생이 직접 느끼게 둔다. 6장의 동기가 된다.</div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab"><pre><code>printf("He said \"C:\\temp\" twice.\n");</code></pre>역슬래시 하나를 출력하려면 <code>\\</code> 두 개를 쓴다. <code>\t</code>로 오인해 탭이 나오는 오답이 자주 나온다.</div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab">표준 코드와 동일. <code>&amp;</code>와 세미콜론을 전부 확인한다.</div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab"><code>printf("%d %d %d\n", a + b, a - b, a * b);</code> — <code>%d</code> 개수와 값 개수가 모두 3인지 센다.</div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab"><code>scanf("%d %d %d", &amp;a, &amp;b, &amp;c);</code> — 예제 2와 결과가 같음을 확인시킨다.</div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab"><code>printf("%d %d\n", b, a);</code> — 변수를 교환할 필요 없이 출력 순서만 바꾸면 된다는 점을 짚는다.</div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab"><code>printf("%d\n%d\n", n * 2, n * 10);</code> 또는 <code>printf</code> 두 번. 서식 문자열 안에 <code>\n</code>을 넣어 한 번에 처리할 수 있음을 보여 준다.</div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab"><code>printf("%d %d\n", a / b, a % b);</code> — 정수끼리의 <code>/</code>는 몫을 준다. 음수 나머지 문제는 4장에서 다룬다.</div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab"><code>scanf("%lf %lf", &amp;x, &amp;y); printf("%.2f\n", (x + y) / 2);</code> — 읽기 <code>%lf</code>, 쓰기 <code>%f</code>를 반드시 확인한다.</div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab"><code>printf("%d\n%d\n", w * h, 2 * (w + h));</code> — 둘레 식의 괄호 누락이 흔한 오답이다.</div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab"><code>printf("%d:%d\n", s / 60, s % 60);</code> — 185 → 3:5. <b>지도 포인트</b> — <code>3:05</code>로 출력하려면 <code>%02d</code>가 필요하다고 예고만 하고 3장으로 넘긴다.</div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab"><code>int main(void){ return 42; }</code>, 확인 명령은 <code>./a.out</code> 실행 후 <code>echo $?</code>. 출력이 없으므로 화면에는 아무것도 나오지 않는 것이 정상이다.</div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab"><code>fprintf(stderr, "sum:");</code> 후 <code>printf("%d\n", a + b);</code>. <code>2&gt;/dev/null</code>을 붙이면 <b>합만</b> 남는다. 채점기가 보는 것이 바로 이 상태임을 연결해 설명한다.</div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab"><pre><code>printf("%d\n", a / b);
+printf("%.3f\n", (double)a / b);</code></pre><code>(double)</code> 형변환을 빠뜨리면 <code>3.000</code>이 나온다. 이 오답이 가장 많으며, 4장 형변환의 도입 사례로 쓴다.</div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab"><code>scanf("%d,%d", &amp;a, &amp;b);</code> — 서식 문자열에 쉼표를 그대로 쓰면 그 자리에 쉼표가 올 것을 기대한다. <b>확장</b> — <code>17, 25</code>처럼 쉼표 뒤에 공백이 있어도 <code>%d</code>가 앞쪽 공백을 건너뛰므로 같은 코드로 동작한다.</div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    실수는 세 군데다. 4번 줄 <code>int a, b</code>의 세미콜론 누락, 5번 줄 <code>scnaf</code> 오타, 6번 줄 <code>printf(...)</code>의 세미콜론 누락. 그런데 <b>이 세 개가 한 번에 다 보이지 않는다</b>는 것이 이 문제의 핵심이다.
+    <br><br><b>1차 컴파일</b> — 세 개의 <code>error</code>가 나오지만 오타 <code>scnaf</code>는 지적되지 않는다.
+<pre>p17.c:5:5: error: expected '=', ',', ';', 'asm' or '__attribute__'
+           before 'scnaf'
+p17.c:6:24: error: 'b' undeclared (first use in this function)
+p17.c:6:26: error: expected ';' before 'return'</pre>
+    4번 줄 선언이 문장으로 끝나지 못했으므로 컴파일러는 <code>b</code>가 선언된 적 없다고 본다. 즉 <b><code>'b' undeclared</code>는 가짜 오류</b>이고, 진짜 원인은 4번 줄 하나다.
+    <br><br><b>2차 컴파일</b>(4번 줄 세미콜론만 고침) — 가짜 오류가 사라지고 오타가 드러난다.
+<pre>p17b.c:5:5: warning: implicit declaration of function 'scnaf';
+            did you mean 'scanf'? [-Wimplicit-function-declaration]
+p17b.c:6:26: error: expected ';' before 'return'</pre>
+    <b>3차 컴파일</b>(6번 줄도 고침) — 문법 오류가 모두 사라지자 비로소 <b>링크 단계</b> 오류가 나타난다.
+<pre>/usr/bin/ld: undefined reference to `scnaf'
+collect2: error: ld returned 1 exit status</pre>
+    <b>정리</b> — 세미콜론 누락은 컴파일 단계, <code>scnaf</code> 오타는 (경고를 무시하면) 링크 단계의 문제다. 링크 오류는 문법 오류가 전부 사라진 뒤에야 보이므로, 처음 메시지만 보고 "오류 세 개"라고 세면 안 된다.
+    <br><b>지도 포인트</b> — <b>맨 위 오류 하나만 고치고 즉시 다시 컴파일한다</b>는 원칙을 이 문제로 세운다. 아래쪽 오류를 먼저 붙잡는 학생이 가장 많이 헤맨다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    <b>(가)와 (나)가 같다.</b> 줄바꿈과 들여쓰기는 컴파일러에게 아무 의미가 없고, 문장의 끝은 세미콜론이 정하기 때문이다. (다)는 <code>scanf(...)</code> 뒤 세미콜론이 없어 컴파일 자체가 되지 않는다 — 오류 1과 같은 <code>expected ';' before 'printf'</code>가 나온다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    합은 300이지만 <code>echo $?</code>는 <b>44</b>를 출력한다. 종료 코드는 1바이트(0~255)만 전달되므로 300을 256으로 나눈 나머지가 남는다.<br>
+    제출하면 안 되는 이유는 두 가지다. ① 256 이상의 값이나 음수를 표현할 수 없다 ② 채점기는 종료 코드가 0이 아니면 <b>런타임 오류</b>로 판정한다. 답은 언제나 <code>stdout</code>으로 출력한다.
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    ① 컴파일은 <b>성공</b>한다(경고만 발생). ② <code>format '%d' expects argument of type 'int *', but argument 2 has type 'int'</code> — 주소를 기대했는데 값이 왔다고 지적한다. ③ 실행하면 대개 <code>Segmentation fault</code>로 죽고, 죽지 않더라도 변수에 예측할 수 없는 값이 남는다. ④ C 표준은 서식 문자열과 인자의 불일치를 <b>정의되지 않은 동작</b>으로 규정할 뿐 컴파일 오류로 못 박지 않는다. gcc가 서식 문자열을 들여다보고 내 주는 경고는 <b>표준이 요구하는 것이 아니라 gcc의 호의</b>다. 그래서 <code>-Wall</code>을 끄면 아무 말 없이 지나간다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li>빈 화면에서 <code>add.c</code> 표준 코드를 보지 않고 쓸 수 있다</li>
+    <li><code>gcc -std=c11 -Wall -o add add.c</code>를 외워서 칠 수 있다</li>
+    <li>컴파일 단계 오류와 링크 단계 오류를 메시지만 보고 구분할 수 있다</li>
+    <li>오류 줄 번호가 진짜 범인이 아닐 수 있다는 것을 안다</li>
+    <li>정답은 <code>stdout</code>, 디버깅 메시지는 <code>stderr</code>로 보낸다</li>
+    <li>제출 전 경고가 0개인지 확인한다</li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 02장 변수와 자료형, 오버플로</span>
+    이 장에서는 <code>int</code>만 썼다. 그런데 1부터 100000까지의 합을 <code>int</code>로 계산하면 틀린 답이 나온다. 왜 그런지, 그리고 <code>long long</code>이 언제 필요한지를 다음 장에서 직접 확인한다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 1 · 01장 · 2026-10-12 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+
+</div>
+</body>
+</html>

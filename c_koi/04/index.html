@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 1 · 04장 연산자와 형변환 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#0d7a6f;
+  --accent-soft:#e3f1ef;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#8fd8cd}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+<header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 1 · C11 문법 기초 — 04 / 16</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">04</span>
+    <h1>연산자와 형변환</h1>
+  </div>
+  <p class="lede">C의 연산자는 수학 기호처럼 생겼지만 규칙이 다르다. 정수끼리 나누면 소수가 사라지고, 음수의 나머지는 음수가 되며, 연산 순서는 괄호 없이는 눈에 보이는 대로 가지 않는다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li>정수 나눗셈과 나머지의 규칙을 설명하고 음수가 섞인 경우를 예측할 수 있다</li>
+    <li>음수 나머지를 0 이상으로 보정하는 표준 공식을 쓸 수 있다</li>
+    <li>형변환을 <strong>올바른 위치</strong>에 넣어 의도한 값을 얻을 수 있다</li>
+    <li>관계·논리 연산자의 결과가 0과 1이라는 것을 알고 단락 평가를 활용할 수 있다</li>
+    <li>비트 연산으로 홀짝 판정과 2의 거듭제곱을 처리할 수 있다</li>
+    <li>연산자 우선순위 때문에 생기는 대표적인 함정 세 가지를 피할 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 문제 · 산술 연산 · 나눗셈과 나머지 · 형변환</div>
+  <div><b>2차시</b>관계·논리·비트 연산 · 우선순위 · 표준 코드</div>
+  <div><b>3차시</b>단계 예제 · 흔한 오류 6종 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>시계를 거꾸로 돌리면</h2>
+  <p>12시간제 시계가 지금 <strong>3시</strong>를 가리킨다. <strong>20시간 전</strong>은 몇 시인가?</p>
+  <p>손으로 풀면 쉽다. 20시간 전은 12시간 전보다 8시간 더 전이니까, 3시에서 거꾸로 8칸 가면 7시다. 이제 이것을 C로 옮겨 보자.</p>
+  <div class="io">
+    <div><div class="lbl">자연스러워 보이는 코드</div><pre>int h = 3, d = -20;
+printf("%d\n", (h + d) % 12);</pre></div>
+    <div><div class="lbl">실제 출력</div><pre>-5</pre></div>
+  </div>
+  <p><strong>−5시</strong>라는 시각은 없다. 수학 시간에 배운 나머지는 항상 0 이상이었는데, C의 <code>%</code>는 그렇지 않다. 이 차이가 올림피아드에서 <strong>모듈러 연산</strong>을 쓰는 거의 모든 문제의 첫 번째 함정이다.</p>
+  <p>또 하나. 2장과 3장에서 <code>(double)sum / cnt</code>라는 표현을 여러 번 썼다. 왜 괄호가 하필 저기에 붙는지, 아래 네 가지는 왜 결과가 다른지 이 장에서 정리한다.</p>
+  <div class="io">
+    <div><div class="lbl">x = 7, y = 2 일 때</div><pre>x / y
+(double)x / y
+(double)(x / y)
+x / (double)y</pre></div>
+    <div><div class="lbl">출력</div><pre>3
+3.500
+3.000
+3.500</pre></div>
+  </div>
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> C의 <code>%</code>는 왜 음수를 내놓는가? 그리고 어떻게 고치는가?<br>
+    <b>②</b> 형변환은 왜 위치가 중요한가?<br>
+    <b>③</b> <code>1 &lt;&lt; 2 + 3</code>은 7일까 32일까?
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">4.1</span>산술 연산자와 정수 나눗셈</h3>
+  <p>C의 산술 연산자는 <code>+ - * / %</code> 다섯 개다. 앞의 셋은 수학과 같고, 뒤의 둘이 다르다.</p>
+  <p><strong>정수끼리 나누면 결과도 정수</strong>다. 소수 부분은 반올림이 아니라 <strong>버린다</strong>. <code>7 / 2</code>는 3.5가 아니라 <code>3</code>이고, <code>1 / 2</code>는 0.5가 아니라 <code>0</code>이다.</p>
+  <div class="note warn">
+    <span class="h">가장 흔한 사고</span>
+    <code>printf("%.2f", (a + b) / 2);</code> — 괄호 안이 정수끼리의 나눗셈이므로 소수점 아래가 이미 사라진 뒤에 실수로 출력된다. <code>5</code>와 <code>6</code>의 평균이 <b>5.00</b>으로 나온다.
+  </div>
+
+  <h3><span class="tag">4.2</span>나머지 연산과 음수</h3>
+  <p><code>%</code>는 나눗셈의 나머지다. C의 규칙은 <strong>"몫을 0 쪽으로 버린다"</strong>이며, 나머지는 다음 항등식을 만족하도록 정해진다.</p>
+  <div class="io">
+    <div><div class="lbl">C가 지키는 항등식</div><pre>(a / b) * b + (a % b) == a</pre></div>
+    <div><div class="lbl">따라오는 성질</div><pre>a % b 의 부호는
+항상 a 의 부호를 따른다</pre></div>
+  </div>
+  <table>
+    <thead><tr><th style="width:22%">a</th><th style="width:18%">b</th><th style="width:20%">a / b</th><th style="width:20%">a % b</th><th>부호</th></tr></thead>
+    <tbody>
+      <tr><td class="num">7</td><td class="num">2</td><td class="num">3</td><td class="num">1</td><td>a가 양수 → 양수</td></tr>
+      <tr><td class="num">−7</td><td class="num">2</td><td class="num">−3</td><td class="num">−1</td><td><strong>a가 음수 → 음수</strong></td></tr>
+      <tr><td class="num">7</td><td class="num">−2</td><td class="num">−3</td><td class="num">1</td><td>b의 부호는 영향 없음</td></tr>
+      <tr><td class="num">−7</td><td class="num">−2</td><td class="num">3</td><td class="num">−1</td><td>a가 음수 → 음수</td></tr>
+    </tbody>
+  </table>
+  <p>수학에서 −7을 2로 나눈 나머지는 보통 <strong>1</strong>이라고 배운다(몫을 −4로 잡는 방식). C는 몫을 −3으로 잡으므로 나머지가 −1이 된다. 둘 다 항등식은 만족하지만 약속이 다를 뿐이다.</p>
+  <h4>0 이상으로 보정하는 표준 공식</h4>
+  <p>배열 인덱스나 시계처럼 <strong>0 이상이어야만 하는</strong> 나머지가 필요할 때는 한 번 더 감싼다.</p>
+  <figure>
+    <figcaption><span class="fn">공식</span><span>m이 양수일 때 항상 0 이상 m 미만</span></figcaption>
+<pre><code>((a % m) + m) % m</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:20%">a (m = 5)</th><th style="width:26%">a % m</th><th style="width:30%">((a % m) + m) % m</th><th>설명</th></tr></thead>
+    <tbody>
+      <tr><td class="num">−7</td><td class="num">−2</td><td class="num">3</td><td>−2 + 5 = 3</td></tr>
+      <tr><td class="num">−6</td><td class="num">−1</td><td class="num">4</td><td>−1 + 5 = 4</td></tr>
+      <tr><td class="num">−5</td><td class="num">0</td><td class="num">0</td><td>0 + 5 = 5 → 다시 %5 → 0</td></tr>
+    </tbody>
+  </table>
+  <p>바깥쪽 <code>% m</code>이 필요한 이유는 세 번째 줄에 있다. 나머지가 이미 0이면 <code>+ m</code> 때문에 m이 되어 버리므로 한 번 더 걸러 준다.</p>
+
+  <h3><span class="tag">4.3</span>형변환 — 위치가 전부다</h3>
+  <p>서로 다른 자료형이 섞이면 C는 <strong>자동으로</strong> 넓은 쪽에 맞춘다(암시적 형변환). <code>int + double</code>은 <code>double</code>이 된다. 문제는 양쪽이 모두 <code>int</code>일 때다. 이때는 아무도 넓혀 주지 않으므로 우리가 <strong>직접</strong> 지정해야 한다(명시적 형변환).</p>
+  <table>
+    <thead><tr><th style="width:34%">식 (x = 7, y = 2)</th><th style="width:18%">결과</th><th>계산 순서</th></tr></thead>
+    <tbody>
+      <tr><td><code>x / y</code></td><td class="num">3</td><td>int ÷ int → int</td></tr>
+      <tr><td><code>(double)x / y</code></td><td class="num">3.500</td><td>x가 먼저 double → y도 자동으로 double</td></tr>
+      <tr><td><code>x / (double)y</code></td><td class="num">3.500</td><td>한쪽만 바꿔도 된다</td></tr>
+      <tr><td><code>(double)(x / y)</code></td><td class="num">3.000</td><td><strong>나눗셈이 끝난 뒤</strong> 바꿔서 늦었다</td></tr>
+    </tbody>
+  </table>
+  <p>2장의 오버플로 형변환과 완전히 같은 원칙이다. <strong>망가지기 전에 바꾼다.</strong> 2장에서는 "넘치기 전", 여기서는 "소수가 사라지기 전"이다.</p>
+  <div class="note">
+    <span class="h">정수 승격</span>
+    <code>char</code>와 <code>short</code>는 연산에 쓰이는 순간 자동으로 <code>int</code>로 넓혀진다. <code>char c1 = 100, c2 = 100;</code>일 때 <code>c1 + c2</code>는 <b>200</b>이고 크기도 4바이트다. 그런데 그 결과를 다시 <code>char</code>에 담으면 범위를 넘어 <b>−56</b>이 된다(2장의 되감기).
+  </div>
+
+  <h3><span class="tag">4.4</span>관계·논리 연산자</h3>
+  <p>관계 연산자 <code>&lt; &lt;= &gt; &gt;= == !=</code>와 논리 연산자 <code>&amp;&amp; || !</code>의 결과는 <strong>항상 0 또는 1인 int 값</strong>이다. 참·거짓이라는 별도의 자료형이 있는 것이 아니다.</p>
+  <div class="io">
+    <div><div class="lbl">CODE</div><pre>printf("%d %d %d %d %d\n",
+   3 &gt; 2, 3 &lt; 2, !5, 1 &amp;&amp; 0, 1 || 0);</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>1 0 0 0 1</pre></div>
+  </div>
+  <p>C에서 <strong>0이 거짓, 0이 아닌 모든 값이 참</strong>이다. 그래서 <code>!5</code>는 0이다. 5가 참이므로 그 부정은 거짓이다.</p>
+  <h4>단락 평가</h4>
+  <p><code>&amp;&amp;</code>는 왼쪽이 거짓이면 오른쪽을 <strong>아예 계산하지 않는다</strong>. <code>||</code>는 왼쪽이 참이면 오른쪽을 계산하지 않는다. 이것을 단락 평가라고 하며, 안전장치로 쓴다.</p>
+  <figure>
+    <figcaption><span class="fn">단락 평가의 활용</span><span>b가 0이어도 죽지 않는다</span></figcaption>
+<pre><code>if (b != 0 &amp;&amp; 10 / b &gt; 1) { ... }</code></pre>
+  </figure>
+  <p><code>b</code>가 0이면 왼쪽이 거짓이므로 <code>10 / b</code>가 실행되지 않는다. 순서를 바꿔 <code>10 / b &gt; 1 &amp;&amp; b != 0</code>으로 쓰면 0으로 나누어 프로그램이 죽는다. <strong>검사를 왼쪽에 둔다</strong>는 것이 규칙이다.</p>
+
+  <h3><span class="tag">4.5</span>비트 연산자</h3>
+  <p>정수를 2진수로 보고 비트 단위로 처리한다. 올림피아드에서는 집합 표현과 빠른 연산에 쓰인다.</p>
+  <table>
+    <thead><tr><th style="width:14%">연산자</th><th style="width:20%">이름</th><th style="width:26%">a=12, b=10일 때</th><th>쓰임새</th></tr></thead>
+    <tbody>
+      <tr><td><code>&amp;</code></td><td>AND</td><td class="num">a &amp; b = 8</td><td>특정 비트 검사, 홀짝 판정</td></tr>
+      <tr><td><code>|</code></td><td>OR</td><td class="num">a | b = 14</td><td>특정 비트 켜기</td></tr>
+      <tr><td><code>^</code></td><td>XOR</td><td class="num">a ^ b = 6</td><td>특정 비트 뒤집기</td></tr>
+      <tr><td><code>~</code></td><td>NOT</td><td class="num">~a = −13</td><td>모든 비트 반전</td></tr>
+      <tr><td><code>&lt;&lt;</code></td><td>왼쪽 시프트</td><td class="num">a &lt;&lt; 1 = 24</td><td>2배씩 곱하기, 2<sup>k</sup> 만들기</td></tr>
+      <tr><td><code>&gt;&gt;</code></td><td>오른쪽 시프트</td><td class="num">a &gt;&gt; 1 = 6</td><td>2로 나누기</td></tr>
+    </tbody>
+  </table>
+  <p>12는 2진수로 <code>1100</code>, 10은 <code>1010</code>이다. 자리마다 AND를 하면 <code>1000</code> = 8이 된다. 직접 자리를 맞춰 써 보면 바로 보인다.</p>
+  <table>
+    <thead><tr><th style="width:26%">자주 쓰는 관용구</th><th style="width:22%">뜻</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td><code>n &amp; 1</code></td><td>홀수면 1, 짝수면 0</td><td>맨 끝 비트만 본다</td></tr>
+      <tr><td><code>1 &lt;&lt; k</code></td><td>2<sup>k</sup></td><td><code>1 &lt;&lt; 10</code> = 1024</td></tr>
+      <tr><td><code>n | (1 &lt;&lt; k)</code></td><td>k번 비트 켜기</td><td>집합에 원소 추가</td></tr>
+      <tr><td><code>n &amp; ~(1 &lt;&lt; k)</code></td><td>k번 비트 끄기</td><td>집합에서 원소 제거</td></tr>
+      <tr><td><code>n ^ (1 &lt;&lt; k)</code></td><td>k번 비트 뒤집기</td><td>토글</td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">시프트의 함정 두 가지</span>
+    <b>①</b> <code>1 &lt;&lt; 31</code>은 <code>int</code>에서 음수가 된다(2장). 큰 값이 필요하면 <code>1LL &lt;&lt; k</code>로 쓴다.<br>
+    <b>②</b> 음수의 <code>&gt;&gt;</code>는 부호 비트가 유지된다. <code>-1 &gt;&gt; 1</code>은 0이 아니라 <b>−1</b>이다.
+  </div>
+
+  <h3><span class="tag">4.6</span>복합 대입과 증감</h3>
+  <p><code>sum = sum + x</code>를 <code>sum += x</code>로 줄여 쓸 수 있다. <code>-= *= /= %= &amp;= |= ^= &lt;&lt;= &gt;&gt;=</code>도 모두 같은 방식이다.</p>
+  <div class="io">
+    <div><div class="lbl">i = 10에서 차례로</div><pre>i += 5;   →  15
+i -= 3;   →  12
+i *= 2;   →  24
+i /= 4;   →   6
+i %= 4;   →   2</pre></div>
+    <div><div class="lbl">증감 연산자</div><pre>n = 5;
+v = n++;   →  v=5, n=6  (쓰고 나서 증가)
+k = 5;
+v = ++k;   →  v=6, k=6  (증가하고 나서 씀)</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">한 문장에 같은 변수를 두 번 건드리지 않는다</span>
+    <code>printf("%d %d", n++, n);</code> 같은 코드는 결과가 정해져 있지 않다. gcc도 <code>operation on 'n' may be undefined</code>라고 경고한다. 증감은 <b>한 문장에 한 번만</b> 쓴다.
+  </div>
+
+  <h3><span class="tag">4.7</span>연산자 우선순위</h3>
+  <p>전부 외울 필요는 없다. 아래 순서만 알고, 나머지는 <strong>괄호로 명시</strong>한다.</p>
+  <table>
+    <thead><tr><th style="width:12%">순위</th><th style="width:40%">연산자</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td class="num">높음 1</td><td><code>!</code> <code>~</code> <code>++</code> <code>--</code> <code>-</code>(부호) <code>(형변환)</code></td><td>단항 연산자</td></tr>
+      <tr><td class="num">2</td><td><code>*</code> <code>/</code> <code>%</code></td><td>셋은 같은 순위</td></tr>
+      <tr><td class="num">3</td><td><code>+</code> <code>-</code></td><td></td></tr>
+      <tr><td class="num">4</td><td><code>&lt;&lt;</code> <code>&gt;&gt;</code></td><td><strong>+ 보다 낮다</strong></td></tr>
+      <tr><td class="num">5</td><td><code>&lt;</code> <code>&lt;=</code> <code>&gt;</code> <code>&gt;=</code></td><td></td></tr>
+      <tr><td class="num">6</td><td><code>==</code> <code>!=</code></td><td></td></tr>
+      <tr><td class="num">7</td><td><code>&amp;</code> → <code>^</code> → <code>|</code></td><td><strong>== 보다 낮다</strong></td></tr>
+      <tr><td class="num">8</td><td><code>&amp;&amp;</code> → <code>||</code></td><td></td></tr>
+      <tr><td class="num">낮음 9</td><td><code>=</code> <code>+=</code> <code>-=</code> …</td><td>오른쪽부터 묶인다</td></tr>
+    </tbody>
+  </table>
+  <h4>대표 함정 세 가지</h4>
+  <table>
+    <thead><tr><th style="width:26%">쓴 것</th><th style="width:16%">값</th><th style="width:26%">실제 묶임</th><th>의도했던 것</th></tr></thead>
+    <tbody>
+      <tr><td><code>1 &lt;&lt; 2 + 3</code></td><td class="num">32</td><td><code>1 &lt;&lt; (2 + 3)</code></td><td><code>(1 &lt;&lt; 2) + 3</code> = 7</td></tr>
+      <tr><td><code>x &amp; 2 == 2</code> (x=2)</td><td class="num">0</td><td><code>x &amp; (2 == 2)</code></td><td><code>(x &amp; 2) == 2</code> = 1</td></tr>
+      <tr><td><code>a / b * c</code></td><td>—</td><td><code>(a / b) * c</code></td><td>왼쪽부터. 정수면 소수가 먼저 날아간다</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <span class="h">gcc가 먼저 알려 준다</span>
+    앞의 두 경우는 <code>-Wall</code>에서 경고가 나온다. <code>suggest parentheses around '+' inside '&lt;&lt;'</code>, <code>suggest parentheses around comparison in operand of '&amp;'</code>. 경고 0개를 지키면 이 함정은 자동으로 걸러진다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드: 12시간 시계</h2>
+  <p>도입 문제의 답이다. 현재 시각 <code>h</code>(0~11)와 시간차 <code>d</code>(음수 가능)를 입력받아 도착 시각을 출력한다.</p>
+  <figure>
+    <figcaption><span class="fn">clock.c</span><span>표준 코드 · gcc 검증 완료</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int h, d;
+    if (scanf("%d %d", &amp;h, &amp;d) != 2) return 1;
+
+    int t = ((h + d) % 12 + 12) % 12;
+
+    printf("%d\n", t);
+    return 0;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:36%">요소</th><th>이유</th></tr></thead>
+    <tbody>
+      <tr><td><code>(h + d) % 12</code></td><td>합이 음수면 나머지도 음수다. 이 상태로는 시각이 될 수 없다.</td></tr>
+      <tr><td><code>+ 12</code></td><td>−11 ~ −1을 1 ~ 11로 끌어올린다.</td></tr>
+      <tr><td>바깥 <code>% 12</code></td><td>원래 0 이상이던 값이 <code>+ 12</code>로 12 이상이 된 경우를 되돌린다.</td></tr>
+      <tr><td><code>scanf(...) != 2</code></td><td>3장에서 배운 반환값 검사. 이 장부터 기본형으로 쓴다.</td></tr>
+    </tbody>
+  </table>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>3 -20</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>7</pre></div>
+  </div>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>3 100</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>7</pre></div>
+  </div>
+  <div class="note">
+    <span class="h">이 세 줄은 평생 쓴다</span>
+    <code>((a % m) + m) % m</code>은 순환 배열, 원형 큐, 모듈러 산술, 해싱에 그대로 등장한다. PART 3의 원형 큐와 PART 4의 해싱에서 다시 만난다. 지금 통째로 외워 둔다.
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+  <p>모든 출력은 실제로 컴파일해 확인한 값이다.</p>
+
+  <h3><span class="tag">예제 1</span>몫과 나머지의 부호</h3>
+  <figure>
+    <figcaption><span class="fn">ex1.c</span><span>네 가지 부호 조합</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    printf("%d %d\n",  7 /  2,  7 %  2);
+    printf("%d %d\n", -7 /  2, -7 %  2);
+    printf("%d %d\n",  7 / -2,  7 % -2);
+    printf("%d %d\n", -7 / -2, -7 % -2);
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>3 1
+-3 -1
+-3 1
+3 -1</pre></div>
+    <div><div class="lbl">읽는 법</div><pre>나머지의 부호는
+나누어지는 수(a)를 따른다.
+나누는 수(b)의 부호는
+몫에만 영향을 준다.</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 2</span>형변환 위치 네 가지</h3>
+  <figure>
+    <figcaption><span class="fn">ex2.c</span><span>괄호 한 쌍의 차이</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x = 7, y = 2;
+
+    printf("%d\n",    x / y);
+    printf("%.3f\n", (double)x / y);
+    printf("%.3f\n",  x / (double)y);
+    printf("%.3f\n", (double)(x / y));
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>3
+3.500
+3.500
+3.000</pre></div>
+    <div><div class="lbl">원칙</div><pre>소수가 사라지기 전에
+형변환한다.
+둘 중 하나만 바꾸면
+나머지는 자동으로 따라온다.</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 3</span>비트 연산 눈으로 보기</h3>
+  <figure>
+    <figcaption><span class="fn">ex3.c</span><span>a = 12(1100), b = 10(1010)</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a = 12, b = 10;
+
+    printf("a &amp; b = %d\n", a &amp; b);
+    printf("a | b = %d\n", a | b);
+    printf("a ^ b = %d\n", a ^ b);
+    printf("~a    = %d\n", ~a);
+    printf("1 &lt;&lt; 10 = %d\n", 1 &lt;&lt; 10);
+    printf("-1 &gt;&gt; 1 = %d\n", -1 &gt;&gt; 1);
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>a &amp; b = 8
+a | b = 14
+a ^ b = 6
+~a    = -13
+1 &lt;&lt; 10 = 1024
+-1 &gt;&gt; 1 = -1</pre></div>
+    <div><div class="lbl">자리 맞춰 보기</div><pre>  1100   (12)
+&amp; 1010   (10)
+------
+  1000   ( 8)</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 4</span>우선순위 함정 확인</h3>
+  <figure>
+    <figcaption><span class="fn">ex4.c</span><span>컴파일하면 경고가 나온다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x = 2;
+
+    printf("%d\n", 1 &lt;&lt; 2 + 3);
+    printf("%d\n", (1 &lt;&lt; 2) + 3);
+    printf("%d\n", x &amp; 2 == 2);
+    printf("%d\n", (x &amp; 2) == 2);
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>32
+7
+0
+1</pre></div>
+    <div><div class="lbl">경고</div><pre>suggest parentheses around
+'+' inside '&lt;&lt;'
+
+suggest parentheses around
+comparison in operand of '&amp;'</pre></div>
+  </div>
+  <p>괄호 없는 쪽이 각각 32와 0이다. 둘 다 의도와 다르고, 둘 다 <code>-Wall</code>이 잡아 준다.</p>
+
+  <h3><span class="tag">예제 5</span>정수 승격 관찰</h3>
+  <figure>
+    <figcaption><span class="fn">ex5.c</span><span>char끼리 더하면 int가 된다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char c1 = 100, c2 = 100;
+
+    printf("%zu %zu\n", sizeof(char), sizeof(c1 + c2));
+    printf("%d\n", c1 + c2);
+
+    char c3 = c1 + c2;
+    printf("%d\n", c3);
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>1 4
+200
+-56</pre></div>
+    <div><div class="lbl">해석</div><pre>계산은 int로 올라가 200.
+그 200을 char에 담는
+순간 127을 넘어 되감긴다.
+(2장의 char 범위)</pre></div>
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 1</span><span class="t">정수 나눗셈으로 소수를 날렸다</span></div>
+    <div class="body">
+      <p>경고도 오류도 없다. 결과만 조용히 틀린다.</p>
+      <pre>printf("%.2f\n", (a + b) / 2);        // 5와 6의 평균 → 5.00
+printf("%.2f\n", (a + b) / 2.0);      // → 5.50</pre>
+      <p><code>2</code>를 <code>2.0</code>으로 바꾸기만 해도 된다. 한쪽이 실수면 나머지가 자동으로 따라오기 때문이다.</p>
+      <div class="fix"><b>고치는 법</b> — 나눗셈이 들어간 식을 쓸 때마다 "여기 양쪽이 다 정수인가"를 확인한다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 2</span><span class="t">음수 나머지를 보정하지 않았다</span></div>
+    <div class="body">
+      <p>배열 인덱스로 쓰면 음수 인덱스가 되어 프로그램이 죽거나 엉뚱한 값을 읽는다.</p>
+      <pre>int idx = (cur - k) % n;        // cur &lt; k 이면 음수
+int idx = ((cur - k) % n + n) % n;   // 올바름</pre>
+      <p>양수만 들어오는 테스트로는 발견되지 않는다. 음수 입력을 직접 만들어 시험해야 한다.</p>
+      <div class="fix"><b>고치는 법</b> — 뺄셈이 섞인 <code>%</code>를 보면 반사적으로 <code>((… ) % m + m) % m</code>으로 감싼다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 3</span><span class="t">형변환이 늦었다</span></div>
+    <div class="body">
+      <p>2장의 오버플로 형변환과 똑같은 실수의 실수 버전이다.</p>
+      <pre>printf("%.3f\n", (double)(x / y));   // 3.000  — 이미 늦음
+printf("%.3f\n", (double)x / y);     // 3.500  — 올바름</pre>
+      <div class="fix"><b>고치는 법</b> — 형변환은 <b>연산자의 피연산자</b>에 붙인다. 식 전체를 감싸면 소용없다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 4</span><span class="t">== 를 = 로 썼다</span></div>
+    <div class="body">
+      <p><code>=</code>는 대입이고 <code>==</code>는 비교다. 대입식의 값은 대입된 값이므로, <code>if (x = 0)</code>은 항상 거짓이 된다.</p>
+      <pre>if (x = 5) { ... }   // x에 5를 넣고, 5는 참이므로 항상 실행</pre>
+      <p>gcc는 <code>suggest parentheses around assignment used as truth value</code>로 경고한다. 5장 조건문에서 본격적으로 만나므로 지금 익혀 둔다.</p>
+      <div class="fix"><b>고치는 법</b> — 비교는 <code>==</code>. 경고를 흘려보내지 않는다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 5</span><span class="t">괄호 없이 우선순위를 믿었다</span></div>
+    <div class="body">
+      <p><code>&lt;&lt;</code>가 <code>+</code>보다 낮고, <code>&amp;</code>가 <code>==</code>보다 낮다는 것은 직관과 반대다.</p>
+      <pre>ex4.c:7:26: warning: suggest parentheses around '+' inside '&lt;&lt;'
+    7 |     printf("%d\n", 1 &lt;&lt; 2 + 3);
+      |                         ~~^~~</pre>
+      <div class="fix"><b>고치는 법</b> — 비트 연산자가 다른 연산자와 섞이면 <b>무조건 괄호</b>를 친다. 괄호는 공짜다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 6</span><span class="t">한 문장에서 같은 변수를 두 번 바꿨다</span></div>
+    <div class="body">
+      <pre>c.c:26:55: warning: operation on 'n' may be undefined [-Wsequence-point]
+   26 |     printf("%d %d\n", n++, n);
+      |                       ~^~</pre>
+      <p>C 표준이 평가 순서를 정해 두지 않아서, 컴파일러와 최적화 옵션에 따라 결과가 달라진다. 집에서 맞던 코드가 채점 서버에서 틀릴 수 있다.</p>
+      <div class="fix"><b>고치는 법</b> — 증감은 한 문장에 한 번만. 헷갈리면 줄을 나눠 쓴다. <code>v = n; n++;</code></div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    오류 1·2·3은 <b>경고조차 나오지 않는다</b>. 컴파일러가 도와주지 않는 영역이므로, 식을 쓸 때마다 스스로 두 가지를 묻는 수밖에 없다. <b>"양쪽이 다 정수인가?"</b> 그리고 <b>"음수가 들어올 수 있는가?"</b>
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>조건문과 반복문은 아직 쓰지 않는다. 모든 문제는 <strong>식 하나</strong>로 풀 수 있다. <code>scanf</code>의 반환값은 3장대로 검사한다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>몫과 나머지</b> — 두 정수 A, B(B ≠ 0)를 입력받아 몫과 나머지를 공백으로 구분해 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>17 5</pre></div><div><span>OUTPUT</span><pre>3 2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>음수 나눗셈 관찰</b> — 두 정수를 입력받아 <code>a/b</code>와 <code>a%b</code>를 출력하라. 입력 <code>-17 5</code>를 넣어 결과를 확인하고, 수학에서 배운 나머지와 어떻게 다른지 주석으로 한 줄 적어라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>-17 5</pre></div><div><span>OUTPUT</span><pre>-3 -2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>정확한 평균</b> — 두 정수를 입력받아 평균을 소수점 아래 둘째 자리까지 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5 6</pre></div><div><span>OUTPUT</span><pre>5.50</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>홀짝 값</b> — 정수를 입력받아 홀수면 1, 짝수면 0을 출력하라. 조건문을 쓰지 말고 연산자 하나로 해결하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>7</pre></div><div><span>OUTPUT</span><pre>1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>비트 연산 네 가지</b> — 두 정수를 입력받아 AND, OR, XOR, 그리고 첫 수의 NOT을 공백으로 구분해 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>12 10</pre></div><div><span>OUTPUT</span><pre>8 14 6 -13</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>2의 거듭제곱</b> — 정수 K(0 ≤ K ≤ 62)를 입력받아 2<sup>K</sup>를 출력하라. 2장을 떠올려 자료형을 결정하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>62</pre></div><div><span>OUTPUT</span><pre>4611686018427387904</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>비교 결과 출력</b> — 두 정수를 입력받아 <code>a&gt;b</code>, <code>a==b</code>, <code>a&lt;b</code>의 값을 공백으로 구분해 출력하라. 셋 중 하나만 1이 나와야 한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3 8</pre></div><div><span>OUTPUT</span><pre>0 0 1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>복합 대입 추적</b> — 변수를 100으로 시작해 <code>+= 20</code>, <code>-= 50</code>, <code>*= 3</code>, <code>/= 7</code>, <code>%= 10</code>을 차례로 적용하며 매 단계의 값을 한 줄씩 출력하라.</p>
+    <div class="sample"><div><span>OUTPUT</span><pre>120
+70
+210
+30
+0</pre></div><div><span>조건</span><pre>반복문 없이 다섯 줄</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>항상 0 이상인 나머지</b> — 정수 A와 양의 정수 M을 입력받아 A를 M으로 나눈 나머지를 <strong>0 이상 M 미만</strong>으로 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>-7 5</pre></div><div><span>OUTPUT</span><pre>3</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>24시간 시계</b> — 현재 시각 H(0 ≤ H ≤ 23)와 시간차 D(−10<sup>9</sup> ≤ D ≤ 10<sup>9</sup>)를 입력받아 도착 시각을 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5 -100</pre></div><div><span>OUTPUT</span><pre>1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>올림 나눗셈</b> — 물건 N개를 한 상자에 K개씩 담을 때 필요한 상자 수를 출력하라(1 ≤ N, K ≤ 10<sup>9</sup>). 조건문 없이 식 하나로 해결하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>10 3</pre></div><div><span>OUTPUT</span><pre>4</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>안전한 중간값</b> — 두 정수 A, B(각각 2,000,000,000 이하의 양수)의 평균을 정수로 출력하라. <code>long long</code>을 쓰지 않고 해결하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>2000000000 2000000000</pre></div><div><span>OUTPUT</span><pre>2000000000</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>비트 켜고 끄고 뒤집기</b> — 정수 N과 비트 위치 K(0 ≤ K ≤ 30)를 입력받아, K번 비트를 켠 값, 끈 값, 뒤집은 값을 공백으로 구분해 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>12 1</pre></div><div><span>OUTPUT</span><pre>14 12 14</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>자릿수 뽑기</b> — 다섯 자리 정수를 입력받아 백의 자리 숫자만 출력하라. 문자열이나 조건문을 쓰지 말고 나눗셈과 나머지로 해결하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>73821</pre></div><div><span>OUTPUT</span><pre>8</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>초를 되감기</b> — 하루를 86400초로 보고, 기준 시각 0초에서 S초만큼 이동한 시각을 0 이상 86399 이하의 초로 출력하라. S는 음수일 수 있고 절댓값은 10<sup>12</sup> 이하다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>-1</pre></div><div><span>OUTPUT</span><pre>86399</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>정수 승격 확인</b> — <code>char</code> 변수 두 개에 각각 100을 넣고, ① 둘을 더한 값을 <code>%d</code>로 출력 ② 그 합을 <code>char</code> 변수에 담아 <code>%d</code>로 출력하라. 두 값이 다른 이유를 2장의 개념으로 설명하라.</p>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>항등식 검증</b> — 네 가지 부호 조합 <code>(7,2) (−7,2) (7,−2) (−7,−2)</code>에 대해 <code>(a/b)*b + a%b</code>를 계산해 모두 <code>a</code>와 같은지 출력으로 확인하라. 그리고 C가 몫을 <strong>0 쪽으로 버린다</strong>는 규칙이 이 항등식에서 어떻게 나오는지 설명하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>우선순위 진단</b> — 아래 네 식의 값을 먼저 손으로 예측하고, 실행해 확인한 뒤, gcc가 어떤 경고를 내는지 적어라. 그리고 의도대로 동작하도록 괄호를 넣어 고쳐라. (<code>x = 2</code>)</p>
+<pre><code>(가) 1 &lt;&lt; 2 + 3
+(나) x &amp; 2 == 2
+(다) 2 + 3 * 4
+(라) 100 / 3 * 3</code></pre>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>단락 평가의 순서</b> — 아래 두 식을 <code>b = 0</code>으로 실행하면 하나는 정상 종료하고 하나는 죽는다. 어느 쪽인지 예측하고 실제로 확인하라. 그리고 "검사를 왼쪽에 둔다"는 규칙을 한 문장으로 정리하라.</p>
+<pre><code>(가) b != 0 &amp;&amp; 10 / b &gt; 1
+(나) 10 / b &gt; 1 &amp;&amp; b != 0</code></pre>
+    <p class="spec">※ 조건문은 5장이지만, 식의 값만 변수에 담아 출력해도 같은 현상을 볼 수 있다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>세 장의 함정 통합</b> — 아래 코드는 N개의 수의 평균을 구하려는 것이다. 숨어 있는 결함을 <strong>세 가지 이상</strong> 찾아 각각 어느 장의 내용인지 밝히고, 모두 고친 코드를 제시하라. (N ≤ 10<sup>6</sup>, 각 수의 절댓값 ≤ 10<sup>9</sup>)</p>
+<pre><code>int n, x;
+int sum = 0;
+scanf("%d", &amp;n);
+while (scanf("%d", &amp;x) != EOF) {
+    sum += x;
+}
+printf("%.2f\n", sum / n);</code></pre>
+  </div></div>
+
+  </div>
+</section>
+
+<section class="pagebreak answers">
+  <span class="sec-no">07 — 확인 평가 해설</span>
+  <h2>정답과 해설</h2>
+  <p class="spec" style="color:var(--ink-faint);font-size:9pt">※ 이 절은 교사용 통합본에만 수록한다. 학생 배부용에서는 제거한다.</p>
+
+  <div class="ans"><span class="an">01</span><div class="ab"><code>printf("%d %d\n", a / b, a % b);</code> — 3장 연습 9번과 같은 코드다. 여기서는 부호 규칙을 묻기 위한 준비 문제다.</div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab">출력은 <code>-3 -2</code>. 수학에서는 −17 = 5×(−4) + 3으로 보아 나머지를 <b>3</b>이라 하지만, C는 몫을 0 쪽으로 버려 −3으로 잡으므로 나머지가 −2가 된다. 두 약속 모두 <code>(a/b)*b + a%b == a</code>는 만족한다.</div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab"><code>printf("%.2f\n", (a + b) / 2.0);</code> — <code>/ 2</code>로 쓰면 <code>5.00</code>이 나온다. <b>흔한 오답 1위</b>이므로 반드시 틀려 보게 한 뒤 고치게 한다.</div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab"><code>printf("%d\n", n &amp; 1);</code> — <code>n % 2</code>도 양수에서는 같지만, <b>음수에서는 −1이 나온다</b>. <code>n &amp; 1</code>은 음수에서도 0 또는 1이므로 이쪽이 안전하다. 이 차이를 꼭 짚는다.</div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab"><code>printf("%d %d %d %d\n", a &amp; b, a | b, a ^ b, ~a);</code> — 12와 10을 2진수로 써 놓고 자리를 맞춰 확인시킨다.</div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab"><code>printf("%lld\n", 1LL &lt;&lt; k);</code> — <code>1 &lt;&lt; k</code>로 쓰면 K가 31 이상일 때 깨진다. <code>1</code>은 <code>int</code>라서 시프트도 int로 수행되기 때문이다. <b>지도 포인트</b> — 2장의 "형변환은 연산 전에"가 시프트에도 똑같이 적용된다.</div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab"><code>printf("%d %d %d\n", a &gt; b, a == b, a &lt; b);</code> — 관계 연산자의 결과가 그대로 출력 가능한 정수라는 것을 체감시킨다.</div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab">100 → 120 → 70 → 210 → 30 → 0. 마지막 <code>%= 10</code>에서 30 % 10 = 0. <code>/= 7</code>에서 210/7 = 30이 정확히 나누어떨어지는 것도 확인시킨다.</div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab"><code>printf("%d\n", ((a % m) + m) % m);</code> — 바깥쪽 <code>% m</code>을 빠뜨린 답안이 많다. <code>a = -5, m = 5</code>를 넣으면 5가 출력되어 틀린다는 것을 보여 준다.</div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab">
+    <code>printf("%d\n", ((h + d) % 24 + 24) % 24);</code><br>
+    <b>지도 포인트</b> — D의 절댓값이 10<sup>9</sup>이고 H가 23 이하이므로 <code>h + d</code>는 int 범위 안이다. 2장의 습관대로 최악의 경우를 먼저 계산하게 한 뒤 "이번에는 int로 충분하다"는 결론까지 내리게 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab">
+    <code>printf("%d\n", (n + k - 1) / k);</code> — 올림 나눗셈의 표준 관용구다.<br>
+    원리: 나누어떨어지면 <code>k-1</code>을 더해도 몫이 그대로이고, 나머지가 있으면 <code>k-1</code>이 그 부족분을 메워 몫이 1 늘어난다.<br>
+    <b>주의</b> — N과 K가 모두 10<sup>9</sup>이면 <code>n + k - 1</code>이 약 2×10<sup>9</sup>으로 <code>INT_MAX</code>를 넘는다. <code>(long long)n + k - 1</code>로 쓰거나 <code>long long</code>으로 받는다. 2장의 중간값 점검이 또 나온다.
+  </div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab"><code>printf("%d\n", a + (b - a) / 2);</code> — 2장 연습 16번의 재등장이다. 차이 <code>b - a</code>는 범위를 넘지 않으므로 int만으로 안전하다. PART 3 이분 탐색에서 쓰는 형태임을 다시 예고한다.</div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab"><code>printf("%d %d %d\n", n | (1 &lt;&lt; k), n &amp; ~(1 &lt;&lt; k), n ^ (1 &lt;&lt; k));</code> — N=12(1100), K=1이면 1번 비트가 원래 0이므로 켜기와 토글이 둘 다 14, 끄기는 변화 없이 12다. K=2로도 시험시켜 결과가 달라지는 것을 확인시킨다.</div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab"><code>printf("%d\n", n / 100 % 10);</code> — 순서가 중요하다. <code>n % 10 / 100</code>으로 쓰면 0이 나온다. <b>지도 포인트</b> — "원하는 자리를 맨 끝으로 끌어내린 뒤 10으로 나눈 나머지"라는 절차로 외우게 한다.</div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab"><code>long long</code>으로 받아 <code>printf("%lld\n", ((s % 86400) + 86400) % 86400);</code> — 입력 서식도 <code>%lld</code>. 3장과 2장과 이 장이 한 줄에 모두 들어간다.</div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">① <b>200</b> ② <b>−56</b>. 연산은 정수 승격으로 <code>int</code>에서 수행되어 200이 되지만, 그 200을 <code>char</code>(−128~127)에 담으면 범위를 넘어 되감긴다. <code>sizeof(c1 + c2)</code>가 4로 나오는 것을 함께 보여 주면 설득력이 커진다.</div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    네 경우 모두 항등식이 성립한다(출력은 <code>1 1 1 1</code>).<br>
+    <b>설명</b> — 몫을 정하면 나머지는 <code>a - (a/b)*b</code>로 자동으로 결정된다. C는 몫을 0 쪽으로 버리므로 <code>-7/2 = -3</code>이고, 따라서 나머지는 <code>-7 - (-3)*2 = -1</code>이 된다. 수학의 약속처럼 몫을 −4로 내림하면 나머지는 <code>-7 - (-4)*2 = 1</code>이 된다. <b>나머지의 부호는 몫을 어느 쪽으로 버리느냐가 결정한다.</b>
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    (가) <b>32</b> — <code>1 &lt;&lt; (2+3)</code>. 경고 <code>suggest parentheses around '+' inside '&lt;&lt;'</code>. 의도대로면 <code>(1 &lt;&lt; 2) + 3</code> = 7.<br>
+    (나) <b>0</b> — <code>x &amp; (2==2)</code> = <code>2 &amp; 1</code> = 0. 경고 <code>suggest parentheses around comparison in operand of '&amp;'</code>. 의도대로면 <code>(x &amp; 2) == 2</code> = 1.<br>
+    (다) <b>14</b> — 곱셈이 먼저. 경고 없음. 직관과 일치한다.<br>
+    (라) <b>99</b> — <code>(100/3)*3 = 33*3</code>. 경고 없음. <b>정수 나눗셈이 먼저 일어나 1이 사라진다.</b><br>
+    <b>지도 포인트</b> — (다)와 (라)는 경고가 없다는 점이 핵심이다. 컴파일러가 잡아 주는 함정과 스스로 조심해야 하는 함정을 구분시킨다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    (가)는 정상 종료, (나)는 <b>0으로 나누어 죽는다</b>(대개 <code>Floating point exception</code>).<br>
+    <code>&amp;&amp;</code>는 왼쪽이 거짓이면 오른쪽을 평가하지 않는다. (가)는 <code>b != 0</code>이 거짓이므로 <code>10 / b</code>에 도달하지 않는다. (나)는 나눗셈이 먼저 평가된다.<br>
+    정리 문장 예시 — "위험한 연산을 보호하는 검사는 <code>&amp;&amp;</code>의 <b>왼쪽</b>에 둔다."
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    결함은 네 가지다.<br>
+    <b>①</b> <code>int sum</code> — 최악의 합이 10<sup>6</sup>×10<sup>9</sup> = 10<sup>15</sup>로 넘친다. <b>2장</b> → <code>long long sum</code>.<br>
+    <b>②</b> <code>!= EOF</code> — 숫자가 아닌 입력에서 무한 루프. <b>3장</b> → <code>== 1</code>.<br>
+    <b>③</b> <code>sum / n</code> — 정수 나눗셈으로 소수가 사라진다. <b>4장</b> → <code>(double)sum / n</code>.<br>
+    <b>④</b> 첫 <code>scanf</code>의 반환값 미검사. <b>3장</b> → <code>if (scanf("%d", &amp;n) != 1) return 1;</code><br>
+    고친 코드:
+<pre><code>int n, x;
+long long sum = 0;
+if (scanf("%d", &amp;n) != 1) return 1;
+while (scanf("%d", &amp;x) == 1) {
+    sum += x;
+}
+printf("%.2f\n", (double)sum / n);</code></pre>
+    <b>지도 포인트</b> — 네 장을 한 코드에서 동시에 점검하는 문제다. PART 2의 오답 유형 분류(개념·구현·시간·경계)로 각 결함을 분류시키면 다음 파트로 자연스럽게 이어진다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li>정수끼리의 나눗셈은 소수를 버린다는 것을 식을 쓸 때마다 의식한다</li>
+    <li><code>a % b</code>의 부호가 <code>a</code>를 따른다는 것을 안다</li>
+    <li><code>((a % m) + m) % m</code>을 외워서 쓸 수 있다</li>
+    <li>형변환을 연산 전에, 피연산자에 붙인다</li>
+    <li>관계·논리 연산의 결과가 0 또는 1이라는 것을 안다</li>
+    <li>위험한 연산을 보호하는 검사를 <code>&amp;&amp;</code>의 왼쪽에 둔다</li>
+    <li>비트 연산자가 섞이면 괄호를 친다</li>
+    <li><code>n &amp; 1</code>이 <code>n % 2</code>보다 안전한 이유를 설명할 수 있다</li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 05장 조건문</span>
+    이 장에서 만든 0과 1이 드디어 쓰인다. <code>if</code>는 식의 값이 0인지 아닌지만 본다. 경우를 빠짐없이 겹치지 않게 나누는 방법과, <code>==</code>를 <code>=</code>로 잘못 쓰는 사고를 다음 장에서 다룬다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 1 · 04장 · 2026-10-12 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+
+</div>
+</body>
+</html>

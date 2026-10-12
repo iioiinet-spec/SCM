@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 1 · 02장 변수와 자료형, 오버플로 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#0d7a6f;
+  --accent-soft:#e3f1ef;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#8fd8cd}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 1 · C11 문법 기초 — 02 / 16</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">02</span>
+    <h1>변수와 자료형, 오버플로</h1>
+  </div>
+  <p class="lede">변수 하나가 차지하는 비트 수가 표현할 수 있는 값의 범위를 정하고, 그 범위를 넘는 순간 계산은 조용히 틀린 답을 낸다. 올림피아드에서 가장 많이 나오는 "맞는 알고리즘, 틀린 답"의 1순위 원인이다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li><code>char</code>·<code>short</code>·<code>int</code>·<code>long long</code>·<code>double</code>의 크기와 표현 범위를 말할 수 있다</li>
+    <li>비트 수에서 표현 범위가 어떻게 나오는지 계산할 수 있다</li>
+    <li><code>limits.h</code>의 상수로 범위를 직접 출력해 확인할 수 있다</li>
+    <li>1부터 N까지의 합이 <code>int</code>로 틀려지는 N을 실험으로 찾고 <code>long long</code>으로 고칠 수 있다</li>
+    <li>중간 계산에서만 넘치는 오버플로를 알아보고 형변환 위치를 올바르게 잡을 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 실험 · 비트와 표현 범위 · 정수 자료형</div>
+  <div><b>2차시</b>limits.h · 표준 코드 · 단계 예제 1~5</div>
+  <div><b>3차시</b>흔한 오류 6종 · 연습 문제 · 확인 평가</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>1부터 N까지 더하면 어디서 틀릴까</h2>
+  <p>1부터 N까지의 합은 <strong>N(N+1)/2</strong>다. 초등학교에서도 배우는 식이고, C로 옮기는 데 한 줄이면 충분하다.</p>
+  <figure>
+    <figcaption><span class="fn">sum_int.c</span><span>겉보기에 완벽한 코드</span></figcaption>
+<pre><code>int N;
+scanf("%d", &amp;N);
+printf("%d\n", N * (N + 1) / 2);</code></pre>
+  </figure>
+  <p>이 코드에 N을 점점 키워 넣어 보자. 아래는 실제 실행 결과다.</p>
+  <table>
+    <thead><tr><th style="width:16%">N</th><th style="width:30%">위 코드의 출력</th><th style="width:30%">참값</th><th>판정</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1000</td><td class="num">500500</td><td class="num">500500</td><td>맞음</td></tr>
+      <tr><td class="num">46340</td><td class="num">1073720970</td><td class="num">1073720970</td><td>맞음</td></tr>
+      <tr><td class="num">46341</td><td class="num">-1073716337</td><td class="num">1073767311</td><td><strong>틀림 — 음수가 됨</strong></td></tr>
+      <tr><td class="num">65536</td><td class="num">32768</td><td class="num">2147516416</td><td><strong>틀림 — 그럴듯한 값</strong></td></tr>
+    </tbody>
+  </table>
+  <p>N = 46341에서 답이 <strong>음수</strong>로 뒤집힌다. 더 무서운 것은 N = 65536이다. 출력 <code>32768</code>은 음수도 아니고 0도 아니어서, 코드를 아무리 들여다봐도 틀렸다는 신호가 없다.</p>
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> 왜 하필 46341인가?<br>
+    <b>②</b> 1부터 한 개씩 더해 나가면 틀리기 시작하는 N도 46341일까?<br>
+    <b>③</b> <code>int</code>를 <code>long long</code>으로 바꾸기만 하면 끝나는가?
+  </div>
+  <p>②의 답을 미리 말하면 <strong>아니다</strong>. 한 개씩 더하는 방식은 <strong>N = 65536</strong>까지 버틴다. 같은 합을 구하는 두 방법이 서로 다른 지점에서 무너진다는 사실이 이 장의 핵심이다.</p>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">2.1</span>비트 수가 범위를 정한다</h3>
+  <p>변수는 메모리에 일정한 개수의 비트를 차지한다. 비트 하나는 0 또는 1이므로, <em>n</em>비트로는 서로 다른 2<sup><em>n</em></sup>가지 상태만 구별할 수 있다. 자료형의 범위는 여기서 곧바로 따라 나온다.</p>
+  <p>부호 있는 정수는 맨 앞 비트 하나를 부호에 쓰므로, <em>n</em>비트일 때 범위는 <strong>−2<sup><em>n</em>−1</sup> ~ 2<sup><em>n</em>−1</sup>−1</strong>이다. 음수 쪽이 하나 더 많은 것은 0이 양수 쪽에 들어가기 때문이다.</p>
+  <table>
+    <thead><tr><th style="width:14%">비트</th><th style="width:22%">가짓수</th><th style="width:34%">부호 있는 범위</th><th>해당 자료형</th></tr></thead>
+    <tbody>
+      <tr><td class="num">8</td><td class="num">256</td><td class="num">−128 ~ 127</td><td><code>char</code></td></tr>
+      <tr><td class="num">16</td><td class="num">65,536</td><td class="num">−32,768 ~ 32,767</td><td><code>short</code></td></tr>
+      <tr><td class="num">32</td><td class="num">약 43억</td><td class="num">−2,147,483,648 ~ 2,147,483,647</td><td><code>int</code></td></tr>
+      <tr><td class="num">64</td><td class="num">약 1844경</td><td class="num">약 ±9.22 × 10<sup>18</sup></td><td><code>long long</code></td></tr>
+    </tbody>
+  </table>
+  <p>외울 숫자는 하나다. <strong><code>int</code>의 상한은 약 21억</strong>. 문제의 제약 조건에서 계산 결과가 21억을 넘을 가능성이 보이면 그 순간 <code>long long</code>을 꺼낸다.</p>
+
+  <h3><span class="tag">2.2</span>정수 자료형과 서식 지정자</h3>
+  <table>
+    <thead><tr><th style="width:20%">자료형</th><th style="width:12%">크기</th><th style="width:34%">범위</th><th style="width:16%">printf</th><th>scanf</th></tr></thead>
+    <tbody>
+      <tr><td><code>char</code></td><td class="num">1바이트</td><td class="num">−128 ~ 127</td><td><code>%c</code> / <code>%d</code></td><td><code>%c</code></td></tr>
+      <tr><td><code>short</code></td><td class="num">2바이트</td><td class="num">−32,768 ~ 32,767</td><td><code>%hd</code></td><td><code>%hd</code></td></tr>
+      <tr><td><code>int</code></td><td class="num">4바이트</td><td class="num">약 ±21억</td><td><code>%d</code></td><td><code>%d</code></td></tr>
+      <tr><td><code>long long</code></td><td class="num">8바이트</td><td class="num">약 ±922경</td><td><code>%lld</code></td><td><code>%lld</code></td></tr>
+      <tr><td><code>unsigned int</code></td><td class="num">4바이트</td><td class="num">0 ~ 약 43억</td><td><code>%u</code></td><td><code>%u</code></td></tr>
+      <tr><td><code>double</code></td><td class="num">8바이트</td><td class="num">유효숫자 약 15~16자리</td><td><code>%f</code> / <code>%.2f</code></td><td><code>%lf</code></td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">long은 쓰지 않는다</span>
+    <code>long</code>의 크기는 환경마다 다르다. 리눅스·macOS에서는 8바이트지만 <b>윈도우에서는 4바이트</b>라 <code>int</code>와 똑같다. 집에서 되던 코드가 시험장에서 틀리는 전형적인 원인이다. 큰 정수가 필요하면 언제나 <b><code>long long</code></b>을 쓴다.
+  </div>
+
+  <h3><span class="tag">2.3</span>limits.h로 직접 확인하기</h3>
+  <p>범위를 외우는 대신 프로그램에게 물어볼 수 있다. <code>&lt;limits.h&gt;</code>에는 각 자료형의 한계값이 상수로 정의되어 있다.</p>
+  <figure>
+    <figcaption><span class="fn">limits_demo.c</span><span>실행 결과는 아래 표와 같다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;limits.h&gt;
+
+int main(void)
+{
+    printf("int  : %d ~ %d\n", INT_MIN, INT_MAX);
+    printf("char : %d ~ %d\n", CHAR_MIN, CHAR_MAX);
+    printf("llong: %lld ~ %lld\n", LLONG_MIN, LLONG_MAX);
+    printf("int size = %zu bytes\n", sizeof(int));
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>int  : -2147483648 ~ 2147483647
+char : -128 ~ 127
+llong: -9223372036854775808 ~ 9223372036854775807
+int size = 4 bytes</pre></div>
+    <div><div class="lbl">주요 상수</div><pre>INT_MIN  INT_MAX   UINT_MAX
+CHAR_MIN CHAR_MAX  UCHAR_MAX
+SHRT_MIN SHRT_MAX
+LLONG_MIN LLONG_MAX</pre></div>
+  </div>
+  <p><code>sizeof</code>는 자료형이 차지하는 바이트 수를 알려 주는 연산자다. 결과를 출력할 때는 <code>%zu</code>를 쓴다.</p>
+
+  <h3><span class="tag">2.4</span>오버플로: 범위를 넘으면 되감긴다</h3>
+  <p><code>int</code>의 최댓값에 1을 더하면 어떻게 될까. 오류가 나지도, 프로그램이 멈추지도 않는다.</p>
+  <div class="io">
+    <div><div class="lbl">CODE</div><pre>int a = INT_MAX;
+a = a + 1;
+printf("%d\n", a);</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>-2147483648</pre></div>
+  </div>
+  <p>자동차 주행 거리계가 999999에서 000000으로 돌아가듯, 비트가 모자라면 값이 <strong>반대쪽 끝으로 되감긴다</strong>. 이것을 <strong>오버플로</strong>라고 한다. 도입 문제에서 답이 음수로 뒤집힌 이유가 바로 이것이다.</p>
+  <p>이제 ①번 질문에 답할 수 있다. 공식 <code>N * (N + 1) / 2</code>에서 컴퓨터는 <strong>곱셈을 먼저</strong> 한다. 그래서 최종 답이 아니라 <strong>중간값 N×(N+1)</strong>이 21억을 넘는 순간부터 틀린다. 46341 × 46342 ≈ 21.5억으로 여기서 처음 넘는다. 반면 한 개씩 더하는 방식은 중간값이 곧 부분합이므로, <strong>합 자체가</strong> 21억을 넘는 65536에서야 무너진다.</p>
+  <div class="note">
+    <span class="h">기억할 원칙</span>
+    오버플로는 <b>최종 답</b>이 아니라 <b>계산 도중에 거쳐 가는 가장 큰 값</b>을 기준으로 판단한다. 답이 작아도 중간에 큰 수가 생기면 넘친다.
+  </div>
+
+  <h3><span class="tag">2.5</span>double과 char</h3>
+  <h4>double — 넓지만 정확하지 않다</h4>
+  <p><code>double</code>은 10<sup>308</sup>까지 담지만, 유효숫자는 약 15~16자리뿐이다. 그래서 큰 정수를 넣으면 뒷자리가 잘린다.</p>
+  <div class="io">
+    <div><div class="lbl">CODE</div><pre>printf("%.20f\n", 0.1 + 0.2);
+printf("%.1f\n", 9007199254740993.0);</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>0.30000000000000004441
+9007199254740992.0</pre></div>
+  </div>
+  <p>0.1과 0.2는 2진 소수로 정확히 표현되지 않아 아주 작은 오차가 남는다. 따라서 <strong>실수끼리 <code>==</code>로 비교하면 안 된다</strong>. 정수로 풀 수 있는 문제는 끝까지 정수로 푸는 것이 정답이다.</p>
+  <h4>char — 1바이트짜리 작은 정수</h4>
+  <p>C에서 <code>char</code>는 문자 전용 자료형이 아니라 <strong>−128 ~ 127을 담는 정수</strong>다. 문자는 아스키 코드라는 번호로 저장될 뿐이다.</p>
+  <div class="io">
+    <div><div class="lbl">CODE</div><pre>char c = 'A';
+printf("%d %c\n", c, c + 1);
+printf("%d\n", 'z' - 'a');
+char d = 127; d = d + 1;
+printf("%d\n", d);</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>65 B
+25
+-128</pre></div>
+  </div>
+  <p><code>'z' - 'a'</code>가 25인 것은 알파벳 번호가 연속이기 때문이다. 8장 이후의 문자 처리 문제에서 계속 쓰인다. 그리고 <code>char</code>도 127을 넘으면 똑같이 되감긴다.</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드: 큰 수를 다루는 기본형</h2>
+  <p>1부터 N까지의 합을 <strong>어떤 N이 들어와도</strong> 맞게 구하는 코드다.</p>
+  <figure>
+    <figcaption><span class="fn">sum.c</span><span>표준 코드 · gcc 검증 완료</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int N;
+    scanf("%d", &amp;N);
+
+    long long sum = (long long)N * (N + 1) / 2;
+
+    printf("%lld\n", sum);
+    return 0;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:40%">요소</th><th>이유</th></tr></thead>
+    <tbody>
+      <tr><td><code>long long sum</code></td><td>결과가 21억을 넘을 수 있으므로 8바이트 변수에 담는다.</td></tr>
+      <tr><td><code>(long long)N</code></td><td><strong>곱셈을 하기 전에</strong> 한쪽을 8바이트로 바꾼다. 그러면 곱셈 자체가 8바이트로 수행되어 중간값이 넘치지 않는다.</td></tr>
+      <tr><td><code>printf("%lld", ...)</code></td><td><code>long long</code>은 반드시 <code>%lld</code>로 출력한다. <code>%d</code>를 쓰면 엉뚱한 값이 나온다.</td></tr>
+      <tr><td><code>int N</code>은 그대로</td><td>입력값 N 자체는 21억 이하이므로 <code>int</code>로 충분하다. 넘치는 것은 <strong>계산 결과</strong>다.</td></tr>
+    </tbody>
+  </table>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>100000</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>5000050000</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">형변환은 위치가 전부다</span>
+    <code>(long long)(N * (N + 1) / 2)</code>라고 쓰면 아무 소용이 없다. 괄호 안의 계산이 <b>이미 int로 끝난 뒤</b> 그 틀린 결과를 8바이트로 넓히는 것이기 때문이다. 형변환은 <b>넘치기 전에</b> 해야 한다.
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+  <p>모든 출력은 실제로 컴파일해 확인한 값이다.</p>
+
+  <h3><span class="tag">예제 1</span>틀리는 N을 직접 찾는 실험</h3>
+  <p>아래 프로그램은 1부터 한 개씩 더해 가면서 <code>int</code> 누적값과 <code>long long</code> 누적값을 비교하다가, 처음으로 달라지는 지점에서 멈춘다. 반복문은 6장에서 배우므로 지금은 <strong>직접 입력해 실행하고 결과를 관찰</strong>한다.</p>
+  <figure>
+    <figcaption><span class="fn">ex1.c</span><span>실험 프로그램 — 실행만 해 본다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int si = 0;
+    long long sl = 0;
+
+    for (int n = 1; n &lt;= 70000; n++) {
+        si += n;
+        sl += n;
+        if ((long long)si != sl) {
+            printf("first wrong N = %d\n", n);
+            printf("  int  sum = %d\n", si);
+            printf("  true sum = %lld\n", sl);
+            break;
+        }
+    }
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>first wrong N = 65536
+  int  sum = -2147450880
+  true sum = 2147516416</pre></div>
+    <div><div class="lbl">확인할 것</div><pre>공식 방식: 46341부터 틀림
+누적 방식: 65536부터 틀림
+
+→ 같은 답을 구하는데
+   무너지는 지점이 다르다</pre></div>
+  </div>
+  <p>65535까지의 합 2,147,450,880은 <code>INT_MAX</code>(2,147,483,647)보다 작아 아슬아슬하게 버틴다. 여기에 65536을 더하는 순간 넘치면서 음수로 떨어진다.</p>
+
+  <h3><span class="tag">예제 2</span>곱셈 함정과 형변환 위치</h3>
+  <figure>
+    <figcaption><span class="fn">ex2.c</span><span>같은 식, 세 가지 결과</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x = 100000, y = 100000;
+
+    printf("%d\n",   x * y);
+    printf("%lld\n", (long long)x * y);
+    printf("%lld\n", (long long)(x * y));
+    return 0;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:38%">식</th><th style="width:26%">출력</th><th>이유</th></tr></thead>
+    <tbody>
+      <tr><td><code>x * y</code></td><td class="num">1410065408</td><td>int끼리 곱해 넘쳤다</td></tr>
+      <tr><td><code>(long long)x * y</code></td><td class="num">10000000000</td><td><strong>곱하기 전에</strong> 넓혔다 — 정답</td></tr>
+      <tr><td><code>(long long)(x * y)</code></td><td class="num">1410065408</td><td>넘친 뒤에 넓혔다 — 소용없음</td></tr>
+    </tbody>
+  </table>
+  <p>세 번째 식이 특히 위험하다. <code>long long</code>이라는 글자가 들어 있어서 안전해 보이지만 결과는 첫 번째와 똑같다.</p>
+
+  <h3><span class="tag">예제 3</span>자료형의 경계를 출력해 보기</h3>
+  <figure>
+    <figcaption><span class="fn">ex3.c</span><span>sizeof와 limits.h</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;limits.h&gt;
+
+int main(void)
+{
+    printf("char      %zu bytes  %d ~ %d\n",
+           sizeof(char), CHAR_MIN, CHAR_MAX);
+    printf("short     %zu bytes  %d ~ %d\n",
+           sizeof(short), SHRT_MIN, SHRT_MAX);
+    printf("int       %zu bytes  %d ~ %d\n",
+           sizeof(int), INT_MIN, INT_MAX);
+    printf("long long %zu bytes  %lld ~ %lld\n",
+           sizeof(long long), LLONG_MIN, LLONG_MAX);
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>char      1 bytes  -128 ~ 127
+short     2 bytes  -32768 ~ 32767
+int       4 bytes  -2147483648 ~ 2147483647
+long long 8 bytes  -9223372036854775808 ~
+                   9223372036854775807</pre></div>
+    <div><div class="lbl">해 볼 것</div><pre>sizeof(long)을 추가해
+자신의 환경이 4바이트인지
+8바이트인지 확인한다.</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 4</span>실수를 == 로 비교하면 안 되는 이유</h3>
+  <figure>
+    <figcaption><span class="fn">ex4.c</span><span>0.1 + 0.2 는 0.3이 아니다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    double d = 0.1 + 0.2;
+
+    printf("%.20f\n", d);
+    printf("%s\n", (d == 0.3) ? "true" : "false");
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>0.30000000000000004441
+false</pre></div>
+    <div><div class="lbl">대안</div><pre>차이의 절댓값이
+아주 작은지로 판단한다.
+(조건문은 5장에서)</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 5</span>unsigned가 섞이면 비교가 뒤집힌다</h3>
+  <figure>
+    <figcaption><span class="fn">ex5.c</span><span>-1이 1보다 크다고 나온다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    unsigned int u = 0;
+    u = u - 1;
+    printf("%u\n", u);
+    printf("%s\n", (-1 &lt; 1u) ? "true" : "false");
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>4294967295
+false</pre></div>
+    <div><div class="lbl">왜</div><pre>int와 unsigned를 비교하면
+int가 unsigned로 변환된다.
+-1 → 4294967295 가 되어
+1보다 커진다.</pre></div>
+  </div>
+  <p>그래서 올림피아드 코드에서는 <strong><code>unsigned</code>를 쓰지 않는 것</strong>을 기본 규칙으로 삼는다. 음수가 필요 없더라도 <code>int</code>나 <code>long long</code>을 쓴다.</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+  <p>아래 메시지는 <code>gcc 13.3.0</code>에서 실제로 출력된 것이다. 이 장의 오류는 1장과 성격이 다르다. <strong>대부분 컴파일에 성공하고, 조용히 틀린 답을 낸다.</strong></p>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 1</span><span class="t">결과를 int에 담았다</span></div>
+    <div class="body">
+      <p>계산은 맞는데 받는 그릇이 작다. 컴파일러는 <strong>아무 말도 하지 않는다</strong>.</p>
+      <pre>int sum = (long long)N * (N + 1) / 2;   // 8바이트 값을 4바이트에 담음</pre>
+      <p>곱셈은 안전하게 수행됐지만, 그 결과를 <code>int</code> 변수에 넣는 순간 잘려 나간다.</p>
+      <div class="fix"><b>고치는 법</b> — 넘칠 수 있는 값을 담는 변수는 처음부터 <code>long long</code>으로 선언한다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 2</span><span class="t">형변환 위치가 늦다</span></div>
+    <div class="body">
+      <p>예제 2의 세 번째 식이다. <code>long long</code>이라는 글자에 속지 않아야 한다.</p>
+      <pre>long long bad  = (long long)(N * (N + 1) / 2);   // 이미 늦음
+long long good = (long long)N * (N + 1) / 2;     // 올바름</pre>
+      <div class="fix"><b>고치는 법</b> — 괄호 안에서 가장 먼저 수행되는 연산의 <b>피연산자</b>에 형변환을 붙인다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 3</span><span class="t">long long을 %d로 출력</span></div>
+    <div class="body">
+      <p><code>printf("%d\n", v);</code>에서 <code>v</code>가 <code>long long</code>인 경우다.</p>
+      <pre>fmt.c:4:14: warning: format '%d' expects argument of type 'int',
+            but argument 2 has type 'long long int' [-Wformat=]
+    4 |     printf("%d\n", v);
+      |             ~^     ~
+      |              |     |
+      |              int   long long int
+      |             %lld</pre>
+      <p>gcc가 고칠 서식까지 <code>%lld</code>로 알려 준다. 그래도 경고일 뿐이라 실행은 된다. <code>v</code>가 100억일 때 출력은 <strong><code>1410065408</code></strong>, 즉 아래쪽 32비트만 찍힌다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>long long</code>은 출력 <code>%lld</code>, 입력 <code>%lld</code>. 예외 없다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 4</span><span class="t">scanf로 long long을 %d로 입력</span></div>
+    <div class="body">
+      <p>출력보다 훨씬 위험하다.</p>
+      <pre>fmt.c:6:13: warning: format '%d' expects argument of type 'int *',
+            but argument 2 has type 'long long int *' [-Wformat=]</pre>
+      <p>8바이트 변수에 4바이트만 채워 넣으므로 나머지 4바이트는 이전에 들어 있던 쓰레기값이 남는다. 그런데 작은 수를 넣어 시험해 보면 <strong>우연히 맞는 값이 나오기도 한다</strong>. 테스트에서 통과하고 채점에서 틀리는 최악의 경우다.</p>
+      <div class="fix"><b>고치는 법</b> — "경고가 떴지만 결과는 맞던데요"는 통하지 않는다. 경고 0개를 지킨다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 5</span><span class="t">long을 믿었다</span></div>
+    <div class="body">
+      <p><code>long sum = ...;</code>으로 써 놓고 8바이트라고 가정하는 경우다. 리눅스에서는 통과하고 윈도우에서는 <code>int</code>와 똑같이 21억에서 넘친다.</p>
+      <p>경고도 오류도 나지 않는다. <strong>환경을 바꾸기 전까지는 발견할 방법이 없다.</strong></p>
+      <div class="fix"><b>고치는 법</b> — <code>long</code>을 아예 쓰지 않는다. 4바이트면 <code>int</code>, 8바이트면 <code>long long</code> 둘 중 하나만 쓴다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 6</span><span class="t">큰 정수를 double로 처리</span></div>
+    <div class="body">
+      <p>"<code>double</code>이 범위가 제일 넓으니까 안전하겠지"라는 오해다.</p>
+      <pre>printf("%.1f\n", 9007199254740993.0);   →   9007199254740992.0</pre>
+      <p>마지막 자리가 1에서 2로 바뀌었다. <code>double</code>은 범위는 넓지만 <strong>유효숫자가 약 15~16자리</strong>라서, 그보다 긴 정수는 가까운 값으로 반올림된다. 정수 문제에서 <code>double</code>을 쓰면 답이 1 차이로 틀린다.</p>
+      <div class="fix"><b>고치는 법</b> — 정수 문제는 정수형으로 끝까지 간다. <code>double</code>은 실수 계산이 꼭 필요할 때만 쓴다.</div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    1장의 오류는 <b>컴파일이 안 되게</b> 만들어 스스로 드러났다. 이 장의 오류는 <b>컴파일도 되고 실행도 되며 작은 입력에서는 정답까지 낸다</b>. 그래서 제출 전에 <b>제약 조건의 최댓값을 직접 넣어 보는 것</b>이 유일한 방어책이다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p><code>gcc -std=c11 -Wall</code>로 경고 없이 컴파일되어야 한다. 입력 범위가 주어지면 <strong>그 최댓값을 반드시 넣어 보고</strong> 제출한다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>크기 출력</b> — <code>char</code>, <code>short</code>, <code>int</code>, <code>long</code>, <code>long long</code>, <code>double</code>의 크기를 각각 한 줄씩 <code>자료형이름 N bytes</code> 형식으로 출력하라. 입력은 없다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>int의 경계</b> — <code>limits.h</code>를 사용해 <code>int</code>의 최솟값과 최댓값을 공백으로 구분해 한 줄에 출력하라.</p>
+    <div class="sample"><div><span>OUTPUT</span><pre>-2147483648 2147483647</pre></div><div><span>조건</span><pre>숫자를 직접 적지 말 것</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>1부터 N까지의 합</b> — 정수 N(1 ≤ N ≤ 1,000,000)을 입력받아 1부터 N까지의 합을 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>1000000</pre></div><div><span>OUTPUT</span><pre>500000500000</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>두 수의 곱</b> — 두 정수 A, B(각각 절댓값 1,000,000 이하)를 입력받아 곱을 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>1000000 1000000</pre></div><div><span>OUTPUT</span><pre>1000000000000</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>세제곱</b> — 정수 A(1 ≤ A ≤ 2,000,000)를 입력받아 A<sup>3</sup>을 출력하라. 어떤 자료형이 필요한지 먼저 계산하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>2000000</pre></div><div><span>OUTPUT</span><pre>8000000000000000000</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>문자의 번호</b> — 알파벳 소문자 한 글자를 입력받아 아스키 코드 번호와, 그 글자가 <code>'a'</code>로부터 몇 번째인지를 공백으로 구분해 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>k</pre></div><div><span>OUTPUT</span><pre>107 10</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>대문자로 바꾸기</b> — 알파벳 소문자 한 글자를 입력받아 대문자로 출력하라. 조건문 없이 아스키 코드의 차이만 이용한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>g</pre></div><div><span>OUTPUT</span><pre>G</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>오버플로 관찰</b> — <code>INT_MAX</code>에 1을 더한 값과 <code>INT_MIN</code>에서 1을 뺀 값을 두 줄에 출력하라. 결과를 보고 무슨 일이 일어났는지 주석으로 한 줄 적어라.</p>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>직사각형의 넓이</b> — 가로 W, 세로 H(각각 1 ≤ 값 ≤ 100,000)를 입력받아 넓이를 출력하라. <code>int</code>로 충분한지 먼저 판단하고, 그 판단 근거를 주석으로 적어라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>100000 100000</pre></div><div><span>OUTPUT</span><pre>10000000000</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>평균의 함정</b> — 세 정수(각각 2,000,000,000 이하)를 입력받아 평균을 소수점 아래 둘째 자리까지 출력하라. 세 수를 그냥 더하면 어떤 일이 일어나는지 먼저 확인한 뒤 고쳐라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>2000000000 2000000000 2000000000</pre></div><div><span>OUTPUT</span><pre>2000000000.00</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>등차수열의 합</b> — 첫째항 a, 공차 d, 항수 n(1 ≤ n ≤ 1,000,000, 나머지는 1,000 이하의 양의 정수)을 입력받아 합을 출력하라. 공식 <code>n(2a + (n−1)d)/2</code>를 쓰되 중간값 오버플로에 주의하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>1000 1000 1000000</pre></div><div><span>OUTPUT</span><pre>500000500000000</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>초를 날짜로</b> — 초 단위 정수 S(0 ≤ S ≤ 10<sup>12</sup>)를 입력받아 <code>일 시 분 초</code>를 공백으로 구분해 출력하라. 입력 서식에도 주의하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>1000000000000</pre></div><div><span>OUTPUT</span><pre>11574074 1 46 40</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>자료형 고르기</b> — 아래 네 상황에서 결과를 담기에 가장 작은 자료형을 각각 고르고 이유를 쓰라. ① 1~100 사이 두 수의 곱 ② 10<sup>5</sup>개의 수(각 10<sup>4</sup> 이하)의 합 ③ 10<sup>6</sup> × 10<sup>6</sup> ④ 20의 팩토리얼</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>double의 한계 확인</b> — <code>double</code> 변수에 <code>9007199254740993.0</code>과 <code>9007199254740992.0</code>을 각각 넣어 <code>%.1f</code>로 출력하고, 두 출력이 같은지 다른지 적어라. 같다면 그 이유를 유효숫자로 설명하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>char 되감기</b> — <code>char</code> 변수에 125를 넣고 1씩 다섯 번 더해 가며 매번 <code>%d</code>로 출력하라. 어느 시점에서 값이 뒤집히는지 확인하고 그 이유를 쓰라.</p>
+    <div class="sample"><div><span>OUTPUT</span><pre>126
+127
+-128
+-127
+-126</pre></div><div><span>조건</span><pre>반복문 없이 작성한다</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>안전한 중간값</b> — 두 정수 A, B(각각 2,000,000,000 이하)를 입력받아 둘의 평균(정수 나눗셈)을 출력하라. <code>(A + B) / 2</code>가 왜 위험한지 설명하고, <code>long long</code>을 쓰지 않고 해결하는 방법도 함께 제시하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>2000000000 2000000000</pre></div><div><span>OUTPUT</span><pre>2000000000</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>두 방식의 경계 비교</b> — 1부터 N까지의 합을 ⑴ 공식 <code>N*(N+1)/2</code>로 구하는 int 버전 ⑵ 1씩 더해 누적하는 int 버전으로 각각 작성하고, 처음으로 틀리는 N을 실험으로 찾아라. 두 값이 다른 이유를 <strong>중간값</strong>이라는 말을 써서 설명하라.</p>
+    <p class="spec">※ 누적 버전의 반복문 코드는 예제 1을 참고해도 좋다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>팩토리얼의 한계</b> — n! 을 <code>int</code>로 계산할 때 정확한 값이 나오는 가장 큰 n과, <code>long long</code>으로 계산할 때 정확한 값이 나오는 가장 큰 n을 각각 구하라. 실험으로 찾되, 왜 그 지점인지 자료형의 상한과 비교해 설명하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>비교가 뒤집히는 조건</b> — 다음 코드의 출력을 예측하고, 실제로 실행해 확인한 뒤 이유를 설명하라. 그리고 올림피아드 코드에서 <code>unsigned</code>를 피해야 하는 이유를 한 문장으로 정리하라.</p>
+<pre><code>int a = -1;
+unsigned int b = 1;
+printf("%s\n", (a &lt; b) ? "a is smaller" : "b is smaller");</code></pre>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>제약 조건에서 자료형 결정하기</b> — 어떤 문제의 조건이 다음과 같다. "N개의 정수가 주어진다(1 ≤ N ≤ 200,000, 각 정수의 절댓값은 1,000,000,000 이하). 모든 수의 합과, 가장 큰 두 수의 곱을 출력하라." ① 합을 담을 자료형 ② 곱을 담을 자료형을 각각 정하고, <strong>최악의 경우 값을 직접 계산해</strong> 근거를 보여라.</p>
+  </div></div>
+
+  </div>
+</section>
+
+<section class="pagebreak answers">
+  <span class="sec-no">07 — 확인 평가 해설</span>
+  <h2>정답과 해설</h2>
+  <p class="spec" style="color:var(--ink-faint);font-size:9pt">※ 이 절은 교사용 통합본에만 수록한다. 학생 배부용에서는 제거한다.</p>
+
+  <div class="ans"><span class="an">01</span><div class="ab"><code>printf("int %zu bytes\n", sizeof(int));</code> 형태로 여섯 줄. <b>지도 포인트</b> — <code>long</code>이 8바이트로 나오는 것을 보여 주고, 윈도우에서는 4바이트임을 반드시 덧붙인다.</div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab"><code>#include &lt;limits.h&gt;</code> 후 <code>printf("%d %d\n", INT_MIN, INT_MAX);</code>. 숫자를 직접 적은 답안은 오답 처리한다. 상수를 쓰는 습관이 목적이다.</div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab"><code>long long sum = (long long)N * (N + 1) / 2;</code> — N의 최댓값 10<sup>6</sup>에서 중간값이 약 10<sup>12</sup>이므로 반드시 형변환이 필요하다. <code>int</code>로 제출한 답안은 N=1000000에서 바로 틀린다.</div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab"><code>printf("%lld\n", (long long)A * B);</code> — 10<sup>12</sup>는 int 범위 밖이다. <b>흔한 오답</b>: <code>long long p = A * B;</code>(곱셈이 이미 int로 끝남).</div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab">2×10<sup>6</sup>의 세제곱은 8×10<sup>18</sup>. <code>LLONG_MAX</code>는 약 9.22×10<sup>18</sup>이므로 <b>간신히 들어간다</b>. <code>(long long)A * A * A</code>로 쓴다. <b>지도 포인트</b> — 이 문제는 "long long도 무한하지 않다"를 느끼게 하는 자리다. A가 3,000,000이면 넘친다.</div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab"><code>char c; scanf("%c", &amp;c); printf("%d %d\n", c, c - 'a');</code> — 'k'는 107, 'a'는 97이므로 10.</div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab"><code>printf("%c\n", c - 'a' + 'A');</code> 또는 <code>c - 32</code>. 전자를 권장한다. 후자는 32라는 숫자의 의미가 코드에 드러나지 않는다.</div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab"><code>INT_MAX + 1</code> → <b>−2147483648</b>, <code>INT_MIN - 1</code> → <b>2147483647</b>. 양 끝이 서로 이어져 있다는 것을 관찰시킨다. <b>보충</b> — 부호 있는 정수의 오버플로는 C 표준상 정의되지 않은 동작이라, 최적화 옵션에 따라 다른 결과가 나올 수도 있음을 교사가 알고 있어야 한다.</div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab">10<sup>5</sup> × 10<sup>5</sup> = 10<sup>10</sup> &gt; 21억이므로 <b>int로 부족하다</b>. <code>(long long)W * H</code>. 근거를 주석으로 쓰게 하는 것이 이 문제의 목적이다.</div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab">세 수의 합은 최대 6×10<sup>9</sup>으로 int 범위를 넘는다. <code>long long s = (long long)a + b + c;</code> 후 <code>printf("%.2f\n", s / 3.0);</code>. <b>흔한 오답</b>: <code>(a+b+c)/3.0</code> — 괄호 안이 이미 int로 넘친다.</div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab"><code>long long total = (long long)n * (2LL * a + (long long)(n - 1) * d) / 2;</code> — 안쪽 <code>(n-1)*d</code>도 10<sup>6</sup>×10<sup>3</sup>=10<sup>9</sup>으로 아슬아슬하다. <b>지도 포인트</b> — 중첩된 식에서는 <b>모든</b> 중간값을 점검해야 한다. 바깥쪽만 형변환한 답안이 많이 나온다.</div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">입력도 <code>long long</code>이므로 <code>scanf("%lld", &amp;s);</code>. 이어서 <code>s/86400</code>, <code>s/3600%24</code>, <code>s/60%60</code>, <code>s%60</code>. <b>흔한 오답</b>: <code>scanf("%d", &amp;s)</code> — 오류 4와 같은 경고가 뜬다.</div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab">① 최대 10,000 → <code>int</code>(short도 가능하나 실무상 int) ② 최대 10<sup>9</sup> → <code>int</code>로 가능하지만 21억에 근접하므로 <code>long long</code> 권장 ③ 10<sup>12</sup> → <code>long long</code> ④ 20! ≈ 2.43×10<sup>18</sup> → <code>long long</code>(21!은 넘침). <b>지도 포인트</b> — ②처럼 "되기는 되지만 아슬아슬한" 경우의 판단 기준을 토론시킨다.</div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab">둘 다 <b>9007199254740992.0</b>으로 같게 출력된다. <code>double</code>의 유효숫자는 약 15~16자리인데 이 수는 16자리이고, 2<sup>53</sup>을 넘어서는 홀수는 표현 자체가 불가능해 가까운 짝수로 반올림된다.</div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab">126 → 127 → <b>−128</b> → −127 → −126. 127이 <code>char</code>의 최댓값이므로 1을 더하는 순간 최솟값으로 되감긴다. 1장에서 배운 <code>printf</code> 다섯 번으로 작성하게 한다.</div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">
+    <code>A + B</code>는 최대 4×10<sup>9</sup>으로 int를 넘는다. 두 가지 해법을 모두 받는다.<br>
+    ⑴ <code>printf("%lld\n", ((long long)A + B) / 2);</code><br>
+    ⑵ <code>A + (B - A) / 2</code> — 차이는 범위를 넘지 않으므로 int만으로 안전하다.<br>
+    <b>지도 포인트</b> — ⑵는 이분 탐색의 중간 지점 계산에서 그대로 쓰인다(PART 3). 여기서 한 번 보여 두면 나중에 설명이 쉬워진다.
+  </div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    공식 버전은 <b>N = 46341</b>, 누적 버전은 <b>N = 65536</b>에서 처음 틀린다.<br>
+    공식 버전의 중간값은 <code>N × (N+1)</code>이고, 46341 × 46342 ≈ 2.148×10<sup>9</sup>으로 <code>INT_MAX</code>(약 2.147×10<sup>9</sup>)를 처음 넘는다. 누적 버전의 중간값은 부분합 그 자체이므로, 합이 <code>INT_MAX</code>를 넘는 65536에서야 넘친다.<br>
+    <b>결론</b> — 오버플로 시점은 최종 답이 아니라 <b>계산 경로에서 나타나는 최댓값</b>이 정한다. 같은 답을 구하는 두 알고리즘의 안전 한계가 다를 수 있다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    <code>int</code>는 <b>12!</b>(479,001,600)까지 정확하고 13!에서 틀린다(6,227,020,800이 1,932,053,504로 나옴). <code>long long</code>은 <b>20!</b>(2,432,902,008,176,640,000)까지 정확하고 21!에서 음수가 된다.<br>
+    근거: 13! ≈ 6.2×10<sup>9</sup> &gt; 2.1×10<sup>9</sup>, 21! ≈ 5.1×10<sup>19</sup> &gt; 9.2×10<sup>18</sup>.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    출력은 <b><code>b is smaller</code></b>. <code>int</code>와 <code>unsigned int</code>를 비교하면 <code>int</code> 쪽이 <code>unsigned</code>로 변환되어 −1이 4,294,967,295가 되기 때문이다.<br>
+    정리 문장 예시 — "<code>unsigned</code>는 음수를 표현하지 못할 뿐 아니라 섞여 쓰이면 비교 결과까지 뒤집으므로, 올림피아드 코드에서는 쓰지 않는다."
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    ① <b>합</b> — 최악은 200,000 × 10<sup>9</sup> = 2×10<sup>14</sup>. int 범위를 다섯 자리 가까이 넘으므로 <code>long long</code>.<br>
+    ② <b>곱</b> — 최악은 10<sup>9</sup> × 10<sup>9</sup> = 10<sup>18</sup>. <code>LLONG_MAX</code>(약 9.22×10<sup>18</sup>) 안에 들어가므로 <code>long long</code>으로 충분하다. 단 곱하기 전에 형변환해야 한다.<br>
+    <b>지도 포인트</b> — 이 문제의 목적은 "N과 값의 범위를 곱해 최악의 경우를 손으로 계산하는 절차"를 몸에 붙이는 것이다. 앞으로 모든 문제에서 이 계산을 먼저 하게 한다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li><code>int</code>의 상한이 약 21억이라는 것을 외우고 있다</li>
+    <li>제약 조건을 보고 최악의 경우 값을 손으로 계산할 수 있다</li>
+    <li>최종 답이 아니라 중간값을 기준으로 오버플로를 판단한다</li>
+    <li>형변환을 넘치기 전 위치에 붙일 수 있다</li>
+    <li><code>long long</code>은 입력도 출력도 <code>%lld</code>로 쓴다</li>
+    <li><code>long</code>과 <code>unsigned</code>는 쓰지 않는다</li>
+    <li>정수 문제를 <code>double</code>로 풀지 않는다</li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 03장 서식 입출력</span>
+    이 장에서 <code>%lld</code>와 <code>%zu</code>가 갑자기 등장했다. 서식 지정자가 몇 종류나 있고 각각 언제 쓰는지, 그리고 1장에서 미뤄 둔 <code>scanf</code>의 반환값과 EOF 처리를 다음 장에서 정리한다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 1 · 02장 · 2026-10-12 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+
+</div>
+</body>
+</html>

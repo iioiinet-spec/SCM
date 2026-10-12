@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 1 · 06장 반복문 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#0d7a6f;
+  --accent-soft:#e3f1ef;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#8fd8cd}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+<header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 1 · C11 문법 기초 — 06 / 16</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">06</span>
+    <h1>반복문</h1>
+  </div>
+  <p class="lede">2장에서 "틀리는 N 찾기", 3장에서 "입력 끝까지 읽기" 코드를 읽기만 하고 넘어갔다. 이 장에서 그것을 직접 쓴다. 반복문은 알고리즘의 몸통이며, 여기서부터 코드의 <strong>속도</strong>를 따지기 시작한다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li><code>while</code>·<code>for</code>·<code>do-while</code>의 구조를 알고 상황에 맞게 고를 수 있다</li>
+    <li>초기화·조건·갱신 세 가지를 빠짐없이 점검해 무한 루프를 막을 수 있다</li>
+    <li><code>break</code>와 <code>continue</code>의 작용 범위를 정확히 안다</li>
+    <li>중첩 루프의 반복 횟수를 계산하고 실행 시간을 가늠할 수 있다</li>
+    <li>한 자리가 될 때까지 자릿수 합을 반복하는 과정을 추적 출력할 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 문제 · while · for · do-while · 루프 설계</div>
+  <div><b>2차시</b>break와 continue · 중첩 루프 · 반복 횟수와 시간 · 표준 코드</div>
+  <div><b>3차시</b>단계 예제 · 흔한 오류 6종 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>한 자리가 될 때까지</h2>
+  <p>어떤 수의 각 자리 숫자를 모두 더한다. 결과가 여전히 두 자리 이상이면 또 더한다. 한 자리가 될 때까지 반복한다.</p>
+  <div class="io">
+    <div><div class="lbl">987654 의 경우</div><pre>987654
+ → 9+8+7+6+5+4 = 39
+ → 3+9 = 12
+ → 1+2 = 3</pre></div>
+    <div><div class="lbl">원하는 출력</div><pre>987654 -> 39 -> 12 -> 3</pre></div>
+  </div>
+  <p>이 문제는 반복이 <strong>두 겹</strong>이다. 바깥쪽은 "한 자리가 될 때까지", 안쪽은 "자릿수를 하나씩 떼어내며". 그리고 두 반복의 성격이 다르다.</p>
+  <table>
+    <thead><tr><th style="width:20%">반복</th><th style="width:30%">몇 번 도는가</th><th>어떤 반복문이 맞는가</th></tr></thead>
+    <tbody>
+      <tr><td>바깥</td><td>미리 알 수 없다</td><td>조건이 거짓이 될 때까지 → <code>while</code></td></tr>
+      <tr><td>안쪽</td><td>자릿수만큼 — 역시 미리 모른다</td><td>수가 0이 될 때까지 → <code>while</code></td></tr>
+    </tbody>
+  </table>
+  <p>지금까지 쓴 <code>for</code>는 "몇 번 돌지 아는" 반복이었다. 이 문제처럼 <strong>횟수를 모르는</strong> 반복이 올림피아드에서는 오히려 더 많다.</p>
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> 세 가지 반복문 중 무엇을 언제 쓰는가?<br>
+    <b>②</b> 반복이 반드시 끝난다는 것을 어떻게 보장하는가?<br>
+    <b>③</b> 1,000,000,000번 도는 반복문은 몇 초나 걸리는가?
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">6.1</span>while — 조건이 참인 동안</h3>
+  <figure>
+    <figcaption><span class="fn">구조</span><span>조건을 먼저 보고, 참이면 실행</span></figcaption>
+<pre><code>while (조건식) {
+    반복할 문장
+}</code></pre>
+  </figure>
+  <p>5장의 <code>if</code>와 모양이 같다. 차이는 몸통을 실행한 뒤 <strong>다시 조건으로 돌아간다</strong>는 것뿐이다. 조건이 처음부터 거짓이면 몸통은 한 번도 실행되지 않는다.</p>
+
+  <h3><span class="tag">6.2</span>for — 횟수가 정해진 반복</h3>
+  <figure>
+    <figcaption><span class="fn">구조</span><span>세 부분을 한 줄에 모은다</span></figcaption>
+<pre><code>for (초기화; 조건; 갱신) {
+    반복할 문장
+}</code></pre>
+  </figure>
+  <p><code>while</code>로 쓰면 세 부분이 코드 여기저기에 흩어진다. <code>for</code>는 그것을 한 줄에 모아 <strong>빠뜨리기 어렵게</strong> 만든 문법이다.</p>
+  <div class="io">
+    <div><div class="lbl">while 버전</div><pre>int i = 0;          // 초기화
+while (i &lt; n) {     // 조건
+    ...
+    i++;            // 갱신
+}</pre></div>
+    <div><div class="lbl">for 버전 — 완전히 같다</div><pre>for (int i = 0; i &lt; n; i++) {
+    ...
+}</pre></div>
+  </div>
+  <p><code>for (int i = 0; ...)</code>처럼 안에서 선언한 변수는 <strong>그 반복문 안에서만</strong> 존재한다. 밖에서 쓰려면 밖에서 선언한다.</p>
+  <div class="note">
+    <span class="h">표준형을 하나만 외운다</span>
+    <code>for (int i = 0; i &lt; n; i++)</code> — <b>0부터 시작해 n 미만까지, 정확히 n번</b>. 배열을 배우는 8장부터 이 형태가 거의 전부가 되므로, 다른 모양을 쓰고 싶을 때마다 한 번 더 생각한다.
+  </div>
+
+  <h3><span class="tag">6.3</span>do-while — 일단 한 번은 실행</h3>
+  <figure>
+    <figcaption><span class="fn">구조</span><span>조건을 나중에 본다. 끝의 세미콜론에 주의</span></figcaption>
+<pre><code>do {
+    반복할 문장
+} while (조건식);</code></pre>
+  </figure>
+  <p><code>n = 0</code>으로 세 반복문을 돌려 보면 차이가 한눈에 보인다.</p>
+  <div class="io">
+    <div><div class="lbl">n = 0 일 때</div><pre>for   : (끝)
+while : (끝)
+do    : 0 (끝)</pre></div>
+    <div><div class="lbl">쓰임새</div><pre>"적어도 한 번은 해야 하는" 일.
+자릿수 분해에서 0을 입력받아도
+"0"을 출력하려면 do-while이 맞다.</pre></div>
+  </div>
+  <p>올림피아드에서는 <code>for</code>와 <code>while</code>로 대부분 해결되므로 <code>do-while</code>은 자주 쓰지 않는다. 다만 <strong>0이 입력될 때의 동작</strong>을 설계할 때 떠올릴 수 있어야 한다.</p>
+
+  <h3><span class="tag">6.4</span>반복문 설계: 세 가지를 반드시 확인</h3>
+  <p>반복문을 쓸 때마다 아래 세 질문에 답한다. 하나라도 빠지면 무한 루프이거나 off-by-one이다.</p>
+  <table>
+    <thead><tr><th style="width:18%">점검</th><th style="width:34%">질문</th><th>어기면</th></tr></thead>
+    <tbody>
+      <tr><td><strong>초기화</strong></td><td>누적 변수와 반복 변수가 올바른 값에서 시작하는가</td><td>쓰레기값부터 더해진다</td></tr>
+      <tr><td><strong>조건</strong></td><td>몇 번 도는가. <code>&lt;</code>인가 <code>&lt;=</code>인가</td><td>한 번 모자라거나 한 번 더 돈다</td></tr>
+      <tr><td><strong>갱신</strong></td><td>조건에 쓰인 변수가 몸통에서 <strong>반드시</strong> 변하는가</td><td>무한 루프</td></tr>
+    </tbody>
+  </table>
+  <h4>반복 횟수 세는 법</h4>
+  <table>
+    <thead><tr><th style="width:34%">for 문</th><th style="width:20%">횟수</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td><code>i = 0; i &lt; n; i++</code></td><td class="num">n</td><td><strong>표준형</strong></td></tr>
+      <tr><td><code>i = 1; i &lt;= n; i++</code></td><td class="num">n</td><td>1부터 셀 때</td></tr>
+      <tr><td><code>i = 1; i &lt; 10; i++</code></td><td class="num">9</td><td>10이 아니다</td></tr>
+      <tr><td><code>i = 1; i &lt;= 10; i++</code></td><td class="num">10</td><td></td></tr>
+      <tr><td><code>i = a; i &lt;= b; i++</code></td><td class="num">b − a + 1</td><td>양끝 포함</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="tag">6.5</span>break와 continue</h3>
+  <table>
+    <thead><tr><th style="width:18%">키워드</th><th style="width:34%">하는 일</th><th>예: 1~10에서</th></tr></thead>
+    <tbody>
+      <tr><td><code>break</code></td><td>반복문을 <strong>즉시 끝낸다</strong></td><td><code>i==5</code>에서 break → <code>1 2 3 4</code></td></tr>
+      <tr><td><code>continue</code></td><td>이번 회차만 건너뛰고 <strong>다음 회차로</strong></td><td>짝수에서 continue → <code>1 3 5 7 9</code></td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">break는 가장 안쪽 반복문 하나만 끝낸다</span>
+    중첩된 <code>for</code> 안에서 <code>break</code>를 쓰면 안쪽 반복만 끝나고 바깥 반복은 계속 돈다. 아래 코드의 출력은 <code>(1,1) (2,1) (3,1)</code>이다.
+<pre><code>for (int i = 1; i &lt;= 3; i++) {
+    for (int j = 1; j &lt;= 3; j++) {
+        if (j == 2) { break; }
+        printf("(%d,%d) ", i, j);
+    }
+}</code></pre>
+    바깥까지 빠져나가려면 <b>깃발 변수</b>를 쓰거나, 10장에서 배울 <b>함수로 분리해 <code>return</code></b>하는 방법을 쓴다.
+  </div>
+  <p><code>continue</code>는 <code>for</code>에서 <strong>갱신식을 건너뛰지 않는다</strong>. 그러나 <code>while</code>에서는 갱신을 몸통에서 직접 하므로, <code>continue</code>가 갱신을 건너뛰어 무한 루프가 되는 사고가 자주 난다.</p>
+
+  <h3><span class="tag">6.6</span>반복 횟수와 실행 시간</h3>
+  <p>2장에서 자료형의 범위를 따졌듯, 이제부터는 <strong>반복 횟수</strong>를 따진다. 아래는 덧셈 한 번만 하는 가장 단순한 반복문의 실측값이다.</p>
+  <table>
+    <thead><tr><th style="width:30%">반복 횟수</th><th style="width:24%">실측 시간</th><th>판단</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1,000,000 (10<sup>6</sup>)</td><td class="num">0.003 초</td><td>여유롭다</td></tr>
+      <tr><td class="num">10,000,000 (10<sup>7</sup>)</td><td class="num">0.027 초</td><td>여유롭다</td></tr>
+      <tr><td class="num">100,000,000 (10<sup>8</sup>)</td><td class="num">0.266 초</td><td>가능하지만 몸통이 무거우면 위험</td></tr>
+      <tr><td class="num">1,000,000,000 (10<sup>9</sup>)</td><td class="num">2.646 초</td><td><strong>대부분 시간 초과</strong></td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <span class="h">1초 ≈ 1억 번</span>
+    위 실측에서 1억 번이 0.27초였지만, 그것은 몸통이 덧셈 하나뿐이기 때문이다. 실제 문제의 몸통은 조건 검사·배열 접근·함수 호출이 섞여 몇 배 무겁다. 그래서 <b>"1초에 1억 번"을 기준으로 잡는다</b>. 넉넉히 잡아 두면 틀릴 일이 없다.
+  </div>
+  <h4>중첩 루프는 곱해진다</h4>
+  <table>
+    <thead><tr><th style="width:22%">N</th><th style="width:28%">N² 반복 횟수</th><th style="width:20%">실측 시간</th><th>판단</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1,000</td><td class="num">1,000,000</td><td class="num">0.002 초</td><td>문제없음</td></tr>
+      <tr><td class="num">10,000</td><td class="num">100,000,000</td><td class="num">0.121 초</td><td>경계선</td></tr>
+      <tr><td class="num">30,000</td><td class="num">900,000,000</td><td class="num">1.206 초</td><td><strong>위험</strong></td></tr>
+    </tbody>
+  </table>
+  <p>여기서 올림피아드의 가장 중요한 판단 기준이 나온다. <strong>문제의 N을 보고 어떤 알고리즘이 허용되는지 먼저 결정한다.</strong> N이 10만인데 이중 루프를 쓰면 100억 번이 되어 어떤 코드를 짜도 통과할 수 없다.</p>
+  <table>
+    <thead><tr><th style="width:26%">N의 크기</th><th style="width:28%">허용되는 반복</th><th>예</th></tr></thead>
+    <tbody>
+      <tr><td class="num">N ≤ 1,000</td><td>삼중 루프 N³까지</td><td>완전탐색</td></tr>
+      <tr><td class="num">N ≤ 10,000</td><td>이중 루프 N²</td><td>모든 쌍 비교</td></tr>
+      <tr><td class="num">N ≤ 1,000,000</td><td>단일 루프 또는 N log N</td><td>정렬, 한 번 훑기</td></tr>
+      <tr><td class="num">N ≥ 10<sup>9</sup></td><td>루프 없이 공식 또는 log N</td><td>수식, 이분 탐색</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="tag">6.7</span>무한 루프와 종료 보장</h3>
+  <p>반복이 끝나려면 <strong>조건에 쓰인 값이 종료 쪽으로 반드시 움직여야</strong> 한다. 세 가지 전형적인 사고가 있다.</p>
+  <table>
+    <thead><tr><th style="width:38%">코드</th><th>왜 끝나지 않는가</th></tr></thead>
+    <tbody>
+      <tr><td><code>while (i &lt; n) { sum += i; }</code></td><td><code>i++</code>가 없다. 갱신 누락</td></tr>
+      <tr><td><code>while (n != 1) { n = n / 2; }</code></td><td><code>n = 0</code>으로 시작하면 영원히 0</td></tr>
+      <tr><td><code>while (scanf("%d",&amp;x) != EOF)</code></td><td>3장의 그 사고. 글자가 섞이면 계속 0</td></tr>
+    </tbody>
+  </table>
+  <p>일부러 무한 루프를 만들고 <code>break</code>로 빠져나오는 형태도 쓴다. 이때는 <strong><code>break</code>에 반드시 도달한다는 근거</strong>가 있어야 한다.</p>
+  <figure>
+    <figcaption><span class="fn">의도적 무한 루프</span><span>탈출 조건을 몸통 가운데 두고 싶을 때</span></figcaption>
+<pre><code>while (1) {
+    if (더 이상 읽을 것이 없다) { break; }
+    ...
+}</code></pre>
+  </figure>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드: 자릿수 합 반복</h2>
+  <p>도입 문제의 답이다. 바깥 <code>while</code>과 안쪽 <code>while</code>의 역할이 다르다는 점에 집중한다.</p>
+  <figure>
+    <figcaption><span class="fn">digitroot.c</span><span>표준 코드 · gcc 검증 완료</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n;
+    if (scanf("%d", &amp;n) != 1) return 1;
+
+    printf("%d", n);
+
+    while (n &gt;= 10) {
+        int sum = 0;
+        while (n &gt; 0) {
+            sum += n % 10;
+            n /= 10;
+        }
+        n = sum;
+        printf(" -&gt; %d", n);
+    }
+
+    printf("\n");
+    return 0;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:34%">요소</th><th>읽는 법</th></tr></thead>
+    <tbody>
+      <tr><td><code>while (n &gt;= 10)</code></td><td>바깥 반복. "두 자리 이상인 동안". 한 자리가 되면 끝난다.</td></tr>
+      <tr><td><code>int sum = 0;</code></td><td><strong>매 회차마다</strong> 0으로 초기화한다. 바깥에 선언하면 이전 결과가 누적되어 틀린다.</td></tr>
+      <tr><td><code>sum += n % 10;</code></td><td>맨 끝 자리를 떼어 더한다(4장의 나머지).</td></tr>
+      <tr><td><code>n /= 10;</code></td><td>맨 끝 자리를 버린다. <strong>이것이 안쪽 반복의 갱신</strong>이다. 빠뜨리면 무한 루프.</td></tr>
+      <tr><td><code>n = sum;</code></td><td><strong>바깥 반복의 갱신</strong>이다. 이것이 있어야 <code>n</code>이 작아져 언젠가 10 미만이 된다.</td></tr>
+    </tbody>
+  </table>
+  <table>
+    <thead><tr><th style="width:30%">INPUT</th><th style="width:44%">OUTPUT</th><th>확인 사항</th></tr></thead>
+    <tbody>
+      <tr><td class="num">987654</td><td class="num">987654 -&gt; 39 -&gt; 12 -&gt; 3</td><td>세 번 반복</td></tr>
+      <tr><td class="num">9875</td><td class="num">9875 -&gt; 29 -&gt; 11 -&gt; 2</td><td></td></tr>
+      <tr><td class="num">100</td><td class="num">100 -&gt; 1</td><td>0이 섞여도 정상</td></tr>
+      <tr><td class="num">5</td><td class="num">5</td><td><strong>처음부터 한 자리 — 반복 0회</strong></td></tr>
+      <tr><td class="num">999999999</td><td class="num">999999999 -&gt; 81 -&gt; 9</td><td>int 최대 근처</td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">반복 0회가 경계값이다</span>
+    입력 <code>5</code>는 바깥 <code>while</code>을 <b>한 번도 돌지 않는다</b>. 그래서 처음에 <code>printf("%d", n)</code>으로 원래 수를 먼저 찍어 두는 설계가 필요했다. 반복문을 쓸 때는 <b>0회 도는 경우</b>를 항상 따로 시험한다.
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+
+  <h3><span class="tag">예제 1</span>2장으로 돌아가기 — 틀리는 N 직접 찾기</h3>
+  <p>2장 예제 1에서 읽기만 했던 코드다. 이제 세 부분이 무엇인지 보인다.</p>
+  <figure>
+    <figcaption><span class="fn">ex1.c</span><span>int와 long long을 나란히 누적한다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int si = 0;
+    long long sl = 0;
+
+    for (int n = 1; n &lt;= 70000; n++) {
+        si += n;
+        sl += n;
+        if ((long long)si != sl) {
+            printf("first wrong N = %d\n", n);
+            break;
+        }
+    }
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>first wrong N = 65536</pre></div>
+    <div><div class="lbl">구조 분해</div><pre>초기화 : si = 0, sl = 0, n = 1
+조건   : n &lt;= 70000
+갱신   : n++
+탈출   : break (조건 밖의 종료)</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 2</span>3장으로 돌아가기 — 입력 끝까지</h3>
+  <figure>
+    <figcaption><span class="fn">ex2.c</span><span>조건 자체가 입력 함수다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x;
+    long long sum = 0;
+
+    while (scanf("%d", &amp;x) == 1) {
+        sum += x;
+    }
+
+    printf("%lld\n", sum);
+    return 0;
+}</code></pre>
+  </figure>
+  <p>이 반복문의 <strong>갱신</strong>은 어디에 있을까. 눈에 보이지 않지만 <code>scanf</code>가 입력을 한 개씩 소비하는 것이 갱신이다. 3장에서 본 대로, 입력이 소비되지 않는 상황(<code>!= EOF</code>)에서는 갱신이 사라져 무한 루프가 된다.</p>
+
+  <h3><span class="tag">예제 3</span>소수 판정 — 루프 횟수를 줄인다</h3>
+  <figure>
+    <figcaption><span class="fn">ex3.c</span><span>i*i &lt;= n 이 핵심</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int n;
+    if (scanf("%d", &amp;n) != 1) return 1;
+
+    int is_prime = (n &gt;= 2);
+
+    for (int i = 2; i * i &lt;= n; i++) {
+        if (n % i == 0) {
+            is_prime = 0;
+            break;
+        }
+    }
+
+    printf("%s\n", is_prime ? "prime" : "not prime");
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT / OUTPUT</div><pre>97  → prime
+91  → not prime  (7 × 13)
+1   → not prime
+2   → prime</pre></div>
+    <div><div class="lbl">루프 횟수</div><pre>n = 97 일 때
+i는 2부터 9까지 8번만 돈다.
+(10 × 10 = 100 &gt; 97)
+96번이 아니라 8번.</pre></div>
+  </div>
+  <p><code>i &lt; n</code>으로 쓰면 n번 가까이 돌지만 <code>i * i &lt;= n</code>으로 쓰면 √n번이면 끝난다. n이 10<sup>9</sup>일 때 10억 번과 3만 번의 차이다. <strong>조건식 하나가 시간 초과와 정답을 가른다.</strong></p>
+  <p><code>sqrt()</code>를 쓰지 않고 <code>i * i</code>로 비교하는 이유는 두 가지다. 실수 오차가 없고, 수학 라이브러리를 포함하지 않아도 된다. 다만 n이 크면 <code>i * i</code>가 넘칠 수 있으므로 <code>(long long)i * i</code>로 쓰기도 한다(2장).</p>
+
+  <h3><span class="tag">예제 4</span>중첩 루프 — 구구단 표</h3>
+  <figure>
+    <figcaption><span class="fn">ex4.c</span><span>안쪽이 다 돌아야 바깥이 한 칸 간다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    for (int i = 2; i &lt;= 4; i++) {
+        for (int j = 1; j &lt;= 9; j++) {
+            printf("%2d ", i * j);
+        }
+        printf("\n");
+    }
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre> 2  4  6  8 10 12 14 16 18
+ 3  6  9 12 15 18 21 24 27
+ 4  8 12 16 20 24 28 32 36</pre></div>
+    <div><div class="lbl">반복 횟수</div><pre>바깥 3번 × 안쪽 9번 = 27번
+줄바꿈은 안쪽 루프 밖,
+바깥 루프 안에 있어야 한다.</pre></div>
+  </div>
+  <p><code>printf("\n")</code>의 위치가 이 코드의 전부다. 안쪽 루프 안에 넣으면 27줄이 되고, 바깥 루프 밖에 넣으면 한 줄이 된다.</p>
+
+  <h3><span class="tag">예제 5</span>break와 continue</h3>
+  <figure>
+    <figcaption><span class="fn">ex5.c</span><span>같은 루프, 다른 키워드</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    for (int i = 1; i &lt;= 10; i++) {
+        if (i == 5) { break; }
+        printf("%d ", i);
+    }
+    printf("\n");
+
+    for (int i = 1; i &lt;= 10; i++) {
+        if (i % 2 == 0) { continue; }
+        printf("%d ", i);
+    }
+    printf("\n");
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>1 2 3 4
+1 3 5 7 9</pre></div>
+    <div><div class="lbl">차이</div><pre>break    : 루프를 끝낸다
+continue : 이번 회차만 건너뛴다</pre></div>
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 1</span><span class="t">off-by-one — 한 번 더, 또는 한 번 덜</span></div>
+    <div class="body">
+      <p>경고가 없다. 반복 횟수가 1만큼 어긋나므로 대부분의 입력에서는 비슷한 답이 나와 발견이 늦다.</p>
+      <table style="margin:6px 0">
+        <thead><tr><th style="width:40%">쓴 것</th><th style="width:18%">횟수</th><th>의도</th></tr></thead>
+        <tbody>
+          <tr><td><code>i = 1; i &lt; n; i++</code></td><td class="num">n − 1</td><td>n번 돌려던 것</td></tr>
+          <tr><td><code>i = 0; i &lt;= n; i++</code></td><td class="num">n + 1</td><td>n번 돌려던 것</td></tr>
+        </tbody>
+      </table>
+      <div class="fix"><b>고치는 법</b> — 표준형 <code>for (int i = 0; i &lt; n; i++)</code>를 기본으로 쓰고, 벗어날 때는 <b>n = 1</b>과 <b>n = 0</b>을 넣어 횟수를 손으로 센다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 2</span><span class="t">누적 변수를 초기화하지 않았다</span></div>
+    <div class="body">
+      <pre>int sum;              // 쓰레기값
+for (int i = 1; i &lt;= n; i++) { sum += i; }</pre>
+      <p>지역 변수는 자동으로 0이 되지 않는다. 실행할 때마다 다른 값이 나오거나, 우연히 0이 들어 있어 <strong>집에서는 맞고 채점에서는 틀리는</strong> 최악의 형태가 된다.</p>
+      <p>반대 방향의 실수도 있다. 표준 코드의 <code>int sum = 0;</code>을 바깥 <code>while</code> 밖으로 빼면 매 회차 누적이 겹쳐 틀린 답이 나온다.</p>
+      <div class="fix"><b>고치는 법</b> — 누적 변수는 <b>선언과 동시에 초기화</b>한다. 그리고 "어느 반복 바깥에 두어야 하는가"를 따로 생각한다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 3</span><span class="t">갱신을 빠뜨려 무한 루프</span></div>
+    <div class="body">
+      <pre>while (n &gt; 0) {
+    sum += n % 10;
+    // n /= 10;  을 빠뜨리면
+}</pre>
+      <p>프로그램이 멈추지 않는다. 채점 결과는 <strong>시간 초과</strong>로 나오므로, 알고리즘이 느린 줄 알고 엉뚱한 곳을 고치게 된다.</p>
+      <p><code>while</code>에서 <code>continue</code>를 쓸 때 특히 조심한다. 갱신이 <code>continue</code> 아래에 있으면 건너뛰어진다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>while</code>을 쓸 때마다 "조건에 쓰인 변수가 몸통의 <b>모든 경로</b>에서 변하는가"를 확인한다. 가능하면 갱신이 눈에 보이는 <code>for</code>를 쓴다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 4</span><span class="t">for 뒤에 세미콜론을 찍었다</span></div>
+    <div class="body">
+      <pre>y.c:4:5: warning: this 'for' clause does not guard...
+          [-Wmisleading-indentation]
+    4 |     for (int i = 1; i &lt;= n; i++);
+      |     ^~~
+    5 |     {
+      |     ^</pre>
+      <p>세미콜론 하나가 <strong>빈 몸통</strong>이 되어, 아래 블록은 반복과 무관하게 <strong>한 번만</strong> 실행된다. n이 5여도 결과는 1이다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>for</code>와 <code>while</code>의 괄호 뒤에는 세미콜론을 찍지 않는다. gcc가 잡아 주므로 경고를 흘리지 않는다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 5</span><span class="t">실수를 루프 변수로 썼다</span></div>
+    <div class="body">
+      <pre>for (double x = 0.0; x != 1.0; x += 0.1) { ... }   // 끝나지 않는다</pre>
+      <p>0.1을 열 번 더한 값은 1.0이 아니라 <code>0.99999999999999988898</code>이다(2장). <code>x != 1.0</code>은 영원히 참이다.</p>
+      <div class="fix"><b>고치는 법</b> — 루프 변수는 <b>정수로</b> 쓴다. 실수가 필요하면 <code>for (int i = 0; i &lt; 10; i++) { double x = i * 0.1; }</code>처럼 정수에서 계산해 낸다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 6</span><span class="t">중첩 루프에서 break가 바깥까지 나갈 줄 알았다</span></div>
+    <div class="body">
+      <p>경고가 없다. 코드만 보면 "찾으면 끝낸다"처럼 읽히지만 실제로는 바깥 반복이 끝까지 돈다.</p>
+      <pre>for (int i = 0; i &lt; n; i++) {
+    for (int j = 0; j &lt; n; j++) {
+        if (조건) { break; }   // 안쪽만 끝난다
+    }
+}</pre>
+      <div class="fix"><b>고치는 법</b> — 깃발 변수를 두고 바깥 조건에도 넣는다. <code>int found = 0;</code> … <code>for (int i = 0; i &lt; n &amp;&amp; !found; i++)</code>. 10장 이후로는 함수로 분리해 <code>return</code>하는 쪽이 깔끔하다.</div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    오류 1·2·3·6은 경고가 없다. 반복문의 정확성은 <b>세 가지 점검(초기화·조건·갱신)</b>과 <b>경계 입력 시험</b>으로만 확인된다. 특히 <b>0회 도는 입력</b>과 <b>1회만 도는 입력</b>을 반드시 넣어 본다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>배열은 아직 쓰지 않는다. 모든 입력 범위에서 <strong>반복 횟수를 먼저 계산</strong>하고, 6.6절의 기준으로 통과 여부를 판단한 뒤 작성한다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>1부터 N까지 출력</b> — 정수 N을 입력받아 1부터 N까지 공백으로 구분해 한 줄에 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5</pre></div><div><span>OUTPUT</span><pre>1 2 3 4 5</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>역순 출력</b> — 정수 N을 입력받아 N부터 1까지 거꾸로 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5</pre></div><div><span>OUTPUT</span><pre>5 4 3 2 1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>1부터 N까지의 합</b> — 공식을 쓰지 말고 <strong>반복으로</strong> 구하라. N ≤ 10<sup>6</sup>, 자료형은 2장대로 결정한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>1000000</pre></div><div><span>OUTPUT</span><pre>500000500000</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>구구단 한 단</b> — 정수 N(2~9)을 입력받아 <code>N x i = 결과</code> 형식으로 i를 1부터 9까지 한 줄씩 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3</pre></div><div><span>OUTPUT</span><pre>3 x 1 = 3
+3 x 2 = 6
+...
+3 x 9 = 27</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>자릿수 합</b> — 정수를 입력받아 각 자리 숫자의 합을 출력하라(한 번만, 반복 축소 없이).</p>
+    <div class="sample"><div><span>INPUT</span><pre>987654</pre></div><div><span>OUTPUT</span><pre>39</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>팩토리얼</b> — 정수 N(1 ≤ N ≤ 20)을 입력받아 N!을 출력하라. 2장에서 확인한 자료형 한계를 떠올려라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>20</pre></div><div><span>OUTPUT</span><pre>2432902008176640000</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>별 삼각형</b> — 정수 N을 입력받아 i번째 줄에 별 i개를 출력하라. 1장 연습 2번을 반복문으로 일반화하는 문제다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4</pre></div><div><span>OUTPUT</span><pre>*
+**
+***
+****</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>홀수만 더하기</b> — 1부터 N까지의 수 중 홀수만 더해 출력하라. <code>continue</code>를 사용하는 버전과 사용하지 않는 버전 두 가지로 작성하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>10</pre></div><div><span>OUTPUT</span><pre>25</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>자릿수 합 반복 추적</b> — 표준 코드를 직접 작성하라. 입력 <code>5</code>와 <code>100</code>을 반드시 시험하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>9875</pre></div><div><span>OUTPUT</span><pre>9875 -&gt; 29 -&gt; 11 -&gt; 2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>소수 판정</b> — 정수 N(1 ≤ N ≤ 10<sup>9</sup>)을 입력받아 소수면 <code>prime</code>, 아니면 <code>not prime</code>을 출력하라. 반복 횟수를 먼저 계산해 적어라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>999999937</pre></div><div><span>OUTPUT</span><pre>prime</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>약수의 개수와 합</b> — 정수 N(1 ≤ N ≤ 10<sup>9</sup>)의 약수의 개수와 합을 출력하라. 10번과 같은 아이디어로 반복 횟수를 √N으로 줄여라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>36</pre></div><div><span>OUTPUT</span><pre>9 91</pre></div></div>
+    <p class="spec">※ 약수는 쌍으로 나타난다. 제곱수일 때 중복을 조심하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>최대공약수</b> — 두 정수의 최대공약수를 <code>while</code>과 나머지 연산으로 구하라(유클리드 호제법). <code>a %= b</code>와 교환을 반복한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>48 18</pre></div><div><span>OUTPUT</span><pre>6</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>입력 끝까지 최댓값</b> — 개수를 모르는 정수들이 주어진다. 최댓값과 최솟값을 공백으로 구분해 출력하라. 입력이 하나뿐인 경우도 올바르게 동작해야 한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3 -7 15 0</pre></div><div><span>OUTPUT</span><pre>15 -7</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>숫자 뒤집기</b> — 정수를 입력받아 자릿수를 뒤집어 출력하라. 앞에 오는 0은 출력하지 않는다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>12300</pre></div><div><span>OUTPUT</span><pre>321</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>마름모</b> — 홀수 N을 입력받아 별로 마름모를 출력하라. 중첩 루프와 공백 개수 계산이 필요하다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5</pre></div><div><span>OUTPUT</span><pre>  *
+ ***
+*****
+ ***
+  *</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>반복 횟수 재기</b> — N을 입력받아 <code>for (i = 0; i &lt; N; i++)</code>를 돌리고 걸린 시간을 <code>stderr</code>에 출력하는 프로그램을 작성하라. N을 10<sup>6</sup>, 10<sup>7</sup>, 10<sup>8</sup>, 10<sup>9</sup>로 바꿔 가며 측정해 표로 만들고, 6.6절의 실측표와 비교하라.</p>
+    <p class="spec">※ <code>#include &lt;time.h&gt;</code>와 <code>clock()</code>을 사용한다.</p>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>경계 입력 설계</b> — 09번 자릿수 합 반복 코드에 대해 <strong>반복이 0회 도는 입력</strong>, <strong>1회 도는 입력</strong>, <strong>3회 이상 도는 입력</strong>을 각각 만들고 기대 출력을 적어라. 그리고 코드에서 <code>printf("%d", n)</code>을 빼면 어느 입력에서 틀리는지 밝혀라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>무한 루프 네 가지</b> — 아래 네 코드 중 끝나지 않는 것을 모두 고르고, 각각 세 가지 점검(초기화·조건·갱신) 중 무엇이 잘못됐는지 밝혀라. 끝나는 것은 몇 번 도는지 적어라.</p>
+<pre><code>(가) int i = 0; while (i &lt; 5) { printf("%d", i); }
+(나) int i = 5; while (i &gt; 0) { printf("%d", i); i--; }
+(다) int i = 0; while (i != 10) { i += 3; }
+(라) for (double x = 0.0; x != 1.0; x += 0.25) { }</code></pre>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>이중 루프의 탈출</b> — 1 이상 N 이하의 두 수 i, j 중 <code>i * j == K</code>를 만족하는 첫 쌍을 찾아 출력하고, 없으면 <code>none</code>을 출력하라. 안쪽 <code>break</code>만으로는 바깥이 계속 도는 것을 확인한 뒤, 깃발 변수로 고쳐라. 두 버전의 반복 횟수를 비교해 적어라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>10 12</pre></div><div><span>OUTPUT</span><pre>2 6</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>N을 보고 알고리즘 고르기</b> — 아래 네 문제 상황에 대해 ① 단순한 방법의 반복 횟수 ② 6.6절 기준으로 통과 가능한지 ③ 통과 불가라면 어떤 방향으로 줄여야 하는지를 각각 쓰라.</p>
+    <p class="spec">⑴ N ≤ 10<sup>6</sup>인 수열에서 최댓값 찾기 ⑵ N ≤ 10<sup>5</sup>인 수열에서 <strong>모든 두 수의 쌍</strong>을 비교 ⑶ N ≤ 10<sup>9</sup>에서 소수 판정 ⑷ N ≤ 10<sup>12</sup>에서 1부터 N까지의 합</p>
+  </div></div>
+
+  </div>
+</section>
+
+<section class="pagebreak answers">
+  <span class="sec-no">07 — 확인 평가 해설</span>
+  <h2>정답과 해설</h2>
+  <p class="spec" style="color:var(--ink-faint);font-size:9pt">※ 이 절은 교사용 통합본에만 수록한다. 학생 배부용에서는 제거한다.</p>
+
+  <div class="ans"><span class="an">01</span><div class="ab"><code>for (int i = 1; i &lt;= n; i++) { printf("%d ", i); }</code> 후 <code>printf("\n");</code> — 끝에 공백이 남는 것이 문제되면 <code>printf("%d%c", i, i==n?'\n':' ')</code>로 처리한다(3장 출력 형식).</div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab"><code>for (int i = n; i &gt;= 1; i--)</code> — 역순 루프의 세 부분이 모두 뒤집힌다는 것을 짚는다. 조건이 <code>i &gt; 0</code>이어도 같다.</div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab"><code>long long sum = 0; for (int i = 1; i &lt;= n; i++) { sum += i; }</code> — 2장 표준 코드의 반복 버전. 누적 변수만 <code>long long</code>이면 된다는 점을 재확인한다.</div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab"><code>printf("%d x %d = %d\n", n, i, n * i);</code> — 서식 문자열에 변수를 세 개 넣는 연습이다.</div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab"><code>int s = 0; while (n &gt; 0) { s += n % 10; n /= 10; }</code> — <b>흔한 오답</b>: <code>n /= 10;</code> 누락 → 무한 루프. 입력 <code>0</code>을 넣으면 0이 출력되는지도 확인시킨다.</div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab"><code>long long f = 1; for (int i = 1; i &lt;= n; i++) { f *= i; }</code> — 2장 연습 18번에서 20!까지가 한계임을 확인했으므로 N ≤ 20이 조건이다. N = 21을 넣어 음수가 나오는 것을 보여 주면 좋다.</div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab">이중 루프. <code>for (int i = 1; i &lt;= n; i++) { for (int j = 1; j &lt;= i; j++) { printf("*"); } printf("\n"); }</code> — 안쪽 조건이 <code>j &lt;= i</code>로 <b>바깥 변수에 의존</b>하는 첫 경험이다.</div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab">
+    <code>continue</code> 버전: <code>if (i % 2 == 0) { continue; } sum += i;</code><br>
+    미사용 버전: <code>if (i % 2 != 0) { sum += i; }</code> 또는 <code>for (int i = 1; i &lt;= n; i += 2)</code>.<br>
+    <b>지도 포인트</b> — 세 번째 방법이 가장 빠르다(반복 횟수 절반). <code>continue</code>는 읽기 쉬울 때만 쓰는 것이 좋다는 판단 기준을 세운다.
+  </div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab">표준 코드와 동일. <code>5</code> → <code>5</code>(반복 0회), <code>100</code> → <code>100 -&gt; 1</code>. <code>sum</code> 선언 위치를 바깥 <code>while</code> 밖으로 옮겨 틀려 보게 한 뒤 되돌리면 오류 2가 몸에 남는다.</div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab">
+    예제 3과 동일. <b>반복 횟수</b>는 √(10<sup>9</sup>) ≈ 31,623번으로 여유롭다.<br>
+    <b>주의</b> — <code>i * i</code>에서 i가 약 31,623이면 <code>i*i</code>는 약 10<sup>9</sup>로 int 범위 안이다. 다만 N이 10<sup>18</sup>까지 커지는 문제에서는 <code>(long long)i * i</code>가 필요하다.<br>
+    <b>경계값</b> — 1(not prime), 2(prime), 4(not prime).
+  </div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab">
+<pre><code>int cnt = 0; long long sum = 0;
+for (int i = 1; (long long)i * i &lt;= n; i++) {
+    if (n % i == 0) {
+        cnt += 2; sum += i + n / i;
+        if ((long long)i * i == n) { cnt--; sum -= i; }
+    }
+}</code></pre>
+    36의 약수는 1,2,3,4,6,9,12,18,36으로 <b>9개</b>, 합은 <b>91</b>. 6×6=36이므로 6이 중복되는 것을 빼는 처리가 핵심이다. 이 중복 처리를 빠뜨리면 10개, 97이 나온다.
+  </div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">
+<pre><code>while (b != 0) { int t = a % b; a = b; b = t; }
+printf("%d\n", a);</code></pre>
+    48, 18 → 6. <b>종료 보장</b> — <code>b</code>가 매 회 반드시 작아지고 0 이상이므로 유한 번에 끝난다. 이것이 6.7절의 "종료 쪽으로 움직인다"의 모범 사례다. PART 2에서 다시 다룬다.
+  </div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab">
+    첫 값을 읽어 <code>mx</code>와 <code>mn</code>의 <b>초기값으로 삼는</b> 것이 핵심이다. <code>mx = 0</code>으로 시작하면 모든 입력이 음수일 때 틀린다.
+<pre><code>int x, mx, mn, first = 1;
+while (scanf("%d", &amp;x) == 1) {
+    if (first) { mx = mn = x; first = 0; }
+    else { if (x &gt; mx) { mx = x; } if (x &lt; mn) { mn = x; } }
+}</code></pre>
+    <b>지도 포인트</b> — <code>INT_MIN</code>/<code>INT_MAX</code>로 초기화하는 방법도 있다(2장의 limits.h). 두 방법을 모두 보여 준다.
+  </div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab"><code>while (n &gt; 0) { r = r * 10 + n % 10; n /= 10; }</code> — 12300 → 321. 앞의 0이 자동으로 사라지는 이유(<code>r * 10 + 0</code>이 0에서 시작)를 추적시킨다. <b>주의</b> — 뒤집은 수가 int를 넘을 수 있으므로 큰 입력에서는 <code>long long</code>.</div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab">
+    위쪽 절반과 아래쪽 절반을 나눠 쓰는 것이 가장 단순하다. i번째 줄의 공백은 <code>n/2 - i</code>개, 별은 <code>2*i + 1</code>개.<br>
+    <b>지도 포인트</b> — 공식을 먼저 세우고 코드를 쓰게 한다. 바로 코딩하면 1씩 어긋나 한참 헤맨다. 7장 격자 패턴의 예고 문제다.
+  </div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">측정값은 환경에 따라 다르지만 <b>10배마다 약 10배</b>라는 비례 관계는 반드시 나온다. 교재의 실측표(0.003 / 0.027 / 0.266 / 2.646초)와 비교해 자기 컴퓨터의 속도 감각을 갖게 하는 것이 목적이다. <code>stderr</code>로 출력하는 이유는 3장에서 배운 대로 채점 대상과 분리하기 위해서다.</div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    <b>0회</b> — <code>5</code> → <code>5</code>. <b>1회</b> — <code>100</code> → <code>100 -&gt; 1</code>, 또는 <code>19</code> → <code>19 -&gt; 10</code>이 아니라 <code>19 -&gt; 10 -&gt; 1</code>이므로 2회. 1회 도는 예는 <code>10</code>(→1), <code>23</code>(→5) 등 자릿수 합이 바로 한 자리가 되는 수.<br>
+    <b>3회 이상</b> — <code>987654</code> → 3회.<br>
+    <b><code>printf("%d", n)</code>을 빼면</b> — 반복이 0회 도는 입력(<code>5</code>)에서 <b>아무것도 출력되지 않는다</b>. 다른 입력에서는 맨 앞의 원래 수만 빠지므로 차이가 덜 눈에 띈다. 0회 경계가 왜 중요한지 보여 주는 문제다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    <b>(가) 무한</b> — <code>i++</code>가 없다. <b>갱신</b> 누락.<br>
+    <b>(나) 끝남, 5번</b> — 5,4,3,2,1.<br>
+    <b>(다) 무한</b> — i가 0,3,6,9,12…로 10을 <b>건너뛴다</b>. <b>조건</b>의 문제. <code>i &lt; 10</code>으로 쓰면 끝난다. 종료 조건은 <code>!=</code>보다 <code>&lt;</code>가 안전하다는 교훈.<br>
+    <b>(라) 끝남, 4번</b> — 0.25는 2진수로 정확히 표현되므로 0.0, 0.25, 0.5, 0.75까지 돌고 1.0에서 멈춘다. <b>지도 포인트</b> — 오류 5에서 0.1은 실패했는데 0.25는 성공한다. 실수 루프가 "가끔 되는" 것이 더 위험하다는 점을 강조한다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    입력 <code>10 12</code> → <code>2 6</code>(i=1일 때 j는 12까지 못 가므로 i=2, j=6이 첫 쌍).<br>
+    <b>안쪽 break만</b> — 쌍을 찾아도 바깥 루프가 i=10까지 계속 돌아 최대 N²번 반복하고, 더 심각하게는 <b>나중 쌍으로 답이 덮어써진다</b>.<br>
+    <b>깃발 버전</b> — <code>int found = 0; for (int i = 1; i &lt;= n &amp;&amp; !found; i++)</code>. 찾는 즉시 바깥도 멈추므로 반복 횟수가 크게 줄어든다.<br>
+    <b>지도 포인트</b> — "더 돌아도 답은 같다"와 "더 돌면 답이 바뀐다"는 전혀 다른 문제다. 후자는 정답 자체가 틀린다.
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    ⑴ 10<sup>6</sup>번 — <b>통과</b>. 한 번 훑으면 된다.<br>
+    ⑵ 10<sup>5</sup> × 10<sup>5</sup> = <b>10<sup>10</sup>번</b> — 불가(약 100초). 정렬하거나 한 번 훑으며 누적하는 방식으로 N 또는 N log N으로 줄여야 한다. PART 3의 정렬·투 포인터가 이 자리를 메운다.<br>
+    ⑶ 단순 반복은 10<sup>9</sup>번으로 불가. <b>√N ≈ 31,623번</b>으로 줄이면 통과.<br>
+    ⑷ 10<sup>12</sup>번 — 반복으로는 불가. <b>공식 N(N+1)/2</b>로 반복 없이 끝낸다. 2장의 중간값 오버플로 점검이 필요하다.<br>
+    <b>지도 포인트</b> — 이 네 가지가 PART 2 이후 모든 문제에서 반복되는 판단 절차다. "코드를 쓰기 전에 횟수를 센다"를 습관으로 만든다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li>반복문마다 초기화·조건·갱신 세 가지를 확인한다</li>
+    <li><code>for (int i = 0; i &lt; n; i++)</code>를 표준형으로 쓴다</li>
+    <li>반복이 0회 도는 입력을 반드시 시험한다</li>
+    <li>누적 변수를 선언과 동시에 초기화하고, 어느 반복 바깥에 둘지 생각한다</li>
+    <li><code>break</code>는 가장 안쪽 반복만 끝낸다는 것을 안다</li>
+    <li>루프 변수로 실수를 쓰지 않는다</li>
+    <li>코드를 쓰기 전에 반복 횟수를 세고 1억 기준으로 판단한다</li>
+    <li>종료 조건은 <code>!=</code>보다 <code>&lt;</code>를 쓴다</li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 07장 중첩 반복과 격자 패턴</span>
+    이 장에서 맛본 이중 루프를 본격적으로 다룬다. 별 패턴과 N×N 나선 채우기를 <strong>좌표 규칙</strong>으로 유도하는 연습인데, 이것이 9장 2차원 배열과 PART 3의 격자 BFS로 바로 이어진다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 1 · 06장 · 2026-10-12 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+
+</div>
+</body>
+</html>

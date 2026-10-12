@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 1 · 05장 조건문 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#0d7a6f;
+  --accent-soft:#e3f1ef;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#8fd8cd}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+<header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 1 · C11 문법 기초 — 05 / 16</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">05</span>
+    <h1>조건문</h1>
+  </div>
+  <p class="lede">프로그램이 갈림길을 만나는 곳이다. 문법은 하루면 외우지만, 경우를 <strong>빠짐없이 겹치지 않게</strong> 나누는 일은 올림피아드 내내 따라다닌다. 이 장은 문법보다 경우 나누기에 더 많은 분량을 쓴다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li><code>if</code>의 조건이 "0인가 아닌가"만 본다는 것을 알고 4장의 0·1과 연결할 수 있다</li>
+    <li><code>else if</code> 체인의 순서가 결과를 바꾼다는 것을 설명할 수 있다</li>
+    <li>성립하지 않는 경우를 <strong>먼저 거르는</strong> 구조로 조건을 배치할 수 있다</li>
+    <li>중괄호를 생략했을 때 생기는 <code>else</code> 결합 문제를 피할 수 있다</li>
+    <li><code>switch</code>의 <code>break</code> 누락이 만드는 fall-through를 이해하고 의도적으로도 쓸 수 있다</li>
+    <li><code>=</code>와 <code>==</code>, 연쇄 비교, 실수 비교의 세 가지 함정을 피할 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 문제 · if 구조 · 경우 나누기의 원칙</div>
+  <div><b>2차시</b>중괄호와 else · 삼항 연산자 · switch · 표준 코드</div>
+  <div><b>3차시</b>단계 예제 · 흔한 오류 6종 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>삼각형이 되기는 하는가</h2>
+  <p>세 변의 길이 <code>a</code>, <code>b</code>, <code>c</code>를 입력받아 삼각형의 종류를 판정하는 문제다. 종류는 정삼각형·이등변삼각형·부등변삼각형 셋이다. 많은 학생이 이렇게 쓴다.</p>
+  <figure>
+    <figcaption><span class="fn">wrong.c</span><span>얼핏 완벽해 보이는 분류</span></figcaption>
+<pre><code>if (a == b &amp;&amp; b == c)      printf("정삼각형\n");
+else if (a == b || b == c || c == a) printf("이등변삼각형\n");
+else                       printf("부등변삼각형\n");</code></pre>
+  </figure>
+  <p>세 경우를 빠짐없이 겹치지 않게 나눴다. 그런데 입력 <code>1 2 10</code>을 넣으면 <strong>부등변삼각형</strong>이라고 답한다. 길이 1, 2, 10으로는 삼각형을 만들 수 없는데도.</p>
+  <div class="note">
+    <span class="h">빠진 것</span>
+    분류 자체는 맞다. 문제는 <b>분류하기 전에 확인했어야 할 것</b>을 건너뛴 데 있다. 세 변이 삼각형을 이루려면 <b>가장 긴 변이 나머지 두 변의 합보다 짧아야</b> 한다.
+  </div>
+  <p>올림피아드 문제는 거의 항상 이런 구조를 가진다. <strong>"성립하지 않는 입력"이 먼저 있고, 그다음에 분류가 온다.</strong> 조건문을 배치하는 순서가 정답과 오답을 가른다.</p>
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> 거르는 조건을 어디에 두어야 하는가?<br>
+    <b>②</b> <code>else if</code> 체인의 순서를 바꾸면 무엇이 달라지는가?<br>
+    <b>③</b> <code>x</code>가 50일 때 <code>0 &lt; x &lt; 10</code>은 참일까 거짓일까?
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">5.1</span>if의 조건은 숫자다</h3>
+  <p>4장에서 관계·논리 연산의 결과가 <strong>0 또는 1인 정수</strong>라는 것을 배웠다. <code>if</code>는 그 값을 받아 <strong>0이면 건너뛰고, 0이 아니면 실행한다</strong>. 참·거짓이라는 별도의 개념이 있는 것이 아니다.</p>
+  <figure>
+    <figcaption><span class="fn">기본 구조</span><span>괄호 안은 식, 그 값이 0인지만 본다</span></figcaption>
+<pre><code>if (조건식) {
+    조건식의 값이 0이 아닐 때 실행
+} else {
+    조건식의 값이 0일 때 실행
+}</code></pre>
+  </figure>
+  <p>그래서 <code>if (n % 2)</code>는 "n이 홀수면"과 같고, <code>if (n)</code>은 "n이 0이 아니면"과 같다. 간결하지만 의도가 흐려지므로, 교재에서는 <code>if (n % 2 != 0)</code>처럼 <strong>비교를 명시</strong>하는 쪽을 권한다.</p>
+
+  <h3><span class="tag">5.2</span>else if 체인은 위에서부터 걸러진다</h3>
+  <p><code>else if</code>는 새로운 문법이 아니라 <code>else</code> 뒤에 <code>if</code>를 붙인 것이다. 중요한 성질은 하나다. <strong>위의 조건이 참이면 아래는 쳐다보지도 않는다.</strong></p>
+  <div class="io">
+    <div><div class="lbl">올바른 순서</div><pre>if (s &gt;= 90) printf("A\n");
+else if (s &gt;= 80) printf("B\n");
+else if (s &gt;= 70) printf("C\n");
+else printf("F\n");</pre></div>
+    <div><div class="lbl">뒤집힌 순서 — 전부 C</div><pre>if (s &gt;= 70) printf("C\n");
+else if (s &gt;= 80) printf("B\n");
+else if (s &gt;= 90) printf("A\n");
+else printf("F\n");</pre></div>
+  </div>
+  <p>오른쪽은 95점도 <code>C</code>로 찍는다. 95는 70 이상이므로 첫 조건에서 걸려 버리기 때문이다. <strong>범위를 나눌 때는 좁은 쪽(또는 극단)부터 쓴다.</strong></p>
+  <p>이 성질 덕분에 아래쪽 조건은 <strong>위쪽이 모두 거짓이라는 전제</strong>를 공짜로 얻는다. <code>else if (s &gt;= 80)</code>은 사실상 "80 이상 90 미만"을 뜻하므로, <code>s &gt;= 80 &amp;&amp; s &lt; 90</code>이라고 쓸 필요가 없다.</p>
+
+  <h3><span class="tag">5.3</span>경우 나누기의 세 가지 원칙</h3>
+  <table>
+    <thead><tr><th style="width:24%">원칙</th><th style="width:30%">뜻</th><th>어기면</th></tr></thead>
+    <tbody>
+      <tr><td><strong>빠짐없이</strong></td><td>모든 입력이 어느 한 가지에 반드시 해당한다</td><td>아무것도 출력하지 않는 입력이 생긴다</td></tr>
+      <tr><td><strong>겹치지 않게</strong></td><td>한 입력이 두 가지에 동시에 해당하지 않는다</td><td>두 번 출력되거나, 순서에 따라 답이 바뀐다</td></tr>
+      <tr><td><strong>거르기 먼저</strong></td><td>성립하지 않는 입력을 맨 앞에서 쳐낸다</td><td>도입 문제의 <code>1 2 10</code>처럼 엉뚱한 답이 나온다</td></tr>
+    </tbody>
+  </table>
+  <p>"빠짐없이"는 마지막을 <code>else</code>로 닫으면 자동으로 보장된다. <strong>조건이 있는 분기로 끝내지 말고 항상 <code>else</code>로 마무리하는 습관</strong>을 들인다.</p>
+  <p>"거르기 먼저"에는 또 하나의 이유가 있다. 4장에서 배운 단락 평가처럼, <strong>위험한 계산을 보호</strong>해 준다. 0으로 나누는 코드 앞에 <code>b != 0</code>을 두는 것과 같은 구조다.</p>
+
+  <h3><span class="tag">5.4</span>중괄호와 else의 결합</h3>
+  <p>실행할 문장이 하나면 중괄호를 생략할 수 있다. 그러나 생략하면 두 가지 사고가 난다.</p>
+  <h4>사고 ① 두 번째 줄이 조건과 무관해진다</h4>
+  <div class="io">
+    <div><div class="lbl">의도</div><pre>if (x &gt; 0)
+    printf("양수\n");
+    printf("확인\n");   ← 항상 실행된다</pre></div>
+    <div><div class="lbl">들여쓰기는 거짓말을 한다</div><pre>C는 들여쓰기를 보지 않는다.
+if에 묶이는 것은
+바로 뒤의 문장 하나뿐.</pre></div>
+  </div>
+  <h4>사고 ② else가 엉뚱한 if에 붙는다</h4>
+  <figure>
+    <figcaption><span class="fn">dangling.c</span><span>a = 1, b = 0 으로 실행</span></figcaption>
+<pre><code>if (a == 1)
+    if (b == 1)
+        printf("둘 다 1\n");
+else
+    printf("else 는 어디에 붙었을까\n");</code></pre>
+  </figure>
+  <p>들여쓰기만 보면 <code>else</code>가 바깥 <code>if</code>에 붙은 것 같다. 그러나 C의 규칙은 <strong><code>else</code>는 가장 가까운, 아직 짝이 없는 <code>if</code>에 붙는다</strong>이다. 따라서 안쪽 <code>if (b == 1)</code>의 짝이다. 실행하면 메시지가 출력된다.</p>
+  <div class="note warn">
+    <span class="h">gcc가 잡아 준다</span>
+    <code>warning: suggest explicit braces to avoid ambiguous 'else' [-Wdangling-else]</code><br>
+    해결책은 하나다. <b>문장이 하나뿐이어도 중괄호를 쓴다.</b> 이 교재의 모든 코드는 중괄호를 생략하지 않는다.
+  </div>
+
+  <h3><span class="tag">5.5</span>삼항 연산자</h3>
+  <p><code>조건 ? A : B</code>는 조건이 참이면 A, 거짓이면 B라는 <strong>값</strong>이 된다. <code>if</code>는 문장이고 삼항 연산자는 식이라는 점이 다르다. 그래서 <code>printf</code> 안에 바로 넣을 수 있다.</p>
+  <div class="io">
+    <div><div class="lbl">CODE (a=7, b=3, n=-7)</div><pre>printf("%d %d\n", a&gt;b?a:b, a&lt;b?a:b);
+printf("%d\n", n &lt; 0 ? -n : n);
+printf("%d\n", a&gt;10 ? 1 : (a&gt;5 ? 2 : 3));</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>7 3
+7
+2</pre></div>
+  </div>
+  <p>최댓값·최솟값·절댓값처럼 <strong>짧고 명백한 선택</strong>에 쓴다. 세 겹 이상 중첩하면 읽기 어려워지므로 그때는 <code>if</code>로 쓴다.</p>
+
+  <h3><span class="tag">5.6</span>switch와 fall-through</h3>
+  <p>하나의 값을 여러 상수와 비교할 때 쓴다. 조건은 <strong>정수나 문자</strong>여야 하고, 범위 비교는 할 수 없다.</p>
+  <figure>
+    <figcaption><span class="fn">sw.c</span><span>break가 하나도 없으면</span></figcaption>
+<pre><code>switch (n) {
+    case 1: printf("one ");
+    case 2: printf("two ");
+    case 3: printf("three "); break;
+    default: printf("other ");
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:18%">n</th><th style="width:36%">출력</th><th>이유</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td class="num">one two three</td><td><code>case 1</code>로 들어가 <code>break</code>까지 쭉 흐른다</td></tr>
+      <tr><td class="num">2</td><td class="num">two three</td><td><code>case 2</code>부터 흐른다</td></tr>
+      <tr><td class="num">3</td><td class="num">three</td><td>바로 <code>break</code>를 만난다</td></tr>
+    </tbody>
+  </table>
+  <p><code>case</code>는 <strong>들어가는 지점을 고르는 표지판</strong>일 뿐 블록의 경계가 아니다. <code>break</code>를 만날 때까지 아래로 계속 흐르는 이 성질을 <strong>fall-through</strong>라고 한다.</p>
+  <p>사고의 원인이지만, 여러 값을 묶을 때는 일부러 활용한다.</p>
+  <figure>
+    <figcaption><span class="fn">의도적 fall-through</span><span>31일인 달 묶기</span></figcaption>
+<pre><code>switch (m) {
+    case 1: case 3: case 5: case 7:
+    case 8: case 10: case 12:
+        printf("31\n"); break;
+    case 4: case 6: case 9: case 11:
+        printf("30\n"); break;
+    default:
+        printf("28 or 29\n");
+}</code></pre>
+  </figure>
+
+  <h3><span class="tag">5.7</span>조건문의 세 가지 함정</h3>
+  <h4>함정 ① 연쇄 비교</h4>
+  <div class="io">
+    <div><div class="lbl">x = 50 일 때</div><pre>0 &lt; x &lt; 10        → 1 (참!)
+(0 &lt; x) &amp;&amp; (x &lt; 10) → 0</pre></div>
+    <div><div class="lbl">왜</div><pre>왼쪽부터 묶인다.
+(0 &lt; 50) → 1
+1 &lt; 10   → 1
+수학 기호와 모양만 같다.</pre></div>
+  </div>
+  <p>gcc는 <code>comparisons like 'X&lt;=Y&lt;=Z' do not have their mathematical meaning</code>으로 경고한다. <strong>범위 조건은 반드시 <code>&amp;&amp;</code>로 두 개를 잇는다.</strong></p>
+  <h4>함정 ② = 와 ==</h4>
+  <div class="io">
+    <div><div class="lbl">CODE</div><pre>int x = 0;
+if (x = 5) printf("실행됨, x=%d\n", x);
+else       printf("실행 안 됨\n");</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>실행됨, x=5</pre></div>
+  </div>
+  <p><code>x = 5</code>는 x에 5를 넣고 그 값 5가 된다. 5는 0이 아니므로 항상 참이다. 거꾸로 <code>if (y = 0)</code>은 항상 거짓이 된다. gcc 경고는 <code>suggest parentheses around assignment used as truth value</code>다.</p>
+  <h4>함정 ③ 실수 비교</h4>
+  <div class="io">
+    <div><div class="lbl">CODE</div><pre>double d = 0.1 + 0.2;
+printf("%d\n", d == 0.3);</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>0</pre></div>
+  </div>
+  <p>2장에서 본 그대로다. 실수는 <code>==</code>로 비교하지 않고 <strong>차이가 충분히 작은지</strong>로 판단한다.</p>
+  <figure>
+    <figcaption><span class="fn">오차 허용 비교</span><span>eps는 보통 1e-9</span></figcaption>
+<pre><code>if (d - 0.3 &lt; 1e-9 &amp;&amp; 0.3 - d &lt; 1e-9) { ... }</code></pre>
+  </figure>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드: 삼각형 판정</h2>
+  <p>도입 문제의 답이다. <strong>거르기를 맨 앞에</strong> 두는 구조를 그대로 보여 준다.</p>
+  <figure>
+    <figcaption><span class="fn">tri.c</span><span>표준 코드 · gcc 검증 완료</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b, c;
+    if (scanf("%d %d %d", &amp;a, &amp;b, &amp;c) != 3) return 1;
+
+    if (a + b &lt;= c || b + c &lt;= a || c + a &lt;= b) {
+        printf("삼각형 아님\n");
+    } else if (a == b &amp;&amp; b == c) {
+        printf("정삼각형\n");
+    } else if (a == b || b == c || c == a) {
+        printf("이등변삼각형\n");
+    } else {
+        printf("부등변삼각형\n");
+    }
+    return 0;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:36%">분기</th><th>설계 의도</th></tr></thead>
+    <tbody>
+      <tr><td>1번 — 삼각형 성립 검사</td><td><strong>거르기 먼저.</strong> 세 부등식 중 하나라도 어기면 삼각형이 아니다. 어느 변이 가장 긴지 찾을 필요 없이 세 개를 모두 검사하면 된다.</td></tr>
+      <tr><td>2번 — 세 변이 같은가</td><td>가장 <strong>좁은</strong> 조건을 먼저 둔다. 정삼각형은 이등변 조건도 만족하므로 순서를 바꾸면 영원히 걸리지 않는다.</td></tr>
+      <tr><td>3번 — 두 변이 같은가</td><td>2번이 거짓이라는 전제가 깔려 있으므로 "정확히 두 변만 같다"를 따로 쓸 필요가 없다.</td></tr>
+      <tr><td>4번 — <code>else</code></td><td><strong>빠짐없이</strong>를 보장한다. 나머지는 전부 부등변이다.</td></tr>
+    </tbody>
+  </table>
+  <table>
+    <thead><tr><th style="width:26%">INPUT</th><th style="width:30%">OUTPUT</th><th>확인 사항</th></tr></thead>
+    <tbody>
+      <tr><td class="num">3 3 3</td><td>정삼각형</td><td>2번에서 걸림</td></tr>
+      <tr><td class="num">3 3 5</td><td>이등변삼각형</td><td>3번에서 걸림</td></tr>
+      <tr><td class="num">3 4 5</td><td>부등변삼각형</td><td><code>else</code>로 떨어짐</td></tr>
+      <tr><td class="num">1 2 3</td><td>삼각형 아님</td><td><strong>등호 포함</strong>: 1+2 = 3이면 안 된다</td></tr>
+      <tr><td class="num">1 2 10</td><td>삼각형 아님</td><td>도입 문제의 그 입력</td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">경계값을 반드시 시험한다</span>
+    <code>1 2 3</code>처럼 <b>딱 맞아떨어지는 경우</b>가 경계값이다. <code>&lt;</code>와 <code>&lt;=</code>를 헷갈리면 이 입력 하나에서만 틀린다. 조건문을 쓸 때마다 "등호가 들어가야 하는가"를 따로 생각한다.
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+
+  <h3><span class="tag">예제 1</span>세 수 중 최댓값</h3>
+  <figure>
+    <figcaption><span class="fn">ex1.c</span><span>두 가지 방법</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b, c;
+    if (scanf("%d %d %d", &amp;a, &amp;b, &amp;c) != 3) return 1;
+
+    int mx = a;
+    if (b &gt; mx) { mx = b; }
+    if (c &gt; mx) { mx = c; }
+    printf("%d\n", mx);
+
+    printf("%d\n", a &gt; b ? (a &gt; c ? a : c) : (b &gt; c ? b : c));
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>4 9 2</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>9
+9</pre></div>
+  </div>
+  <p>앞쪽 방법은 변수 하나를 두고 <strong>갱신</strong>한다. 이 패턴은 8장 배열에서 최댓값을 찾을 때 그대로 쓰이므로 이쪽을 기본형으로 익힌다.</p>
+
+  <h3><span class="tag">예제 2</span>윤년 판정</h3>
+  <figure>
+    <figcaption><span class="fn">ex2.c</span><span>조건 세 개를 논리 연산으로 묶는다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int y;
+    if (scanf("%d", &amp;y) != 1) return 1;
+
+    if ((y % 4 == 0 &amp;&amp; y % 100 != 0) || (y % 400 == 0)) {
+        printf("윤년\n");
+    } else {
+        printf("평년\n");
+    }
+    return 0;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:20%">입력</th><th style="width:20%">출력</th><th>걸린 조건</th></tr></thead>
+    <tbody>
+      <tr><td class="num">2024</td><td>윤년</td><td>4의 배수이고 100의 배수가 아님</td></tr>
+      <tr><td class="num">1900</td><td>평년</td><td>100의 배수인데 400의 배수가 아님</td></tr>
+      <tr><td class="num">2000</td><td>윤년</td><td>400의 배수</td></tr>
+      <tr><td class="num">2100</td><td>평년</td><td>1900과 같은 경우</td></tr>
+    </tbody>
+  </table>
+  <p>1900과 2100이 <strong>경계값</strong>이다. <code>y % 4 == 0</code>만 쓴 코드는 이 둘에서만 틀린다.</p>
+
+  <h3><span class="tag">예제 3</span>등급 판정 — 순서가 전부</h3>
+  <figure>
+    <figcaption><span class="fn">ex3.c</span><span>높은 점수부터 내려온다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int s;
+    if (scanf("%d", &amp;s) != 1) return 1;
+
+    if (s &lt; 0 || s &gt; 100) {
+        printf("invalid\n");
+    } else if (s &gt;= 90) {
+        printf("A\n");
+    } else if (s &gt;= 80) {
+        printf("B\n");
+    } else if (s &gt;= 70) {
+        printf("C\n");
+    } else {
+        printf("F\n");
+    }
+    return 0;
+}</code></pre>
+  </figure>
+  <p>맨 앞의 범위 검사가 <strong>거르기</strong>다. 그 뒤로는 높은 쪽부터 내려오므로 각 분기에 상한을 쓸 필요가 없다. <code>s = 85</code>는 첫 두 조건을 통과하고 세 번째에서 걸려 <code>B</code>가 된다.</p>
+
+  <h3><span class="tag">예제 4</span>switch로 달의 일수</h3>
+  <figure>
+    <figcaption><span class="fn">ex4.c</span><span>fall-through를 의도적으로 쓴다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int y, m;
+    if (scanf("%d %d", &amp;y, &amp;m) != 2) return 1;
+
+    switch (m) {
+        case 1: case 3: case 5: case 7:
+        case 8: case 10: case 12:
+            printf("31\n");
+            break;
+        case 4: case 6: case 9: case 11:
+            printf("30\n");
+            break;
+        case 2:
+            if ((y % 4 == 0 &amp;&amp; y % 100 != 0) || (y % 400 == 0)) {
+                printf("29\n");
+            } else {
+                printf("28\n");
+            }
+            break;
+        default:
+            printf("invalid\n");
+    }
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT / OUTPUT</div><pre>2024 2  →  29
+2023 2  →  28
+2024 7  →  31
+2024 13 →  invalid</pre></div>
+    <div><div class="lbl">구조</div><pre>case 를 줄줄이 붙여
+여러 값을 한 묶음으로 만든다.
+default 가 "빠짐없이"를
+보장한다.</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 5</span>거르기를 빼먹으면</h3>
+  <figure>
+    <figcaption><span class="fn">ex5.c</span><span>같은 분류, 거르기만 제거</span></figcaption>
+<pre><code>// 표준 코드에서 첫 번째 분기만 지운 것
+if (a == b &amp;&amp; b == c) {
+    printf("정삼각형\n");
+} else if (a == b || b == c || c == a) {
+    printf("이등변삼각형\n");
+} else {
+    printf("부등변삼각형\n");
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:22%">INPUT</th><th style="width:28%">거르기 있음</th><th style="width:28%">거르기 없음</th><th>판정</th></tr></thead>
+    <tbody>
+      <tr><td class="num">3 4 5</td><td>부등변삼각형</td><td>부등변삼각형</td><td>같음</td></tr>
+      <tr><td class="num">1 2 10</td><td>삼각형 아님</td><td><strong>부등변삼각형</strong></td><td>틀림</td></tr>
+      <tr><td class="num">1 1 5</td><td>삼각형 아님</td><td><strong>이등변삼각형</strong></td><td>틀림</td></tr>
+    </tbody>
+  </table>
+  <p>정상적인 입력으로만 시험하면 <strong>두 코드의 차이가 전혀 드러나지 않는다</strong>. 성립하지 않는 입력을 일부러 만들어 넣어야 보인다.</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 1</span><span class="t">== 를 = 로 썼다</span></div>
+    <div class="body">
+      <pre>eq.c:4:9: warning: suggest parentheses around assignment
+          used as truth value [-Wparentheses]
+    4 |     if (x = 5) printf("실행됨, x=%d\n", x);
+      |         ^</pre>
+      <p><code>if (x = 5)</code>는 <strong>항상 참</strong>이고 덤으로 x의 값까지 바꾼다. <code>if (x = 0)</code>은 <strong>항상 거짓</strong>이다. 둘 다 컴파일은 된다.</p>
+      <div class="fix"><b>고치는 법</b> — 경고를 보면 즉시 멈추고 확인한다. 의도적으로 대입을 쓰는 경우는 이 수준에서는 없다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 2</span><span class="t">범위를 수학 기호처럼 썼다</span></div>
+    <div class="body">
+      <pre>m.c:18:61: warning: comparisons like 'X&lt;=Y&lt;=Z' do not have
+           their mathematical meaning [-Wparentheses]
+m.c:18:65: warning: comparison of constant '10' with boolean
+           expression is always true [-Wbool-compare]</pre>
+      <p><code>0 &lt; x &lt; 10</code>은 <code>(0 &lt; x) &lt; 10</code>으로 묶인다. 앞이 0이나 1이 되고 그것은 언제나 10보다 작으므로 <strong>x가 무엇이든 참</strong>이다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>(0 &lt; x) &amp;&amp; (x &lt; 10)</code>. 두 번째 경고가 "항상 참"이라고 직접 말해 준다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 3</span><span class="t">중괄호를 생략해 else가 엉뚱한 곳에 붙었다</span></div>
+    <div class="body">
+      <pre>de.c:4:8: warning: suggest explicit braces to avoid
+          ambiguous 'else' [-Wdangling-else]</pre>
+      <p><code>else</code>는 들여쓰기가 아니라 <strong>가장 가까운 짝 없는 <code>if</code></strong>에 붙는다. 눈으로 본 구조와 실제 구조가 달라서, 코드를 아무리 읽어도 원인이 보이지 않는다.</p>
+      <div class="fix"><b>고치는 법</b> — 문장이 하나여도 중괄호를 쓴다. 예외 없이.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 4</span><span class="t">else if 순서가 뒤집혔다</span></div>
+    <div class="body">
+      <p>경고가 없다. 컴파일러 입장에서는 완벽히 정상인 코드다.</p>
+      <pre>if (s &gt;= 70) printf("C\n");        // 95점도 여기서 걸린다
+else if (s &gt;= 80) printf("B\n");   // 영원히 실행되지 않음
+else if (s &gt;= 90) printf("A\n");   // 영원히 실행되지 않음</pre>
+      <div class="fix"><b>고치는 법</b> — 범위 분기는 <b>극단부터</b> 쓴다. 작성 후 각 분기에 해당하는 값을 하나씩 대입해 확인한다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 5</span><span class="t">switch에서 break를 빠뜨렸다</span></div>
+    <div class="body">
+      <p>경고가 없다. 의도적 fall-through와 실수를 컴파일러가 구별할 수 없기 때문이다.</p>
+      <pre>switch (n) {
+    case 1: printf("one ");      // break 없음 → 아래로 흐른다
+    case 2: printf("two ");
+    case 3: printf("three "); break;
+}
+// n=1 일 때 출력: one two three</pre>
+      <div class="fix"><b>고치는 법</b> — <code>case</code>를 쓸 때 <code>break</code>를 <b>먼저</b> 쓰고 그 위에 내용을 채운다. 일부러 흘릴 때는 주석으로 표시한다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 6</span><span class="t">거르기를 뒤에 두었다</span></div>
+    <div class="body">
+      <p>도입 문제와 예제 5가 그대로 이 오류다. 더 위험한 형태는 <strong>계산이 먼저 일어나는</strong> 경우다.</p>
+      <pre>if (a / b &gt; 2) { ... }         // b가 0이면 여기서 죽는다
+else if (b == 0) { ... }       // 도달하지 못한다</pre>
+      <p>4장의 단락 평가와 같은 원리다. <strong>보호하는 검사가 보호받는 계산보다 먼저 와야 한다.</strong></p>
+      <div class="fix"><b>고치는 법</b> — 조건을 나열하기 전에 "이 입력이 애초에 유효한가"를 먼저 묻는 분기를 둔다.</div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    오류 4·5·6은 <b>경고가 나오지 않는다</b>. 조건문의 정확성은 컴파일러가 아니라 <b>테스트 입력</b>이 보증한다. 분기를 하나 만들 때마다 <b>그 분기에만 해당하는 입력</b>을 하나씩 준비해 전부 통과시킨다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>반복문과 배열은 아직 쓰지 않는다. 모든 코드는 중괄호를 생략하지 않고, <code>else</code>로 마무리하며, <code>scanf</code>의 반환값을 검사한다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>큰 수 고르기</b> — 두 정수를 입력받아 큰 쪽을 출력하라. 같으면 그 값을 출력한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>14 29</pre></div><div><span>OUTPUT</span><pre>29</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>부호 판정</b> — 정수를 입력받아 <code>positive</code> / <code>negative</code> / <code>zero</code> 중 하나를 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>0</pre></div><div><span>OUTPUT</span><pre>zero</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>홀짝</b> — 정수를 입력받아 <code>odd</code> 또는 <code>even</code>을 출력하라. 음수도 올바르게 판정해야 한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>-7</pre></div><div><span>OUTPUT</span><pre>odd</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>세 수 중 최댓값</b> — 세 정수를 입력받아 가장 큰 값을 출력하라. 변수 하나를 갱신하는 방식으로 작성하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4 9 2</pre></div><div><span>OUTPUT</span><pre>9</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>윤년</b> — 연도를 입력받아 <code>1</code>(윤년) 또는 <code>0</code>(평년)을 출력하라. 1900·2000·2100을 반드시 시험하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>1900</pre></div><div><span>OUTPUT</span><pre>0</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>사분면</b> — 좌표 (x, y)를 입력받아 몇 사분면인지 출력하라. 축 위에 있으면 <code>axis</code>를 출력한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>-3 5</pre></div><div><span>OUTPUT</span><pre>2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>등급 판정</b> — 점수(0~100)를 입력받아 90 이상 A, 80 이상 B, 70 이상 C, 60 이상 D, 나머지 F를 출력하라. 범위를 벗어난 입력은 <code>invalid</code>.</p>
+    <div class="sample"><div><span>INPUT</span><pre>80</pre></div><div><span>OUTPUT</span><pre>B</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>삼항 연산자로 절댓값</b> — 정수를 입력받아 절댓값을 출력하라. <code>if</code>를 쓰지 말고 삼항 연산자만 사용하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>-42</pre></div><div><span>OUTPUT</span><pre>42</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>삼각형 성립</b> — 세 변의 길이를 입력받아 삼각형이 되면 <code>YES</code>, 아니면 <code>NO</code>를 출력하라. 입력 <code>1 2 3</code>을 반드시 시험하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>1 2 3</pre></div><div><span>OUTPUT</span><pre>NO</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>직각삼각형까지</b> — 표준 코드를 확장해 <code>삼각형 아님</code> / <code>정삼각형</code> / <code>직각이등변삼각형</code> / <code>이등변삼각형</code> / <code>직각삼각형</code> / <code>부등변삼각형</code> 여섯 가지로 판정하라. 분기 순서를 신중히 정하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3 4 5</pre></div><div><span>OUTPUT</span><pre>직각삼각형</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>달의 일수</b> — 연도와 월을 입력받아 그 달의 일수를 출력하라. <code>switch</code>와 fall-through를 사용하고, 1~12를 벗어나면 <code>invalid</code>를 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>2024 2</pre></div><div><span>OUTPUT</span><pre>29</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>세 수 오름차순</b> — 세 정수를 입력받아 작은 것부터 공백으로 구분해 출력하라. 배열과 반복문 없이 <code>if</code>와 변수 교환만으로 해결하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>7 2 5</pre></div><div><span>OUTPUT</span><pre>2 5 7</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>문자 분류</b> — 문자 하나를 입력받아 <code>upper</code> / <code>lower</code> / <code>digit</code> / <code>other</code> 중 하나를 출력하라. 아스키 범위 비교로 해결하라(2장).</p>
+    <div class="sample"><div><span>INPUT</span><pre>7</pre></div><div><span>OUTPUT</span><pre>digit</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>구간 겹침</b> — 두 구간 [a, b]와 [c, d]를 입력받아 겹치면 <code>YES</code>, 아니면 <code>NO</code>를 출력하라. 끝점만 닿아도 겹친 것으로 본다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>1 5 5 9</pre></div><div><span>OUTPUT</span><pre>YES</pre></div></div>
+    <p class="spec">※ 겹치는 조건을 직접 쓰기보다 <strong>겹치지 않는 조건</strong>을 먼저 생각하면 쉽다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>나눗셈 보호</b> — 두 정수 A, B를 입력받아 A/B의 몫을 출력하되, B가 0이면 <code>divide by zero</code>를 출력하고 종료 코드 1로 끝내라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>7 0</pre></div><div><span>OUTPUT</span><pre>divide by zero</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>실수 비교</b> — 두 실수를 입력받아 같으면 <code>equal</code>, 아니면 <code>different</code>를 출력하라. 단, 차이가 10<sup>−9</sup> 미만이면 같은 것으로 본다. <code>0.1+0.2</code>와 <code>0.3</code>을 넣어 결과를 확인하라.</p>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>else는 누구의 짝인가</b> — 아래 코드를 <code>a=1, b=0</code>으로 실행한 결과를 예측하고 확인하라. gcc 경고를 적고, ① <code>else</code>가 바깥 <code>if</code>에 붙도록 ② 안쪽 <code>if</code>에 붙도록 각각 중괄호를 넣어 두 가지 버전을 만들어라.</p>
+<pre><code>if (a == 1)
+    if (b == 1)
+        printf("X\n");
+else
+    printf("Y\n");</code></pre>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>항상 참, 항상 거짓</b> — 아래 세 조건은 모두 입력과 무관하게 결과가 정해져 있다. 각각 무엇으로 고정되는지 밝히고, gcc 경고를 적고, 의도한 대로 고쳐라. (<code>x</code>는 입력받은 정수)</p>
+<pre><code>(가) if (x = 5)
+(나) if (0 &lt; x &lt; 100)
+(다) if (x != 1 || x != 2)</code></pre>
+    <p class="spec">※ (다)는 gcc가 경고하지 않는다. 왜 그런지도 함께 생각하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>순서를 바꿔 보기</b> — 7번 등급 판정 코드에서 분기 순서를 거꾸로(60 → 70 → 80 → 90) 바꾸어 실행하라. ① 95점의 출력은 무엇인가 ② 왜 그렇게 되는가 ③ 컴파일러가 경고하지 않는 이유는 무엇인가 ④ 이런 오류를 발견하려면 어떤 테스트를 해야 하는가.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>분기 테스트 설계</b> — 10번에서 만든 여섯 가지 판정 코드에 대해, <strong>각 분기에 정확히 하나씩 해당하는 입력</strong>을 설계해 표로 만들어라(총 6개 이상). 그리고 경계값 입력을 <strong>2개 이상</strong> 추가하라(예: 변의 합이 정확히 같은 경우). 각 입력에 대해 기대 출력을 적고 실제로 전부 통과시켜라.</p>
+  </div></div>
+
+  </div>
+</section>
+
+<section class="pagebreak answers">
+  <span class="sec-no">07 — 확인 평가 해설</span>
+  <h2>정답과 해설</h2>
+  <p class="spec" style="color:var(--ink-faint);font-size:9pt">※ 이 절은 교사용 통합본에만 수록한다. 학생 배부용에서는 제거한다.</p>
+
+  <div class="ans"><span class="an">01</span><div class="ab"><code>if (a &gt; b) { printf("%d\n", a); } else { printf("%d\n", b); }</code> — 같을 때 <code>else</code>로 떨어져 b가 출력되는데, a와 b가 같으므로 문제없다. 이 점을 학생에게 확인시킨다.</div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab">세 분기. <code>if (n &gt; 0) … else if (n &lt; 0) … else …</code>. <b>지도 포인트</b> — 0을 <code>else</code>로 처리하는 것이 "빠짐없이"의 전형이다. <code>else if (n == 0)</code>으로 끝내면 <code>else</code>가 없어 원칙에 어긋난다.</div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab"><code>if (n % 2 != 0)</code> 또는 <code>if (n &amp; 1)</code>. <b>흔한 오답</b>: <code>if (n % 2 == 1)</code> — 음수에서 <code>-7 % 2</code>가 <b>−1</b>이라 홀수인데도 <code>even</code>이 나온다. 4장 연습 4번의 재확인이다.</div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab"><code>int mx = a; if (b &gt; mx) { mx = b; } if (c &gt; mx) { mx = c; }</code> — <code>else</code>를 붙이면 안 된다는 점을 짚는다. 두 비교는 독립적이다.</div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab"><code>(y % 4 == 0 &amp;&amp; y % 100 != 0) || (y % 400 == 0)</code> — 1900→0, 2000→1, 2100→0. 괄호를 빼면 <code>&amp;&amp;</code>가 <code>||</code>보다 우선순위가 높아 결과는 같지만(4장 우선순위표), 가독성을 위해 괄호를 쓰게 한다.</div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab">
+    거르기 먼저: <code>if (x == 0 || y == 0) { printf("axis\n"); }</code> 그다음 네 사분면.<br>
+    <b>지도 포인트</b> — 축 검사를 뒤로 미루면 (0, 5)가 2사분면으로 잘못 판정된다. 표준 코드와 같은 구조다.
+  </div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab">예제 3에 D 분기를 추가한 형태. 범위 검사(<code>s &lt; 0 || s &gt; 100</code>)가 맨 앞이다. 경계값 0, 60, 70, 80, 90, 100, 101, −1을 전부 시험시킨다.</div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab"><code>printf("%d\n", n &lt; 0 ? -n : n);</code> — <b>보충</b> — <code>INT_MIN</code>의 절댓값은 <code>int</code>로 표현할 수 없다(2장). 입력 범위가 주어지지 않으면 이런 구멍이 생긴다는 것을 언급해 둔다.</div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab"><code>if (a + b &lt;= c || b + c &lt;= a || c + a &lt;= b) { printf("NO\n"); } else { printf("YES\n"); }</code> — <b>등호 포함</b>이 핵심이다. <code>&lt;</code>만 쓰면 <code>1 2 3</code>에서 <code>YES</code>가 나온다.</div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab">
+    분기 순서가 이 문제의 전부다. 좁은 조건부터 내려간다.
+<pre><code>삼각형 아님
+→ 정삼각형 (a==b &amp;&amp; b==c)
+→ 직각이등변 (이등변 AND 직각)
+→ 이등변
+→ 직각 (a*a+b*b==c*c 등 세 경우)
+→ 부등변 (else)</code></pre>
+    <b>주의</b> — 직각 판정은 어느 변이 빗변인지 모르므로 세 조합을 모두 검사한다. 변의 길이가 크면 <code>a*a</code>가 넘칠 수 있으므로 <code>(long long)a*a</code>로 쓴다(2장).<br>
+    <b>지도 포인트</b> — 정삼각형은 직각일 수 없으므로 순서를 어떻게 두어도 무방하지만, 직각이등변은 이등변보다 <b>반드시 위</b>에 와야 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab">예제 4와 동일. <code>case</code>를 줄줄이 붙이는 것이 fall-through의 의도적 활용임을 다시 확인시킨다. <code>default: printf("invalid\n");</code>로 마무리한다.</div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">
+    세 번의 비교·교환으로 정렬된다.
+<pre><code>if (a &gt; b) { int t = a; a = b; b = t; }
+if (b &gt; c) { int t = b; b = c; c = t; }
+if (a &gt; b) { int t = a; a = b; b = t; }
+printf("%d %d %d\n", a, b, c);</code></pre>
+    <b>지도 포인트</b> — 세 번째 비교가 왜 또 필요한지 <code>7 2 5</code>로 추적시킨다. 이것이 PART 3 버블 정렬의 축소판이다.
+  </div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab"><code>c &gt;= 'A' &amp;&amp; c &lt;= 'Z'</code> / <code>c &gt;= 'a' &amp;&amp; c &lt;= 'z'</code> / <code>c &gt;= '0' &amp;&amp; c &lt;= '9'</code> / <code>else</code>. 입력은 <code>scanf(" %c", &amp;c)</code>로 받는다(3장). 숫자 문자 <code>'7'</code>과 정수 <code>7</code>이 다르다는 것을 반드시 짚는다.</div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab">
+    겹치지 않는 경우는 <b>b &lt; c 이거나 d &lt; a</b>, 두 가지뿐이다. 따라서
+<pre><code>if (b &lt; c || d &lt; a) { printf("NO\n"); } else { printf("YES\n"); }</code></pre>
+    <b>지도 포인트</b> — 겹치는 경우를 직접 나열하면 네다섯 가지가 되어 빠뜨리기 쉽다. <b>여집합이 더 단순하면 여집합을 쓴다</b>는 발상은 PART 2 이후에도 계속 쓰인다.
+  </div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab"><code>if (b == 0) { printf("divide by zero\n"); return 1; } printf("%d\n", a / b);</code> — <code>return 1</code>로 끝내면 뒤쪽 코드에 도달하지 않으므로 <code>else</code>가 없어도 안전하다. 1장의 종료 코드와 연결해 <code>echo $?</code>로 확인시킨다.</div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab"><code>double diff = a - b; if (diff &lt; 1e-9 &amp;&amp; -diff &lt; 1e-9) { printf("equal\n"); } else { printf("different\n"); }</code> — <code>0.1+0.2</code>와 <code>0.3</code>은 <code>==</code>로는 다르지만 이 방식으로는 <code>equal</code>이 된다.</div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    출력은 <b><code>Y</code></b>. 경고는 <code>suggest explicit braces to avoid ambiguous 'else' [-Wdangling-else]</code>.<br>
+    <code>else</code>는 안쪽 <code>if (b == 1)</code>의 짝이다. a가 1이라 바깥 조건은 통과하고, b가 0이라 안쪽이 거짓이므로 <code>else</code>가 실행된다.<br>
+    ① 바깥에 붙이려면: <code>if (a == 1) { if (b == 1) { printf("X\n"); } } else { printf("Y\n"); }</code> → a=1이면 아무것도 출력되지 않는다.<br>
+    ② 안쪽에 붙이려면: <code>if (a == 1) { if (b == 1) { printf("X\n"); } else { printf("Y\n"); } }</code> → 현재 동작과 같다.<br>
+    <b>지도 포인트</b> — 같은 글자 배열이 중괄호 위치에 따라 전혀 다른 프로그램이 된다는 것을 보여 주는 문제다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    (가) <b>항상 참</b> — 대입식의 값 5가 0이 아니다. 경고 <code>suggest parentheses around assignment used as truth value</code>.<br>
+    (나) <b>항상 참</b> — <code>(0 &lt; x)</code>가 0이나 1이 되고 둘 다 100보다 작다. 경고 두 개: <code>comparisons like 'X&lt;=Y&lt;=Z' do not have their mathematical meaning</code>, <code>comparison of constant '100' with boolean expression is always true</code>.<br>
+    (다) <b>항상 참</b> — x가 1이면 <code>x != 2</code>가 참, x가 2면 <code>x != 1</code>이 참, 나머지는 둘 다 참. 의도는 <code>&amp;&amp;</code>였을 것이다.<br>
+    <b>(다)에 경고가 없는 이유</b> — (가)와 (나)는 <b>문법 모양</b>만 보고 기계적으로 잡아낼 수 있는 패턴이지만, (다)는 각 비교가 그 자체로 완전히 정상이고 둘을 합쳤을 때의 의미를 따져야 알 수 있다. 컴파일러는 <b>프로그래머의 의도</b>까지 추론하지 않는다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    ① <b><code>D</code></b>가 출력된다. ② 95는 60 이상이므로 맨 위 조건에서 걸리고, <code>else if</code>이므로 아래는 평가되지 않는다. ③ 각 조건이 문법적으로 완전히 정상이고, 도달 불가능한 분기인지 판단하려면 값의 범위를 추론해야 하는데 컴파일러는 그렇게까지 하지 않는다. ④ <b>각 분기에 정확히 하나씩 해당하는 입력</b>을 준비해 전부 시험한다. 95, 85, 75, 65, 50을 넣으면 전부 <code>D</code>가 나와 즉시 발견된다.
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    모범 테스트 표(입력 → 기대 출력).<br>
+    <code>1 2 10</code> → 삼각형 아님 · <code>3 3 3</code> → 정삼각형 · <code>1 1 1.414…</code>는 정수가 아니므로 <code>5 5 7</code> → 이등변삼각형 · <code>3 4 5</code> → 직각삼각형 · <code>6 7 8</code> → 부등변삼각형 · 직각이등변은 정수 변으로 불가능하므로 <b>그 분기는 도달할 수 없다</b>는 것을 발견하는 것이 이 문제의 함정이다.<br>
+    <b>경계값</b> — <code>1 2 3</code>(합이 정확히 같음) → 삼각형 아님, <code>0 1 1</code>(길이 0) → 삼각형 아님.<br>
+    <b>지도 포인트</b> — 분기를 만들었는데 <b>도달 가능한 입력이 존재하지 않는</b> 경우가 있다는 발견이 핵심이다. 정수 변에서는 직각이등변삼각형이 존재할 수 없다(√2가 무리수). 문제 조건이 실수 입력이었다면 달라진다. 이 토론을 꼭 거친다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li>성립하지 않는 입력을 거르는 분기를 맨 앞에 둔다</li>
+    <li>범위 분기는 극단부터 쓰고 <code>else</code>로 마무리한다</li>
+    <li>문장이 하나여도 중괄호를 생략하지 않는다</li>
+    <li>범위 조건을 <code>0 &lt; x &lt; 10</code>처럼 쓰지 않는다</li>
+    <li><code>switch</code>의 <code>case</code>마다 <code>break</code>를 확인한다</li>
+    <li>실수는 <code>==</code>로 비교하지 않는다</li>
+    <li>분기마다 그 분기에만 해당하는 테스트 입력을 하나씩 만든다</li>
+    <li>등호가 들어가야 하는 경계인지 따로 생각한다</li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 06장 반복문</span>
+    지금까지 미뤄 둔 <code>for</code>와 <code>while</code>을 드디어 다룬다. 2장의 "틀리는 N 찾기"와 3장의 "입력 끝까지 읽기"에서 읽기만 했던 코드를 직접 쓰게 된다. 그리고 이 장의 조건문이 반복의 <strong>종료 조건</strong>으로 다시 등장한다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 1 · 05장 · 2026-10-12 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+
+</div>
+</body>
+</html>

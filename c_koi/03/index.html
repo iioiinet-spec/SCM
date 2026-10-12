@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 1 · 03장 서식 입출력 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#0d7a6f;
+  --accent-soft:#e3f1ef;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#8fd8cd}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+<header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 1 · C11 문법 기초 — 03 / 16</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">03</span>
+    <h1>서식 입출력</h1>
+  </div>
+  <p class="lede">서식 문자열은 입출력의 설계도다. 글자 하나가 어긋나면 컴파일은 되고 실행도 되지만 답이 틀린다. 이 장에서 1장에 미뤄 둔 <code>scanf</code>의 반환값과 <code>-O2</code> 경고까지 정리한다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li>자료형마다 맞는 서식 지정자를 골라 쓸 수 있다 — 특히 읽기와 쓰기가 다른 경우</li>
+    <li>폭·정렬·정밀도 지정자로 출력 모양을 원하는 대로 맞출 수 있다</li>
+    <li><code>scanf</code>가 공백을 건너뛰는 경우와 건너뛰지 않는 경우를 구분할 수 있다</li>
+    <li><code>scanf</code>의 반환값을 읽어 입력 성공 여부를 판정하고 EOF를 감지할 수 있다</li>
+    <li>개수를 모르는 입력을 끝까지 읽어 처리하는 표준형을 쓸 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 문제 · printf 서식 · 폭과 정렬</div>
+  <div><b>2차시</b>scanf 서식 · 공백 규칙 · 반환값과 EOF · 표준 코드</div>
+  <div><b>3차시</b>단계 예제 · 흔한 오류 6종 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>개수를 모르는 입력</h2>
+  <p>지금까지 푼 문제는 입력의 개수가 정해져 있었다. 두 수, 세 수. 그런데 올림피아드 문제는 이렇게 끝나는 경우가 많다.</p>
+  <div class="note">
+    <span class="h">문제의 입력 설명</span>
+    <b>"입력은 여러 개의 정수로 이루어진다. 입력의 끝까지 모든 정수의 합을 출력하라."</b><br>
+    몇 개가 들어올지 알려 주지 않는다. 100개일 수도, 1,000,000개일 수도 있다.
+  </div>
+  <p>이 문제를 풀려면 두 가지를 알아야 한다. 첫째, <strong>입력이 끝났다는 것을 어떻게 아는가.</strong> 둘째, <strong>끝날 때까지 반복하려면 무엇이 필요한가.</strong> 둘째는 6장 반복문의 몫이고, 이 장은 첫째를 책임진다.</p>
+  <p>답은 <code>scanf</code>가 돌려주는 값에 들어 있다. 우리는 1장부터 <code>scanf</code>를 써 왔지만 그 반환값을 한 번도 쳐다보지 않았다. 사실 <code>scanf</code>는 매번 <strong>"몇 개를 제대로 읽었는지"</strong>를 보고하고 있었다.</p>
+  <p>또 하나, 1장에서 남겨 둔 숙제가 있다. <code>-O2</code>를 붙여 컴파일하면 나오던 그 경고다.</p>
+  <figure>
+    <figcaption><span class="fn">terminal</span><span>1장에서 미뤄 둔 경고</span></figcaption>
+    <pre class="term"><span class="c">$ gcc -std=c11 -O2 -Wall -o add add.c</span>
+<span class="o">add.c:6:5: warning: ignoring return value of 'scanf'
+           declared with attribute 'warn_unused_result'</span></pre>
+  </figure>
+  <p>"<code>scanf</code>의 반환값을 무시하고 있다"는 뜻이다. 두 문제의 답이 같은 곳에 있다는 것을 이 장에서 확인한다.</p>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">3.1</span>서식 지정자 한눈에</h3>
+  <p>서식 지정자는 <strong>값과 글자 사이의 변환 규칙</strong>이다. <code>printf</code>는 값을 글자로 바꾸고, <code>scanf</code>는 글자를 값으로 바꾼다. 방향이 반대이므로 지정자가 다른 경우가 생긴다.</p>
+  <table>
+    <thead><tr><th style="width:22%">자료형</th><th style="width:18%">printf</th><th style="width:18%">scanf</th><th>주의</th></tr></thead>
+    <tbody>
+      <tr><td><code>int</code></td><td><code>%d</code></td><td><code>%d</code></td><td>같다</td></tr>
+      <tr><td><code>long long</code></td><td><code>%lld</code></td><td><code>%lld</code></td><td>같다. <code>%d</code>를 쓰면 틀린다(2장)</td></tr>
+      <tr><td><code>unsigned int</code></td><td><code>%u</code></td><td><code>%u</code></td><td>올림피아드에서는 쓰지 않는다</td></tr>
+      <tr><td><code>float</code></td><td><code>%f</code></td><td><code>%f</code></td><td>정밀도가 낮아 쓰지 않는다</td></tr>
+      <tr><td><code>double</code></td><td><code>%f</code></td><td><strong><code>%lf</code></strong></td><td><strong>읽기와 쓰기가 다르다</strong></td></tr>
+      <tr><td><code>char</code></td><td><code>%c</code></td><td><code>%c</code></td><td><code>%d</code>로 아스키 번호도 출력 가능</td></tr>
+      <tr><td>문자열(<code>char[]</code>)</td><td><code>%s</code></td><td><code>%s</code></td><td><strong><code>&amp;</code>를 붙이지 않는다</strong></td></tr>
+      <tr><td><code>sizeof</code>의 결과</td><td><code>%zu</code></td><td>—</td><td>2장에서 사용</td></tr>
+      <tr><td>글자 <code>%</code> 자체</td><td><code>%%</code></td><td>—</td><td></td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">double만 비대칭이다</span>
+    <code>printf</code>는 <code>%f</code>, <code>scanf</code>는 <code>%lf</code>. 이것만 따로 외운다. <code>scanf("%f", &amp;d)</code>로 double을 읽으면 경고가 뜨고 값은 <b>0.000000</b>이 된다.
+  </div>
+
+  <h3><span class="tag">3.2</span>출력 모양 다듬기 — 폭·정렬·정밀도</h3>
+  <p>지정자 앞에 숫자를 넣어 출력 칸을 조절한다. 형식은 <code>%</code> + <code>-</code>(왼쪽 정렬) + <code>0</code>(0으로 채움) + <strong>폭</strong> + <code>.</code><strong>정밀도</strong> + 지정자다.</p>
+  <table>
+    <thead><tr><th style="width:28%">서식</th><th style="width:26%">출력</th><th>의미</th></tr></thead>
+    <tbody>
+      <tr><td><code>printf("[%d]", 42)</code></td><td class="num">[42]</td><td>기본</td></tr>
+      <tr><td><code>printf("[%5d]", 42)</code></td><td class="num">[&nbsp;&nbsp;&nbsp;42]</td><td>폭 5, 오른쪽 정렬</td></tr>
+      <tr><td><code>printf("[%-5d]", 42)</code></td><td class="num">[42&nbsp;&nbsp;&nbsp;]</td><td>폭 5, 왼쪽 정렬</td></tr>
+      <tr><td><code>printf("[%05d]", 42)</code></td><td class="num">[00042]</td><td>빈칸을 0으로 채움</td></tr>
+      <tr><td><code>printf("[%f]", 3.14159)</code></td><td class="num">[3.141590]</td><td>기본은 소수점 아래 6자리</td></tr>
+      <tr><td><code>printf("[%.2f]", 3.14159)</code></td><td class="num">[3.14]</td><td>소수점 아래 2자리</td></tr>
+      <tr><td><code>printf("[%8.2f]", 3.14159)</code></td><td class="num">[&nbsp;&nbsp;&nbsp;&nbsp;3.14]</td><td>전체 폭 8, 소수 2자리</td></tr>
+      <tr><td><code>printf("[%8s]", "abc")</code></td><td class="num">[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;abc]</td><td>문자열도 폭 지정 가능</td></tr>
+      <tr><td><code>printf("%d:%02d", 3, 5)</code></td><td class="num">3:05</td><td>시계 표기 — 2장 연습 12번의 숙제</td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">%.0f의 반올림은 우리가 아는 반올림이 아니다</span>
+    <code>printf("%.0f", 2.5)</code>는 <b>2</b>, <code>printf("%.0f", 3.5)</code>는 <b>4</b>를 출력한다. 0.5인 경우 가까운 <b>짝수</b>로 보내는 규칙을 쓰기 때문이다. 반올림이 중요한 문제에서는 출력 서식에 맡기지 말고 정수 연산으로 직접 처리한다.
+  </div>
+
+  <h3><span class="tag">3.3</span>scanf의 공백 규칙</h3>
+  <p>입력 파일에는 공백과 줄바꿈이 섞여 있다. <code>scanf</code>가 이것을 어떻게 처리하는지가 입력 코드의 거의 모든 버그를 만든다. 규칙은 두 줄이다.</p>
+  <table>
+    <thead><tr><th style="width:26%">지정자</th><th style="width:30%">앞의 공백·줄바꿈</th><th>읽는 범위</th></tr></thead>
+    <tbody>
+      <tr><td><code>%d %lld %lf %s</code></td><td><strong>알아서 건너뛴다</strong></td><td>공백을 만날 때까지</td></tr>
+      <tr><td><code>%c</code></td><td><strong>건너뛰지 않는다</strong></td><td>딱 한 글자 — 공백도 글자다</td></tr>
+    </tbody>
+  </table>
+  <p>그래서 <code>%c</code>만 사고가 난다. 입력 <code>A B</code>에서 문자 두 개를 읽어 보자.</p>
+  <div class="io">
+    <div><div class="lbl">scanf("%c") 두 번</div><pre>c1 = [A] (65)
+c2 = [ ] (32)   ← 공백!</pre></div>
+    <div><div class="lbl">scanf(" %c") 두 번</div><pre>c1 = [A] (65)
+c2 = [B] (66)   ← 정상</pre></div>
+  </div>
+  <p>서식 문자열 안의 <strong>공백 한 칸</strong>은 "여기서 공백을 만나면 모두 건너뛰라"는 명령이다. 그래서 <code>" %c"</code>라고 쓰면 해결된다. <strong><code>%c</code>를 쓸 때는 항상 앞에 공백을 붙인다</strong>고 외워 두면 된다.</p>
+  <p><code>%d</code> 다음에 <code>%c</code>를 쓰는 경우도 같은 함정이다. <code>%d</code>가 숫자를 읽고 멈추면 그 뒤의 줄바꿈이 그대로 남아 있어서, 다음 <code>%c</code>가 그 줄바꿈을 읽어 버린다.</p>
+  <div class="io">
+    <div><div class="lbl">입력</div><pre>7
+A</pre></div>
+    <div><div class="lbl">결과 비교</div><pre>scanf("%c", &amp;g)  → g = 개행(10)
+scanf(" %c", &amp;g) → g = 'A'(65)</pre></div>
+  </div>
+
+  <h3><span class="tag">3.4</span>scanf의 반환값</h3>
+  <p><code>scanf</code>는 <strong>성공적으로 읽어서 변수에 넣은 항목의 개수</strong>를 돌려준다. 입력이 완전히 끝났으면 <code>EOF</code>를 돌려주는데, 이 값은 <strong>−1</strong>이다.</p>
+  <table>
+    <thead><tr><th style="width:34%">입력</th><th style="width:20%">반환값</th><th>뜻</th></tr></thead>
+    <tbody>
+      <tr><td class="num">12 25</td><td class="num">2</td><td>두 개 모두 성공</td></tr>
+      <tr><td class="num">12 ab</td><td class="num">1</td><td>첫 번째만 성공</td></tr>
+      <tr><td class="num">ab cd</td><td class="num">0</td><td>하나도 못 읽음 — 입력은 그대로 남는다</td></tr>
+      <tr><td>(입력 없음)</td><td class="num">-1 (EOF)</td><td>더 읽을 것이 없음</td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">0과 EOF는 다르다</span>
+    숫자가 와야 할 자리에 글자가 있으면 <code>scanf</code>는 <b>0</b>을 돌려주고 <b>그 글자를 입력에서 치우지 않는다</b>. 그래서 같은 자리를 다시 읽으면 또 0이다. 끝을 <code>!= EOF</code>로 판정하면 영원히 끝나지 않는다. <b>반드시 "읽어야 할 개수와 같은가"로 판정한다.</b>
+  </div>
+
+  <h3><span class="tag">3.5</span>1장의 숙제: -O2 경고의 정체</h3>
+  <p>이제 그 경고를 읽을 수 있다. "<code>scanf</code>의 반환값을 무시했다"는 지적이고, 지적이 옳다. 반환값을 검사하도록 고치면 경고는 사라진다.</p>
+  <div class="io">
+    <div><div class="lbl">경고가 나는 코드</div><pre>scanf("%d %d", &amp;a, &amp;b);</pre></div>
+    <div><div class="lbl">경고가 사라지는 코드</div><pre>if (scanf("%d %d", &amp;a, &amp;b) != 2)
+    return 1;</pre></div>
+  </div>
+  <p>올림피아드 문제는 입력이 명세대로 들어온다고 보장하므로 검사를 생략해도 답은 맞는다. 다만 이 장부터는 <strong>반환값을 쓰는 습관</strong>을 들인다. 입력 개수를 모르는 문제에서는 선택이 아니라 필수이고, 디버깅할 때도 입력이 잘못됐는지 로직이 틀렸는지를 즉시 가려 준다.</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드: 입력 끝까지 읽어 합하기</h2>
+  <p>도입 문제의 답이다. 반복문은 6장에서 다루므로 지금은 <code>while</code> 줄의 <strong>조건</strong>에만 집중한다.</p>
+  <figure>
+    <figcaption><span class="fn">eofsum.c</span><span>표준 코드 · gcc 검증 완료</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int x, sum = 0;
+
+    while (scanf("%d", &amp;x) == 1) {
+        sum += x;
+    }
+
+    printf("%d\n", sum);
+    return 0;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:38%">요소</th><th>읽는 법</th></tr></thead>
+    <tbody>
+      <tr><td><code>scanf("%d", &amp;x) == 1</code></td><td>"정수 하나를 제대로 읽었는가". 성공하면 1, 입력이 끝나면 −1, 글자가 섞여 있으면 0이 되어 어느 쪽이든 반복이 끝난다.</td></tr>
+      <tr><td><code>sum += x;</code></td><td>읽은 값을 누적한다. <code>sum = sum + x;</code>와 같다.</td></tr>
+      <tr><td><code>int sum = 0;</code></td><td><strong>초기화를 빠뜨리면 쓰레기값부터 더해진다.</strong> 누적 변수는 반드시 0으로 시작한다.</td></tr>
+      <tr><td>반환값 사용</td><td>조건식에서 반환값을 썼으므로 <code>-O2</code> 경고도 나지 않는다.</td></tr>
+    </tbody>
+  </table>
+  <div class="io">
+    <div><div class="lbl">INPUT — 줄마다 하나</div><pre>10
+20
+30
+40
+50</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>150</pre></div>
+  </div>
+  <div class="io">
+    <div><div class="lbl">INPUT — 한 줄에 모아서</div><pre>1 2 3 4 5</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>15</pre></div>
+  </div>
+  <p>두 입력의 모양이 전혀 다른데 코드는 그대로다. <code>%d</code>가 공백과 줄바꿈을 모두 건너뛰기 때문이다. <strong>입력 데이터의 줄 구분에 맞춰 코드를 바꿀 필요가 없다.</strong></p>
+  <div class="note">
+    <span class="h">키보드로 직접 시험할 때</span>
+    터미널에서 값을 입력하다가 입력의 끝을 알리려면 <b>Ctrl+D</b>(윈도우는 Ctrl+Z 후 Enter)를 누른다. 또는 1장에서 배운 대로 <code>./eofsum &lt; input.txt</code>로 파일을 연결한다.
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+  <p>모든 출력은 실제로 컴파일해 확인한 값이다.</p>
+
+  <h3><span class="tag">예제 1</span>표 모양으로 줄 맞춰 출력하기</h3>
+  <figure>
+    <figcaption><span class="fn">ex1.c</span><span>폭 지정으로 칸을 맞춘다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    printf("%-8s%6s%9s\n", "name", "score", "ratio");
+    printf("%-8s%6d%9.2f\n", "kim",   97, 0.97);
+    printf("%-8s%6d%9.2f\n", "lee",    8, 0.08);
+    printf("%-8s%6d%9.2f\n", "park", 100, 1.00);
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>name     score    ratio
+kim         97     0.97
+lee          8     0.08
+park       100     1.00</pre></div>
+    <div><div class="lbl">요령</div><pre>이름은 왼쪽(%-8s),
+숫자는 오른쪽(%6d).
+자릿수가 달라도
+세로줄이 맞는다.</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 2</span>%c 공백 함정 직접 보기</h3>
+  <figure>
+    <figcaption><span class="fn">ex2.c</span><span>같은 입력, 서식만 다르다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char c1, c2;
+
+    if (scanf("%c", &amp;c1) != 1) return 1;
+    if (scanf("%c", &amp;c2) != 1) return 1;
+
+    printf("c1=[%c](%d)  c2=[%c](%d)\n", c1, c1, c2, c2);
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>A B</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>c1=[A](65)  c2=[ ](32)</pre></div>
+  </div>
+  <p>두 <code>scanf</code>의 <code>"%c"</code>를 <code>" %c"</code>로 바꾸고 다시 실행하면 <code>c2=[B](66)</code>이 나온다. 공백 한 칸의 차이다.</p>
+
+  <h3><span class="tag">예제 3</span>문자열 읽기와 폭 제한</h3>
+  <figure>
+    <figcaption><span class="fn">ex3.c</span><span>%s는 공백에서 끊긴다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    char s[32], t[32];
+
+    if (scanf("%31s", s) != 1) return 1;
+    if (scanf("%31s", t) != 1) return 1;
+
+    printf("s=[%s] t=[%s]\n", s, t);
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>hello world</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>s=[hello] t=[world]</pre></div>
+  </div>
+  <p>배열 이름 <code>s</code>에 <strong><code>&amp;</code>를 붙이지 않는 것</strong>에 주의한다. 배열 이름은 그 자체가 이미 주소다. 자세한 이유는 13장에서 다룬다.</p>
+  <p><code>%31s</code>의 31은 <strong>최대 31글자까지만 읽으라</strong>는 제한이다. 배열 크기가 32이고 끝에 종료 문자 한 칸이 필요하므로 31이 상한이다. 폭을 지정하지 않으면 긴 입력이 배열 밖으로 넘쳐 프로그램이 죽는다.</p>
+
+  <h3><span class="tag">예제 4</span>붙어 있는 숫자 쪼개 읽기</h3>
+  <figure>
+    <figcaption><span class="fn">ex4.c</span><span>필드 폭으로 날짜를 분해한다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int y, m, d;
+
+    if (scanf("%4d%2d%2d", &amp;y, &amp;m, &amp;d) != 3) return 1;
+
+    printf("%d년 %d월 %d일\n", y, m, d);
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>20261012</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>2026년 10월 12일</pre></div>
+  </div>
+  <p>공백 없이 붙어 있는 숫자도 자릿수를 알면 쪼갤 수 있다. 서식 문자열에 <code>-</code>나 <code>:</code> 같은 글자를 그대로 넣으면 그 자리에 그 글자가 올 것을 기대하므로, <code>scanf("%d-%d-%d", ...)</code>로 <code>2026-10-12</code> 형태도 읽을 수 있다.</p>
+
+  <h3><span class="tag">예제 5</span>반환값으로 입력 검증하기</h3>
+  <figure>
+    <figcaption><span class="fn">ex5.c</span><span>몇 개를 읽었는지 보고받는다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int a, b;
+    int r = scanf("%d %d", &amp;a, &amp;b);
+
+    printf("return = %d\n", r);
+    return 0;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:30%">입력</th><th style="width:22%">출력</th><th>해석</th></tr></thead>
+    <tbody>
+      <tr><td class="num">12 25</td><td class="num">return = 2</td><td>정상</td></tr>
+      <tr><td class="num">12 ab</td><td class="num">return = 1</td><td>두 번째에서 실패. <code>b</code>는 쓰레기값</td></tr>
+      <tr><td class="num">ab cd</td><td class="num">return = 0</td><td>첫 번째부터 실패</td></tr>
+      <tr><td>(빈 입력)</td><td class="num">return = -1</td><td>EOF</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+  <p>메시지는 모두 <code>gcc 13.3.0</code>의 실제 출력이다. 이 장의 오류는 2장처럼 <strong>조용히 틀리는</strong> 쪽이다.</p>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 1</span><span class="t">double을 %f로 읽었다</span></div>
+    <div class="body">
+      <p>출력은 <code>%f</code>, 입력은 <code>%lf</code>. 이것 하나만 비대칭이라 계속 틀린다.</p>
+      <pre>e1.c:6:13: warning: format '%f' expects argument of type 'float *',
+            but argument 2 has type 'double *' [-Wformat=]
+    6 |     scanf("%f", &amp;d);
+      |            ~^   ~~
+      |             |   |
+      |             |   double *
+      |             float *
+      |            %lf</pre>
+      <p>실행하면 <code>d</code>에 입력값이 들어가지 않고 <strong><code>0.000000</code></strong>이 나온다. 4바이트만 채워 넣기 때문이다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>scanf("%lf", &amp;d)</code>. gcc가 <code>%lf</code>라고 답까지 적어 준다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 2</span><span class="t">%c 앞에 공백을 안 붙였다</span></div>
+    <div class="body">
+      <p>경고도 오류도 없다. 컴파일러 입장에서는 완전히 정상인 코드다.</p>
+      <pre>scanf("%d", &amp;n);
+scanf("%c", &amp;g);     // n 뒤의 줄바꿈을 읽어 버린다</pre>
+      <p><code>g</code>에는 개행 문자(아스키 10)가 들어간다. 입력이 밀렸다는 것을 알아채기까지 한참 걸린다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>scanf(" %c", &amp;g)</code>. <b><code>%c</code>를 쓸 때는 기계적으로 앞에 공백을 붙인다.</b></div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 3</span><span class="t">문자열에 &amp;를 붙였다</span></div>
+    <div class="body">
+      <p>1장에서 "읽을 때는 <code>&amp;</code>"라고 외운 것이 여기서 역효과를 낸다.</p>
+      <pre>e1.c:5:13: warning: format '%s' expects argument of type 'char *',
+            but argument 2 has type 'char (*)[32]' [-Wformat=]
+    5 |     scanf("%s", &amp;s);
+      |            ~^   ~~
+      |             |   |
+      |             |   char (*)[32]
+      |             char *</pre>
+      <p>이 경우는 주소값이 우연히 같아서 <strong>대개 정상 동작한다</strong>. 그래서 더 위험하다. 경고를 무시하는 습관이 붙는다.</p>
+      <div class="fix"><b>고치는 법</b> — 배열 이름은 그 자체가 주소다. <code>scanf("%s", s)</code>.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 4</span><span class="t">%s에 폭을 지정하지 않았다</span></div>
+    <div class="body">
+      <p><code>char s[32];</code>에 <code>scanf("%s", s)</code>로 50글자를 입력하면 배열 뒤의 메모리를 덮어쓴다. 경고는 없고, 운이 좋으면 멀쩡히 돌아가고 운이 나쁘면 <code>Segmentation fault</code>로 죽는다.</p>
+      <div class="fix"><b>고치는 법</b> — 배열 크기가 <code>N</code>이면 <code>%(N-1)s</code>. 크기 32면 <code>%31s</code>. 문제의 최대 길이를 보고 배열을 넉넉히 잡는 것도 함께 한다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 5</span><span class="t">끝 판정을 != EOF 로 했다</span></div>
+    <div class="body">
+      <p>숫자 자리에 글자가 들어오면 <code>scanf</code>는 0을 돌려주고 그 글자를 치우지 않는다. 다음 번에도 같은 글자를 보고 또 0이다.</p>
+      <pre>입력이 "abc"일 때 while (scanf("%d", &amp;x) != EOF) 의 동작:
+
+try 1: scanf 반환 0
+try 2: scanf 반환 0
+try 3: scanf 반환 0
+...  영원히 끝나지 않는다</pre>
+      <p>채점 결과는 <strong>시간 초과</strong>로 나온다. 알고리즘이 느린 줄 알고 엉뚱한 곳을 고치게 된다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>while (scanf("%d", &amp;x) == 1)</code>. 읽어야 할 항목이 두 개면 <code>== 2</code>. <b>"기대한 개수와 같은가"로 판정한다.</b></div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 6</span><span class="t">출력에 군더더기를 넣었다</span></div>
+    <div class="body">
+      <p>채점은 <code>stdout</code>의 글자를 정답 파일과 <strong>글자 단위로</strong> 비교한다(1장 2.4절). 다음은 모두 오답 처리된다.</p>
+      <table style="margin:6px 0">
+        <thead><tr><th style="width:46%">코드</th><th>문제</th></tr></thead>
+        <tbody>
+          <tr><td><code>printf("합은 %d입니다\n", s);</code></td><td>안내문이 섞였다</td></tr>
+          <tr><td><code>printf("%d ", s);</code></td><td>끝에 불필요한 공백</td></tr>
+          <tr><td><code>printf("%d", s);</code></td><td>줄바꿈 누락 — 문제에 따라 허용되기도 한다</td></tr>
+          <tr><td><code>printf("%.2f\n", (double)s);</code></td><td>정수를 실수로 출력했다</td></tr>
+        </tbody>
+      </table>
+      <div class="fix"><b>고치는 법</b> — 문제의 출력 예시를 <b>글자 그대로</b> 재현한다. 안내문이 필요하면 <code>fprintf(stderr, ...)</code>로 보낸다.</div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    서식 문자열의 글자 하나는 코드 한 줄과 같은 무게를 가진다. <code>%f</code>와 <code>%lf</code>, <code>%c</code>와 <code>" %c"</code>, <code>== 1</code>과 <code>!= EOF</code>. 전부 한 글자 차이인데 결과는 <b>0.000000</b>, <b>엉뚱한 문자</b>, <b>시간 초과</b>로 갈린다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p><code>gcc -std=c11 -Wall</code>로 경고 없이 컴파일되어야 한다. 9번부터는 <code>scanf</code>의 반환값을 검사하는 형태로 작성한다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>서식 연습</b> — 정수 <code>7</code>을 폭 1, 폭 5(오른쪽), 폭 5(왼쪽), 0 채움 폭 5의 네 가지로 각각 대괄호에 감싸 한 줄씩 출력하라. 입력은 없다.</p>
+    <div class="sample"><div><span>OUTPUT</span><pre>[7]
+[    7]
+[7    ]
+[00007]</pre></div><div><span>HINT</span><pre>%d %5d %-5d %05d</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>퍼센트 출력</b> — 실수 하나를 입력받아 소수점 아래 첫째 자리까지 쓰고 뒤에 <code>%</code> 기호를 붙여 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>87.65</pre></div><div><span>OUTPUT</span><pre>87.7%</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>시계 표기</b> — 초 단위 정수를 입력받아 <code>시:분:초</code>를 각각 두 자리로 맞춰 출력하라(한 자리면 앞에 0).</p>
+    <div class="sample"><div><span>INPUT</span><pre>3725</pre></div><div><span>OUTPUT</span><pre>01:02:05</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>문자 하나 받기</b> — 알파벳 한 글자를 입력받아 <code>[글자](아스키번호)</code> 형식으로 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>Q</pre></div><div><span>OUTPUT</span><pre>[Q](81)</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>문자 두 개</b> — 공백으로 구분된 알파벳 두 글자를 입력받아 순서를 바꿔 붙여서 출력하라. <code>%c</code>의 공백 처리에 주의한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>A B</pre></div><div><span>OUTPUT</span><pre>BA</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>단어 받기</b> — 공백 없는 단어 하나(최대 100글자)를 입력받아 그대로 출력하라. 배열 크기와 폭 지정을 맞춰라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>algorithm</pre></div><div><span>OUTPUT</span><pre>algorithm</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>실수 입출력</b> — 실수 두 개를 입력받아 합을 소수점 아래 넷째 자리까지 출력하라. 읽기와 쓰기의 지정자가 다른 것에 주의한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>1.25 2.5</pre></div><div><span>OUTPUT</span><pre>3.7500</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>날짜 분해</b> — <code>2026-10-12</code> 형식의 날짜를 입력받아 연·월·일을 공백으로 구분해 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>2026-10-12</pre></div><div><span>OUTPUT</span><pre>2026 10 12</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>입력 끝까지 합</b> — 개수를 알 수 없는 정수들이 주어진다. 모든 수의 합을 출력하라. 각 수의 절댓값은 10<sup>9</sup> 이하, 개수는 10<sup>6</sup> 이하다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>10
+20
+30</pre></div><div><span>OUTPUT</span><pre>60</pre></div></div>
+    <p class="spec">※ 2장의 교훈을 적용해 합을 담을 자료형을 먼저 결정하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>입력 끝까지 개수와 평균</b> — 개수를 알 수 없는 정수들이 주어진다. 개수와 평균을 공백으로 구분해 출력하라. 평균은 소수점 아래 둘째 자리까지.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3 4 5 6</pre></div><div><span>OUTPUT</span><pre>4 4.50</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>성적표 만들기</b> — 이름(공백 없음)과 점수가 한 줄씩 주어진다. 개수는 알 수 없다. 각 줄을 이름 왼쪽 정렬 폭 10, 점수 오른쪽 정렬 폭 5로 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>kim 97
+leesuyeon 8</pre></div><div><span>OUTPUT</span><pre>kim          97
+leesuyeon     8</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>테스트케이스 형식</b> — 첫 줄에 테스트케이스 개수 T가 주어지고, 이후 T개의 줄에 각각 두 정수가 주어진다. 각 줄의 합을 한 줄씩 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3
+1 2
+10 20
+100 200</pre></div><div><span>OUTPUT</span><pre>3
+30
+300</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>붙은 숫자 쪼개기</b> — 여섯 자리 숫자 하나가 주어진다. 두 자리씩 끊어 세 수로 나눈 뒤 공백으로 구분해 출력하라. 나눗셈과 나머지를 쓰지 말고 <strong>필드 폭</strong>으로 해결하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>123456</pre></div><div><span>OUTPUT</span><pre>12 34 56</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>혼합 입력</b> — <code>이름 나이 키</code>가 공백으로 구분되어 한 줄에 주어진다(이름은 공백 없는 영문, 나이는 정수, 키는 실수). <code>이름/나이/키</code> 형식으로 키는 소수점 아래 첫째 자리까지 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>minjun 15 172.48</pre></div><div><span>OUTPUT</span><pre>minjun/15/172.5</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>입력 검증하기</b> — 두 정수를 입력받되, 제대로 읽지 못하면 <code>stderr</code>에 <code>input error</code>를 쓰고 종료 코드 1로 끝내라. 제대로 읽었으면 합을 <code>stdout</code>에 출력하고 0으로 끝내라.</p>
+    <p class="spec">※ 두 경우 모두 <code>echo $?</code>로 종료 코드를 확인해 보고 결과를 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>반올림 확인</b> — <code>%.0f</code>로 0.5 / 1.5 / 2.5 / 3.5 / 4.5를 차례로 출력하라. 결과를 보고 어떤 규칙인지 한 문장으로 쓰고, 일반적인 반올림(0.5는 올림)과 어디서 다른지 지적하라.</p>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>무한 루프 재현하기</b> — 아래 코드를 작성하고 입력으로 <code>abc</code>를 주어 실행하라. ① 무슨 일이 일어나는가 ② <code>scanf</code>의 반환값은 몇인가 ③ 왜 끝나지 않는가 ④ 한 글자만 고쳐 해결하라.</p>
+<pre><code>int x, sum = 0;
+while (scanf("%d", &amp;x) != EOF) {
+    sum += x;
+}
+printf("%d\n", sum);</code></pre>
+    <p class="spec">※ 실행이 멈추지 않으면 Ctrl+C로 중단한다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>서식 지정자 진단</b> — 아래 네 줄을 컴파일하면 어떤 경고가 나오고 실행 결과는 어떻게 되는지 각각 예측한 뒤 확인하고 고쳐라. 변수는 <code>long long v = 10000000000LL; double d; char s[16];</code>이다.</p>
+<pre><code>(가) printf("%d\n", v);
+(나) scanf("%f", &amp;d);
+(다) scanf("%s", &amp;s);
+(라) scanf("%d", &amp;v);</code></pre>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>두 가지 입력 형식 모두 처리</b> — 같은 문제의 입력이 어떤 파일에서는 한 줄에 모여 있고, 다른 파일에서는 줄마다 하나씩 들어 있다. 두 경우 모두 코드를 바꾸지 않고 처리되는 이유를 설명하라. 그리고 <code>%c</code>로 읽는 경우에는 왜 이 설명이 성립하지 않는지도 밝혀라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>출력 형식 점검표 만들기</b> — 지금까지 배운 내용을 바탕으로, 제출 직전에 확인할 <strong>출력 형식 점검표</strong>를 5항목 이상 작성하라. 각 항목은 "무엇을 확인하는가"와 "어기면 어떤 판정을 받는가"를 포함해야 한다. 그리고 2장에서 만든 자료형 점검 항목도 함께 넣어 하나의 제출 전 점검표로 합쳐라.</p>
+  </div></div>
+
+  </div>
+</section>
+
+<section class="pagebreak answers">
+  <span class="sec-no">07 — 확인 평가 해설</span>
+  <h2>정답과 해설</h2>
+  <p class="spec" style="color:var(--ink-faint);font-size:9pt">※ 이 절은 교사용 통합본에만 수록한다. 학생 배부용에서는 제거한다.</p>
+
+  <div class="ans"><span class="an">01</span><div class="ab"><code>printf("[%d]\n[%5d]\n[%-5d]\n[%05d]\n", 7, 7, 7, 7);</code> 한 줄로도 가능하다. 서식 문자열 안에 <code>\n</code>을 넣어 묶는 것을 보여 준다.</div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab"><code>printf("%.1f%%\n", x);</code> — <code>%</code> 하나만 쓰면 다음 글자를 지정자로 해석해 출력이 깨진다. <b>흔한 오답</b>: <code>printf("%.1f%\n", x)</code>.</div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab"><code>printf("%02d:%02d:%02d\n", s/3600, s/60%60, s%60);</code> — 2장 연습 12번에서 <code>3:5</code>로 끝냈던 것을 여기서 완성한다. 두 장의 연결을 짚어 준다.</div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab"><code>scanf(" %c", &amp;c);</code> 후 <code>printf("[%c](%d)\n", c, c);</code> — 같은 변수를 두 서식으로 출력하는 것이 요점이다.</div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab"><code>scanf(" %c %c", &amp;a, &amp;b);</code> 또는 <code>" %c"</code> 두 번. <code>printf("%c%c\n", b, a);</code>. <b>흔한 오답</b>: <code>"%c %c"</code> — 첫 번째 <code>%c</code> 앞 공백이 없어도 이 입력에서는 우연히 동작한다. 앞에 개행이 붙은 입력으로 시험시켜 차이를 보여 준다.</div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab"><code>char s[101]; scanf("%100s", s);</code> — 배열 크기 101, 폭 100. 종료 문자 한 칸을 왜 남기는지 설명한다(14장 예고).</div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab"><code>double a, b; scanf("%lf %lf", &amp;a, &amp;b); printf("%.4f\n", a+b);</code> — 읽기 <code>%lf</code>, 쓰기 <code>%f</code>. <b>흔한 오답</b>: <code>scanf("%f", ...)</code> → 출력 <code>0.0000</code>.</div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab"><code>scanf("%d-%d-%d", &amp;y, &amp;m, &amp;d);</code> — 서식 문자열의 <code>-</code>가 입력의 <code>-</code>와 맞춰진다. <b>보충</b> — <code>scanf("%4d-%2d-%2d", ...)</code>로도 되고, 구분자가 없는 <code>20261012</code>라면 <code>%4d%2d%2d</code>를 쓴다(예제 4).</div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab">
+    최악의 합은 10<sup>6</sup> × 10<sup>9</sup> = 10<sup>15</sup>이므로 <code>long long</code>이 필요하다.
+<pre><code>int x;
+long long sum = 0;
+while (scanf("%d", &amp;x) == 1) sum += x;
+printf("%lld\n", sum);</code></pre>
+    <b>지도 포인트</b> — 읽는 변수 <code>x</code>는 <code>int</code>로 충분하고 <b>누적 변수만</b> <code>long long</code>이면 된다. 2장 표준 코드와 같은 구조다.
+  </div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab"><code>cnt</code>와 <code>sum</code>을 함께 누적한 뒤 <code>printf("%d %.2f\n", cnt, (double)sum / cnt);</code>. <b>흔한 오답</b>: <code>sum / cnt</code> — 정수 나눗셈이 되어 <code>4.00</code>이 나온다(2장 연습 15번과 같은 함정).</div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab"><code>while (scanf("%99s %d", name, &amp;score) == 2) printf("%-10s%5d\n", name, score);</code> — 한 번의 <code>scanf</code>로 두 항목을 읽고 반환값을 <code>2</code>와 비교하는 것이 요점이다.</div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">
+    첫 줄의 T를 먼저 읽고 T번 반복한다.
+<pre><code>int T, a, b;
+if (scanf("%d", &amp;T) != 1) return 1;
+for (int i = 0; i &lt; T; i++) {
+    if (scanf("%d %d", &amp;a, &amp;b) != 2) return 1;
+    printf("%d\n", a + b);
+}</code></pre>
+    <b>지도 포인트</b> — 올림피아드에서 가장 흔한 입력 형식이다. 9~11번의 EOF 방식과 이 T 방식 두 가지가 입력 처리의 전부라고 정리해 준다.
+  </div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab"><code>scanf("%2d%2d%2d", &amp;a, &amp;b, &amp;c);</code> — 나눗셈 풀이를 쓴 답안도 정답이지만, 이 문제의 목적은 필드 폭의 존재를 체득하는 것이므로 서식 풀이를 요구한다.</div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab"><code>scanf("%99s %d %lf", name, &amp;age, &amp;h);</code> 후 <code>printf("%s/%d/%.1f\n", name, age, h);</code><br>
+    <b>보충 실험</b> — 입력을 <code>172.45</code>로 바꾸면 <code>172.5</code>가 아니라 <b><code>172.4</code></b>가 나온다. <code>%.20f</code>로 찍어 보면 실제 저장된 값이 <code>172.44999999999998863132</code>이기 때문이다. 2장에서 배운 "<code>double</code>은 정확하지 않다"가 출력 자리에서 드러나는 사례다.</div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab">
+<pre><code>int a, b;
+if (scanf("%d %d", &amp;a, &amp;b) != 2) {
+    fprintf(stderr, "input error\n");
+    return 1;
+}
+printf("%d\n", a + b);
+return 0;</code></pre>
+    정상 입력이면 <code>echo $?</code>가 <b>0</b>, 잘못된 입력이면 <b>1</b>. 1장의 종료 코드와 이 장의 반환값이 만나는 지점이다.
+  </div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">
+    출력은 <code>0 2 2 4 4</code>. 규칙은 <b>0.5인 경우 가까운 짝수 쪽으로 보낸다</b>(은행가 반올림). 일반적인 반올림이라면 1, 2, 3, 4, 5가 나와야 한다.<br>
+    <b>지도 포인트</b> — 평균·확률을 출력하는 문제에서 마지막 자리가 1 차이로 틀리는 원인이다. 정확한 반올림이 필요하면 정수 연산으로 처리한다.
+  </div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    ① 프로그램이 멈추지 않는다(채점에서는 시간 초과). ② 반환값은 계속 <b>0</b>이다. ③ <code>scanf</code>가 <code>%d</code>로 읽는 데 실패하면 그 글자를 입력에서 <b>치우지 않는다</b>. 그래서 다음 호출도 같은 <code>a</code>를 보고 또 실패한다. 0은 <code>EOF</code>(−1)가 아니므로 조건이 끝나지 않는다.<br>
+    ④ <code>!= EOF</code>를 <b><code>== 1</code></b>로 바꾼다.<br>
+    <b>지도 포인트</b> — 0과 EOF를 구분하는 것이 이 장의 핵심이다. 이 문제를 직접 겪게 한 뒤 3.4절로 돌아가 다시 읽힌다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    (가) <code>%d</code>에 <code>long long</code> — 경고 <code>expects argument of type 'int'</code>, 출력은 하위 32비트인 <b>1410065408</b>. → <code>%lld</code>.<br>
+    (나) <code>%f</code>에 <code>double*</code> — 경고 <code>expects argument of type 'float *'</code>, <code>d</code>는 <b>0.000000</b>. → <code>%lf</code>.<br>
+    (다) <code>%s</code>에 <code>&amp;s</code> — 경고 <code>has type 'char (*)[16]'</code>, 그러나 <b>대개 정상 동작한다</b>. → <code>&amp;</code>를 뺀다.<br>
+    (라) <code>%d</code>에 <code>long long*</code> — 경고 <code>expects argument of type 'int *'</code>, 작은 수에서는 우연히 맞기도 한다. → <code>%lld</code>.<br>
+    <b>정리</b> — 네 경우 모두 <b>컴파일은 성공</b>한다. (다)와 (라)는 테스트에서 통과하고 채점에서 틀릴 수 있어 가장 위험하다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    <code>%d</code>·<code>%lf</code>·<code>%s</code>는 값을 읽기 전에 <b>앞쪽의 공백과 줄바꿈을 모두 건너뛴다</b>. 입력에서 공백과 줄바꿈은 똑같이 "구분자"로 취급되므로, 한 줄에 모여 있든 줄마다 나뉘어 있든 동일하게 읽힌다.<br>
+    <code>%c</code>는 예외다. 한 글자를 <b>있는 그대로</b> 읽으므로 공백과 줄바꿈도 하나의 글자로 가져간다. 그래서 입력의 줄 구성이 바뀌면 결과가 달라지고, <code>" %c"</code>처럼 앞에 공백을 두어 명시적으로 건너뛰게 해야 같은 동작이 된다.
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    모범 답안 예시(항목 수와 표현은 달라도 된다).<br>
+    <b>출력</b> ① 안내문이 <code>stdout</code>에 섞이지 않았는가 → 틀림 ② 끝의 불필요한 공백 → 틀림 ③ 줄바꿈 처리 → 문제에 따라 틀림 ④ 정수를 실수로, 실수를 정수로 출력하지 않았는가 → 틀림 ⑤ 소수점 자릿수가 문제 요구와 같은가 → 틀림<br>
+    <b>입력</b> ⑥ <code>double</code>을 <code>%lf</code>로 읽는가 ⑦ <code>%c</code> 앞에 공백을 붙였는가 ⑧ 끝 판정을 <code>== 1</code>로 했는가 → 시간 초과<br>
+    <b>자료형</b>(2장) ⑨ 최악의 경우 값을 계산했는가 ⑩ 중간값이 넘치지 않는가 ⑪ <code>long long</code>을 <code>%lld</code>로 출력하는가<br>
+    <b>공통</b> ⑫ 경고 0개인가(1장)<br>
+    <b>지도 포인트</b> — 이 점검표를 교실 벽에 붙이고 PART 2 내내 쓴다. 학생이 직접 만든 표라야 실제로 쓴다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li><code>double</code>은 읽기 <code>%lf</code>, 쓰기 <code>%f</code>라는 것을 안다</li>
+    <li><code>%c</code> 앞에는 기계적으로 공백을 붙인다</li>
+    <li>문자열에는 <code>&amp;</code>를 붙이지 않고, 폭을 지정해 읽는다</li>
+    <li><code>scanf</code>의 반환값이 무엇을 뜻하는지 설명할 수 있다</li>
+    <li>끝 판정을 <code>== 1</code>로 하고 <code>!= EOF</code>를 쓰지 않는 이유를 안다</li>
+    <li>폭·정렬·정밀도로 출력 모양을 맞출 수 있다</li>
+    <li>제출 전 출력 형식 점검표를 확인한다</li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 04장 연산자와 형변환</span>
+    이 장에서 <code>(double)sum / cnt</code>라는 표현이 여러 번 나왔다. 왜 괄호가 저기에 붙는지, 정수끼리의 나눗셈은 왜 소수가 사라지는지, 그리고 음수를 나눈 나머지가 왜 음수가 되는지를 다음 장에서 정리한다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 1 · 03장 · 2026-10-12 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+
+</div>
+</body>
+</html>

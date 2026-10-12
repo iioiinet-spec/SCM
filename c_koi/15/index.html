@@ -1,0 +1,937 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 1 · 15장 구조체와 사용자 정의 자료형 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#0d7a6f;
+  --accent-soft:#e3f1ef;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#8fd8cd}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+<header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 1 · C11 문법 기초 — 15 / 16</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">15</span>
+    <h1>구조체와 사용자 정의 자료형</h1>
+  </div>
+  <p class="lede">13장에서 "정렬하면 원래 인덱스가 사라진다"는 문제를 남겨 두었다. 서로 관련된 값들을 <strong>한 덩어리로 묶으면</strong> 그 문제가 사라진다. 그리고 구조체 배열을 <code>qsort</code>로 정렬하는 형태가 PART 2·3의 거의 모든 정렬 문제에서 쓰인다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li>구조체를 정의하고 <code>.</code>으로 멤버에 접근할 수 있다</li>
+    <li>구조체 배열을 만들어 입력받고 출력할 수 있다</li>
+    <li>구조체 포인터와 <code>-&gt;</code>를 쓸 수 있다</li>
+    <li><code>typedef</code>로 이름을 짧게, <code>enum</code>으로 상수에 이름을 붙일 수 있다</li>
+    <li>구조체는 <code>=</code>로 복사되고 <code>return</code>으로 돌려줄 수 있다는 점이 배열과 다름을 안다</li>
+    <li><code>qsort</code>의 비교 함수를 <strong>다중 기준</strong>으로 작성할 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 문제 · 구조체 정의와 멤버 · 구조체 배열</div>
+  <div><b>2차시</b>포인터와 화살표 · typedef · enum · qsort</div>
+  <div><b>3차시</b>표준 코드(다중 기준 정렬) · 흔한 오류 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>이름과 점수가 따로 놀 때</h2>
+  <p>학생 N명의 이름과 점수를 받아 <strong>점수가 높은 순으로</strong> 출력하는 문제다. 14장까지의 방법으로는 배열을 두 개 쓴다.</p>
+  <figure>
+    <figcaption><span class="fn">배열 두 개</span><span>문제는 정렬할 때 생긴다</span></figcaption>
+<pre><code>char name[100][21];
+int  score[100];</code></pre>
+  </figure>
+  <p>점수를 정렬하면 <code>score</code> 배열의 순서가 바뀐다. 그런데 <code>name</code> 배열은 그대로다. <strong>이름과 점수의 짝이 깨진다.</strong></p>
+  <div class="io">
+    <div><div class="lbl">정렬 전</div><pre>name:  minjun  jisoo  hyun
+score:     90     95    88</pre></div>
+    <div><div class="lbl">score만 정렬하면</div><pre>name:  minjun  jisoo  hyun
+score:     95     90    88
+            ↑ minjun이 95점?</pre></div>
+  </div>
+  <p>해결하려면 두 배열을 <strong>함께</strong> 옮겨야 한다. 멤버가 셋, 넷으로 늘어나면 교환할 때마다 모두 옮겨야 하고, 한 줄이라도 빠뜨리면 조용히 틀린다.</p>
+  <div class="note">
+    <span class="h">근본적인 해법</span>
+    애초에 <b>이름과 점수를 한 덩어리로 묶어</b> 두면, 덩어리 하나를 옮기는 것으로 끝난다. 그 묶음이 <b>구조체</b>다.
+  </div>
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> 서로 다른 자료형의 값을 어떻게 한 덩어리로 묶는가?<br>
+    <b>②</b> 구조체는 배열처럼 "복사되지 않는" 것인가?<br>
+    <b>③</b> 점수가 같으면 나이순, 그것도 같으면 이름순 — 이런 정렬을 어떻게 쓰는가?
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">15.1</span>구조체 정의와 멤버 접근</h3>
+  <figure>
+    <figcaption><span class="fn">정의와 사용</span><span>끝의 세미콜론을 빠뜨리지 않는다</span></figcaption>
+<pre><code>struct Student {
+    char name[20];
+    int  score;
+    int  age;
+};                      // ← 세미콜론 필수
+
+struct Student s;
+strcpy(s.name, "minjun");
+s.score = 95;
+s.age = 15;</code></pre>
+  </figure>
+  <p>배열은 <strong>같은 자료형</strong>을 여러 개 모으지만, 구조체는 <strong>다른 자료형</strong>을 묶는다. 멤버는 <code>.</code>으로 접근한다.</p>
+  <p>이름 멤버는 <code>char</code> 배열이므로 <code>=</code>로 대입할 수 없다(8장). <code>strcpy</code>를 쓴다.</p>
+  <h4>초기화</h4>
+  <div class="io">
+    <div><div class="lbl">선언과 동시에</div><pre>struct Student s = {"minjun", 95, 15};</pre></div>
+    <div><div class="lbl">전부 0으로</div><pre>struct Student s = {0};</pre></div>
+  </div>
+  <p>배열과 같은 규칙이다(8장). 전역으로 선언하면 자동으로 0이 된다.</p>
+
+  <h3><span class="tag">15.2</span>구조체는 = 로 복사된다</h3>
+  <p>여기가 배열과 결정적으로 다른 점이다.</p>
+  <div class="io">
+    <div><div class="lbl">CODE</div><pre>struct Student t = s;      // 통째로 복사
+strcpy(t.name, "jisoo");
+t.score = 88;</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>s: minjun 95
+t: jisoo  88</pre></div>
+  </div>
+  <p><code>t</code>를 고쳐도 <code>s</code>는 멀쩡하다. <strong>안에 들어 있는 배열 멤버까지 함께 복사된다.</strong> 8장에서 배열은 <code>b = a</code>가 오류였는데, 구조체로 감싸면 복사가 된다.</p>
+  <table>
+    <thead><tr><th style="width:30%">동작</th><th style="width:22%">배열</th><th>구조체</th></tr></thead>
+    <tbody>
+      <tr><td><code>=</code>로 복사</td><td><strong>오류</strong></td><td><strong>된다</strong></td></tr>
+      <tr><td>함수에 넘기기</td><td>주소만 간다</td><td><strong>통째로 복사된다</strong></td></tr>
+      <tr><td><code>return</code>으로 돌려주기</td><td>불가능</td><td><strong>된다</strong></td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">함수에 넘기면 복사되므로 못 고친다</span>
+    <code>void move(Point p) { p.x += 100; }</code>는 아무 일도 하지 않는다. 10장의 <code>swap_bad</code>와 같은 상황이다. 고치려면 <b>포인터로 받는다</b>.<br>
+    또 하나, 큰 구조체를 값으로 넘기면 <b>매 호출마다 복사 비용</b>이 든다. 그래서 읽기만 해도 <code>const</code> 포인터로 넘기는 경우가 많다.
+  </div>
+
+  <h3><span class="tag">15.3</span>구조체 포인터와 화살표</h3>
+  <div class="io">
+    <div><div class="lbl">두 표기는 같다</div><pre>struct Student *p = &amp;s;
+
+(*p).score      // 괄호 필수
+p-&gt;score        // 같은 뜻, 이쪽을 쓴다</pre></div>
+    <div><div class="lbl">왜 괄호가 필요한가</div><pre>*p.score 로 쓰면
+.이 *보다 먼저 묶여
+*(p.score) 가 된다 (4장)</pre></div>
+  </div>
+  <p><code>-&gt;</code>는 <strong>"가리키는 구조체의 멤버"</strong>를 뜻한다. <code>(*p).</code>를 짧게 쓴 것이고, 실무에서는 거의 <code>-&gt;</code>만 쓴다.</p>
+  <p>포인터로 받았으므로 <code>p-&gt;score = 100;</code>으로 고치면 <strong>원본이 바뀐다</strong>(12장).</p>
+
+  <h3><span class="tag">15.4</span>typedef — 이름을 짧게</h3>
+  <div class="io">
+    <div><div class="lbl">매번 struct를 쓰기 번거롭다</div><pre>struct Student s;
+struct Student a[100];</pre></div>
+    <div><div class="lbl">typedef를 쓰면</div><pre>typedef struct {
+    char name[20];
+    int  score;
+} Student;
+
+Student s;
+Student a[100];</pre></div>
+  </div>
+  <p>이 교재는 <strong><code>typedef</code> 형태를 표준으로</strong> 쓴다. 코드가 짧아지고 읽기 쉽다.</p>
+
+  <h3><span class="tag">15.5</span>enum — 상수에 이름을</h3>
+  <figure>
+    <figcaption><span class="fn">정의</span><span>값을 안 적으면 0부터 1씩</span></figcaption>
+<pre><code>enum Dir { UP, DOWN, LEFT, RIGHT };      // 0, 1, 2, 3
+enum Color { RED = 1, GREEN = 5, BLUE }; // 1, 5, 6</code></pre>
+  </figure>
+  <p>값을 지정하면 그 값부터, 안 하면 <strong>직전 값 + 1</strong>이다. 9장의 델타 배열에 이름을 붙이는 데 특히 유용하다.</p>
+  <div class="io">
+    <div><div class="lbl">9장의 델타 배열</div><pre>int dy[4] = {-1, 1, 0, 0};
+int dx[4] = { 0, 0,-1, 1};
+
+dy[2], dx[2]   // 무슨 방향?</pre></div>
+    <div><div class="lbl">enum을 쓰면</div><pre>enum { UP, DOWN, LEFT, RIGHT };
+
+dy[LEFT], dx[LEFT]   // 명확하다</pre></div>
+  </div>
+  <p>숫자 2가 왼쪽이라는 것을 코드가 직접 말해 준다. <strong>주석이 필요 없어진다.</strong></p>
+
+  <h3><span class="tag">15.6</span>구조체의 크기와 패딩</h3>
+  <p>구조체의 크기는 멤버 크기의 합보다 <strong>클 수 있다</strong>.</p>
+  <table>
+    <thead><tr><th style="width:40%">구조체</th><th style="width:22%">멤버 합</th><th>실제 크기</th></tr></thead>
+    <tbody>
+      <tr><td><code>struct { char c; int i; }</code></td><td class="num">5</td><td class="num"><strong>8</strong></td></tr>
+      <tr><td><code>struct { int i; char c; }</code></td><td class="num">5</td><td class="num"><strong>8</strong></td></tr>
+      <tr><td><code>struct { char a; char b; int i; }</code></td><td class="num">6</td><td class="num"><strong>8</strong></td></tr>
+      <tr><td><code>struct { char name[20]; int s; int a; }</code></td><td class="num">28</td><td class="num">28</td></tr>
+    </tbody>
+  </table>
+  <p>CPU가 값을 빠르게 읽을 수 있도록 <strong>빈 칸을 끼워 넣기</strong> 때문이다. 이것을 <strong>패딩</strong>이라고 한다.</p>
+  <div class="note">
+    <span class="h">올림피아드에서 알아 둘 점</span>
+    <b>메모리 계산에 영향을 준다.</b> 10만 개짜리 구조체 배열을 만들 때 "멤버 합 × 10만"으로 계산하면 실제보다 작게 나온다. <code>sizeof</code>로 직접 재는 것이 정확하다.<br>
+    <b>큰 멤버부터 선언하면</b> 패딩이 줄어드는 경우가 많다. 메모리가 빠듯할 때만 신경 쓰면 된다.
+  </div>
+
+  <h3><span class="tag">15.7</span>qsort — 표준 정렬 함수</h3>
+  <p>C는 정렬 함수를 표준으로 제공한다. <code>&lt;stdlib.h&gt;</code>의 <code>qsort</code>다.</p>
+  <figure>
+    <figcaption><span class="fn">사용법</span><span>네 개의 인자</span></figcaption>
+<pre><code>qsort(배열, 원소수, 한원소크기, 비교함수);
+
+qsort(a, (size_t)n, sizeof(Student), cmp);</code></pre>
+  </figure>
+  <h4>비교 함수의 규칙</h4>
+  <figure>
+    <figcaption><span class="fn">cmp의 모양</span><span>이 형태는 바꿀 수 없다</span></figcaption>
+<pre><code>int cmp(const void *x, const void *y)
+{
+    const Student *p = (const Student *)x;
+    const Student *q = (const Student *)y;
+
+    return q-&gt;score - p-&gt;score;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:26%">반환값</th><th>뜻</th></tr></thead>
+    <tbody>
+      <tr><td><strong>음수</strong></td><td>x를 앞에 놓는다</td></tr>
+      <tr><td><strong>0</strong></td><td>순서 상관없음</td></tr>
+      <tr><td><strong>양수</strong></td><td>y를 앞에 놓는다</td></tr>
+    </tbody>
+  </table>
+  <p><code>p-&gt;score - q-&gt;score</code>이면 <strong>오름차순</strong>, <code>q-&gt;score - p-&gt;score</code>이면 <strong>내림차순</strong>이다. 순서만 바꾸면 된다.</p>
+  <div class="note warn">
+    <span class="h">뺄셈 방식은 오버플로에 걸린다</span>
+    값이 20억 근처면 <code>a - b</code>가 넘쳐 <b>부호가 뒤집힌다</b>(2장). 실제로 <code>{2000000000, -2000000000}</code>을 뺄셈 방식으로 정렬하면 <b>정렬되지 않는다</b>.<br>
+    안전한 형태는 다음과 같다.
+<pre><code>return (a &gt; b) - (a &lt; b);        // 오름차순
+if (a != b) { return (a &gt; b) ? 1 : -1; }</code></pre>
+    값의 범위가 작다고 확신할 때만 뺄셈을 쓴다.
+  </div>
+  <h4>다중 기준</h4>
+  <p>1순위가 같을 때 2순위를 보는 것은 <strong><code>if</code>를 차례로 쓰면</strong> 된다.</p>
+  <figure>
+    <figcaption><span class="fn">세 단계 기준</span><span>5장의 else if 체인과 같은 구조</span></figcaption>
+<pre><code>if (p-&gt;score != q-&gt;score) { return q-&gt;score - p-&gt;score; }  // 1순위
+if (p-&gt;age   != q-&gt;age)   { return p-&gt;age   - q-&gt;age;   }  // 2순위
+return strcmp(p-&gt;name, q-&gt;name);                           // 3순위</code></pre>
+  </figure>
+  <p>앞의 기준이 다르면 거기서 결정되고, 같으면 다음으로 넘어간다. <strong>마지막 기준은 <code>if</code> 없이</strong> 바로 반환한다. <code>strcmp</code>가 이미 음수·0·양수를 돌려주므로 그대로 쓸 수 있다(14장).</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드: 다중 기준 정렬</h2>
+  <p>학생들을 <strong>점수 내림차순 → 나이 오름차순 → 이름 사전순</strong>으로 정렬한다.</p>
+  <figure>
+    <figcaption><span class="fn">sortstu.c</span><span>표준 코드 · gcc 검증 완료</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+#define MAXN 100000
+#define NLEN 21
+
+typedef struct {
+    char name[NLEN];
+    int  score;
+    int  age;
+} Student;
+
+Student a[MAXN];
+
+int cmp(const void *x, const void *y)
+{
+    const Student *p = (const Student *)x;
+    const Student *q = (const Student *)y;
+
+    if (p-&gt;score != q-&gt;score) { return q-&gt;score - p-&gt;score; }
+    if (p-&gt;age   != q-&gt;age)   { return p-&gt;age   - q-&gt;age;   }
+    return strcmp(p-&gt;name, q-&gt;name);
+}
+
+int main(void)
+{
+    int n;
+    if (scanf("%d", &amp;n) != 1) return 1;
+
+    for (int i = 0; i &lt; n; i++) {
+        if (scanf("%20s %d %d", a[i].name, &amp;a[i].score, &amp;a[i].age) != 3) return 1;
+    }
+
+    qsort(a, (size_t)n, sizeof(Student), cmp);
+
+    for (int i = 0; i &lt; n; i++) {
+        printf("%s %d %d\n", a[i].name, a[i].score, a[i].age);
+    }
+    return 0;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:34%">요소</th><th>설계 의도</th></tr></thead>
+    <tbody>
+      <tr><td><code>NLEN 21</code></td><td>이름 최대 20자 + 종료 문자(14장 오류 1).</td></tr>
+      <tr><td><code>scanf("%20s", a[i].name)</code></td><td>배열 멤버이므로 <strong><code>&amp;</code>가 없다</strong>. 점수와 나이에는 붙는다(12장).</td></tr>
+      <tr><td><code>const void *</code></td><td><code>qsort</code>가 요구하는 고정된 형태다. 바꿀 수 없다.</td></tr>
+      <tr><td>형변환 두 줄</td><td><code>void*</code>는 바로 쓸 수 없으므로 실제 자료형으로 바꿔 받는다.</td></tr>
+      <tr><td><code>q-&gt;score - p-&gt;score</code></td><td><strong>q가 앞</strong>이면 내림차순. 점수는 0~100이라 뺄셈이 안전하다.</td></tr>
+      <tr><td><code>strcmp(p-&gt;name, q-&gt;name)</code></td><td>사전순 오름차순. 반환값 규칙이 <code>qsort</code>와 똑같아 그대로 쓴다.</td></tr>
+      <tr><td>전역 <code>a[MAXN]</code></td><td>10만 × 28바이트 = 2.8 MB. 전역이어야 한다(8장).</td></tr>
+    </tbody>
+  </table>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>6
+minjun 90 15
+jisoo 95 14
+hyun 90 14
+sora 88 16
+yuna 95 14
+bada 90 15</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>jisoo 95 14
+yuna 95 14
+hyun 90 14
+bada 90 15
+minjun 90 15
+sora 88 16</pre></div>
+  </div>
+  <p>95점 두 명은 나이가 같아 <strong>이름순</strong>으로 갈렸다(jisoo &lt; yuna). 90점 세 명은 나이 14인 hyun이 먼저, 나이 15인 둘은 이름순으로 bada &lt; minjun이다. <strong>세 기준이 모두 동작하는 것을 한 입력으로 확인할 수 있게</strong> 설계한 테스트다.</p>
+  <div class="note warn">
+    <span class="h">이 코드는 PART 2·3 내내 쓰인다</span>
+    "정렬 후 훑기"는 완전탐색을 줄이는 가장 흔한 방법이다. 좌표 정렬, 구간 정렬, 회의실 배정(PART 3 그리디) 모두 이 형태를 쓴다. <b>비교 함수의 모양을 통째로 외운다.</b>
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+
+  <h3><span class="tag">예제 1</span>구조체 배열 입출력</h3>
+  <figure>
+    <figcaption><span class="fn">ex1.c</span><span>배열 세 개가 하나로</span></figcaption>
+<pre><code>typedef struct {
+    char name[21];
+    int  score;
+} Student;
+
+Student a[100];
+
+for (int i = 0; i &lt; n; i++) {
+    scanf("%20s %d", a[i].name, &amp;a[i].score);
+}
+for (int i = 0; i &lt; n; i++) {
+    printf("%s %d\n", a[i].name, a[i].score);
+}</code></pre>
+  </figure>
+  <p><code>a[i]</code>가 구조체 하나이고, <code>a[i].name</code>이 그 안의 멤버다. <strong>인덱스가 먼저, 점이 나중</strong>이다.</p>
+
+  <h3><span class="tag">예제 2</span>좌표 구조체</h3>
+  <figure>
+    <figcaption><span class="fn">ex2.c</span><span>return으로 구조체를 돌려준다</span></figcaption>
+<pre><code>typedef struct { int x, y; } Point;
+
+Point make(int x, int y)
+{
+    Point p;
+    p.x = x;
+    p.y = y;
+    return p;
+}
+
+long long dist2(Point a, Point b)
+{
+    long long dx = a.x - b.x;
+    long long dy = a.y - b.y;
+    return dx * dx + dy * dy;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">사용</div><pre>Point p = make(0, 0);
+Point q = make(3, 4);
+printf("%lld\n", dist2(p, q));   // 25</pre></div>
+    <div><div class="lbl">주의</div><pre>거리의 제곱으로 비교한다.
+제곱근은 실수 오차가 생기므로
+(2장) 되도록 쓰지 않는다.</pre></div>
+  </div>
+  <p>배열은 <code>return</code>할 수 없지만 구조체는 가능하다. 12장 오류 5(지역 변수의 주소 반환)가 여기서는 생기지 않는다. <strong>값이 복사되어 돌아오기 때문이다.</strong></p>
+
+  <h3><span class="tag">예제 3</span>포인터로 받아 고치기</h3>
+  <figure>
+    <figcaption><span class="fn">ex3.c</span><span>값으로 받으면 안 바뀐다</span></figcaption>
+<pre><code>void move_bad(Point p)  { p.x += 100; }
+void move_ok (Point *p) { p-&gt;x += 100; }
+
+Point p = {1, 2};
+move_bad(p);   printf("%d %d\n", p.x, p.y);   // 1 2
+move_ok(&amp;p);   printf("%d %d\n", p.x, p.y);   // 101 2</code></pre>
+  </figure>
+  <p>12장의 <code>swap</code>과 완전히 같은 구조다. 구조체도 <strong>값으로 넘기면 복사본</strong>이므로 고치려면 주소를 넘긴다.</p>
+
+  <h3><span class="tag">예제 4</span>enum으로 방향에 이름 붙이기</h3>
+  <figure>
+    <figcaption><span class="fn">ex4.c</span><span>9장 델타 배열을 읽기 쉽게</span></figcaption>
+<pre><code>enum { UP, DOWN, LEFT, RIGHT };
+
+int dy[4] = {-1, 1, 0, 0};
+int dx[4] = { 0, 0,-1, 1};
+
+int ny = y + dy[LEFT];
+int nx = x + dx[LEFT];</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">값 확인</div><pre>UP=0 DOWN=1 LEFT=2 RIGHT=3
+dy[LEFT]=0  dx[LEFT]=-1</pre></div>
+    <div><div class="lbl">얻는 것</div><pre>dx[2] 가 무슨 방향인지
+코드만 보고 알 수 있다.
+주석이 필요 없다.</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 5</span>정수 배열 정렬 — qsort 기본형</h3>
+  <figure>
+    <figcaption><span class="fn">ex5.c</span><span>구조체가 아니어도 쓴다</span></figcaption>
+<pre><code>int cmp_int(const void *x, const void *y)
+{
+    int a = *(const int *)x;
+    int b = *(const int *)y;
+    return (a &gt; b) - (a &lt; b);        // 오버플로 안전
+}
+
+qsort(v, (size_t)n, sizeof(int), cmp_int);</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">뺄셈 방식의 실패</div><pre>{2000000000, -2000000000}
+
+a - b 방식 → 정렬 안 됨
+(a&gt;b)-(a&lt;b) → 정상</pre></div>
+    <div><div class="lbl">내림차순으로</div><pre>return (a &lt; b) - (a &gt; b);
+
+부등호를 뒤집는다.</pre></div>
+  </div>
+  <p><code>(a &gt; b) - (a &lt; b)</code>는 관계 연산이 0 또는 1을 돌려준다는 성질(4장)을 이용한 관용구다. a가 크면 <code>1-0=1</code>, 작으면 <code>0-1=-1</code>, 같으면 0이 된다.</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 1</span><span class="t">구조체 정의 끝에 세미콜론을 안 붙였다</span></div>
+    <div class="body">
+      <pre>struct Student {
+    int score;
+}            // ← 세미콜론 없음
+
+int main(void) { ... }
+
+error: expected identifier or '(' before 'int'</pre>
+      <p>오류 메시지가 <strong>다음 줄</strong>을 가리킨다. 1장 오류 1(세미콜론 누락)과 같은 구조다. 구조체 정의가 끝났다는 것을 알리는 세미콜론이 없어 <code>int main</code>을 구조체 변수 선언으로 읽는다.</p>
+      <div class="fix"><b>고치는 법</b> — 구조체 정의의 닫는 중괄호 뒤에는 <b>항상 세미콜론</b>. 함수와 다른 점이다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 2</span><span class="t">점과 화살표를 바꿔 썼다</span></div>
+    <div class="body">
+      <pre>Student *p = &amp;s;
+p.score = 100;      // error: invalid type argument of '->'
+s-&gt;score = 100;     // error: invalid type argument of '->'</pre>
+      <p>오류라서 반드시 걸린다. <strong>구조체 변수는 <code>.</code>, 구조체 포인터는 <code>-&gt;</code></strong>로 외운다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>*</code>가 붙어 선언됐으면 <code>-&gt;</code>. 함수 매개변수로 받은 것은 대개 포인터이므로 <code>-&gt;</code>다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 3</span><span class="t">값으로 넘기고 고치려 했다</span></div>
+    <div class="body">
+      <pre>void init(Student s) { s.score = 0; }    // 아무 일도 안 한다
+void init(Student *s) { s-&gt;score = 0; }  // 올바름</pre>
+      <p>경고가 없다. 10장 오류 3, 12장 오류 2와 같은 함정이 구조체에서 반복된다. 게다가 큰 구조체면 <strong>복사 비용까지</strong> 든다.</p>
+      <div class="fix"><b>고치는 법</b> — 고치는 함수는 포인터로 받는다. 읽기만 해도 구조체가 크면 <code>const Student *</code>로 받아 복사를 피한다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 4</span><span class="t">비교 함수에서 뺄셈을 썼다</span></div>
+    <div class="body">
+      <pre>int cmp(const void *x, const void *y)
+{
+    return *(const int*)x - *(const int*)y;   // 오버플로
+}</pre>
+      <p>경고가 없다. 값이 작을 때는 완벽히 동작한다. <code>{2000000000, -2000000000}</code>을 넣으면 <strong>정렬되지 않은 채로</strong> 나온다. 2장의 오버플로가 여기서 다시 나온다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>return (a &gt; b) - (a &lt; b);</code>. 값의 범위가 작다고 <b>확인했을 때만</b> 뺄셈을 쓴다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 5</span><span class="t">qsort에 원소 크기를 잘못 넘겼다</span></div>
+    <div class="body">
+      <pre>qsort(a, n, sizeof(a), cmp);       // 배열 전체 크기
+qsort(a, n, sizeof(Student), cmp); // 올바름 — 원소 하나의 크기</pre>
+      <p>경고가 없다. <code>qsort</code>가 엉뚱한 간격으로 자료를 옮겨 <strong>데이터가 망가진다</strong>. 멤버 합으로 직접 계산해 넘기는 것도 패딩 때문에 틀린다(15.6절).</p>
+      <div class="fix"><b>고치는 법</b> — 세 번째 인자는 <b>언제나 <code>sizeof(원소자료형)</code></b>. <code>sizeof(a[0])</code>으로 써도 좋다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 6</span><span class="t">다중 기준에서 앞 조건을 검사하지 않았다</span></div>
+    <div class="body">
+      <pre>return (q-&gt;score - p-&gt;score) + (p-&gt;age - q-&gt;age);   // 두 기준을 더했다</pre>
+      <p>점수 차이와 나이 차이가 상쇄되어 <strong>엉뚱한 순서</strong>가 나온다. 1순위가 같을 때만 2순위를 봐야 한다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>if (p-&gt;score != q-&gt;score) { return ...; }</code>로 <b>먼저 다른지 확인</b>하고 반환한다. 마지막 기준만 <code>if</code> 없이 반환한다.</div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    오류 3·4·5·6은 <b>경고가 전혀 없다</b>. 특히 4번과 6번은 작은 테스트에서 정상 동작한다. <b>정렬 결과는 눈으로 확인한다.</b> 1순위가 같은 자료를 일부러 여러 개 넣어, 2·3순위가 제대로 작동하는지 보는 테스트를 반드시 만든다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>구조체는 <code>typedef</code>로 정의하고, 큰 배열은 전역에 둔다. 정렬 문제는 <strong>동점 자료를 포함한 입력</strong>을 반드시 만들어 시험한다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>구조체 정의</b> — 이름(20자 이내)과 점수를 담는 <code>Student</code>를 정의하고, 하나를 입력받아 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>minjun 95</pre></div><div><span>OUTPUT</span><pre>minjun 95</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>구조체 배열</b> — N명의 이름과 점수를 입력받아 그대로 출력하라(N ≤ 1,000).</p>
+    <div class="sample"><div><span>INPUT</span><pre>2
+minjun 95
+jisoo 88</pre></div><div><span>OUTPUT</span><pre>minjun 95
+jisoo 88</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>최고점 학생</b> — N명 중 점수가 가장 높은 학생의 이름과 점수를 출력하라. 동점이면 먼저 입력된 학생.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3
+minjun 90
+jisoo 95
+hyun 95</pre></div><div><span>OUTPUT</span><pre>jisoo 95</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>구조체 복사</b> — 학생 하나를 입력받아 다른 변수에 <code>=</code>로 복사한 뒤, 복사본만 고치고 원본과 복사본을 모두 출력하라. 배열과 어떻게 다른지 주석으로 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>좌표 구조체</b> — <code>Point</code>를 정의하고 두 점을 입력받아 거리의 <strong>제곱</strong>을 출력하라. 좌표는 절댓값 10<sup>9</sup> 이하다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>0 0 3 4</pre></div><div><span>OUTPUT</span><pre>25</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>포인터로 고치기</b> — <code>void set_score(Student *s, int v)</code>를 만들어 점수를 바꾸고, 값으로 받는 버전도 함께 만들어 결과를 비교하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>정수 정렬</b> — N개의 정수를 입력받아 <code>qsort</code>로 오름차순 정렬해 출력하라(각 수의 절댓값은 2×10<sup>9</sup> 이하). 비교 함수에서 뺄셈을 쓰지 마라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+3 1 4 1 5</pre></div><div><span>OUTPUT</span><pre>1 1 3 4 5</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>enum 방향</b> — <code>enum { UP, DOWN, LEFT, RIGHT }</code>를 정의하고, 9장의 격자 이동 시뮬레이션을 <strong>숫자 대신 이름</strong>으로 읽히도록 다시 작성하라.</p>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>점수순 정렬</b> — N명을 점수 내림차순으로 정렬해 출력하라. 동점이면 이름 사전순.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3
+minjun 90
+jisoo 95
+hyun 95</pre></div><div><span>OUTPUT</span><pre>hyun 95
+jisoo 95
+minjun 90</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>세 기준 정렬</b> — 표준 코드를 작성하라. 점수 내림차순 → 나이 오름차순 → 이름 사전순. <strong>세 기준이 모두 쓰이는 입력</strong>을 직접 만들어 시험하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>인덱스를 지키는 정렬</b> — N개의 정수를 입력받아 <strong>정렬한 뒤에도 원래 위치</strong>를 알 수 있게 하라. 값과 인덱스를 묶은 구조체를 만들어 값 오름차순으로 정렬하고, <code>값 원래위치</code>를 출력한다(위치는 0부터).</p>
+    <div class="sample"><div><span>INPUT</span><pre>4
+30 10 20 10</pre></div><div><span>OUTPUT</span><pre>10 1
+10 3
+20 2
+30 0</pre></div></div>
+    <p class="spec">※ 13장에서 남긴 문제의 답이다. 동점일 때 원래 순서가 유지되도록 기준을 정하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>좌표 정렬</b> — N개의 점을 x 오름차순, x가 같으면 y 오름차순으로 정렬해 출력하라(좌표는 절댓값 10<sup>9</sup> 이하).</p>
+    <div class="sample"><div><span>INPUT</span><pre>3
+3 4
+1 2
+3 1</pre></div><div><span>OUTPUT</span><pre>1 2
+3 1
+3 4</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>구간 정렬</b> — N개의 구간 [a, b]를 끝점 b 오름차순, 같으면 시작점 a 오름차순으로 정렬해 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3
+1 5
+2 3
+0 3</pre></div><div><span>OUTPUT</span><pre>0 3
+2 3
+1 5</pre></div></div>
+    <p class="spec">※ 이 정렬 기준이 PART 3 회의실 배정(그리디)의 출발점이다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>구조체 크기 재기</b> — 멤버 순서만 다른 구조체 두 개를 만들어 <code>sizeof</code>를 비교하라. 그리고 10만 개 배열을 만들었을 때 메모리 차이가 얼마인지 계산하라.</p>
+    <p class="spec">예: <code>{char c; int i; char d;}</code> vs <code>{int i; char c; char d;}</code></p>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>구조체 함수 모음</b> — <code>Point</code>에 대해 <code>make</code>, <code>dist2</code>, <code>add</code>(두 점의 합), <code>equal</code>(같은지 판정)을 작성하고 모두 시험하라. 각 함수가 값으로 받을지 포인터로 받을지 판단해 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>평균 이상 학생</b> — N명의 점수 평균을 구하고, 평균 이상인 학생을 점수 내림차순으로 출력하라. 8장 예제 1을 구조체로 다시 쓰는 문제다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4
+a 60
+b 80
+c 90
+d 70</pre></div><div><span>OUTPUT</span><pre>c 90
+b 80</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>뺄셈 비교의 실패 재현</b> — 정수 정렬을 ① <code>a - b</code> ② <code>(a&gt;b)-(a&lt;b)</code> 두 가지 비교 함수로 구현하고, 입력 <code>{2000000000, -2000000000}</code>으로 각각 실행하라. ① 결과가 어떻게 다른지 ② 왜 그런지 2장의 개념으로 설명하고 ③ 어떤 입력 범위에서는 ①이 안전한지 조건을 쓰라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>다중 기준 테스트 설계</b> — 10번의 세 기준 정렬에 대해, <strong>각 기준이 실제로 쓰이는지</strong> 확인하는 테스트를 설계하라. ① 1순위만으로 갈리는 쌍 ② 1순위가 같아 2순위로 갈리는 쌍 ③ 1·2순위가 같아 3순위로 갈리는 쌍을 모두 포함하는 입력 하나를 만들고 기대 출력을 적어라. 그리고 2순위 <code>if</code>를 일부러 지우면 어느 줄이 틀리는지 확인하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>구조체와 배열의 차이 정리</b> — 아래 다섯 가지 동작에 대해 배열과 구조체가 각각 되는지 표로 만들고, 실제 코드로 확인하라. ① <code>=</code>로 복사 ② 함수에 넘겨 고치기 ③ <code>return</code>으로 돌려주기 ④ 함수 안에서 <code>sizeof</code> ⑤ <code>==</code>로 전체 비교</p>
+    <p class="spec">※ ⑤는 둘 다 안 된다. 어떤 오류가 나는지 확인하고, 구조체를 비교하려면 어떻게 해야 하는지 쓰라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>PART 1 함수 라이브러리 완성</b> — 10·12·13·14장에서 만든 함수 모음에 <strong>구조체와 정렬</strong>을 추가해 최종본을 만들어라. 다음을 포함한다.</p>
+    <p class="spec">① 자주 쓰는 구조체 정의(<code>Point</code>, <code>Interval</code>, <code>Item</code>=값+인덱스) ② 각 구조체의 비교 함수 ③ <code>cmp_int</code>, <code>cmp_int_desc</code> ④ 각 비교 함수의 정렬 기준을 한 줄 주석으로 ⑤ 동점 처리 기준 명시</p>
+    <p class="spec">※ 이 파일이 PART 2 첫 시간에 열어 놓고 시작할 도구 모음이다. 지금까지 만든 네 개의 모음을 하나로 합쳐 정리한다.</p>
+  </div></div>
+
+  </div>
+</section>
+
+<section class="pagebreak answers">
+  <span class="sec-no">07 — 확인 평가 해설</span>
+  <h2>정답과 해설</h2>
+  <p class="spec" style="color:var(--ink-faint);font-size:9pt">※ 이 절은 교사용 통합본에만 수록한다. 학생 배부용에서는 제거한다.</p>
+
+  <div class="ans"><span class="an">01</span><div class="ab"><code>scanf("%20s %d", s.name, &amp;s.score)</code> — <b>이름에는 <code>&amp;</code>가 없고 점수에는 있다</b>. 배열 멤버와 정수 멤버의 차이다(12장). 이 구분을 반드시 짚는다.</div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab"><code>a[i].name</code>, <code>&amp;a[i].score</code> — 인덱스가 먼저, 점이 나중이다. <code>a.name[i]</code>로 쓰는 오답이 종종 나온다.</div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab">
+    <code>int best = 0;</code>으로 시작해 <code>if (a[i].score &gt; a[best].score) { best = i; }</code>. <b>인덱스를 기억</b>하는 방식이 가장 간단하다.<br>
+    <b>동점이면 먼저</b>이므로 <code>&gt;</code>를 쓴다. <code>&gt;=</code>면 나중 학생이 남는다(8장 표준 코드와 같은 기준).
+  </div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab">구조체는 <code>=</code>로 복사되고 <b>안의 배열 멤버까지 함께</b> 복사된다. 배열은 <code>=</code>가 컴파일 오류였다(8장 오류 6). 구조체로 감싸면 복사가 가능해진다는 점이 핵심이다.</div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab">
+    좌표가 10<sup>9</sup>이면 차이가 2×10<sup>9</sup>, 제곱이 4×10<sup>18</sup>로 <code>long long</code>이 꼭 필요하다.
+<pre><code>long long dx = a.x - b.x;      // 먼저 long long에 담는다
+long long dy = a.y - b.y;
+return dx * dx + dy * dy;</code></pre>
+    <b>흔한 오답</b> — <code>(long long)((a.x-b.x)*(a.x-b.x) + ...)</code>. 괄호 안이 이미 <code>int</code>로 넘친다(2장 오류 2).
+  </div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab">예제 3과 동일. 값으로 받은 버전은 아무 일도 하지 않는다. 10장 <code>swap_bad</code>, 12장 오류 2와 같은 함정이 세 번째로 반복되는 자리다.</div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab">
+    <code>return (a &gt; b) - (a &lt; b);</code>. 절댓값이 2×10<sup>9</sup>이면 뺄셈이 넘친다.<br>
+    <b>지도 포인트</b> — 문제에서 범위를 크게 준 이유가 이것이다. 뺄셈으로 제출하면 특정 입력에서만 틀린다.
+  </div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab">예제 4와 동일. <b>지도 포인트</b> — 입력 명령이 0~3 숫자로 들어와도, 코드 안에서는 <code>dy[d]</code>처럼 변수로 쓰이므로 <code>enum</code>의 이점은 <b>상수를 직접 쓰는 자리</b>에서 나온다. 예: <code>if (d == LEFT)</code>.</div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab">
+<pre><code>if (p-&gt;score != q-&gt;score) { return q-&gt;score - p-&gt;score; }
+return strcmp(p-&gt;name, q-&gt;name);</code></pre>
+    점수는 0~100이라 뺄셈이 안전하다. 95점 두 명이 hyun, jisoo 순으로 나오는지 확인시킨다.
+  </div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab">표준 코드와 동일. 교재의 6명 입력을 그대로 쓰면 세 기준이 모두 검증된다. 학생이 직접 만든 입력도 18번에서 점검한다.</div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab">
+<pre><code>typedef struct { int value; int idx; } Item;
+
+int cmp(const void *x, const void *y)
+{
+    const Item *p = x, *q = y;
+    if (p-&gt;value != q-&gt;value) { return (p-&gt;value &gt; q-&gt;value) - (p-&gt;value &lt; q-&gt;value); }
+    return p-&gt;idx - q-&gt;idx;      // 동점이면 원래 순서
+}</code></pre>
+    <b>13장 19번의 답이다.</b> 값과 인덱스를 묶으면 정렬해도 원래 위치를 잃지 않는다.<br>
+    <b>지도 포인트</b> — 2순위로 <code>idx</code>를 넣으면 동점의 원래 순서가 보장된다(안정 정렬의 효과를 손으로 만든 것). <code>qsort</code>는 안정 정렬이 아니므로 <b>이 한 줄이 필요하다</b>. PART 3 정렬 단원에서 다시 다룬다.
+  </div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">좌표가 10<sup>9</sup>이므로 <b>뺄셈을 쓰면 안 된다</b>. <code>(p-&gt;x &gt; q-&gt;x) - (p-&gt;x &lt; q-&gt;x)</code> 형태로 쓴다. 07번과 같은 이유다.</div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab">
+    끝점이 1순위, 시작점이 2순위다. 예제에서 끝점 3인 둘이 시작점으로 갈려 <code>0 3</code>, <code>2 3</code> 순이다.<br>
+    <b>지도 포인트</b> — "끝나는 시각이 빠른 순"으로 정렬하는 것이 회의실 배정 그리디의 핵심이다. PART 3에서 이 정렬 하나로 문제가 풀리는 것을 보게 된다고 예고한다.
+  </div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab">
+    <code>{char c; int i; char d;}</code>는 <b>12바이트</b>, <code>{int i; char c; char d;}</code>는 <b>8바이트</b>가 나온다(환경에 따라 다를 수 있다).<br>
+    10만 개면 1.2 MB 대 0.8 MB로 <b>0.4 MB 차이</b>다.<br>
+    <b>지도 포인트</b> — 메모리 제한이 빠듯한 문제에서만 신경 쓰면 된다. 다만 <b>멤버 합으로 계산하면 틀린다</b>는 것은 반드시 알아야 한다(오류 5와 연결).
+  </div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab">
+    <code>make</code>와 <code>add</code>는 결과를 <code>return</code>하므로 값으로 받아도 된다. <code>dist2</code>는 읽기만 하므로 값으로 받아도 되지만, 구조체가 커지면 <code>const Point *</code>가 낫다. <code>equal</code>도 마찬가지다.<br>
+    <b>지도 포인트</b> — <code>Point</code>는 8바이트라 값으로 넘기는 비용이 거의 없다. <b>구조체 크기를 보고 판단</b>한다는 기준을 세운다.
+  </div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">합을 <code>long long</code>으로 구한 뒤 <code>(double)sum / n</code>과 비교한다(4장). 정렬은 점수 내림차순. 평균이 75이므로 90, 80 두 명이 나온다.</div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    ① 뺄셈 방식은 <b>정렬되지 않은 채</b> <code>2000000000 -2000000000</code>으로 나오고, 안전한 방식은 <code>-2000000000 2000000000</code>으로 정상이다.<br>
+    ② <code>2000000000 - (-2000000000)</code>은 40억으로 <code>INT_MAX</code>를 넘어 음수가 된다(실제 <b>−294967296</b>). 음수를 돌려주므로 <code>qsort</code>는 "x가 앞"이라고 판단한다. 즉 <b>큰 수를 앞에 놓는다</b>.<br>
+    ③ 두 값의 차이가 <code>int</code> 범위 안이면 안전하다. 실무 기준으로는 <b>모든 값이 10억 미만의 양수</b>이거나, 값의 범위가 2<sup>31</sup>보다 좁다고 확인된 경우다. 점수(0~100)나 나이는 안전하다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    모범 입력(교재 표준 코드의 것과 같은 구조).
+<pre><code>6
+minjun 90 15     ← 90/15
+jisoo 95 14      ← 1순위로 갈림 (95)
+hyun 90 14       ← 2순위로 갈림 (90, 나이 14)
+sora 88 16       ← 1순위로 갈림 (88)
+yuna 95 14       ← jisoo와 3순위로 갈림
+bada 90 15       ← minjun과 3순위로 갈림</code></pre>
+    기대 출력은 <code>jisoo / yuna / hyun / bada / minjun / sora</code>.<br>
+    <b>2순위 <code>if</code>를 지우면</b> — 90점 세 명(hyun 14, bada 15, minjun 15)의 나이 기준이 사라져 <b>이름순</b>으로만 갈린다. <code>bada / hyun / minjun</code> 순이 되어 hyun이 밀린다.<br>
+    <b>지도 포인트</b> — 기준 하나를 지웠을 때 <b>정확히 어느 줄이 바뀌는지</b> 예측하고 확인하는 것이 이 문제의 목적이다. 테스트가 기준마다 걸려 있어야 한다는 원칙을 세운다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    <table style="margin:6px 0">
+      <thead><tr><th style="width:36%">동작</th><th style="width:22%">배열</th><th>구조체</th></tr></thead>
+      <tbody>
+        <tr><td><code>=</code>로 복사</td><td>오류</td><td><strong>된다</strong></td></tr>
+        <tr><td>함수에 넘겨 고치기</td><td><strong>된다</strong>(주소가 감)</td><td>안 된다(복사됨)</td></tr>
+        <tr><td><code>return</code>으로 돌려주기</td><td>불가능</td><td><strong>된다</strong></td></tr>
+        <tr><td>함수 안 <code>sizeof</code></td><td>8(포인터)</td><td><strong>실제 크기</strong></td></tr>
+        <tr><td><code>==</code>로 전체 비교</td><td>주소 비교가 됨</td><td>오류</td></tr>
+      </tbody>
+    </table>
+    <b>⑤에 대해</b> — 구조체끼리 <code>==</code>는 <code>error: invalid operands to binary ==</code>로 막힌다. 패딩의 쓰레기값 때문에 바이트 비교가 의미 없을 수 있어서다. <b>멤버를 하나씩 비교</b>하는 함수를 만들어야 한다.<br>
+    <b>지도 포인트</b> — 배열과 구조체가 <b>거의 정반대</b>로 동작한다는 것이 이 표의 핵심이다. 벽에 붙여 두고 PART 2 내내 참고하게 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    최종 라이브러리 구성 예.
+<pre><code>/* 자료형 */
+typedef struct { int x, y; } Point;
+typedef struct { int a, b; } Interval;     // 구간 [a,b]
+typedef struct { int value, idx; } Item;   // 값 + 원래 위치
+
+/* 비교 함수 — 모두 qsort용 */
+int cmp_int      (const void*, const void*);  // 오름차순, 오버플로 안전
+int cmp_int_desc (const void*, const void*);  // 내림차순
+int cmp_point    (const void*, const void*);  // x 오름 → y 오름
+int cmp_interval (const void*, const void*);  // 끝점 b 오름 → 시작 a 오름
+int cmp_item     (const void*, const void*);  // value 오름 → idx 오름(원래순 유지)
+
+/* 10장 수학 */  is_prime, gcd, lcm, digit_sum, digital_root, my_abs, mod
+/* 12장 출력매개변수 */ swap, divmod, minmax, to_hms, safe_div
+/* 13장 배열 */  arr_print, arr_sum, arr_minmax, arr_reverse, arr_copy, find
+/* 14장 문자열 */ trim_newline, str_reverse, is_palindrome, count_char, str_find</code></pre>
+    <b>동점 처리 기준</b> — 모든 비교 함수에 "동점이면 무엇으로 갈리는가"를 주석으로 명시한다. 특히 <code>cmp_item</code>의 <code>idx</code> 2순위는 <b>안정 정렬 효과</b>를 만드는 핵심이므로 이유까지 적게 한다.<br>
+    <b>지도 포인트</b> — PART 1의 결산이다. 다음 수업 첫머리에 이 파일을 열고 "지난 16장 동안 만든 도구"로 소개한 뒤 PART 2를 시작한다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li>구조체 정의 끝에 세미콜론을 붙인다</li>
+    <li>구조체 변수는 <code>.</code>, 포인터는 <code>-&gt;</code></li>
+    <li>구조체는 <code>=</code>로 복사되고 함수에 넘기면 복사된다 — 고치려면 포인터</li>
+    <li><code>qsort</code>의 세 번째 인자는 <code>sizeof(원소자료형)</code></li>
+    <li>비교 함수에서 뺄셈 대신 <code>(a&gt;b)-(a&lt;b)</code>를 쓴다</li>
+    <li>다중 기준은 <code>if (다르면) return</code>을 차례로 쌓는다</li>
+    <li>값과 인덱스를 묶으면 정렬 후에도 원래 위치를 안다</li>
+    <li>정렬 결과는 동점 자료를 넣은 입력으로 눈으로 확인한다</li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 16장 동적 메모리·디버깅·테스트</span>
+    PART 1의 마지막 장이다. 크기를 미리 모를 때 메모리를 얻는 방법, 그리고 지금까지 열다섯 장에서 쌓인 모든 함정을 <strong>제출 전에 걸러 내는 절차</strong>를 정리한다. 스스로 테스트를 만들고 기준 정답과 대조하는 습관이 PART 2의 출발점이 된다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 1 · 15장 · 2026-10-12 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+
+</div>
+</body>
+</html>

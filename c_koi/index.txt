@@ -1,0 +1,52 @@
+중등 KOI 를 위한 C언어
+
+PART I : 기본 문법
+
+
+01 개발 환경과 첫 프로그램
+https://iioiinet-spec.github.io/SCM/c_koi/01
+
+02 변수와 자료형, 오버플로
+https://iioiinet-spec.github.io/SCM/c_koi/02
+
+03 서식 입출력
+https://iioiinet-spec.github.io/SCM/c_koi/03
+
+04 연산자와 형변환
+https://iioiinet-spec.github.io/SCM/c_koi/04
+
+05 조건문
+https://iioiinet-spec.github.io/SCM/c_koi/05
+
+06 반복문
+https://iioiinet-spec.github.io/SCM/c_koi/06
+
+07 중첩 반복과 격자 패턴
+https://iioiinet-spec.github.io/SCM/c_koi/07
+
+08 1차원 배열
+https://iioiinet-spec.github.io/SCM/c_koi/08
+
+09 2차원 배열과 델타 이동
+https://iioiinet-spec.github.io/SCM/c_koi/09
+
+10 함수
+https://iioiinet-spec.github.io/SCM/c_koi/10
+
+11 재귀 함수 기초
+https://iioiinet-spec.github.io/SCM/c_koi/11
+
+12 포인터
+https://iioiinet-spec.github.io/SCM/c_koi/12
+
+13 포인터·배열·함수의 연결
+https://iioiinet-spec.github.io/SCM/c_koi/13
+
+14 문자열과 문자 처리
+https://iioiinet-spec.github.io/SCM/c_koi/14
+
+15 구조체와 사용자 정의 자료형
+https://iioiinet-spec.github.io/SCM/c_koi/15
+
+16 동적 메모리·디버깅·테스트
+https://iioiinet-spec.github.io/SCM/c_koi/16

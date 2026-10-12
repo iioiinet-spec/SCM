@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 1 · 08장 1차원 배열 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#0d7a6f;
+  --accent-soft:#e3f1ef;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#8fd8cd}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+<header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 1 · C11 문법 기초 — 08 / 16</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">08</span>
+    <h1>1차원 배열</h1>
+  </div>
+  <p class="lede">지금까지는 입력을 읽고 계산한 뒤 <strong>버렸다</strong>. 값을 모아 두고 여러 번 들여다봐야 하는 순간부터 배열이 필요하다. 그리고 배열의 인덱스를 <strong>값 자체로</strong> 쓰는 발상 하나가 올림피아드에서 가장 자주 쓰이는 도구가 된다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li>배열을 선언·초기화하고 인덱스로 접근할 수 있다</li>
+    <li>인덱스 범위를 넘는 접근이 왜 위험한지 설명할 수 있다</li>
+    <li>배열을 순회하며 합·최댓값·조건에 맞는 개수를 구할 수 있다</li>
+    <li><strong>값을 인덱스로 쓰는</strong> 카운팅 배열로 분포를 집계하고 최빈값을 찾을 수 있다</li>
+    <li>큰 배열을 어디에 선언해야 하는지 알고 메모리 한계를 계산할 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 문제 · 선언과 초기화 · 인덱스 · 순회</div>
+  <div><b>2차시</b>카운팅 배열 · 표준 코드 · 메모리와 선언 위치</div>
+  <div><b>3차시</b>단계 예제 · 흔한 오류 6종 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>두 번 들여다봐야 하는 문제</h2>
+  <p>N명의 점수를 입력받아 <strong>평균보다 높은 사람이 몇 명인지</strong> 세는 문제다. 지금까지의 방법으로 시도해 보자.</p>
+  <figure>
+    <figcaption><span class="fn">불가능한 시도</span><span>왜 안 되는가</span></figcaption>
+<pre><code>int n, x, sum = 0, cnt = 0;
+scanf("%d", &amp;n);
+for (int i = 0; i &lt; n; i++) {
+    scanf("%d", &amp;x);
+    sum += x;
+    if (x &gt; sum / n) { cnt++; }   // 평균을 아직 모른다
+}</code></pre>
+  </figure>
+  <p>평균은 <strong>모든 입력을 다 읽은 뒤에야</strong> 알 수 있다. 그런데 비교하려면 각 점수가 다시 필요하다. 이미 지나간 값들은 <code>x</code>에 덮어써져 사라졌다.</p>
+  <p>해결책은 둘 중 하나다. 입력을 두 번 읽거나(채점 환경에서는 불가능하다), <strong>읽은 값을 전부 저장해 두는 것</strong>이다. 후자가 배열이다.</p>
+  <div class="note">
+    <span class="h">또 하나의 문제</span>
+    N명의 점수(0~100)에서 <b>가장 많이 나온 점수</b>를 찾으려면? 각 점수가 몇 번 나왔는지 세야 하는데, 101개의 변수를 만들 수는 없다. 이 문제의 답이 이 장의 핵심인 <b>카운팅 배열</b>이다.
+  </div>
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> 같은 종류의 값 여러 개를 어떻게 한 이름으로 다루는가?<br>
+    <b>②</b> 인덱스를 "몇 번째"가 아니라 "값 그 자체"로 쓰면 무엇이 가능해지는가?<br>
+    <b>③</b> 배열을 100만 개 만들면 어디에 선언해야 하는가?
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">8.1</span>선언과 초기화</h3>
+  <figure>
+    <figcaption><span class="fn">선언</span><span>크기는 상수여야 한다</span></figcaption>
+<pre><code>int a[5];          // 크기 5, 값은 쓰레기
+int b[5] = {1, 2, 3, 4, 5};
+int c[5] = {1, 2};  // 나머지는 0으로 채워진다
+int d[5] = {0};     // 전부 0 — 가장 많이 쓰는 형태
+int e[] = {7, 8, 9}; // 크기를 3으로 자동 결정</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:20%">배열</th><th style="width:34%">실제 내용</th><th>주의</th></tr></thead>
+    <tbody>
+      <tr><td><code>a[5]</code></td><td class="num">쓰레기 5개</td><td><strong>초기화하지 않으면 0이 아니다</strong></td></tr>
+      <tr><td><code>b[5]</code></td><td class="num">1 2 3 4 5</td><td></td></tr>
+      <tr><td><code>c[5]</code></td><td class="num">1 2 0 0 0</td><td>부분 초기화하면 나머지는 0</td></tr>
+      <tr><td><code>d[5]</code></td><td class="num">0 0 0 0 0</td><td><code>{0}</code>은 전부 0을 만드는 관용구</td></tr>
+      <tr><td><code>e[]</code></td><td class="num">7 8 9</td><td>원소 수 = <code>sizeof(e)/sizeof(e[0])</code></td></tr>
+    </tbody>
+  </table>
+  <p>인덱스는 <strong>0부터</strong> 시작한다. 크기가 5면 쓸 수 있는 인덱스는 <code>0, 1, 2, 3, 4</code>이고 <code>a[5]</code>는 없다. 6장에서 표준형으로 외운 <code>for (int i = 0; i &lt; n; i++)</code>가 바로 이 범위와 정확히 맞아떨어진다.</p>
+
+  <h3><span class="tag">8.2</span>인덱스 범위를 넘으면</h3>
+  <p>C는 인덱스를 검사하지 않는다. 범위를 넘어도 <strong>그냥 그 자리의 메모리를 읽거나 쓴다</strong>.</p>
+  <div class="io">
+    <div><div class="lbl">CODE</div><pre>int a[5] = {1,2,3,4,5};
+for (int i = 0; i &lt;= 5; i++) {
+    printf("%d ", a[i]);
+}</pre></div>
+    <div><div class="lbl">OUTPUT (한 예)</div><pre>1 2 3 4 5 32766</pre></div>
+  </div>
+  <p>마지막 값은 실행할 때마다 달라진다. <strong>읽기</strong>는 이렇게 이상한 값이 나오는 정도지만, <strong>쓰기</strong>는 다른 변수를 망가뜨리거나 프로그램을 죽인다. 배열 오류가 찾기 어려운 이유는, 망가진 곳과 증상이 나타나는 곳이 다르기 때문이다.</p>
+  <div class="note warn">
+    <span class="h">-O2를 켜면 경고가 나온다</span>
+    <code>warning: array subscript 5 is above array bounds of 'int[5]' [-Warray-bounds=]</code><br>
+    <code>warning: iteration 5 invokes undefined behavior [-Waggressive-loop-optimizations]</code><br>
+    다만 인덱스가 변수일 때는 컴파일러가 알 수 없으므로 경고가 나오지 않는다. <b>범위 검사는 결국 사람이 한다.</b>
+  </div>
+
+  <h3><span class="tag">8.3</span>배열 순회의 기본 네 가지</h3>
+  <table>
+    <thead><tr><th style="width:22%">목적</th><th style="width:40%">핵심 코드</th><th>주의</th></tr></thead>
+    <tbody>
+      <tr><td><strong>합</strong></td><td><code>sum += a[i];</code></td><td>누적 변수는 <code>long long</code>을 고려(2장)</td></tr>
+      <tr><td><strong>최댓값</strong></td><td><code>if (a[i] &gt; mx) { mx = a[i]; }</code></td><td>초기값을 <code>a[0]</code>으로</td></tr>
+      <tr><td><strong>개수 세기</strong></td><td><code>if (조건) { cnt++; }</code></td><td><code>cnt = 0</code> 초기화</td></tr>
+      <tr><td><strong>찾기</strong></td><td><code>if (a[i] == t) { pos = i; break; }</code></td><td>없을 때의 값을 −1로</td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">최댓값의 초기값을 0으로 두지 않는다</span>
+    <code>int mx = 0;</code>으로 시작하면 모든 값이 음수일 때 0이 답으로 나온다. <b><code>mx = a[0]</code>으로 시작하고 <code>i = 1</code>부터 비교</b>하거나, 2장의 <code>INT_MIN</code>을 쓴다. 6장 연습 13번에서 이미 만난 문제다.
+  </div>
+
+  <h3><span class="tag">8.4</span>카운팅 배열 — 값을 인덱스로</h3>
+  <p>이 장에서 가장 중요한 절이다. 지금까지 인덱스는 "몇 번째"였다. 이제 인덱스를 <strong>값 그 자체</strong>로 쓴다.</p>
+  <div class="io">
+    <div><div class="lbl">보통의 배열</div><pre>a[0] = 90   ← 0번 학생의 점수
+a[1] = 85
+a[2] = 90</pre></div>
+    <div><div class="lbl">카운팅 배열</div><pre>cnt[90] = 2  ← 90점이 2명
+cnt[85] = 1
+cnt[0..100] 전부 준비</pre></div>
+  </div>
+  <figure>
+    <figcaption><span class="fn">카운팅의 전부</span><span>이 한 줄이 핵심이다</span></figcaption>
+<pre><code>cnt[x]++;</code></pre>
+  </figure>
+  <p>값 <code>x</code>를 읽을 때마다 <code>cnt[x]</code>를 1 늘린다. 입력을 한 번만 훑으면 모든 값의 등장 횟수가 완성된다. <strong>N번의 반복으로 끝난다.</strong></p>
+  <p>이것이 왜 강력한지는 비교해 보면 안다. 최빈값을 배열 저장 방식으로 구하면 모든 쌍을 비교해 N²번이 필요하다. 카운팅 배열은 N + 101번이면 끝난다. 7장에서 본 "N이 10만이면 이중 루프는 불가능"이라는 벽을 <strong>자료구조 하나로</strong> 넘는 것이다.</p>
+  <table>
+    <thead><tr><th style="width:26%">쓸 수 있는 조건</th><th style="width:30%">쓸 수 없는 경우</th><th>이유</th></tr></thead>
+    <tbody>
+      <tr><td>값의 범위가 좁고 정수</td><td>값이 10<sup>9</sup>까지</td><td>배열을 그만큼 만들 수 없다</td></tr>
+      <tr><td>점수 0~100, 나이 0~150</td><td>값이 실수</td><td>인덱스는 정수여야 한다</td></tr>
+      <tr><td>알파벳 26개</td><td>값이 음수일 수 있음</td><td>인덱스가 음수가 된다</td></tr>
+    </tbody>
+  </table>
+  <p>값이 음수를 포함하면 <strong>옮겨서</strong> 쓴다. −100 ~ 100이면 <code>cnt[x + 100]</code>으로 0 ~ 200에 담는다. 이 수법을 <strong>오프셋</strong>이라고 하며, PART 3의 좌표 압축으로 이어진다.</p>
+
+  <h3><span class="tag">8.5</span>배열은 통째로 대입할 수 없다</h3>
+  <div class="io">
+    <div><div class="lbl">하면 오류</div><pre>int a[5], b[5];
+b = a;</pre></div>
+    <div><div class="lbl">컴파일 결과</div><pre>error: assignment to
+expression with array type</pre></div>
+  </div>
+  <p>경고가 아니라 <strong>오류</strong>라서 바로 걸린다. 복사하려면 반복문으로 한 칸씩 옮긴다. 배열 이름이 왜 그냥 값이 아닌지는 13장 포인터에서 밝혀진다.</p>
+
+  <h3><span class="tag">8.6</span>큰 배열은 어디에 선언하는가</h3>
+  <p>올림피아드 문제는 N이 100만까지 가는 경우가 흔하다. 그런데 함수 안에 큰 배열을 선언하면 프로그램이 죽는다.</p>
+  <table>
+    <thead><tr><th style="width:30%">선언</th><th style="width:22%">크기</th><th style="width:20%">실측 결과</th><th>이유</th></tr></thead>
+    <tbody>
+      <tr><td><code>main</code> 안 <code>int a[1000000]</code></td><td class="num">3.8 MB</td><td>정상</td><td rowspan="2">스택은 보통 <strong>8 MB</strong>까지</td></tr>
+      <tr><td><code>main</code> 안 <code>int a[2000000]</code></td><td class="num">7.6 MB</td><td>정상</td></tr>
+      <tr><td><code>main</code> 안 <code>int a[10000000]</code></td><td class="num">38 MB</td><td><strong>Segmentation fault</strong></td><td>스택 초과</td></tr>
+      <tr><td><strong>전역</strong> <code>int a[10000000]</code></td><td class="num">38 MB</td><td>정상</td><td>스택이 아닌 별도 영역</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <span class="h">규칙 두 가지</span>
+    <b>①</b> 원소가 <b>10만 개를 넘으면 전역으로</b> 선언한다. 함수 밖, <code>main</code> 위에 쓴다.<br>
+    <b>②</b> 전역 배열은 <b>자동으로 0으로 초기화</b>된다. 카운팅 배열을 전역으로 두면 <code>{0}</code>을 쓸 필요도 없다.
+  </div>
+  <p>메모리 계산도 해 둔다. <code>int</code>는 4바이트이므로 <strong>100만 개 = 약 4 MB</strong>다. 문제의 메모리 제한이 256 MB라면 <code>int</code> 배열을 6천만 개까지 쓸 수 있다.</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드: 점수 분포와 최빈값</h2>
+  <p>N명의 점수(0~100)를 읽어 분포를 집계하고 가장 많이 나온 점수를 출력한다.</p>
+  <figure>
+    <figcaption><span class="fn">mode.c</span><span>표준 코드 · gcc 검증 완료</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int cnt[101];          // 전역 — 자동으로 전부 0
+
+int main(void)
+{
+    int n, x;
+    if (scanf("%d", &amp;n) != 1) return 1;
+
+    for (int i = 0; i &lt; n; i++) {
+        if (scanf("%d", &amp;x) != 1) return 1;
+        cnt[x]++;                      // 값을 인덱스로
+    }
+
+    int best = 0;
+    for (int s = 0; s &lt;= 100; s++) {
+        if (cnt[s] &gt; cnt[best]) { best = s; }
+    }
+
+    printf("%d %d\n", best, cnt[best]);
+    return 0;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:34%">요소</th><th>설계 의도</th></tr></thead>
+    <tbody>
+      <tr><td><code>int cnt[101];</code></td><td>점수가 0부터 <strong>100까지</strong>이므로 크기는 101이다. 100으로 쓰면 만점자에서 범위를 넘는다.</td></tr>
+      <tr><td>전역 선언</td><td>자동 0 초기화. 지역에 두려면 <code>int cnt[101] = {0};</code>로 쓴다.</td></tr>
+      <tr><td><code>cnt[x]++;</code></td><td><strong>이 한 줄이 집계의 전부.</strong> 입력을 한 번만 훑는다.</td></tr>
+      <tr><td><code>cnt[s] &gt; cnt[best]</code></td><td>같을 때 갱신하지 않으므로 <strong>동점이면 작은 점수</strong>가 답이 된다. 문제가 요구하는 기준에 맞춰야 한다.</td></tr>
+      <tr><td>반복 횟수</td><td>입력 N번 + 탐색 101번. N이 100만이어도 즉시 끝난다.</td></tr>
+    </tbody>
+  </table>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>10
+90 85 90 100 85 90 70 85 85 60</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>85 4</pre></div>
+  </div>
+  <div class="io">
+    <div><div class="lbl">분포 전체를 찍어 보면</div><pre>60:1  70:1  85:4  90:3  100:1</pre></div>
+    <div><div class="lbl">검산</div><pre>1+1+4+3+1 = 10 = N
+모든 칸의 합이 N과 같아야 한다.</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">동점 처리를 문제에서 확인한다</span>
+    "가장 많이 나온 점수가 여럿이면 작은 것을 출력"인지 "큰 것"인지에 따라 비교 연산자가 달라진다. <code>&gt;</code>는 작은 쪽, <code>&gt;=</code>는 큰 쪽을 남긴다. <b>한 글자 차이로 오답</b>이 되므로 문제 서술을 반드시 다시 읽는다.
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+
+  <h3><span class="tag">예제 1</span>도입 문제의 답 — 평균 초과 인원</h3>
+  <figure>
+    <figcaption><span class="fn">ex1.c</span><span>저장해 두고 두 번 훑는다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int a[1000];
+
+int main(void)
+{
+    int n;
+    if (scanf("%d", &amp;n) != 1) return 1;
+
+    long long sum = 0;
+    for (int i = 0; i &lt; n; i++) {
+        if (scanf("%d", &amp;a[i]) != 1) return 1;
+        sum += a[i];
+    }
+
+    double avg = (double)sum / n;
+
+    int cnt = 0;
+    for (int i = 0; i &lt; n; i++) {
+        if (a[i] &gt; avg) { cnt++; }
+    }
+
+    printf("%d\n", cnt);
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>5
+10 20 30 40 50</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>2</pre></div>
+  </div>
+  <p>평균이 30이므로 40과 50, 두 명이다. <strong>첫 번째 루프에서 저장하면서 동시에 합을 구하고</strong>, 두 번째 루프에서 비교한다. <code>scanf("%d", &amp;a[i])</code>처럼 배열 칸에 직접 받는 것도 익혀 둔다.</p>
+  <p><code>(double)sum / n</code>의 형변환 위치는 4장 그대로다.</p>
+
+  <h3><span class="tag">예제 2</span>최댓값·최솟값·합을 한 번에</h3>
+  <figure>
+    <figcaption><span class="fn">ex2.c</span><span>초기값을 a[0]으로</span></figcaption>
+<pre><code>int mx = a[0], mn = a[0];
+long long sum = 0;
+
+for (int i = 0; i &lt; n; i++) {
+    if (a[i] &gt; mx) { mx = a[i]; }
+    if (a[i] &lt; mn) { mn = a[i]; }
+    sum += a[i];
+}
+
+printf("%d %d %lld\n", mx, mn, sum);</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>4
+-7 3 -1 5</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>5 -7 0</pre></div>
+  </div>
+  <p><code>mx = 0</code>으로 시작했다면 최솟값이 0으로 나와 틀린다. <strong>배열의 첫 원소를 초기값으로</strong> 쓰는 것이 가장 안전하다. 단 <code>n ≥ 1</code>이 보장되어야 한다.</p>
+
+  <h3><span class="tag">예제 3</span>역순 출력과 뒤집기</h3>
+  <figure>
+    <figcaption><span class="fn">ex3.c</span><span>출력만 거꾸로 vs 배열 자체를 뒤집기</span></figcaption>
+<pre><code>// 방법 A — 출력 순서만 거꾸로
+for (int i = n - 1; i &gt;= 0; i--) { printf("%d ", a[i]); }
+
+// 방법 B — 배열 자체를 뒤집는다
+for (int i = 0; i &lt; n / 2; i++) {
+    int t = a[i];
+    a[i] = a[n - 1 - i];
+    a[n - 1 - i] = t;
+}</code></pre>
+  </figure>
+  <div class="note">
+    <span class="h">방법 B에서 n/2이 중요하다</span>
+    <code>i &lt; n</code>으로 쓰면 뒤집은 것을 <b>다시 뒤집어</b> 원래대로 돌아온다. 양쪽 끝에서 가운데로 모이므로 절반만 돌면 끝난다. 홀수일 때 가운데 한 칸은 교환할 필요가 없고, <code>n/2</code>가 정수 나눗셈이라 자동으로 빠진다(4장).
+  </div>
+
+  <h3><span class="tag">예제 4</span>알파벳 빈도 — 카운팅의 응용</h3>
+  <figure>
+    <figcaption><span class="fn">ex4.c</span><span>문자를 인덱스로 바꾼다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int cnt[26];
+
+int main(void)
+{
+    char c;
+    while (scanf(" %c", &amp;c) == 1) {
+        if (c &gt;= 'a' &amp;&amp; c &lt;= 'z') {
+            cnt[c - 'a']++;        // 'a'를 0번으로
+        }
+    }
+
+    for (int i = 0; i &lt; 26; i++) {
+        if (cnt[i] &gt; 0) { printf("%c:%d ", 'a' + i, cnt[i]); }
+    }
+    printf("\n");
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>banana</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>a:3 b:1 n:2</pre></div>
+  </div>
+  <p><code>c - 'a'</code>가 오프셋이다. 2장에서 <code>'z' - 'a'</code>가 25라고 확인했으므로, 소문자는 0~25에 정확히 들어간다. 출력할 때는 <code>'a' + i</code>로 되돌린다.</p>
+
+  <h3><span class="tag">예제 5</span>음수를 포함한 카운팅 — 오프셋</h3>
+  <figure>
+    <figcaption><span class="fn">ex5.c</span><span>−100 ~ 100 을 0 ~ 200 으로</span></figcaption>
+<pre><code>#define OFFSET 100
+
+int cnt[201];
+
+// 입력받을 때
+cnt[x + OFFSET]++;
+
+// 출력할 때
+for (int i = 0; i &lt;= 200; i++) {
+    if (cnt[i] &gt; 0) { printf("%d:%d ", i - OFFSET, cnt[i]); }
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>5
+-3 0 -3 7 0</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>-3:2 0:2 7:1</pre></div>
+  </div>
+  <p>배열 크기는 <code>최댓값 − 최솟값 + 1</code>이다. −100 ~ 100이면 201이다. <strong>+1을 빠뜨리는 것이 이 장에서 가장 흔한 off-by-one</strong>이다.</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 1</span><span class="t">배열 크기를 1 모자라게 잡았다</span></div>
+    <div class="body">
+      <p>값의 범위가 0 ~ 100이면 서로 다른 값이 <strong>101개</strong>다.</p>
+      <pre>int cnt[100];   // 100점 입력에서 cnt[100] → 범위 밖
+int cnt[101];   // 올바름</pre>
+      <p>만점자가 없는 테스트로는 발견되지 않는다. 범위의 양 끝 값을 반드시 넣어 본다.</p>
+      <div class="fix"><b>고치는 법</b> — 크기는 <b>최댓값 + 1</b>. 오프셋이 있으면 <b>최댓값 − 최솟값 + 1</b>. 넉넉하게 잡는 것이 안전하다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 2</span><span class="t">지역 배열을 초기화하지 않았다</span></div>
+    <div class="body">
+      <pre>int main(void) {
+    int cnt[101];        // 쓰레기값
+    cnt[x]++;            // 쓰레기 + 1
+}</pre>
+      <p>6장 오류 2의 배열 버전이다. 실행할 때마다 결과가 달라지거나, 우연히 0이 들어 있어 <strong>집에서는 맞고 채점에서는 틀린다</strong>.</p>
+      <div class="fix"><b>고치는 법</b> — <code>int cnt[101] = {0};</code>로 쓰거나, <b>전역으로 선언</b>한다. 전역은 자동으로 0이다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 3</span><span class="t">큰 배열을 함수 안에 선언했다</span></div>
+    <div class="body">
+      <pre>int main(void) {
+    int a[10000000];     // 38 MB → Segmentation fault
+}</pre>
+      <p>컴파일은 되고 실행하자마자 죽는다. 메시지에 배열 이야기가 전혀 없어서 원인을 찾기 어렵다. 스택 한계는 보통 <strong>8 MB</strong>, 즉 <code>int</code> 약 200만 개다.</p>
+      <div class="fix"><b>고치는 법</b> — 원소가 10만 개를 넘으면 <b>전역</b>으로 옮긴다. <code>main</code> 위, 함수 밖에 쓴다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 4</span><span class="t">인덱스가 범위를 넘었다</span></div>
+    <div class="body">
+      <pre>oob.c:4:5: warning: array subscript 5 is above array bounds
+          of 'int[5]' [-Warray-bounds=]        (-O2 에서만)</pre>
+      <p>상수 인덱스는 <code>-O2</code>에서 잡아 주지만, <strong>변수 인덱스는 아무도 잡아 주지 못한다</strong>. 특히 위험한 두 가지:</p>
+      <table style="margin:6px 0">
+        <thead><tr><th style="width:44%">코드</th><th>문제</th></tr></thead>
+        <tbody>
+          <tr><td><code>for (i = 0; i &lt;= n; i++) a[i]</code></td><td><code>a[n]</code>은 범위 밖</td></tr>
+          <tr><td><code>cnt[x]++</code> (x가 범위 밖 입력)</td><td>입력 검증을 안 했다</td></tr>
+        </tbody>
+      </table>
+      <div class="fix"><b>고치는 법</b> — 표준형 <code>i &lt; n</code>을 쓴다. 카운팅할 값이 범위 안인지 의심되면 <code>if (0 &lt;= x &amp;&amp; x &lt;= 100)</code>로 거른다(5장의 "거르기 먼저").</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 5</span><span class="t">최댓값 초기값을 0으로 두었다</span></div>
+    <div class="body">
+      <pre>int mx = 0;
+for (int i = 0; i &lt; n; i++) { if (a[i] &gt; mx) { mx = a[i]; } }
+// 입력이 전부 음수면 답이 0으로 나온다</pre>
+      <p>양수만 들어오는 테스트에서는 완벽히 동작한다. 음수 입력이 있는 문제에서만 틀린다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>int mx = a[0];</code>로 시작한다. 또는 <code>INT_MIN</code>(2장). 최솟값은 <code>a[0]</code> 또는 <code>INT_MAX</code>.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 6</span><span class="t">배열을 = 로 복사하려 했다</span></div>
+    <div class="body">
+      <pre>cp.c:2:47: error: assignment to expression with array type
+    2 | int b[5]; b = a;
+      |             ^</pre>
+      <p>이것은 <strong>오류</strong>라서 바로 걸린다. 다행이다. 13장에서 포인터를 배우면 <code>int *p = a;</code>는 <strong>통과하는데</strong>, 그것은 복사가 아니라 같은 배열을 가리키게 만드는 것이라 더 위험하다.</p>
+      <div class="fix"><b>고치는 법</b> — 반복문으로 한 칸씩 옮긴다. <code>for (i = 0; i &lt; n; i++) { b[i] = a[i]; }</code></div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    배열 오류는 <b>망가진 곳과 증상이 나타나는 곳이 다르다</b>. 엉뚱한 변수의 값이 바뀌거나, 한참 뒤에 죽는다. 그래서 선언한 크기와 실제로 쓰는 인덱스 범위를 <b>선언할 때 한 번, 쓸 때 한 번</b> 두 번 확인하는 수밖에 없다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>배열 크기는 문제의 최대 N보다 넉넉히 잡고, 10만 개가 넘으면 전역으로 선언한다. 범위의 <strong>양 끝 값</strong>을 반드시 시험한다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>저장하고 역순 출력</b> — N과 N개의 정수를 입력받아 거꾸로 출력하라(N ≤ 1,000).</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+1 2 3 4 5</pre></div><div><span>OUTPUT</span><pre>5 4 3 2 1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>합과 평균</b> — N개의 정수를 입력받아 합과 평균(소수점 둘째 자리)을 출력하라. 각 수는 10<sup>9</sup> 이하, N ≤ 10<sup>5</sup>.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4
+1 2 3 4</pre></div><div><span>OUTPUT</span><pre>10 2.50</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>최댓값과 그 위치</b> — N개의 정수 중 최댓값과 그것이 처음 나온 위치(1부터)를 출력하라. 음수가 포함될 수 있다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+-3 -1 -7 -1 -9</pre></div><div><span>OUTPUT</span><pre>-1 2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>특정 값 세기</b> — N개의 정수와 찾을 값 T를 입력받아 T가 몇 번 나오는지 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>6 3
+1 3 5 3 3 2</pre></div><div><span>OUTPUT</span><pre>3</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>배열 뒤집기</b> — N개의 정수를 입력받아 배열 자체를 뒤집은 뒤 앞에서부터 출력하라. <code>n/2</code>번만 교환해야 한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+1 2 3 4 5</pre></div><div><span>OUTPUT</span><pre>5 4 3 2 1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>점수 분포</b> — N명의 점수(0~100)를 입력받아 0점부터 100점까지 <strong>한 명 이상인 점수만</strong> <code>점수:인원</code> 형식으로 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+90 85 90 100 85</pre></div><div><span>OUTPUT</span><pre>85:2 90:2 100:1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>최빈값</b> — 표준 코드를 작성하라. 동점이면 <strong>작은 점수</strong>를 출력한다. 그리고 <code>&gt;</code>를 <code>&gt;=</code>로 바꾸면 결과가 어떻게 달라지는지 확인해 적어라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4
+70 90 70 90</pre></div><div><span>OUTPUT</span><pre>70 2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>알파벳 빈도</b> — 공백 없는 소문자 단어가 주어진다. 각 알파벳이 몇 번 나왔는지 <code>a</code>부터 순서대로, 한 번 이상 나온 것만 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>banana</pre></div><div><span>OUTPUT</span><pre>a:3 b:1 n:2</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>평균 초과 인원</b> — N명의 점수를 입력받아 평균보다 높은 사람 수를 출력하라(N ≤ 10<sup>5</sup>).</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+10 20 30 40 50</pre></div><div><span>OUTPUT</span><pre>2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>음수 포함 카운팅</b> — N개의 정수(−100 ~ 100)를 입력받아 등장한 값을 작은 것부터 <code>값:횟수</code> 형식으로 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+-3 0 -3 7 0</pre></div><div><span>OUTPUT</span><pre>-3:2 0:2 7:1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>중복 제거</b> — N개의 정수(0 ~ 1000)를 입력받아 <strong>처음 나온 순서대로</strong> 중복 없이 출력하라. 카운팅 배열을 "이미 나왔는가" 표시용으로 쓴다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>7
+3 1 3 5 1 7 5</pre></div><div><span>OUTPUT</span><pre>3 1 5 7</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>카운팅 정렬</b> — N개의 정수(0 ~ 10,000)를 입력받아 오름차순으로 출력하라. <strong>비교 없이</strong> 카운팅 배열만으로 해결하라(N ≤ 10<sup>6</sup>).</p>
+    <div class="sample"><div><span>INPUT</span><pre>6
+3 1 3 5 1 7</pre></div><div><span>OUTPUT</span><pre>1 1 3 3 5 7</pre></div></div>
+    <p class="spec">※ 반복 횟수를 계산해 적어라. 이것이 PART 3 정렬 단원의 예고편이다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>두 번째로 큰 값</b> — N개의 정수 중 두 번째로 큰 값을 출력하라. 같은 값이 여러 개면 하나로 본다(예: 5 5 3 → 3).</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+5 5 3 9 9</pre></div><div><span>OUTPUT</span><pre>5</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>한 번만 나온 수</b> — N개의 정수(0 ~ 1,000,000)가 주어진다. 정확히 한 번만 나온 수를 작은 것부터 출력하라. 없으면 <code>none</code>을 출력한다(N ≤ 10<sup>6</sup>).</p>
+    <div class="sample"><div><span>INPUT</span><pre>6
+4 2 4 7 2 9</pre></div><div><span>OUTPUT</span><pre>7 9</pre></div></div>
+    <p class="spec">※ 배열 크기가 100만을 넘는다. 선언 위치를 생각하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>구간의 합</b> — N개의 정수와 질의 개수 Q가 주어지고, 각 질의는 두 인덱스 L, R(1부터)이다. 각 질의에 대해 L번째부터 R번째까지의 합을 출력하라(N, Q ≤ 1,000).</p>
+    <div class="sample"><div><span>INPUT</span><pre>5 2
+1 2 3 4 5
+2 4
+1 5</pre></div><div><span>OUTPUT</span><pre>9
+15</pre></div></div>
+    <p class="spec">※ 단순하게 풀면 반복 횟수가 얼마인지 계산하고, N과 Q가 10만이면 어떻게 될지도 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>메모리 계산</b> — 아래 각 배열이 차지하는 메모리를 계산하고, 메모리 제한 256 MB를 넘는지 판정하라. 그리고 지역에 선언할 수 있는지도 밝혀라.</p>
+    <p class="spec">⑴ <code>int a[1000000]</code> ⑵ <code>long long b[10000000]</code> ⑶ <code>char c[100000000]</code> ⑷ <code>int d[100000000]</code></p>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>두 방식의 속도 비교</b> — N개의 정수(0 ~ 1,000) 중 최빈값을 ① 모든 쌍을 비교하는 이중 루프 ② 카운팅 배열 두 가지로 구현하라. N을 1,000 / 10,000 / 50,000으로 바꿔 가며 각각의 실행 시간을 <code>stderr</code>로 측정해 표로 만들고, 7장의 복잡도 판단과 비교해 설명하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>경계값 사냥</b> — 표준 코드(최빈값)에 대해 다음을 각각 시험하고 결과를 적어라. ① 모든 점수가 0점 ② 모든 점수가 100점 ③ N = 1 ④ 배열 크기를 101에서 100으로 바꾸고 100점 입력. ④에서 무슨 일이 일어나며, 왜 그 증상이 바로 나타나지 않을 수도 있는지 설명하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>오프셋 설계</b> — 값의 범위가 ⑴ −10<sup>5</sup> ~ 10<sup>5</sup> ⑵ 1 ~ 10<sup>9</sup> ⑶ 실수 0.0 ~ 100.0(소수 첫째 자리까지) 세 경우에 대해, 카운팅 배열을 쓸 수 있는지 판정하고 쓸 수 있다면 배열 크기와 오프셋을 정하라. 쓸 수 없다면 그 이유와 대안의 방향을 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>범위 밖 쓰기의 실제 피해</b> — 아래 코드를 작성해 실행하고, <code>before</code>와 <code>after</code>의 값이 어떻게 되는지 관찰하라. 왜 이런 일이 생기는지 메모리 배치로 설명하고, 이런 오류를 조기에 발견하는 방법을 두 가지 이상 제시하라.</p>
+<pre><code>int before = 111;
+int a[5] = {0};
+int after = 222;
+
+for (int i = 0; i &lt;= 7; i++) { a[i] = 9; }
+
+printf("before=%d after=%d\n", before, after);</code></pre>
+    <p class="spec">※ 결과는 컴파일러와 최적화 옵션에 따라 달라진다. 자신의 환경에서 관찰한 것을 그대로 적는다.</p>
+  </div></div>
+
+  </div>
+</section>
+
+<section class="pagebreak answers">
+  <span class="sec-no">07 — 확인 평가 해설</span>
+  <h2>정답과 해설</h2>
+  <p class="spec" style="color:var(--ink-faint);font-size:9pt">※ 이 절은 교사용 통합본에만 수록한다. 학생 배부용에서는 제거한다.</p>
+
+  <div class="ans"><span class="an">01</span><div class="ab"><code>for (int i = n-1; i &gt;= 0; i--) { printf("%d ", a[i]); }</code> — 6장 역순 루프와 같다. 인덱스가 <code>n-1</code>부터라는 점을 짚는다.</div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab">합이 최대 10<sup>5</sup> × 10<sup>9</sup> = 10<sup>14</sup>이므로 <code>long long</code>(2장). 평균은 <code>(double)sum / n</code>(4장). <b>흔한 오답</b> — <code>int sum</code> 또는 <code>sum / n</code>.</div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab">
+<pre><code>int mx = a[0], pos = 0;
+for (int i = 1; i &lt; n; i++) {
+    if (a[i] &gt; mx) { mx = a[i]; pos = i; }
+}
+printf("%d %d\n", mx, pos + 1);</code></pre>
+    <b>처음 나온 위치</b>이므로 <code>&gt;</code>를 쓴다. <code>&gt;=</code>면 마지막 위치가 된다. 전부 음수인 예제로 <code>mx = 0</code> 오답을 반드시 걸러 낸다.
+  </div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab">배열에 저장할 필요도 없다. 읽으면서 <code>if (x == t) cnt++;</code>로 끝난다. <b>지도 포인트</b> — "배열을 배웠으니 무조건 배열에 담는다"는 습관을 여기서 경계시킨다. <b>두 번 봐야 할 때만</b> 저장한다.</div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab">예제 3의 방법 B. <code>i &lt; n/2</code>가 핵심이다. <code>i &lt; n</code>으로 쓰면 원래대로 돌아오는 것을 직접 실행해 보게 한다.</div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab"><code>cnt[x]++</code> 후 0~100 순회하며 <code>if (cnt[s] &gt; 0)</code>. 카운팅 배열이 <b>자동으로 정렬된 순서</b>를 준다는 점이 중요하다. 12번의 복선이다.</div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab">
+    표준 코드와 동일. 입력 <code>70 90 70 90</code>에서 <code>&gt;</code>면 <b>70</b>, <code>&gt;=</code>면 <b>90</b>이 나온다.<br>
+    <b>이유</b> — <code>&gt;=</code>는 같은 값을 만나도 갱신하므로 뒤쪽(큰 점수)이 남는다. 문제가 요구하는 기준을 반드시 확인하라는 교훈.
+  </div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab">예제 4와 동일. <code>cnt[c - 'a']++</code>. 입력은 <code>scanf(" %c", &amp;c)</code>를 <code>== 1</code>로 반복(3장). 대문자나 공백이 섞일 수 있으면 <code>if</code>로 거른다.</div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab">예제 1과 동일. N ≤ 10<sup>5</sup>이므로 배열 크기는 넉넉히 100,005 정도. 10만 개는 400 KB로 지역에 두어도 되지만, 습관상 전역으로 두는 것을 권한다.</div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab">예제 5와 동일. 크기 <b>201</b>, 오프셋 100. <b>흔한 오답</b> — 크기 200. <code>-100</code>과 <code>100</code>을 모두 넣어 확인시킨다.</div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab">
+<pre><code>int seen[1001] = {0};
+for (int i = 0; i &lt; n; i++) {
+    if (seen[a[i]] == 0) { printf("%d ", a[i]); seen[a[i]] = 1; }
+}</code></pre>
+    카운팅 배열을 <b>0/1 표시</b>로만 쓰는 형태다. 이것이 PART 3에서 그래프 탐색의 <code>visited</code> 배열로 그대로 이어진다. 반드시 짚어 둔다.
+  </div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">
+<pre><code>for (int v = 0; v &lt;= 10000; v++) {
+    for (int k = 0; k &lt; cnt[v]; k++) { printf("%d ", v); }
+}</code></pre>
+    <b>반복 횟수</b> — 입력 N번 + 출력 (10,001 + N)번. 즉 <b>N + 값의 범위</b>에 비례하며, 비교 정렬의 N log N보다 빠르다.<br>
+    <b>지도 포인트</b> — 안쪽 루프가 있어도 전체 출력 횟수는 N이므로 이중 루프가 아니다. "루프가 겹쳤다 = N²"이 아니라는 것을 여기서 가르친다. 값의 범위가 좁을 때만 쓸 수 있다는 제약도 함께 강조한다.
+  </div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab">
+    최댓값을 찾고, 최댓값이 아닌 것 중 최댓값을 다시 찾는다(두 번 훑기). 또는 <code>mx1</code>, <code>mx2</code>를 한 번에 갱신한다. 값의 범위가 좁다면 카운팅 배열로 위에서 두 번째로 <code>cnt[v] &gt; 0</code>인 v를 찾는 방법이 가장 간단하다.<br>
+    <b>경계</b> — 모든 값이 같으면 두 번째가 존재하지 않는다. 문제에서 이 경우의 처리를 정해야 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab">
+    <code>cnt</code> 배열 크기가 1,000,001이므로 약 4 MB다. 지역에 두면 위험하니 <b>전역</b>으로 선언한다. 집계 후 <code>cnt[v] == 1</code>인 v를 작은 것부터 출력한다.<br>
+    <b>지도 포인트</b> — 입력 N도 10<sup>6</sup>이므로 입력 배열까지 두면 8 MB다. 사실 이 문제는 <b>입력 배열이 필요 없다</b>. 읽으면서 바로 <code>cnt[x]++</code>만 하면 된다. 4번과 같은 교훈이다.
+  </div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab">
+    단순 풀이는 질의마다 L~R을 더하므로 최악 <code>Q × N = 10<sup>6</sup></code>번으로 N, Q ≤ 1,000에서는 통과한다.<br>
+    <b>N, Q가 10만이면</b> <code>10<sup>10</sup></code>번으로 불가능하다. 미리 <b>누적합</b>을 만들어 두면 질의 하나를 뺄셈 한 번으로 끝낼 수 있다(PART 3 누적합 단원). 여기서는 "단순 풀이의 한계를 체감하는 것"까지가 목표다.
+  </div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">
+    ⑴ 4 MB — 통과, 지역도 가능(8 MB 이내).<br>
+    ⑵ 8 × 10<sup>7</sup> = <b>80 MB</b> — 256 MB 이내라 통과, 그러나 지역은 불가(전역 필수).<br>
+    ⑶ 1 × 10<sup>8</sup> = <b>100 MB</b> — 통과, 전역 필수.<br>
+    ⑷ 4 × 10<sup>8</sup> = <b>400 MB</b> — <b>메모리 초과</b>. 자료형을 줄이거나(<code>char</code>·<code>short</code>) 알고리즘을 바꿔야 한다.<br>
+    <b>지도 포인트</b> — 2장의 자료형 크기와 이 장의 배열이 만나 <b>메모리 제한</b>이라는 새 제약을 만든다. 시간과 메모리를 모두 계산하는 습관으로 넘어간다.
+  </div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    이중 루프는 <code>N²</code>, 카운팅은 <code>N + 1001</code>번이다. N = 50,000이면 25억 대 5만으로 약 <b>5만 배</b> 차이다. 실측하면 이중 루프는 수 초, 카운팅은 측정이 어려울 만큼 빠르게 나온다.<br>
+    <b>지도 포인트</b> — 7장에서 "N이 크면 이중 루프 불가"라고 배웠고, 여기서 <b>그 벽을 자료구조로 넘는 첫 경험</b>을 한다. 알고리즘 공부의 동기가 되는 자리이므로 시간을 들여 체감시킨다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    ① <code>0 N</code> ② <code>100 N</code> ③ 입력된 그 점수와 1 ④ <code>cnt[100]</code>이 배열 밖을 건드린다.<br>
+    <b>④의 증상이 바로 안 나타나는 이유</b> — <code>cnt[100]</code>은 배열 바로 다음 메모리이고, 거기에 마침 다른 변수가 있으면 그 변수가 망가진다. 아무것도 없으면 아무 일도 일어나지 않은 것처럼 보인다. <b>프로그램이 죽지 않는다고 해서 맞는 것이 아니다.</b><br>
+    <b>지도 포인트</b> — 전역 배열의 경우 뒤에 다른 전역 변수가 올 수 있고, 지역이면 스택의 다른 값을 덮는다. 20번으로 이어진다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    ⑴ <b>가능</b> — 크기 200,001, 오프셋 100,000. 약 800 KB로 전역 선언.<br>
+    ⑵ <b>불가능</b> — 배열 크기 10<sup>9</sup>는 4 GB. 값의 개수는 많아야 N개이므로, 값을 정렬해 순서로 바꾸는 <b>좌표 압축</b>이나 해시가 필요하다(PART 3).<br>
+    ⑶ <b>변형하면 가능</b> — 소수 첫째 자리까지이므로 <code>×10</code>해 정수로 만들면 0 ~ 1000의 1001칸이 된다. 다만 실수 입력을 10배 한 뒤 반올림할 때 오차에 주의한다(2장).<br>
+    <b>지도 포인트</b> — ⑶의 "실수를 정수로 바꿔 다루기"는 계산 기하(PART 4)에서도 쓰는 표준 수법이다.
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    결과는 환경과 옵션에 따라 전혀 다르게 나온다. 교재 집필 환경(gcc 13.3.0, 리눅스)에서 실제로 관찰한 것은 다음과 같다.
+<pre class="term">$ gcc -std=c11 -Wall -o q20 q20.c
+$ ./q20
+*** stack smashing detected ***: terminated
+Aborted
+
+$ gcc -std=c11 -O2 -Wall -o q20 q20.c
+q20.c:6:41: warning: iteration 5 invokes undefined behavior
+$ ./q20
+before=111 after=222</pre>
+    <b>최적화를 끄면 프로그램이 죽고, 켜면 멀쩡히 돌아간다.</b> <code>-O2</code>에서는 <code>a</code>를 읽는 곳이 없다고 판단해 루프 자체를 없애 버렸기 때문이다. 다른 환경에서는 <code>after</code>만 9로 바뀌는 결과가 나오기도 한다. <b>어느 쪽도 "정상 동작"이 아니다.</b><br>
+    (<code>stack smashing detected</code>는 컴파일러가 배열 뒤에 심어 둔 감시값이 망가진 것을 실행 중에 발견한 것이다. 항상 잡아 주지는 않는다.)<br>
+    <b>설명</b> — 지역 변수들은 스택에 나란히 놓인다. <code>a[5]</code>, <code>a[6]</code>, <code>a[7]</code>은 배열 바깥이지만 그 자리에 다른 변수가 있을 수 있고, 그 변수가 덮어써진다. 컴파일러가 변수를 어떤 순서로 배치할지는 정해져 있지 않으므로 결과를 예측할 수 없다.<br>
+    <b>조기 발견 방법</b> — ① <code>-O2 -Wall</code>로 컴파일해 <code>-Warray-bounds</code> 경고 확인 ② 루프 조건을 <code>i &lt; n</code> 표준형으로 통일 ③ 배열 크기를 상수로 정의해 선언과 루프에서 같은 이름을 쓰기 ④ 가능하면 <code>-fsanitize=address</code> 옵션으로 실행해 즉시 잡기.<br>
+    <b>지도 포인트</b> — "실행이 되니까 맞다"는 가장 위험한 판단이다. 이 장의 교훈을 여기서 마무리한다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li>인덱스는 0부터 <code>n-1</code>까지라는 것을 쓸 때마다 확인한다</li>
+    <li>카운팅 배열의 크기는 <strong>최댓값 − 최솟값 + 1</strong>로 잡는다</li>
+    <li>지역 배열은 <code>= {0}</code>으로 초기화하거나 전역으로 선언한다</li>
+    <li>원소가 10만 개를 넘으면 전역에 선언한다</li>
+    <li>최댓값의 초기값을 0이 아니라 <code>a[0]</code>으로 둔다</li>
+    <li>두 번 봐야 할 때만 배열에 저장한다</li>
+    <li><code>cnt[x]++</code> 한 줄이 N번의 훑기로 분포를 완성한다는 것을 안다</li>
+    <li>시간뿐 아니라 <strong>메모리</strong>도 계산한다</li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 09장 2차원 배열과 델타 이동</span>
+    7장에서 좌표로 <strong>계산</strong>했던 격자를 이제 <strong>저장</strong>한다. 그리고 상하좌우 네 방향을 <code>dx</code>, <code>dy</code> 배열 두 개로 표현하는 수법을 배우는데, 이것이 PART 3 격자 BFS의 뼈대가 된다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 1 · 08장 · 2026-10-12 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+
+</div>
+</body>
+</html>

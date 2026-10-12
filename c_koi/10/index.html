@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 1 · 10장 함수 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#0d7a6f;
+  --accent-soft:#e3f1ef;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#8fd8cd}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+<header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 1 · C11 문법 기초 — 10 / 16</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">10</span>
+    <h1>함수</h1>
+  </div>
+  <p class="lede">지금까지 모든 코드를 <code>main</code> 하나에 몰아 넣었다. 문제가 조금만 복잡해지면 같은 코드를 두세 번 쓰게 되고, 고칠 때마다 전부 찾아 고쳐야 한다. 함수는 <strong>이름 붙은 재사용 단위</strong>이자, 6장에서 미뤄 둔 숙제의 해답이다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li>함수를 정의하고 호출할 수 있으며 프로토타입이 왜 필요한지 설명할 수 있다</li>
+    <li>매개변수가 <strong>복사본</strong>이라는 것을 알고, 함수 안의 변경이 밖에 전해지지 않는 이유를 안다</li>
+    <li>모든 경로에서 <code>return</code>하도록 함수를 작성할 수 있다</li>
+    <li>지역 변수와 전역 변수의 유효 범위를 구분할 수 있다</li>
+    <li><code>return</code>으로 중첩 반복문을 한 번에 빠져나올 수 있다</li>
+    <li>소수 판정·최대공약수·자릿수 합을 함수로 분리해 재사용할 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 문제 · 함수의 구조 · 프로토타입 · 값에 의한 전달</div>
+  <div><b>2차시</b>반환값 · 유효 범위 · return 탈출 · 표준 코드</div>
+  <div><b>3차시</b>함수 분해 기준 · 단계 예제 · 흔한 오류 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>같은 코드를 세 번 쓰게 될 때</h2>
+  <p>"1부터 N까지의 수 중 <strong>소수인 것의 개수</strong>와 <strong>소수의 합</strong>, 그리고 <strong>가장 큰 소수</strong>를 출력하라." 6장에서 배운 소수 판정을 그대로 쓰면 이렇게 된다.</p>
+  <figure>
+    <figcaption><span class="fn">중복이 쌓인다</span><span>같은 판정이 세 번</span></figcaption>
+<pre><code>for (int n = 2; n &lt;= N; n++) {
+    int p = 1;
+    for (int i = 2; i * i &lt;= n; i++) { if (n % i == 0) { p = 0; break; } }
+    if (p) { cnt++; }
+}
+for (int n = 2; n &lt;= N; n++) {
+    int p = 1;
+    for (int i = 2; i * i &lt;= n; i++) { if (n % i == 0) { p = 0; break; } }
+    if (p) { sum += n; }
+}
+...</code></pre>
+  </figure>
+  <p>문제는 길이가 아니다. <strong>판정 로직을 고쳐야 할 때 세 군데를 모두 고쳐야 하고, 한 군데를 빠뜨리면 발견되지 않는다.</strong> 실제로 이 코드에는 <code>n = 1</code>을 소수로 세는 버그가 있는데, 세 곳에 똑같이 들어 있다.</p>
+  <p>그리고 또 하나. 6장 연습 19번에서 "이중 루프를 한 번에 빠져나오기"를 깃발 변수로 해결하면서, 더 깔끔한 방법이 10장에 있다고 미뤄 두었다. 그 답도 이 장에 있다.</p>
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> 코드 덩어리에 이름을 붙여 재사용하려면?<br>
+    <b>②</b> 함수 안에서 바꾼 값이 왜 밖에 전해지지 않는가?<br>
+    <b>③</b> 중첩 루프를 한 번에 빠져나오는 가장 깔끔한 방법은?
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">10.1</span>함수의 구조</h3>
+  <figure>
+    <figcaption><span class="fn">정의</span><span>네 부분으로 되어 있다</span></figcaption>
+<pre><code>int square(int x)      // 반환형  이름  (매개변수)
+{
+    return x * x;      // 몸통 — return으로 값을 돌려준다
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:22%">부분</th><th style="width:30%">뜻</th><th>주의</th></tr></thead>
+    <tbody>
+      <tr><td><strong>반환형</strong></td><td>돌려주는 값의 자료형</td><td>돌려줄 것이 없으면 <code>void</code></td></tr>
+      <tr><td><strong>이름</strong></td><td>호출할 때 쓰는 이름</td><td>하는 일이 드러나게 짓는다</td></tr>
+      <tr><td><strong>매개변수</strong></td><td>받아들이는 값</td><td>없으면 <code>(void)</code>로 명시</td></tr>
+      <tr><td><strong>몸통</strong></td><td>실제로 하는 일</td><td><code>return</code>을 만나면 즉시 끝난다</td></tr>
+    </tbody>
+  </table>
+  <p>우리는 1장부터 <code>int main(void)</code>를 써 왔다. <code>main</code>도 함수다. 반환형이 <code>int</code>이고 매개변수가 없으며 <code>return 0;</code>으로 끝난다. 다른 점은 <strong>운영체제가 호출한다</strong>는 것뿐이다(1장 2.3절).</p>
+
+  <h3><span class="tag">10.2</span>프로토타입 — 미리 알려 두기</h3>
+  <p>C는 위에서 아래로 읽는다. <code>main</code>보다 아래에 정의된 함수를 호출하면 컴파일러가 모른다.</p>
+  <div class="io">
+    <div><div class="lbl">문제의 코드</div><pre>int main(void) {
+    printf("%d\n", square(5));
+}
+int square(int x) { return x * x; }</pre></div>
+    <div><div class="lbl">경고</div><pre>warning: implicit declaration
+of function 'square'
+[-Wimplicit-function-declaration]</pre></div>
+  </div>
+  <p>1장 오류 5에서 본 그 경고다. 실행은 되지만 <strong>경고가 난다</strong>. 해결 방법은 두 가지다.</p>
+  <table>
+    <thead><tr><th style="width:36%">방법</th><th>설명</th></tr></thead>
+    <tbody>
+      <tr><td><strong>함수를 <code>main</code> 위에 정의</strong></td><td>함수가 적을 때는 이것으로 충분하다</td></tr>
+      <tr><td><strong>프로토타입을 맨 위에 선언</strong></td><td><code>int square(int x);</code> — 몸통 없이 <strong>세미콜론</strong>으로 끝낸다</td></tr>
+    </tbody>
+  </table>
+  <p>이 교재는 <strong>프로토타입을 맨 위에 모아 쓰는 방식</strong>을 표준으로 삼는다. 함수가 서로를 호출할 때 순서를 고민하지 않아도 되고, 파일 맨 위만 봐도 어떤 함수가 있는지 한눈에 보이기 때문이다.</p>
+
+  <h3><span class="tag">10.3</span>값에 의한 전달 — 매개변수는 복사본</h3>
+  <p>C에서 함수에 값을 넘기면 <strong>복사본</strong>이 만들어진다. 함수 안에서 아무리 바꿔도 원본은 그대로다.</p>
+  <div class="io">
+    <div><div class="lbl">CODE</div><pre>void swap_bad(int a, int b)
+{
+    int t = a; a = b; b = t;
+}
+
+int x = 3, y = 7;
+swap_bad(x, y);
+printf("x=%d y=%d\n", x, y);</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>x=3 y=7</pre></div>
+  </div>
+  <p>함수 안에서 <code>a</code>와 <code>b</code>는 분명히 바뀌었다. 그러나 그것은 <code>x</code>와 <code>y</code>의 <strong>복사본</strong>이었고, 함수가 끝나면서 사라졌다. 이름이 같아도 마찬가지다.</p>
+  <div class="note warn">
+    <span class="h">값을 돌려주려면 return을 쓴다</span>
+    지금 단계에서 함수가 바깥에 결과를 전하는 방법은 <b><code>return</code> 하나</b>다. 그래서 돌려줄 값이 두 개 이상이면 곤란해진다. 그 해결책이 <b>12장 포인터</b>이고, 교환 함수를 제대로 만드는 것도 그때다. 지금은 "복사본이라 안 된다"는 사실만 확실히 해 둔다.
+  </div>
+
+  <h3><span class="tag">10.4</span>반환값 — 모든 경로에서 return</h3>
+  <div class="io">
+    <div><div class="lbl">잘못된 코드</div><pre>int f(int x)
+{
+    if (x &gt; 0) return 1;
+}</pre></div>
+    <div><div class="lbl">경고와 결과</div><pre>warning: control reaches end
+of non-void function
+[-Wreturn-type]
+
+f(5)  → 1
+f(-5) → -551763613 (쓰레기)</pre></div>
+  </div>
+  <p><code>x</code>가 0 이하면 <code>return</code> 없이 함수가 끝난다. 그러면 <strong>아무 값이나</strong> 돌아온다. 5장에서 배운 "빠짐없이"가 여기서도 그대로 적용된다. <strong>조건 분기로 끝내지 말고 마지막에 <code>return</code>을 둔다.</strong></p>
+  <figure>
+    <figcaption><span class="fn">올바른 형태</span><span>마지막 return이 모든 경우를 받는다</span></figcaption>
+<pre><code>int f(int x)
+{
+    if (x &gt; 0) { return 1; }
+    return 0;
+}</code></pre>
+  </figure>
+  <p><code>void</code> 함수는 돌려줄 값이 없으므로 <code>return;</code>만 쓰거나 아예 생략한다. 중간에 끝내고 싶을 때 <code>return;</code> 한 줄을 쓸 수 있다.</p>
+
+  <h3><span class="tag">10.5</span>지역 변수와 전역 변수</h3>
+  <table>
+    <thead><tr><th style="width:20%">종류</th><th style="width:26%">선언 위치</th><th style="width:22%">살아 있는 동안</th><th>초기값</th></tr></thead>
+    <tbody>
+      <tr><td><strong>지역 변수</strong></td><td>함수(또는 블록) 안</td><td>그 함수가 실행되는 동안</td><td><strong>쓰레기</strong></td></tr>
+      <tr><td><strong>전역 변수</strong></td><td>모든 함수 바깥</td><td>프로그램 전체</td><td><strong>0</strong></td></tr>
+    </tbody>
+  </table>
+  <div class="io">
+    <div><div class="lbl">CODE</div><pre>int cnt = 100;           // 전역
+
+void f(void) { printf("%d\n", cnt); cnt++; }
+void g(void) { int cnt = 5; printf("%d\n", cnt); }
+
+int main(void) {
+    f();   // 100
+    f();   // 101
+    g();   //   5
+    printf("%d\n", cnt);
+}</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>100
+101
+5
+102</pre></div>
+  </div>
+  <p><code>g</code> 안의 <code>cnt</code>는 전역 <code>cnt</code>를 <strong>가린다</strong>. 같은 이름이지만 전혀 다른 변수이고, <code>g</code>가 끝나면 사라진다. 전역은 102로 멀쩡하다.</p>
+  <div class="note">
+    <span class="h">올림피아드에서의 실용 지침</span>
+    <b>큰 배열과 N, M 같은 입력 크기는 전역으로</b> 둔다(8·9장). 그러면 함수마다 넘겨 줄 필요가 없어 코드가 짧아진다. 대신 <b>이름을 가리는 실수</b>를 조심해야 하므로, 지역 변수에는 <code>i</code>, <code>j</code>, <code>t</code> 같은 짧은 이름을, 전역에는 <code>board</code>, <code>visited</code> 같은 긴 이름을 쓴다.
+  </div>
+
+  <h3><span class="tag">10.6</span>return으로 중첩 루프 탈출</h3>
+  <p>6장 오류 6과 연습 19번의 숙제다. <code>break</code>는 가장 안쪽 반복만 끝낸다. 깃발 변수를 쓰면 되지만 조건이 지저분해진다.</p>
+  <div class="io">
+    <div><div class="lbl">깃발 변수 방식 (6장)</div><pre>int found = 0;
+for (int i = 1; i &lt;= n &amp;&amp; !found; i++) {
+    for (int j = 1; j &lt;= n; j++) {
+        if (i * j == k) {
+            fi = i; fj = j;
+            found = 1; break;
+        }
+    }
+}</pre></div>
+    <div><div class="lbl">함수로 분리 (10장)</div><pre>int find_pair(void)
+{
+    for (int i = 1; i &lt;= n; i++) {
+        for (int j = 1; j &lt;= n; j++) {
+            if (i * j == k) {
+                fi = i; fj = j;
+                return 1;
+            }
+        }
+    }
+    return 0;
+}</pre></div>
+  </div>
+  <p><code>return</code>은 <strong>함수 전체를 끝낸다</strong>. 몇 겹으로 중첩되어 있든 한 번에 빠져나온다. 게다가 "찾았는가"를 반환값으로 돌려주므로 깃발 변수도 필요 없다.</p>
+
+  <h3><span class="tag">10.7</span>함수로 나누는 기준</h3>
+  <table>
+    <thead><tr><th style="width:30%">기준</th><th>설명</th></tr></thead>
+    <tbody>
+      <tr><td><strong>두 번 이상 쓰인다</strong></td><td>가장 분명한 신호. 도입 문제의 소수 판정이 그렇다</td></tr>
+      <tr><td><strong>이름을 붙일 수 있다</strong></td><td>"소수인지 판정한다"처럼 한 문장으로 말할 수 있으면 함수가 된다</td></tr>
+      <tr><td><strong>중첩이 깊어진다</strong></td><td>루프 세 겹에 조건문이 들어가면 안쪽을 떼어 낸다</td></tr>
+      <tr><td><strong>탈출이 필요하다</strong></td><td>10.6절처럼 <code>return</code>으로 끊고 싶을 때</td></tr>
+    </tbody>
+  </table>
+  <p>반대로 <strong>나누지 않아야 할 때</strong>도 있다. 한 번만 쓰이고 이름 붙이기도 애매한 세 줄짜리 코드는 그냥 두는 편이 읽기 쉽다. 함수 개수가 많다고 좋은 코드가 아니다.</p>
+
+  <h3><span class="tag">10.8</span>배열을 넘기면 복사되지 않는다</h3>
+  <p>값에 의한 전달에는 예외처럼 보이는 것이 하나 있다. 배열이다.</p>
+  <div class="io">
+    <div><div class="lbl">CODE</div><pre>void touch(int a[], int n)
+{
+    a[0] = 999;
+}
+
+int v[5] = {1,2,3,4,5};
+touch(v, 5);
+printf("%d\n", v[0]);</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>999</pre></div>
+  </div>
+  <p>함수 안에서 바꾼 것이 <strong>밖에 전해졌다</strong>. 배열은 통째로 복사되지 않고 "어디에 있는지"만 전달되기 때문이다. 그 정체는 13장에서 밝혀진다.</p>
+  <div class="note warn">
+    <span class="h">함수 안에서는 sizeof가 통하지 않는다</span>
+    <code>sizeof(a)</code>를 함수 안에서 쓰면 배열 전체 크기가 아니라 <b>8</b>이 나온다. gcc도 <code>'sizeof' on array function parameter 'a' will return size of 'int *'</code>로 경고한다.<br>
+    그래서 배열을 넘길 때는 <b>크기를 따로 넘긴다</b>. <code>void touch(int a[], int n)</code>처럼 <code>n</code>이 항상 따라다니는 이유다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드: 수학 함수 네 개</h2>
+  <p>앞으로 계속 쓸 함수들이다. 통째로 외워서 빈 화면에 바로 쓸 수 있어야 한다.</p>
+  <figure>
+    <figcaption><span class="fn">mathlib.c</span><span>표준 코드 · gcc 검증 완료</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int is_prime(int n);
+int gcd(int a, int b);
+int digit_sum(int n);
+int digital_root(int n);
+
+int is_prime(int n)
+{
+    if (n &lt; 2) { return 0; }
+    for (int i = 2; (long long)i * i &lt;= n; i++) {
+        if (n % i == 0) { return 0; }
+    }
+    return 1;
+}
+
+int gcd(int a, int b)
+{
+    while (b != 0) {
+        int t = a % b;
+        a = b;
+        b = t;
+    }
+    return a;
+}
+
+int digit_sum(int n)
+{
+    int s = 0;
+    while (n &gt; 0) {
+        s += n % 10;
+        n /= 10;
+    }
+    return s;
+}
+
+int digital_root(int n)
+{
+    while (n &gt;= 10) { n = digit_sum(n); }
+    return n;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:26%">함수</th><th>읽는 법</th></tr></thead>
+    <tbody>
+      <tr><td><code>is_prime</code></td><td><code>n &lt; 2</code>를 <strong>맨 앞에서 거른다</strong>(5장). 도입 문제의 버그가 여기서 한 번만 고쳐진다. <code>(long long)i * i</code>는 2장의 중간값 오버플로 대비.</td></tr>
+      <tr><td><code>gcd</code></td><td>유클리드 호제법(6장 연습 12). <code>b</code>가 매 회 작아지므로 반드시 끝난다. <code>gcd(100, 0) = 100</code>도 올바르게 처리된다.</td></tr>
+      <tr><td><code>digit_sum</code></td><td>매개변수 <code>n</code>을 직접 깎아 쓴다. <strong>복사본이므로 호출한 쪽의 값은 멀쩡하다.</strong></td></tr>
+      <tr><td><code>digital_root</code></td><td>6장 표준 코드를 함수 두 개로 나눈 것. <code>digit_sum</code>을 재사용한다.</td></tr>
+    </tbody>
+  </table>
+  <div class="io">
+    <div><div class="lbl">호출 결과</div><pre>is_prime(97) = 1
+is_prime(91) = 0   (7 × 13)
+is_prime(1)  = 0
+is_prime(2)  = 1
+gcd(48, 18)  = 6
+gcd(17, 5)   = 1
+gcd(100, 0)  = 100</pre></div>
+    <div><div class="lbl">조합해 쓰기</div><pre>digit_sum(987654)    = 39
+digital_root(987654) = 3
+digital_root(5)      = 5
+
+최소공배수:
+(long long)a / gcd(a,b) * b
+lcm(48,18) = 144</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">최소공배수는 나누기를 먼저 한다</span>
+    <code>a * b / gcd(a,b)</code>로 쓰면 <code>a * b</code>에서 넘칠 수 있다(2장). <b><code>a / gcd(a,b) * b</code></b>로 쓰면 중간값이 작아진다. <code>gcd</code>는 <code>a</code>의 약수이므로 나누어떨어져 정확도도 유지된다.
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+
+  <h3><span class="tag">예제 1</span>도입 문제의 답</h3>
+  <figure>
+    <figcaption><span class="fn">ex1.c</span><span>판정은 한 곳에만 있다</span></figcaption>
+<pre><code>int main(void)
+{
+    int N;
+    if (scanf("%d", &amp;N) != 1) return 1;
+
+    int cnt = 0, mx = -1;
+    long long sum = 0;
+
+    for (int n = 2; n &lt;= N; n++) {
+        if (is_prime(n)) {
+            cnt++;
+            sum += n;
+            mx = n;
+        }
+    }
+
+    printf("%d %lld %d\n", cnt, sum, mx);
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>20</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>8 77 19</pre></div>
+  </div>
+  <p>루프가 셋에서 하나로 줄었고, 무엇보다 <strong>판정 로직이 한 곳에만 있다</strong>. <code>is_prime</code>을 고치면 세 결과가 모두 함께 고쳐진다. 가장 큰 소수는 오름차순으로 보고 있으므로 <strong>갱신만 하면</strong> 마지막 값이 답이 된다.</p>
+
+  <h3><span class="tag">예제 2</span>최대공약수와 최소공배수</h3>
+  <figure>
+    <figcaption><span class="fn">ex2.c</span><span>함수 하나로 둘 다 해결</span></figcaption>
+<pre><code>int a, b;
+if (scanf("%d %d", &amp;a, &amp;b) != 2) return 1;
+
+int g = gcd(a, b);
+long long l = (long long)a / g * b;
+
+printf("%d %lld\n", g, l);</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>48 18</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>6 144</pre></div>
+  </div>
+  <p>최소공배수를 위한 별도 함수를 만들 필요가 없다. <strong>작은 함수 하나가 여러 문제를 덮는다</strong>는 것이 함수의 진짜 가치다.</p>
+
+  <h3><span class="tag">예제 3</span>return으로 중첩 루프 탈출</h3>
+  <figure>
+    <figcaption><span class="fn">ex3.c</span><span>6장의 숙제를 해결한다</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+int n, k, fi, fj;
+
+int find_pair(void)
+{
+    for (int i = 1; i &lt;= n; i++) {
+        for (int j = 1; j &lt;= n; j++) {
+            if (i * j == k) {
+                fi = i; fj = j;
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    if (scanf("%d %d", &amp;n, &amp;k) != 2) return 1;
+
+    if (find_pair()) { printf("%d %d\n", fi, fj); }
+    else             { printf("none\n"); }
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">INPUT / OUTPUT</div><pre>10 12  →  2 6
+3 100  →  none</pre></div>
+    <div><div class="lbl">얻은 것</div><pre>· 깃발 변수가 사라졌다
+· 바깥 루프 조건이 깨끗하다
+· "찾았는가"가 반환값으로 나온다
+· 찾는 즉시 멈춘다</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 4</span>값에 의한 전달 확인</h3>
+  <figure>
+    <figcaption><span class="fn">ex4.c</span><span>복사본이라는 것을 눈으로</span></figcaption>
+<pre><code>void h(int x)
+{
+    x = 999;
+    printf("h 안에서 x = %d\n", x);
+}
+
+int main(void)
+{
+    int x = 1;
+    printf("호출 전 x = %d\n", x);
+    h(x);
+    printf("호출 후 x = %d\n", x);
+    return 0;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>호출 전 x = 1
+h 안에서 x = 999
+호출 후 x = 1</pre></div>
+    <div><div class="lbl">해석</div><pre>이름이 같아도
+서로 다른 변수다.
+함수 안의 x는
+복사본이고 곧 사라진다.</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 5</span>9장 경계 검사를 함수로</h3>
+  <figure>
+    <figcaption><span class="fn">ex5.c</span><span>조건이 이름을 갖는다</span></figcaption>
+<pre><code>int n, m;
+int board[100][100];
+
+int in_range(int y, int x)
+{
+    return (y &gt;= 0 &amp;&amp; y &lt; n &amp;&amp; x &gt;= 0 &amp;&amp; x &lt; m);
+}
+
+// 쓰는 쪽
+for (int d = 0; d &lt; 8; d++) {
+    int ny = i + dy[d];
+    int nx = j + dx[d];
+    if (!in_range(ny, nx)) { continue; }
+    if (board[ny][nx]) { c++; }
+}</code></pre>
+  </figure>
+  <p>네 개의 비교가 <code>in_range(ny, nx)</code> 한 마디가 된다. <strong>조건의 의미가 이름으로 드러나고</strong>, 9장 오류 2(<code>n</code>과 <code>m</code> 혼동)도 한 곳에서만 확인하면 된다. PART 3의 탐색 코드는 거의 전부 이 형태를 쓴다.</p>
+  <p><code>n</code>과 <code>m</code>을 전역으로 둔 덕분에 매개변수가 둘뿐이다. 이것이 10.5절에서 말한 실용 지침의 효과다.</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 1</span><span class="t">프로토타입 없이 아래쪽 함수를 호출했다</span></div>
+    <div class="body">
+      <pre>p1.c:2:32: warning: implicit declaration of function 'square'
+           [-Wimplicit-function-declaration]</pre>
+      <p>1장 오류 5에서 <code>pritnf</code> 오타로 만났던 그 경고다. 이번에는 오타가 아니라 <strong>순서</strong> 때문이다. 경고만 나고 실행은 되므로 넘어가기 쉽다.</p>
+      <div class="fix"><b>고치는 법</b> — 프로토타입을 파일 맨 위에 모아 쓴다. 몸통 없이 <code>세미콜론</code>으로 끝낸다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 2</span><span class="t">모든 경로에서 return하지 않았다</span></div>
+    <div class="body">
+      <pre>rv.c:2:36: warning: control reaches end of non-void function
+           [-Wreturn-type]</pre>
+      <p>경고를 무시하면 <strong>쓰레기값</strong>이 돌아온다. 실행 결과가 <code>1</code>과 <code>-551763613</code>처럼 나온다. 조건이 복잡해질수록 빠뜨린 경로를 찾기 어려워진다.</p>
+      <div class="fix"><b>고치는 법</b> — 함수의 <b>마지막 줄에 항상 <code>return</code></b>을 둔다. 5장의 "빠짐없이"를 함수에 적용한 것이다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 3</span><span class="t">함수가 바꾼 값이 전해질 줄 알았다</span></div>
+    <div class="body">
+      <pre>void swap_bad(int a, int b) { int t=a; a=b; b=t; }
+swap_bad(x, y);   // x, y는 그대로</pre>
+      <p>경고도 오류도 없다. 완벽히 정상인 코드이고, 단지 <strong>아무 일도 하지 않을</strong> 뿐이다. 함수 안에 <code>printf</code>를 넣어 보면 분명히 바뀌어 있어서 더 혼란스럽다.</p>
+      <div class="fix"><b>고치는 법</b> — 지금은 <code>return</code>으로 값을 돌려받는다. 두 값을 바꾸려면 호출한 쪽에서 직접 교환한다. 제대로 된 해법은 <b>12장 포인터</b>.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 4</span><span class="t">지역 변수가 전역 변수를 가렸다</span></div>
+    <div class="body">
+      <pre>int cnt = 0;                    // 전역 — 전체 개수를 셀 생각
+
+void f(void) {
+    int cnt = 0;                // 같은 이름의 지역 변수
+    ...
+    cnt++;                      // 전역이 아니라 지역이 늘어난다
+}</pre>
+      <p>경고가 없다. 함수가 끝나면 지역 <code>cnt</code>는 사라지고 전역은 0 그대로다. 결과가 항상 0으로 나오는데 코드만 봐서는 멀쩡해 보인다.</p>
+      <div class="fix"><b>고치는 법</b> — 전역에는 <code>total_count</code>, <code>board</code>처럼 <b>긴 이름</b>을, 지역에는 <code>i</code>, <code>c</code>, <code>t</code>처럼 짧은 이름을 쓴다. 이름이 겹치지 않으면 생기지 않는 사고다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 5</span><span class="t">함수 안에서 sizeof로 배열 크기를 구하려 했다</span></div>
+    <div class="body">
+      <pre>arr.c: warning: 'sizeof' on array function parameter 'a'
+       will return size of 'int *' [-Wsizeof-array-argument]
+
+main 안    : sizeof(v) = 20
+함수 안    : sizeof(a) =  8</pre>
+      <p>8장에서 배운 <code>sizeof(a)/sizeof(a[0])</code>가 함수 안에서는 통하지 않는다. 결과는 <code>8/4 = 2</code>가 되어 배열을 두 칸만 훑는다.</p>
+      <div class="fix"><b>고치는 법</b> — 배열을 넘길 때는 <b>크기를 매개변수로 함께 넘긴다</b>. <code>void f(int a[], int n)</code>.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 6</span><span class="t">매개변수가 없는데 괄호를 비워 두었다</span></div>
+    <div class="body">
+      <pre>int f();        // 매개변수 정보가 없다는 뜻 (옛 문법)
+int f(void);    // 매개변수가 없다는 뜻 (올바름)</pre>
+      <p><code>f()</code>로 선언하면 컴파일러가 <strong>인자 개수를 검사하지 않는다</strong>. <code>f(1, 2, 3)</code>처럼 잘못 불러도 경고가 나오지 않는다.</p>
+      <div class="fix"><b>고치는 법</b> — 매개변수가 없으면 <code>(void)</code>로 명시한다. 1장부터 써 온 <code>int main(void)</code>가 그래서 그 모양이다.</div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    오류 3·4는 <b>경고가 전혀 나오지 않는다</b>. 그리고 둘 다 "코드는 맞는데 아무 효과가 없는" 형태라서, 로직을 의심하며 한참을 헤매게 만든다. 함수를 쓸 때는 <b>"이 함수가 바깥에 전하는 것은 반환값뿐인가?"</b>를 매번 확인한다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>모든 함수는 프로토타입을 파일 맨 위에 선언하고, 마지막 줄에 <code>return</code>을 둔다. 함수마다 <strong>경계 입력</strong>을 하나씩 준비해 시험한다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>세제곱 함수</b> — 정수를 받아 세제곱을 돌려주는 <code>cube</code> 함수를 만들고, 입력받은 수의 세제곱을 출력하라. 2장을 떠올려 반환형을 정하라(입력은 2,000,000 이하).</p>
+    <div class="sample"><div><span>INPUT</span><pre>2000000</pre></div><div><span>OUTPUT</span><pre>8000000000000000000</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>최댓값 함수</b> — 두 정수 중 큰 값을 돌려주는 <code>max2</code>를 만들고, 그것만 써서 세 수 중 최댓값을 구하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4 9 2</pre></div><div><span>OUTPUT</span><pre>9</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>절댓값 함수</b> — <code>my_abs</code>를 만들어 입력받은 수의 절댓값을 출력하라. <code>INT_MIN</code>이 들어오면 어떻게 되는지도 확인해 적어라(2장).</p>
+    <div class="sample"><div><span>INPUT</span><pre>-42</pre></div><div><span>OUTPUT</span><pre>42</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>소수 판정 함수</b> — <code>is_prime</code>을 작성하고 입력받은 수가 소수면 <code>prime</code>, 아니면 <code>not prime</code>을 출력하라. 1, 2, 4, 97을 반드시 시험하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>1</pre></div><div><span>OUTPUT</span><pre>not prime</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>최대공약수 함수</b> — <code>gcd</code>를 작성하고 두 수의 최대공약수를 출력하라. 한쪽이 0인 경우도 시험하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>100 0</pre></div><div><span>OUTPUT</span><pre>100</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>자릿수 합 함수</b> — <code>digit_sum</code>을 작성하라. 호출한 뒤에도 원래 변수가 그대로인지 출력해 확인하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>987654</pre></div><div><span>OUTPUT</span><pre>39 987654</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>void 함수</b> — 정수 N을 받아 별 N개를 한 줄에 출력하는 <code>print_stars</code>를 만들고, 이것만 써서 7장의 직각삼각형을 그려라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4</pre></div><div><span>OUTPUT</span><pre>*
+**
+***
+****</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>교환은 안 된다</b> — <code>void swap_bad(int a, int b)</code>를 만들어 호출하고, 호출 전후의 값을 출력해 바뀌지 않음을 보여라. 함수 안에서도 값을 출력해 <strong>안에서는 바뀌었다</strong>는 것을 함께 보여라.</p>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>소수 통계</b> — N을 입력받아 1 이상 N 이하의 소수의 개수, 합, 가장 큰 소수를 출력하라(N ≤ 10<sup>6</sup>). <code>is_prime</code>을 재사용하고, 합의 자료형을 2장대로 정하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>20</pre></div><div><span>OUTPUT</span><pre>8 77 19</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>최소공배수</b> — 두 정수(각각 10<sup>9</sup> 이하)의 최대공약수와 최소공배수를 출력하라. 오버플로를 피하는 순서로 계산하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>1000000000 999999999</pre></div><div><span>OUTPUT</span><pre>1 999999999000000000</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>디지털 루트</b> — <code>digit_sum</code>과 <code>digital_root</code> 두 함수로 6장 표준 코드를 다시 작성하라. 과정 추적 출력도 함께 하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>987654</pre></div><div><span>OUTPUT</span><pre>987654 -&gt; 39 -&gt; 12 -&gt; 3</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>회문 수 판정</b> — 정수를 받아 앞뒤가 같은 수인지 판정하는 <code>is_palindrome</code>을 만들어라(6장 숫자 뒤집기 활용). 입력받은 수가 회문이면 <code>YES</code>, 아니면 <code>NO</code>를 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>12321</pre></div><div><span>OUTPUT</span><pre>YES</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>배열 함수 세 개</b> — <code>int arr_sum(int a[], int n)</code>, <code>int arr_max(int a[], int n)</code>, <code>void arr_print(int a[], int n)</code>을 만들고, N개의 정수를 입력받아 합·최댓값·전체 출력을 하라. 음수가 포함될 수 있다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4
+-7 3 -1 5</pre></div><div><span>OUTPUT</span><pre>0 5
+-7 3 -1 5</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>배열 뒤집기 함수</b> — <code>void arr_reverse(int a[], int n)</code>을 만들어 배열을 뒤집고, 호출 후 <code>main</code>에서 출력해 <strong>실제로 바뀌었는지</strong> 확인하라. 8번의 <code>swap_bad</code>와 왜 다른지 설명하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+1 2 3 4 5</pre></div><div><span>OUTPUT</span><pre>5 4 3 2 1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>경계 검사 함수</b> — 9장 지뢰 찾기 코드를 <code>in_range</code> 함수를 써서 다시 작성하라. <code>n</code>, <code>m</code>, <code>mine</code>은 전역으로 둔다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3 3
+1 0 0
+0 0 0
+0 0 1</pre></div><div><span>OUTPUT</span><pre>*10
+121
+01*</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>첫 쌍 찾기</b> — N과 K를 입력받아 <code>i * j == K</code>인 첫 쌍 <code>(i, j)</code>(1 ≤ i, j ≤ N)를 <code>return</code>으로 탈출하는 함수로 찾아 출력하라. 없으면 <code>none</code>.</p>
+    <div class="sample"><div><span>INPUT</span><pre>10 12</pre></div><div><span>OUTPUT</span><pre>2 6</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>복사본의 증거</b> — 아래 코드의 출력을 예측한 뒤 실행해 확인하고, 각 줄이 왜 그 값인지 설명하라. 그리고 <code>f</code>의 매개변수 이름을 <code>x</code>에서 <code>y</code>로 바꾸면 결과가 달라지는지도 답하라.</p>
+<pre><code>int x = 10;                  // 전역
+
+void f(int x) { x = x + 1; printf("A %d\n", x); }
+void g(void)  { x = x + 1; printf("B %d\n", x); }
+
+int main(void) {
+    int x = 100;             // 지역
+    f(x);  printf("C %d\n", x);
+    g();   printf("D %d\n", x);
+    return 0;
+}</code></pre>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>세 가지 탈출 방법 비교</b> — 16번을 ① 깃발 변수 ② <code>goto</code> ③ 함수와 <code>return</code> 세 가지로 각각 구현하라. 각 방법의 코드 길이, 읽기 쉬움, 바깥 루프가 불필요하게 더 도는지를 표로 비교하고, 어느 것을 표준으로 삼을지 근거와 함께 정하라.</p>
+    <p class="spec">※ <code>goto</code>는 이 교재에서 다루지 않았다. 직접 찾아보고 써 본 뒤 판단하는 것까지가 문제의 일부다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>함수로 나누기와 나누지 않기</b> — 9장 표준 코드(지뢰 찾기)를 함수 네 개로 과하게 쪼갠 버전과, 함수 <code>in_range</code> 하나만 쓴 버전을 각각 작성하라. 두 코드를 비교해 <strong>어느 쪽이 읽기 쉬운지</strong>와 그 이유를 쓰고, 10.7절의 기준에 비추어 평가하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>나만의 함수 모음</b> — PART 1에서 배운 것 중 앞으로 반복해 쓸 함수 <strong>여섯 개 이상</strong>을 골라 하나의 파일로 정리하라. 각 함수마다 ① 프로토타입 ② 한 줄 설명 ③ 경계 입력과 기대 출력을 적는다. 이 파일은 PART 2 내내 쓰게 되므로 이름과 동작을 신중히 정하라.</p>
+    <p class="spec">※ 후보: <code>is_prime</code>, <code>gcd</code>, <code>lcm</code>, <code>digit_sum</code>, <code>digital_root</code>, <code>my_abs</code>, <code>max2</code>, <code>min2</code>, <code>in_range</code>, <code>mod</code>(4장의 음수 보정), <code>arr_max</code>, <code>arr_sum</code></p>
+  </div></div>
+
+  </div>
+</section>
+
+<section class="pagebreak answers">
+  <span class="sec-no">07 — 확인 평가 해설</span>
+  <h2>정답과 해설</h2>
+  <p class="spec" style="color:var(--ink-faint);font-size:9pt">※ 이 절은 교사용 통합본에만 수록한다. 학생 배부용에서는 제거한다.</p>
+
+  <div class="ans"><span class="an">01</span><div class="ab"><code>long long cube(int x) { return (long long)x * x * x; }</code> — 반환형이 <code>long long</code>이어야 하고, <b>곱하기 전에 형변환</b>해야 한다(2장 연습 5). 둘 중 하나만 해도 틀린다.</div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab"><code>max2(max2(a, b), c)</code> — 함수를 <b>중첩 호출</b>하는 첫 경험이다. 안쪽이 먼저 계산되어 그 결과가 바깥의 인자가 된다는 것을 짚는다.</div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab"><code>int my_abs(int x) { if (x &lt; 0) { return -x; } return x; }</code> — <b><code>INT_MIN</code>의 절댓값은 <code>int</code>로 표현할 수 없다</b>(2장). <code>-INT_MIN</code>이 다시 <code>INT_MIN</code>이 되어 음수가 그대로 나온다. 실행해 확인시킨다.</div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab">표준 코드와 동일. <b><code>n &lt; 2</code> 거르기가 맨 앞</b>이어야 1이 소수로 나오지 않는다. 2는 루프가 한 번도 돌지 않고 바로 <code>return 1</code>이 되는 것도 확인시킨다.</div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab"><code>gcd(100, 0)</code>은 <code>b == 0</code>이라 루프를 돌지 않고 <code>a</code>인 <b>100</b>을 돌려준다. 수학적으로도 맞다. <code>gcd(0, 0)</code>은 0이 되는데, 문제에서 그 입력이 가능한지 확인하는 습관을 들인다.</div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab">출력은 <code>39 987654</code>. 함수 안에서 <code>n /= 10</code>으로 깎았지만 <b>복사본</b>이라 호출한 쪽은 멀쩡하다. 이 확인이 10.3절을 몸에 새기는 자리다.</div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab"><code>void print_stars(int k) { for (int j = 0; j &lt; k; j++) { printf("*"); } printf("\n"); }</code> 후 <code>for (int i = 1; i &lt;= n; i++) { print_stars(i); }</code>. <b>지도 포인트</b> — 7장의 이중 루프가 "루프 + 함수 호출"로 바뀌었다. 중첩이 한 겹 줄어 읽기 쉬워진다.</div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab">
+    출력 예: <code>호출 전 3 7</code> / <code>함수 안 7 3</code> / <code>호출 후 3 7</code>.<br>
+    <b>지도 포인트</b> — "안에서는 분명히 바뀌었는데 밖은 그대로"라는 체험이 핵심이다. 12장 포인터의 동기를 여기서 만들어 둔다.
+  </div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab">
+    예제 1과 동일. N = 20에서 소수는 2,3,5,7,11,13,17,19로 <b>8개</b>, 합 <b>77</b>, 최대 <b>19</b>.<br>
+    <b>반복 횟수</b> — N = 10<sup>6</sup>이면 각 수마다 √n번이므로 대략 10<sup>6</sup> × 1000 = 10<sup>9</sup>에 가깝다. 실제로는 합성수가 빨리 걸러져 훨씬 적지만 <b>아슬아슬하다</b>. PART 3의 에라토스테네스 체가 이 자리를 대체한다는 것을 예고한다.
+  </div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab">
+    <code>(long long)a / g * b</code>. <code>a * b</code>를 먼저 하면 10<sup>18</sup>로 간신히 들어가지만, 조금만 더 커지면 넘친다. 나누기를 먼저 하는 습관을 들인다.<br>
+    예제에서 <code>gcd(10<sup>9</sup>, 10<sup>9</sup>−1) = 1</code>이고 lcm은 <b>999999999000000000</b>이다.
+  </div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab">표준 코드의 <code>digital_root</code>에 추적 출력을 넣는다. 6장 표준 코드와 비교해 <b>안쪽 while이 함수로 빠져 바깥 구조가 또렷해진 것</b>을 보여 준다. 입력 <code>5</code>(반복 0회)도 다시 확인시킨다.</div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">
+<pre><code>int is_palindrome(int n)
+{
+    int r = 0, t = n;
+    while (t &gt; 0) { r = r * 10 + t % 10; t /= 10; }
+    return (r == n);
+}</code></pre>
+    <code>n</code>을 그대로 쓰지 않고 <code>t</code>에 복사해 깎는 것이 요점이다. <code>n</code>을 깎으면 마지막 비교에서 쓸 원본이 없어진다. <b>복사본이라도 함수 안에서는 조심해야 한다</b>는 교훈.
+  </div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab">세 함수 모두 <code>(int a[], int n)</code> 형태다. <code>arr_max</code>의 초기값은 <code>a[0]</code>(8장 오류 5). 합이 0으로 나오는 예제를 넣은 것은 "0이니까 틀렸나" 의심하는 학생을 걸러 내기 위해서다.</div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab">
+    실제로 바뀐다. <b>8번과 다른 이유</b> — <code>int a</code>는 값이 복사되지만, 배열은 통째로 복사되지 않고 <b>어디에 있는지만</b> 전달되기 때문이다. 그래서 함수가 그 자리의 값을 직접 고친다.<br>
+    <b>지도 포인트</b> — 이 차이가 13장 포인터의 핵심 주제다. 지금은 "배열은 예외"로 외워 두되, 이유가 따로 있다는 것을 알려 둔다.
+  </div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab">예제 5와 동일. <b>지도 포인트</b> — 9장 코드와 나란히 놓고 비교시킨다. 조건 네 개가 이름 하나로 바뀌면서 본체 루프가 짧아지고, <code>n</code>/<code>m</code> 혼동(9장 오류 2)을 확인할 곳이 한 군데로 줄었다.</div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">예제 3과 동일. <code>10 12</code> → <code>2 6</code>, <code>3 100</code> → <code>none</code>. 반환값으로 성공 여부를, 전역 변수로 결과를 전달하는 구조를 설명한다.</div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    출력은 <b>A 101 / C 100 / B 11 / D 100</b>.<br>
+    <b>A</b> — <code>f</code>의 매개변수 <code>x</code>는 지역 <code>x</code>(100)의 복사본. 101이 되지만 복사본이다.<br>
+    <b>C</b> — <code>main</code>의 <code>x</code>는 그대로 100.<br>
+    <b>B</b> — <code>g</code>에는 지역 <code>x</code>가 없으므로 <b>전역</b> <code>x</code>(10)를 건드려 11이 된다.<br>
+    <b>D</b> — <code>main</code>의 지역 <code>x</code>는 여전히 100. 전역이 바뀐 것과 무관하다.<br>
+    <b>매개변수 이름을 <code>y</code>로 바꾸면</b> — 결과는 <b>달라지지 않는다</b>. 이름은 사람이 읽기 위한 것이고, 어느 변수인지는 <b>선언 위치</b>가 정한다. 이름을 바꾸면 오히려 혼동이 줄어 읽기 좋아진다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    <table style="margin:6px 0">
+      <thead><tr><th style="width:22%">방법</th><th style="width:22%">길이</th><th style="width:26%">바깥 루프</th><th>평가</th></tr></thead>
+      <tbody>
+        <tr><td>깃발 변수</td><td>조건이 길어짐</td><td>즉시 멈춤</td><td>조건식이 지저분</td></tr>
+        <tr><td><code>goto</code></td><td>가장 짧음</td><td>즉시 멈춤</td><td>남용하면 흐름이 꼬임</td></tr>
+        <tr><td>함수 + <code>return</code></td><td>함수 선언이 추가</td><td>즉시 멈춤</td><td><strong>재사용 가능, 의미가 드러남</strong></td></tr>
+      </tbody>
+    </table>
+    <b>이 교재의 표준은 함수 + <code>return</code></b>이다. 셋 다 정확히 동작하지만, 함수 방식만이 <b>그 덩어리에 이름을 주고 다른 곳에서 다시 쓸 수 있게</b> 한다. 다만 <code>goto</code>를 "쓰면 안 되는 것"으로 가르치지는 않는다. 중첩 루프 탈출 한 가지 용도로는 널리 쓰이며, 직접 써 보고 판단하게 하는 것이 이 문제의 목적이다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    과도한 분해의 예: <code>read_board()</code>, <code>in_range()</code>, <code>count_neighbors()</code>, <code>print_board()</code> 네 개. 각각 한 번씩만 쓰이고 전역 변수에 의존하므로, 이름만 붙었을 뿐 <b>읽으려면 네 곳을 오가야 한다</b>.<br>
+    <code>in_range</code> 하나만 쓴 버전이 대체로 읽기 쉽다. 그 조건은 <b>루프 안에서 반복해 쓰이고</b>(기준 ①), <b>이름을 붙일 수 있으며</b>(기준 ②), 9장 오류 2를 한 곳으로 모은다.<br>
+    <b>지도 포인트</b> — "함수를 많이 만들수록 좋다"는 오해를 깨는 자리다. 다만 <code>count_neighbors</code>는 다른 문제에서도 쓰일 가능성이 높아 분리할 가치가 있다는 반론도 받아 준다. <b>정답이 하나가 아닌 토론 문제</b>로 운영한다.
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    모범 구성 예(여섯 개 이상이면 된다).
+<pre><code>int  is_prime(int n);        // n이 소수면 1      경계: 1→0, 2→1
+int  gcd(int a, int b);      // 최대공약수        경계: (100,0)→100
+long long lcm(int a, int b); // 최소공배수        주의: 나누기 먼저
+int  digit_sum(int n);       // 자릿수 합         경계: 0→0
+int  digital_root(int n);    // 한 자리까지 반복  경계: 5→5
+int  my_abs(int x);          // 절댓값            주의: INT_MIN
+int  max2(int a, int b);     // 큰 값
+int  mod(int a, int m);      // 0 이상 나머지     경계: (-7,5)→3
+int  in_range(int y, int x); // 격자 안이면 1     전역 n, m 사용</code></pre>
+    <b>지도 포인트</b> — PART 2 첫 수업에서 이 파일을 꺼내 쓰게 한다. 자기가 만든 도구를 다시 쓰는 경험이 함수를 체득하는 가장 빠른 길이다. <code>mod</code>는 4장 표준 코드 <code>((a % m) + m) % m</code>을 함수로 만든 것으로, PART 3·4에서 계속 쓰인다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li>프로토타입을 파일 맨 위에 모아 선언한다</li>
+    <li>함수의 마지막 줄에 항상 <code>return</code>을 둔다</li>
+    <li>매개변수가 복사본이라는 것을 알고, 바깥에 전하는 것은 반환값뿐임을 확인한다</li>
+    <li>매개변수가 없으면 <code>(void)</code>로 명시한다</li>
+    <li>전역과 지역의 이름이 겹치지 않게 짓는다</li>
+    <li>중첩 루프 탈출은 함수와 <code>return</code>으로 처리한다</li>
+    <li>배열을 넘길 때 크기를 함께 넘긴다</li>
+    <li>두 번 이상 쓰이거나 이름 붙일 수 있는 덩어리만 함수로 뗀다</li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 11장 재귀 함수 기초</span>
+    함수가 <strong>자기 자신을 부를</strong> 수 있다. 팩토리얼과 하노이 탑을 재귀로 쓰고, 호출 스택이 어떤 모양으로 쌓이는지 본다. 그리고 피보나치를 재귀로 짜서 호출 횟수를 세어 보면, 왜 PART 3에서 DP가 필요한지가 숫자로 드러난다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 1 · 10장 · 2026-10-12 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+
+</div>
+</body>
+</html>

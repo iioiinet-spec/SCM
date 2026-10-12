@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 1 · 11장 재귀 함수 기초 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#0d7a6f;
+  --accent-soft:#e3f1ef;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#8fd8cd}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+<header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 1 · C11 문법 기초 — 11 / 16</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">11</span>
+    <h1>재귀 함수 기초</h1>
+  </div>
+  <p class="lede">함수가 자기 자신을 부를 수 있다. 반복문으로는 쓰기 어려운 문제가 세 줄로 풀리기도 하고, 반대로 아무 생각 없이 쓰면 <strong>호출 횟수가 폭발</strong>한다. 이 장의 마지막 실험이 PART 3에서 DP를 배워야 하는 이유를 숫자로 보여 준다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li>재귀 함수의 두 부분(종료 조건, 자기 호출)을 구분해 쓸 수 있다</li>
+    <li>호출 스택이 쌓였다가 풀리는 모양을 추적 출력으로 확인할 수 있다</li>
+    <li>간단한 재귀를 반복으로, 반복을 재귀로 바꿀 수 있다</li>
+    <li>하노이 탑을 재귀로 풀고 이동 횟수가 2<sup>n</sup>−1임을 확인할 수 있다</li>
+    <li>재귀 피보나치의 호출 횟수를 세어 왜 쓰면 안 되는지 설명할 수 있다</li>
+    <li>재귀 깊이에 한계가 있다는 것을 알고 대략의 크기를 안다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 문제 · 재귀의 구조 · 호출 스택 · 추적</div>
+  <div><b>2차시</b>재귀와 반복의 변환 · 표준 코드(하노이) · 분할의 사고</div>
+  <div><b>3차시</b>피보나치 실험 · 깊이 한계 · 흔한 오류 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>자기 자신으로 정의하기</h2>
+  <p>팩토리얼의 정의를 다시 읽어 보자.</p>
+  <div class="io">
+    <div><div class="lbl">수학적 정의</div><pre>0! = 1
+n! = n × (n−1)!</pre></div>
+    <div><div class="lbl">6장에서 쓴 코드</div><pre>long long f = 1;
+for (int i = 1; i &lt;= n; i++) {
+    f *= i;
+}</pre></div>
+  </div>
+  <p>정의는 <strong>자기 자신을 이용해</strong> 되어 있는데, 코드는 1부터 차례로 곱하는 전혀 다른 모양이다. 정의를 그대로 옮길 수는 없을까.</p>
+  <figure>
+    <figcaption><span class="fn">정의를 그대로</span><span>이것이 재귀다</span></figcaption>
+<pre><code>long long fact(int n)
+{
+    if (n == 0) { return 1; }      // 0! = 1
+    return n * fact(n - 1);        // n! = n × (n−1)!
+}</code></pre>
+  </figure>
+  <p>두 줄이다. 그리고 수학 정의와 한 줄씩 정확히 대응한다. <strong>문제의 정의가 재귀적이면 코드도 재귀로 쓰는 것이 가장 짧고 정확하다.</strong></p>
+  <p>그런데 재귀는 공짜가 아니다. 이 장의 마지막에서 같은 방식으로 피보나치를 쓰면 <code>fib(45)</code> 한 번에 <strong>36억 번</strong>의 호출이 일어나 11초가 걸린다. 같은 답을 반복문으로는 45번 만에 구할 수 있는데도.</p>
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> 재귀 함수가 반드시 끝나려면 무엇이 필요한가?<br>
+    <b>②</b> 호출이 겹겹이 쌓일 때 메모리에서는 무슨 일이 일어나는가?<br>
+    <b>③</b> 재귀를 써야 할 때와 쓰면 안 될 때를 어떻게 구분하는가?
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">11.1</span>재귀의 두 부분</h3>
+  <p>모든 재귀 함수는 반드시 두 부분을 가진다. 하나라도 빠지면 끝나지 않는다.</p>
+  <table>
+    <thead><tr><th style="width:24%">부분</th><th style="width:34%">하는 일</th><th>팩토리얼에서</th></tr></thead>
+    <tbody>
+      <tr><td><strong>종료 조건</strong><br>base case</td><td>더 이상 자기를 부르지 않고 <strong>답을 바로 돌려준다</strong></td><td><code>if (n == 0) return 1;</code></td></tr>
+      <tr><td><strong>재귀 호출</strong><br>recursive case</td><td><strong>더 작은 문제</strong>로 자기를 부른다</td><td><code>return n * fact(n-1);</code></td></tr>
+    </tbody>
+  </table>
+  <p>6장에서 배운 반복문의 세 가지 점검(초기화·조건·갱신)과 짝이 맞는다. <strong>종료 조건은 반복문의 조건이고, "더 작은 문제로 부르는 것"은 갱신이다.</strong> 매번 작아지지 않으면 영원히 끝나지 않는 것도 같다.</p>
+  <div class="note warn">
+    <span class="h">종료 조건은 반드시 도달 가능해야 한다</span>
+    <code>fact(-1)</code>을 부르면 <code>n</code>이 −2, −3, …으로 가면서 <code>n == 0</code>에 <b>영원히 닿지 않는다</b>. 조건을 <code>if (n &lt;= 0)</code>으로 바꾸거나, 애초에 음수가 들어오지 않도록 막아야 한다(5장의 거르기 먼저).
+  </div>
+
+  <h3><span class="tag">11.2</span>호출 스택 — 쌓였다가 풀린다</h3>
+  <p>함수를 부르면 돌아올 자리와 지역 변수를 <strong>스택</strong>에 쌓는다. 재귀는 돌아오기 전에 또 부르므로 계속 쌓이기만 하다가, 종료 조건에 닿는 순간부터 거꾸로 풀린다.</p>
+  <div class="io">
+    <div><div class="lbl">fact(4) 의 쌓임</div><pre>fact(4)  → 4 * fact(3)
+  fact(3)  → 3 * fact(2)
+    fact(2)  → 2 * fact(1)
+      fact(1)  → 1 * fact(0)
+        fact(0)  → 1      ← 종료</pre></div>
+    <div><div class="lbl">풀림 — 거꾸로 계산된다</div><pre>        fact(0) = 1
+      fact(1) = 1 * 1  = 1
+    fact(2) = 2 * 1  = 2
+  fact(3) = 3 * 2  = 6
+fact(4) = 4 * 6  = 24</pre></div>
+  </div>
+  <p>중요한 것은 <strong>곱셈이 돌아오면서 일어난다</strong>는 점이다. 가장 깊이 들어간 호출이 가장 먼저 답을 내고, 그 답이 한 단계씩 위로 전달된다.</p>
+  <p>8장에서 큰 지역 배열이 왜 죽는지 배웠다. 같은 스택이다. 재귀가 깊어지면 <strong>호출 하나하나가 스택을 조금씩 먹는다.</strong></p>
+
+  <h3><span class="tag">11.3</span>추적하는 법</h3>
+  <p>재귀를 처음 배울 때는 머릿속으로 따라가기 어렵다. <strong>들여쓰기 출력</strong>으로 직접 보는 것이 가장 빠르다.</p>
+  <figure>
+    <figcaption><span class="fn">추적 코드</span><span>깊이를 매개변수로 함께 넘긴다</span></figcaption>
+<pre><code>long long fact_trace(int n, int depth)
+{
+    for (int i = 0; i &lt; depth; i++) { printf("  "); }
+    printf("fact(%d) 들어옴\n", n);
+
+    long long r;
+    if (n == 0) { r = 1; }
+    else        { r = n * fact_trace(n - 1, depth + 1); }
+
+    for (int i = 0; i &lt; depth; i++) { printf("  "); }
+    printf("fact(%d) = %lld 돌려줌\n", n, r);
+    return r;
+}</code></pre>
+  </figure>
+  <p>들어올 때 한 번, 나갈 때 한 번 찍으면 쌓임과 풀림이 눈에 보인다. <strong>재귀 문제가 안 풀릴 때 가장 먼저 할 일</strong>이 이 추적 출력이다.</p>
+
+  <h3><span class="tag">11.4</span>재귀와 반복은 서로 바꿀 수 있다</h3>
+  <p>원리상 모든 재귀는 반복으로, 모든 반복은 재귀로 바꿀 수 있다. 어느 쪽이 쉬운지는 문제에 따라 다르다.</p>
+  <table>
+    <thead><tr><th style="width:24%">문제</th><th style="width:26%">반복</th><th style="width:26%">재귀</th><th>권장</th></tr></thead>
+    <tbody>
+      <tr><td>팩토리얼</td><td>쉽다</td><td>쉽다</td><td><strong>반복</strong>(스택 안 씀)</td></tr>
+      <tr><td>1~N 합</td><td>쉽다</td><td>가능</td><td><strong>반복</strong></td></tr>
+      <tr><td>자릿수 합</td><td>쉽다</td><td>쉽다</td><td>둘 다</td></tr>
+      <tr><td>하노이 탑</td><td><strong>매우 어렵다</strong></td><td>쉽다</td><td><strong>재귀</strong></td></tr>
+      <tr><td>트리 순회</td><td>어렵다</td><td>쉽다</td><td><strong>재귀</strong>(PART 3)</td></tr>
+      <tr><td>피보나치</td><td>쉽고 빠르다</td><td><strong>쓰면 안 된다</strong></td><td><strong>반복</strong></td></tr>
+    </tbody>
+  </table>
+  <p>기준은 단순하다. <strong>문제가 "자기와 같은 모양의 더 작은 문제 여러 개"로 쪼개지면 재귀</strong>, 그냥 차례로 처리하면 되면 반복이다.</p>
+
+  <h3><span class="tag">11.5</span>하노이 탑 — 재귀가 이기는 문제</h3>
+  <p>기둥 세 개와 크기가 다른 원반 n개가 있다. 원반을 모두 1번에서 3번으로 옮기되, <strong>한 번에 하나씩</strong>, <strong>큰 원반을 작은 원반 위에 놓을 수 없다</strong>.</p>
+  <p>반복문으로 풀려고 하면 막막하다. 그런데 재귀로 생각하면 세 줄이다.</p>
+  <div class="io">
+    <div><div class="lbl">생각의 전부</div><pre>n개를 1 → 3으로 옮기려면
+
+① 위의 n−1개를 1 → 2로
+② 가장 큰 1개를 1 → 3으로
+③ n−1개를 2 → 3으로</pre></div>
+    <div><div class="lbl">왜 되는가</div><pre>①과 ③은 "n−1개 옮기기"로
+원래 문제와 같은 모양이다.
+n이 0이 되면 할 일이 없다.
+→ 종료 조건</pre></div>
+  </div>
+  <p>①을 어떻게 하는지는 <strong>신경 쓰지 않는다</strong>. 그것도 같은 문제이므로 함수가 알아서 한다고 믿으면 된다. 이 "믿고 맡기는" 사고가 재귀의 핵심이며, PART 3의 분할 정복·백트래킹에서 그대로 쓰인다.</p>
+
+  <h3><span class="tag">11.6</span>피보나치의 함정</h3>
+  <p>피보나치도 정의가 재귀적이다. 그대로 옮겨 보자.</p>
+  <figure>
+    <figcaption><span class="fn">위험한 코드</span><span>정의에는 충실하지만</span></figcaption>
+<pre><code>long long fib(int n)
+{
+    if (n &lt;= 1) { return n; }
+    return fib(n - 1) + fib(n - 2);
+}</code></pre>
+  </figure>
+  <p>정확히 동작한다. 문제는 속도다. 호출 횟수를 세어 보았다.</p>
+  <table>
+    <thead><tr><th style="width:16%">n</th><th style="width:26%">fib(n)</th><th style="width:28%">호출 횟수</th><th>시간</th></tr></thead>
+    <tbody>
+      <tr><td class="num">10</td><td class="num">55</td><td class="num">177</td><td class="num">0.000 초</td></tr>
+      <tr><td class="num">20</td><td class="num">6,765</td><td class="num">21,891</td><td class="num">0.000 초</td></tr>
+      <tr><td class="num">30</td><td class="num">832,040</td><td class="num">2,692,537</td><td class="num">0.008 초</td></tr>
+      <tr><td class="num">40</td><td class="num">102,334,155</td><td class="num">331,160,281</td><td class="num">0.981 초</td></tr>
+      <tr><td class="num">45</td><td class="num">1,134,903,170</td><td class="num"><strong>3,672,623,805</strong></td><td class="num"><strong>10.843 초</strong></td></tr>
+    </tbody>
+  </table>
+  <p>n이 5 늘 때마다 호출이 약 <strong>11배</strong>가 된다. 같은 값을 수없이 다시 계산하기 때문이다. <code>fib(5)</code>를 계산하는 데 <code>fib(3)</code>이 두 번, <code>fib(2)</code>가 세 번 호출된다.</p>
+  <h4>이미 구한 답을 적어 두면</h4>
+  <p>한 번 구한 값을 배열에 저장해 두고 다시 묻지 않게 하면 어떨까.</p>
+  <div class="io">
+    <div><div class="lbl">핵심 두 줄</div><pre>if (done[n]) { return memo[n]; }
+done[n] = 1;
+memo[n] = fib_memo(n-1) + fib_memo(n-2);</pre></div>
+    <div><div class="lbl">결과</div><pre>fib(45)
+  그냥 재귀 : 36억 7천만 호출
+  저장하면  :       89 호출
+  반복문    :       45 회</pre></div>
+  </div>
+  <div class="note">
+    <span class="h">이것이 PART 3 DP의 출발점이다</span>
+    "이미 구한 답을 적어 두고 다시 계산하지 않는다"는 이 발상을 <b>메모이제이션</b>이라고 하며, 동적 계획법(DP)의 절반이다. 36억을 89로 줄이는 것이 어떤 의미인지 여기서 체감해 두면, PART 3에서 DP를 배울 때 왜 그렇게까지 하는지 의문이 들지 않는다.
+  </div>
+
+  <h3><span class="tag">11.7</span>재귀 깊이의 한계</h3>
+  <p>호출마다 스택을 먹으므로 무한정 깊어질 수 없다. 실측해 보았다(스택 8 MB 환경).</p>
+  <table>
+    <thead><tr><th style="width:40%">함수의 지역 변수</th><th style="width:26%">성공한 깊이</th><th>죽은 깊이</th></tr></thead>
+    <tbody>
+      <tr><td>거의 없음 (<code>int</code> 하나)</td><td class="num">200,000</td><td class="num">500,000</td></tr>
+      <tr><td><code>int buf[256]</code> (1 KB)</td><td class="num">5,000</td><td class="num">8,000</td></tr>
+    </tbody>
+  </table>
+  <p>함수 안에 <strong>지역 배열을 두면 깊이가 수십 분의 일로 줄어든다</strong>. 재귀 함수에는 지역 배열을 두지 않고, 필요한 배열은 전역으로 빼는 것이 원칙이다(8·9장과 같은 결론).</p>
+  <div class="note warn">
+    <span class="h">스택 초과는 메시지가 없다</span>
+    그냥 <code>Segmentation fault</code>로 죽는다. 재귀를 쓴 코드가 큰 입력에서만 죽는다면 <b>깊이를 먼저 의심</b>한다. PART 3의 DFS에서 10만 개짜리 그래프를 다룰 때 실제로 부딪히는 문제다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드: 하노이 탑</h2>
+  <figure>
+    <figcaption><span class="fn">hanoi.c</span><span>표준 코드 · gcc 검증 완료</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+void hanoi(int n, int from, int to, int via);
+
+void hanoi(int n, int from, int to, int via)
+{
+    if (n == 0) { return; }              // 종료 조건
+
+    hanoi(n - 1, from, via, to);         // ① 위 n-1개를 via로
+    printf("%d %d\n", from, to);         // ② 가장 큰 것을 to로
+    hanoi(n - 1, via, to, from);         // ③ n-1개를 to로
+}
+
+int main(void)
+{
+    int n;
+    if (scanf("%d", &amp;n) != 1) return 1;
+
+    printf("%lld\n", (1LL &lt;&lt; n) - 1);    // 전체 이동 횟수
+    hanoi(n, 1, 3, 2);
+    return 0;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:30%">요소</th><th>설계 의도</th></tr></thead>
+    <tbody>
+      <tr><td><code>if (n == 0) return;</code></td><td>옮길 원반이 없으면 할 일이 없다. <code>void</code> 함수이므로 <code>return;</code>만 쓴다.</td></tr>
+      <tr><td>매개변수 <code>from, to, via</code></td><td>세 기둥의 <strong>역할</strong>이다. 호출할 때마다 역할이 바뀌는 것이 이 코드의 전부다.</td></tr>
+      <tr><td>①의 <code>(from, via, to)</code></td><td>목적지가 <code>via</code>, 경유지가 <code>to</code>로 <strong>뒤바뀐다</strong>. 여기를 틀리는 것이 가장 흔한 오답.</td></tr>
+      <tr><td>③의 <code>(via, to, from)</code></td><td>출발지가 <code>via</code>, 경유지가 <code>from</code>이다.</td></tr>
+      <tr><td><code>(1LL &lt;&lt; n) - 1</code></td><td>2<sup>n</sup>−1. <code>1LL</code>로 써야 n이 31 이상에서 깨지지 않는다(2·4장).</td></tr>
+    </tbody>
+  </table>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>3</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>7
+1 3
+1 2
+3 2
+1 3
+2 1
+2 3
+1 3</pre></div>
+  </div>
+  <table>
+    <thead><tr><th style="width:20%">n</th><th style="width:28%">이동 횟수</th><th>2<sup>n</sup>−1</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td class="num">1</td><td class="num">1</td></tr>
+      <tr><td class="num">3</td><td class="num">7</td><td class="num">7</td></tr>
+      <tr><td class="num">5</td><td class="num">31</td><td class="num">31</td></tr>
+      <tr><td class="num">20</td><td class="num">1,048,575</td><td class="num">1,048,575</td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">n이 커지면 출력이 감당되지 않는다</span>
+    이동 횟수가 2<sup>n</sup>−1이므로 n = 30이면 약 <b>10억 줄</b>이다. 알고리즘이 느린 것이 아니라 <b>답 자체가 그만큼 크다</b>. 문제가 n ≤ 20 정도로 제한하는 이유가 그것이다. 횟수만 묻는 문제라면 재귀를 돌릴 필요 없이 <code>(1LL &lt;&lt; n) - 1</code>로 끝난다.
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+
+  <h3><span class="tag">예제 1</span>팩토리얼 — 재귀와 반복</h3>
+  <figure>
+    <figcaption><span class="fn">ex1.c</span><span>같은 답, 다른 모양</span></figcaption>
+<pre><code>long long fact_rec(int n)
+{
+    if (n == 0) { return 1; }
+    return n * fact_rec(n - 1);
+}
+
+long long fact_loop(int n)
+{
+    long long f = 1;
+    for (int i = 1; i &lt;= n; i++) { f *= i; }
+    return f;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">둘 다</div><pre>fact(20) = 2432902008176640000</pre></div>
+    <div><div class="lbl">차이</div><pre>재귀: 스택을 n칸 쓴다
+반복: 스택을 쓰지 않는다
+
+답이 같으면 반복이 낫다.</pre></div>
+  </div>
+  <p>2장 연습 18번에서 확인한 대로 <code>long long</code>으로도 20!이 한계다. 21을 넣으면 음수가 나온다.</p>
+
+  <h3><span class="tag">예제 2</span>호출 추적</h3>
+  <figure>
+    <figcaption><span class="fn">ex2.c</span><span>들어올 때와 나갈 때를 모두 찍는다</span></figcaption>
+<pre><code>long long fact_trace(int n, int depth)
+{
+    for (int i = 0; i &lt; depth; i++) { printf("  "); }
+    printf("-&gt; fact(%d)\n", n);
+
+    long long r = (n == 0) ? 1 : n * fact_trace(n - 1, depth + 1);
+
+    for (int i = 0; i &lt; depth; i++) { printf("  "); }
+    printf("&lt;- fact(%d) = %lld\n", n, r);
+    return r;
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">fact_trace(3, 0) 의 출력</div><pre>-&gt; fact(3)
+  -&gt; fact(2)
+    -&gt; fact(1)
+      -&gt; fact(0)
+      &lt;- fact(0) = 1
+    &lt;- fact(1) = 1
+  &lt;- fact(2) = 2
+&lt;- fact(3) = 6</pre></div>
+    <div><div class="lbl">읽는 법</div><pre>들여쓰기 깊이 = 스택 깊이
+위에서 아래로 쌓이고
+안쪽에서 바깥으로 풀린다</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 3</span>자릿수 합을 재귀로</h3>
+  <figure>
+    <figcaption><span class="fn">ex3.c</span><span>10장 함수를 재귀로 다시 쓴다</span></figcaption>
+<pre><code>int digit_sum_rec(int n)
+{
+    if (n == 0) { return 0; }
+    return n % 10 + digit_sum_rec(n / 10);
+}</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">digit_sum_rec(987654)</div><pre>39</pre></div>
+    <div><div class="lbl">구조</div><pre>마지막 자리 + 나머지의 합
+n이 0이면 더할 것이 없다
+
+10장의 while 버전과
+한 줄짜리 식이 대응한다</pre></div>
+  </div>
+  <p>깊이는 자릿수만큼이다. <code>int</code>는 10자리이므로 깊이 10, 전혀 문제가 없다. <strong>깊이가 작다는 것을 확인한 뒤 재귀를 쓴다.</strong></p>
+
+  <h3><span class="tag">예제 4</span>피보나치 — 호출 횟수 세기</h3>
+  <figure>
+    <figcaption><span class="fn">ex4.c</span><span>전역 변수로 호출을 센다</span></figcaption>
+<pre><code>long long calls;
+
+long long fib(int n)
+{
+    calls++;
+    if (n &lt;= 1) { return n; }
+    return fib(n - 1) + fib(n - 2);
+}
+
+// main에서
+calls = 0;
+printf("fib(%d) = %lld, 호출 %lld회\n", n, fib(n), calls);</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">출력</div><pre>fib(20) =      6765, 호출      21891회
+fib(30) =    832040, 호출    2692537회
+fib(40) = 102334155, 호출  331160281회</pre></div>
+    <div><div class="lbl">관찰</div><pre>호출 횟수가
+답보다 약 3배 크다.
+
+n이 10 커지면
+약 120배가 된다.</pre></div>
+  </div>
+  <p>호출 횟수를 전역 변수로 세는 이 기법은 <strong>재귀의 비효율을 확인하는 표준 도구</strong>다. PART 3·4에서 가지치기의 효과를 측정할 때도 똑같이 쓴다.</p>
+
+  <h3><span class="tag">예제 5</span>메모이제이션 — 36억을 89로</h3>
+  <figure>
+    <figcaption><span class="fn">ex5.c</span><span>두 줄만 추가했다</span></figcaption>
+<pre><code>long long memo[91];
+int done[91];
+long long calls;
+
+long long fib_memo(int n)
+{
+    calls++;
+    if (n &lt;= 1) { return n; }
+    if (done[n]) { return memo[n]; }      // 이미 구했으면 그대로
+
+    done[n] = 1;
+    memo[n] = fib_memo(n - 1) + fib_memo(n - 2);
+    return memo[n];
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:34%">방법</th><th style="width:30%">fib(45) 호출 횟수</th><th>시간</th></tr></thead>
+    <tbody>
+      <tr><td>그냥 재귀</td><td class="num">3,672,623,805</td><td class="num">10.843 초</td></tr>
+      <tr><td><strong>메모이제이션</strong></td><td class="num">89</td><td class="num">0.000 초</td></tr>
+      <tr><td>반복문</td><td class="num">45 회</td><td class="num">0.000 초</td></tr>
+    </tbody>
+  </table>
+  <p>배열 크기가 91인 것은 <code>fib(92)</code>까지만 <code>long long</code>에 들어가기 때문이다(<code>fib(93)</code>은 음수가 된다). <strong>자료형의 한계가 문제의 범위를 정한다</strong>는 2장의 교훈이 여기서도 나온다.</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 1</span><span class="t">종료 조건이 없다</span></div>
+    <div class="body">
+      <pre>long long fact(int n)
+{
+    return n * fact(n - 1);     // 멈추지 않는다
+}</pre>
+      <p>경고가 없다. 실행하면 스택이 가득 차 <strong><code>Segmentation fault</code></strong>로 죽는다. 무한 루프와 달리 <strong>프로그램이 멈추는 것이 아니라 죽는다</strong>는 점이 다르다.</p>
+      <div class="fix"><b>고치는 법</b> — 재귀 함수를 쓸 때는 <b>종료 조건을 맨 먼저</b> 쓰고 나서 나머지를 채운다. 순서를 거꾸로 하면 빠뜨린다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 2</span><span class="t">종료 조건에 도달하지 못한다</span></div>
+    <div class="body">
+      <pre>if (n == 0) { return 1; }
+return n * fact(n - 1);
+// fact(-1) 을 부르면 -2, -3, ... 영원히</pre>
+      <p>종료 조건이 있는데도 끝나지 않는다. 호출이 <strong>종료 조건을 지나쳐 버리기</strong> 때문이다. 6장 연습 18번 (다)의 <code>while (i != 10)</code>과 완전히 같은 함정이다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>==</code> 대신 <code>&lt;=</code>를 쓴다. <code>if (n &lt;= 0) { return 1; }</code>. 그리고 호출 전에 입력을 검사한다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 3</span><span class="t">더 작은 문제로 부르지 않았다</span></div>
+    <div class="body">
+      <pre>return n * fact(n);        // n이 그대로다
+return n * fact(n + 1);    // 오히려 커진다</pre>
+      <p>종료 조건도 있고 문법도 맞다. 그러나 문제가 작아지지 않으므로 종료 조건에 닿지 않는다. 오타 한 글자로 생기는 사고다.</p>
+      <div class="fix"><b>고치는 법</b> — 재귀 호출의 인자가 <b>반드시 종료 조건 쪽으로 움직이는지</b> 눈으로 확인한다. 6장의 "갱신" 점검과 같다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 4</span><span class="t">하노이의 기둥 역할을 틀렸다</span></div>
+    <div class="body">
+      <pre>hanoi(n-1, from, via, to);   // 올바름
+hanoi(n-1, from, to, via);   // 틀림 — ①에서 to로 보내 버린다</pre>
+      <p>경고도 없고 죽지도 않는다. 이동 횟수도 2<sup>n</sup>−1로 똑같이 나온다. <strong>출력된 이동 순서만 틀린다.</strong> 채점에서만 발견된다.</p>
+      <div class="fix"><b>고치는 법</b> — n = 2와 n = 3을 <b>손으로 풀어 보고</b> 출력과 대조한다. n = 3의 일곱 줄을 외워 두면 즉시 확인할 수 있다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 5</span><span class="t">깊이를 생각하지 않고 재귀를 썼다</span></div>
+    <div class="body">
+      <pre>long long sum(int n) { if (n == 0) return 0; return n + sum(n-1); }
+sum(1000000);      // 깊이 100만 → Segmentation fault</pre>
+      <p>반복문으로는 100만 번이 0.003초인데(6장), 재귀로 쓰면 죽는다. 작은 입력에서는 멀쩡히 돌아가므로 <strong>제출 후에야 발견된다</strong>.</p>
+      <div class="fix"><b>고치는 법</b> — 재귀를 쓰기 전에 <b>최대 깊이를 계산</b>한다. 수만 이상이면 반복으로 바꾼다. 특히 함수 안에 지역 배열을 두면 한계가 5천 수준까지 내려간다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 6</span><span class="t">같은 값을 계속 다시 계산했다</span></div>
+    <div class="body">
+      <p>피보나치가 대표다. 정확하지만 <strong>n = 45에서 11초</strong>가 걸린다. 채점 결과는 시간 초과다.</p>
+      <pre>fib(45) : 3,672,623,805 회 호출
+         (반복문이면 45회)</pre>
+      <p>재귀 호출이 <strong>두 번 이상</strong> 나오고 인자가 겹칠 때 생긴다. 하노이처럼 두 번 불러도 겹치지 않으면 괜찮다.</p>
+      <div class="fix"><b>고치는 법</b> — 호출 횟수를 전역 변수로 세어 본다. 답보다 훨씬 크면 메모이제이션을 쓰거나 반복으로 바꾼다.</div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    재귀의 오류는 <b>작은 입력에서 전부 통과한다</b>. 깊이 초과(오류 5)도, 호출 폭발(오류 6)도 n이 10이면 아무 문제가 없다. <b>재귀를 쓸 때마다 두 가지를 계산한다. 최대 깊이는 얼마인가, 총 호출 횟수는 얼마인가.</b>
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>재귀 함수를 쓸 때마다 <strong>종료 조건을 먼저</strong> 쓰고, <strong>최대 깊이</strong>를 주석에 적는다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>팩토리얼</b> — 재귀로 <code>fact</code>를 작성하고 N!을 출력하라(N ≤ 20). 반환형을 2장대로 정하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>20</pre></div><div><span>OUTPUT</span><pre>2432902008176640000</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>1부터 N까지의 합</b> — 재귀로 작성하라(N ≤ 1,000). 그리고 N을 100만으로 늘리면 어떻게 되는지 실험해 적어라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>100</pre></div><div><span>OUTPUT</span><pre>5050</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>거듭제곱</b> — <code>power(a, b)</code>를 재귀로 작성하라(a<sup>b</sup>, 결과는 10<sup>18</sup> 이하).</p>
+    <div class="sample"><div><span>INPUT</span><pre>2 40</pre></div><div><span>OUTPUT</span><pre>1099511627776</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>자릿수 합</b> — 재귀로 <code>digit_sum</code>을 작성하라. 입력이 0일 때도 올바르게 동작해야 한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>987654</pre></div><div><span>OUTPUT</span><pre>39</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>최대공약수</b> — 유클리드 호제법을 재귀로 작성하라. 10장의 반복 버전과 비교해 어느 쪽이 짧은지 적어라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>48 18</pre></div><div><span>OUTPUT</span><pre>6</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>역순 출력</b> — 1부터 N까지를 재귀만으로 <strong>거꾸로</strong> 출력하라. 반복문을 쓰지 않는다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5</pre></div><div><span>OUTPUT</span><pre>5 4 3 2 1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>정순 출력</b> — 같은 구조에서 <code>printf</code>의 <strong>위치만 바꿔</strong> 1부터 N까지 순서대로 출력하라. 왜 그렇게 되는지 주석으로 설명하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5</pre></div><div><span>OUTPUT</span><pre>1 2 3 4 5</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>호출 추적</b> — 예제 2의 추적 코드를 작성해 <code>fact(4)</code>를 실행하고 출력을 그대로 옮겨 적어라. 들여쓰기 깊이가 무엇을 뜻하는지 쓰라.</p>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>하노이 탑</b> — 표준 코드를 작성하라. 첫 줄에 이동 횟수, 이후 각 줄에 <code>출발 도착</code>을 출력한다(N ≤ 20).</p>
+    <div class="sample"><div><span>INPUT</span><pre>3</pre></div><div><span>OUTPUT</span><pre>7
+1 3
+1 2
+3 2
+1 3
+2 1
+2 3
+1 3</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>하노이 횟수만</b> — N(≤ 60)을 입력받아 이동 횟수만 출력하라. 재귀를 돌리지 말고 식으로 구하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>60</pre></div><div><span>OUTPUT</span><pre>1152921504606846975</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>피보나치 호출 세기</b> — 재귀 피보나치의 호출 횟수를 전역 변수로 세어, N = 10, 20, 30, 35에 대해 <code>N 값 호출수</code>를 출력하라. 시간도 함께 측정해 표로 만들어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>메모이제이션</b> — 11번에 메모 배열을 추가해 <code>fib(90)</code>을 구하라. 호출 횟수를 함께 출력하고 11번과 비교하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>90</pre></div><div><span>OUTPUT</span><pre>2880067194370816120</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>재귀를 반복으로</b> — 04번 자릿수 합과 05번 최대공약수를 각각 반복문 버전으로 다시 작성하고, 두 버전의 결과가 같은지 여러 입력으로 확인하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>이진수 출력</b> — 양의 정수를 재귀로 2진수 변환해 출력하라. <code>printf</code>의 위치가 핵심이다(07번과 같은 구조).</p>
+    <div class="sample"><div><span>INPUT</span><pre>13</pre></div><div><span>OUTPUT</span><pre>1101</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>회문 판정</b> — 길이 L의 문자열 대신, 배열 <code>a[]</code>의 구간 <code>[l, r]</code>이 회문인지 재귀로 판정하는 <code>is_pal(int a[], int l, int r)</code>을 작성하라. 종료 조건이 두 가지임에 주의하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+1 2 3 2 1</pre></div><div><span>OUTPUT</span><pre>YES</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>깊이 한계 실험</b> — 02번의 재귀 합 함수로 N을 1만, 10만, 50만으로 늘려 가며 실행하고, 어디서 죽는지 찾아라. 이어서 함수 안에 <code>int buf[256];</code>을 추가하고 같은 실험을 반복해 한계가 어떻게 달라지는지 표로 만들어라.</p>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>빠른 거듭제곱</b> — <code>power(a, b)</code>를 b를 <strong>절반씩</strong> 줄이는 방식으로 작성하라. a<sup>b</sup> = (a<sup>b/2</sup>)<sup>2</sup>를 이용한다(b가 홀수면 a를 한 번 더 곱한다). 03번과 호출 횟수를 비교하고, b = 10<sup>9</sup>일 때 각각 몇 번인지 계산하라.</p>
+    <p class="spec">※ 결과는 10<sup>18</sup>을 넘지 않는다고 가정한다. 이 기법은 PART 4에서 다시 나온다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>호출 트리 그리기</b> — <code>fib(5)</code>의 호출 트리를 종이에 그려라. 각 노드는 <code>fib(k)</code>이고 자식은 <code>fib(k-1)</code>, <code>fib(k-2)</code>다. ① 전체 노드 수를 세어 예제 4의 호출 횟수와 맞는지 확인하라 ② <code>fib(2)</code>가 몇 번 나타나는지 세어라 ③ 메모이제이션이 어느 노드들을 잘라 내는지 표시하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>재귀가 맞는가 판단하기</b> — 아래 네 상황에 대해 ① 재귀로 쓸지 반복으로 쓸지 ② 최대 깊이 ③ 총 호출 횟수를 각각 판단하고 근거를 쓰라.</p>
+    <p class="spec">⑴ N ≤ 10<sup>6</sup>인 배열의 합 ⑵ N ≤ 20인 하노이 탑 ⑶ N ≤ 10<sup>5</sup>인 그래프를 한 점에서 끝까지 따라가기 ⑷ N ≤ 50인 피보나치</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>하노이의 역할 바꿔 보기</b> — 표준 코드에서 ①의 인자를 <code>(n-1, from, to, via)</code>로, 그리고 ③을 <code>(n-1, via, from, to)</code>로 각각 바꿔 실행하라. ① 이동 횟수는 달라지는가 ② 출력된 순서가 규칙을 지키는가(큰 원반이 작은 원반 위에 올라가는 일이 생기는가) ③ 왜 횟수만으로는 정답 여부를 알 수 없는지 설명하라.</p>
+    <p class="spec">※ 원반 위치를 배열로 추적해 규칙 위반을 자동으로 검사하는 코드를 짜면 더 좋다.</p>
+  </div></div>
+
+  </div>
+</section>
+
+<section class="pagebreak answers">
+  <span class="sec-no">07 — 확인 평가 해설</span>
+  <h2>정답과 해설</h2>
+  <p class="spec" style="color:var(--ink-faint);font-size:9pt">※ 이 절은 교사용 통합본에만 수록한다. 학생 배부용에서는 제거한다.</p>
+
+  <div class="ans"><span class="an">01</span><div class="ab"><code>long long fact(int n) { if (n == 0) return 1; return n * fact(n-1); }</code> — 반환형이 <code>long long</code>이어야 한다. 최대 깊이는 20으로 안전하다.</div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab">
+    <code>long long s(int n) { if (n == 0) return 0; return n + s(n-1); }</code><br>
+    <b>N = 100만이면 깊이 100만</b>으로 스택을 초과해 <code>Segmentation fault</code>로 죽는다. 반복문으로는 0.003초인 작업이다(6장). 오류 5를 직접 겪게 하는 문제다.
+  </div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab"><code>long long power(int a, int b) { if (b == 0) return 1; return a * power(a, b-1); }</code> — 깊이는 b. 2<sup>40</sup> = 1099511627776. <b>주의</b> — <code>a * power(...)</code>에서 <code>a</code>가 <code>int</code>이므로 <code>(long long)a * power(...)</code>로 쓰는 것이 안전하다(2장).</div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab">예제 3과 동일. <b>입력 0</b>일 때 종료 조건에 바로 걸려 0이 나온다. 10장 반복 버전도 <code>while (n &gt; 0)</code>이라 0을 출력하므로 결과가 같다.</div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab">
+    <code>int gcd(int a, int b) { if (b == 0) return a; return gcd(b, a % b); }</code><br>
+    <b>재귀 쪽이 짧다.</b> 임시 변수 <code>t</code>가 필요 없기 때문이다. 깊이는 로그 수준이라 전혀 문제없다. <b>재귀를 쓰는 것이 더 나은 드문 예</b>로 소개한다.
+  </div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab"><code>void down(int n) { if (n == 0) return; printf("%d ", n); down(n-1); }</code> — 호출하기 <b>전에</b> 찍으므로 쌓이면서 출력된다.</div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab">
+    <code>void up(int n) { if (n == 0) return; up(n-1); printf("%d ", n); }</code> — 호출을 먼저 하고 <b>돌아오면서</b> 찍는다.<br>
+    <b>지도 포인트</b> — 같은 구조에서 한 줄의 위치만 바꿨는데 출력 순서가 뒤집힌다. 11.2절의 "쌓임과 풀림"을 가장 선명하게 보여 주는 문제이므로 반드시 추적 출력과 함께 설명한다.
+  </div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab">예제 2의 출력과 같다. 들여쓰기 깊이 = <b>스택에 쌓인 호출의 수</b>. <code>fact(4)</code>면 최대 깊이 5(0까지)이고, 가장 깊은 곳에서 먼저 답이 나온다.</div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab">표준 코드와 동일. 검증: n = 3의 일곱 줄이 <code>1 3 / 1 2 / 3 2 / 1 3 / 2 1 / 2 3 / 1 3</code>과 일치하는지 확인시킨다.</div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab"><code>printf("%lld\n", (1LL &lt;&lt; n) - 1);</code> — N = 60이면 2<sup>60</sup>−1 = 1152921504606846975. <code>1 &lt;&lt; n</code>으로 쓰면 n ≥ 31에서 깨진다(4장). <b>재귀를 돌리면 10<sup>18</sup>번이라 영원히 끝나지 않는다</b>는 점을 짚는다.</div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab">
+    측정값(환경에 따라 다름): 10 → 177회, 20 → 21,891회, 30 → 2,692,537회(0.008초), 35 → 29,860,703회(0.094초).<br>
+    <b>지도 포인트</b> — n이 5 늘 때마다 호출이 약 11배가 된다. 이 비율을 학생이 직접 계산하게 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">
+    예제 5와 동일. <code>fib(90) = 2880067194370816120</code>, 호출은 <b>179회</b> 수준(n마다 두 번씩 들어오고 한 번만 계산).<br>
+    <b>주의</b> — 배열 크기를 91 이상으로 잡아야 <code>memo[90]</code>이 범위 안이다(8장 오류 1). <code>fib(93)</code>은 <code>long long</code>을 넘어 음수가 된다.
+  </div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab">10장 표준 코드가 그대로 반복 버전이다. <b>지도 포인트</b> — 두 버전을 1부터 10,000까지 전부 돌려 결과를 비교하는 <b>자동 대조 코드</b>를 짜게 한다. 이것이 PART 2에서 배울 "기준 정답과 대조하기"의 첫 연습이다.</div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab">
+    <code>void bin(int n) { if (n == 0) return; bin(n / 2); printf("%d", n % 2); }</code><br>
+    07번과 같은 구조다. <b>돌아오면서</b> 찍어야 높은 자리부터 나온다. 호출하기 전에 찍으면 <code>1011</code>로 거꾸로 나온다. 13 → <code>1101</code>.
+  </div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab">
+<pre><code>int is_pal(int a[], int l, int r)
+{
+    if (l &gt;= r) { return 1; }            // 종료 ①: 다 봤다
+    if (a[l] != a[r]) { return 0; }      // 종료 ②: 다르다
+    return is_pal(a, l + 1, r - 1);
+}</code></pre>
+    <b>종료 조건이 둘</b>인 것이 이 문제의 핵심이다. 하나는 성공, 하나는 실패다. <code>l &gt;= r</code>로 쓰면 길이가 짝수일 때(<code>l &gt; r</code>)와 홀수일 때(<code>l == r</code>)가 모두 처리된다.
+  </div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">
+    교재 집필 환경(스택 8 MB)의 실측값.
+    <table style="margin:6px 0">
+      <thead><tr><th style="width:44%">지역 변수</th><th style="width:26%">성공</th><th>실패</th></tr></thead>
+      <tbody>
+        <tr><td>거의 없음</td><td class="num">깊이 200,000</td><td class="num">깊이 500,000</td></tr>
+        <tr><td><code>int buf[256]</code> (1 KB)</td><td class="num">깊이 5,000</td><td class="num">깊이 8,000</td></tr>
+      </tbody>
+    </table>
+    약 <b>40배</b> 차이다. 학생마다 값이 다를 수 있으나 "지역 배열이 깊이를 크게 깎는다"는 경향은 반드시 같게 나온다.<br>
+    <b>지도 포인트</b> — PART 3의 DFS에서 10만 개 노드를 재귀로 따라갈 때 이 계산이 실제로 필요하다. 그때를 위해 지금 수치 감각을 만들어 둔다.
+  </div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+<pre><code>long long power(long long a, int b)
+{
+    if (b == 0) { return 1; }
+    long long h = power(a, b / 2);
+    if (b % 2 == 0) { return h * h; }
+    return h * h * a;
+}</code></pre>
+    <b>핵심</b> — <code>power(a, b/2)</code>를 <b>한 번만</b> 부르고 변수에 담는다. <code>power(a,b/2) * power(a,b/2)</code>로 쓰면 두 번 계산해 효과가 사라진다(오류 6과 같은 함정).<br>
+    <b>호출 횟수</b> — 03번은 b번, 이 방법은 약 log₂b번. b = 10<sup>9</sup>이면 <b>10억 번 대 30번</b>이다.<br>
+    <b>지도 포인트</b> — "절반으로 줄이기"가 로그 시간을 만든다는 첫 경험이다. PART 3 이분 탐색, PART 4 분할 정복으로 이어진다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    ① <code>fib(5)</code>의 노드 수는 <b>15개</b>로 예제 4의 호출 횟수와 일치한다.<br>
+    ② <code>fib(2)</code>는 <b>3번</b> 나타난다. (<code>fib(3)</code>은 2번, <code>fib(1)</code>은 5번, <code>fib(0)</code>은 3번.)<br>
+    ③ 메모이제이션은 <b>두 번째로 나타난 노드부터 그 아래 전체</b>를 잘라 낸다. <code>fib(3)</code>의 두 번째 등장 아래가 통째로 사라지므로, 트리가 사실상 한 줄짜리 사슬이 된다.<br>
+    <b>지도 포인트</b> — 트리를 직접 그려 본 학생은 "왜 호출이 지수적으로 느는가"를 설명할 수 있게 된다. 말로 설명하지 말고 반드시 그리게 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    ⑴ <b>반복</b> — 재귀면 깊이 10<sup>6</sup>으로 죽는다. 호출 횟수 자체는 문제없지만 깊이가 치명적이다.<br>
+    ⑵ <b>재귀</b> — 깊이 20, 호출 약 2<sup>21</sup>회. 둘 다 안전하고, 반복으로 쓰면 오히려 매우 어렵다.<br>
+    ⑶ <b>주의 필요</b> — 재귀가 자연스럽지만 최악의 경우 깊이가 10<sup>5</sup>가 된다. 지역 변수를 최소로 하면 대개 통과하나, 여유가 없으면 스택을 직접 만들어 반복으로 바꾼다(PART 3에서 다룬다).<br>
+    ⑷ <b>반복 또는 메모이제이션</b> — 그냥 재귀면 fib(50)에서 약 400억 호출로 불가능하다.<br>
+    <b>지도 포인트</b> — 판단 기준이 <b>깊이</b>와 <b>호출 횟수</b> 두 가지라는 것을 표로 정리시킨다. ⑴은 깊이가, ⑷는 횟수가 문제다.
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    ① <b>이동 횟수는 똑같이 2<sup>n</sup>−1</b>이다. 재귀 구조가 같기 때문이다.<br>
+    ② 규칙을 <b>위반한다</b>. 기둥마다 원반을 쌓아 두는 배열을 만들어 검사하면, 큰 원반이 작은 원반 위에 올라가는 이동이 나온다.<br>
+    ③ 횟수는 <b>재귀 호출의 구조</b>만으로 정해지고, 기둥 이름을 어떻게 섞든 두 번의 <code>n-1</code> 호출과 한 번의 출력이라는 모양은 변하지 않는다. 따라서 횟수가 맞다고 답이 맞는 것이 아니다. <b>출력의 내용을 검증해야 한다.</b><br>
+    <b>검증 코드 예</b> — 기둥 3개를 스택처럼 쓰는 배열을 두고, 각 이동마다 "출발 기둥이 비어 있지 않은가", "옮길 원반이 도착 기둥의 맨 위보다 작은가"를 확인한다. 이것이 PART 2에서 배울 <b>자체 채점 스크립트</b>의 축소판이다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li>재귀 함수를 쓸 때 종료 조건을 맨 먼저 쓴다</li>
+    <li>재귀 호출의 인자가 종료 조건 쪽으로 움직이는지 확인한다</li>
+    <li>종료 조건을 <code>==</code> 대신 <code>&lt;=</code>로 쓴다</li>
+    <li>재귀를 쓰기 전에 <strong>최대 깊이</strong>를 계산한다</li>
+    <li>재귀를 쓰기 전에 <strong>총 호출 횟수</strong>를 계산한다</li>
+    <li>재귀 함수 안에 지역 배열을 두지 않는다</li>
+    <li>안 풀리면 들여쓰기 추적 출력부터 찍는다</li>
+    <li>같은 값을 다시 계산하고 있으면 메모 배열을 둔다</li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 12장 포인터</span>
+    10장에서 "함수가 바꾼 값이 왜 밖에 전해지지 않는가"를 남겨 두었다. 그리고 배열은 왜 예외였는지도. 변수의 <strong>주소</strong>라는 개념을 배우면 두 질문이 한꺼번에 풀리고, 1장부터 써 온 <code>scanf</code>의 <code>&amp;</code>가 무엇이었는지도 드디어 밝혀진다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 1 · 11장 · 2026-10-12 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+
+</div>
+</body>
+</html>

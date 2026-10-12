@@ -1,0 +1,866 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 1 · 13장 포인터·배열·함수의 연결 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#0d7a6f;
+  --accent-soft:#e3f1ef;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#8fd8cd}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+<header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 1 · C11 문법 기초 — 13 / 16</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">13</span>
+    <h1>포인터·배열·함수의 연결</h1>
+  </div>
+  <p class="lede">12장에서 "배열 이름은 첫 원소의 주소"라는 한 줄을 확인했다. 이 장은 그 한 줄이 만드는 모든 결과를 끝까지 따라간다. 배열을 함수에 넘기는 정확한 의미, 2차원 배열을 넘기는 법, 그리고 <strong>결과를 여러 개 돌려받는 함수 설계</strong>가 여기서 완성된다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li>배열 이름이 함수에 넘어갈 때 <strong>포인터로 바뀐다</strong>는 것을 설명할 수 있다</li>
+    <li><code>int a[]</code>, <code>int *a</code>, <code>int a[5]</code>가 매개변수로서 모두 같음을 안다</li>
+    <li>배열의 일부만 함수에 넘길 수 있다</li>
+    <li>2차원 배열을 함수에 넘길 때 <strong>열 크기를 반드시 적는</strong> 이유를 안다</li>
+    <li><code>const</code>로 "읽기만 하는 배열"을 표시할 수 있다</li>
+    <li>최댓값과 최솟값을 <strong>한 번의 호출로</strong> 함께 돌려받는 함수를 쓸 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 문제 · 배열 이름의 정체 · 매개변수의 세 표기</div>
+  <div><b>2차시</b>부분 배열 · const · 표준 코드 · 2차원 배열 전달</div>
+  <div><b>3차시</b>단계 예제 · 흔한 오류 6종 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>두 번 훑을 것인가, 한 번에 받을 것인가</h2>
+  <p>배열의 최댓값과 최솟값이 둘 다 필요하다. 10장까지의 방법으로는 함수를 두 개 만들어야 했다.</p>
+  <figure>
+    <figcaption><span class="fn">두 번 훑는다</span><span>배열을 두 번 지나간다</span></figcaption>
+<pre><code>int mx = arr_max(a, n);
+int mn = arr_min(a, n);</code></pre>
+  </figure>
+  <p>답은 맞다. 그런데 배열을 <strong>두 번</strong> 훑는다. N이 100만이면 200만 번이다. 한 번 지나가면서 둘 다 구할 수 있는데도.</p>
+  <p>12장에서 포인터로 값을 여러 개 돌려받는 법을 배웠다. 그것을 배열에 적용하면 된다.</p>
+  <div class="io">
+    <div><div class="lbl">원하는 모양</div><pre>int mn, mx;
+arr_minmax(a, n, &amp;mn, &amp;mx);</pre></div>
+    <div><div class="lbl">얻는 것</div><pre>· 배열을 한 번만 훑는다
+· 호출도 한 줄
+· 무엇이 결과인지 보인다</pre></div>
+  </div>
+  <p>그런데 여기서 의문이 하나 생긴다. <code>a</code>에는 <code>&amp;</code>를 붙이지 않았는데 <code>mn</code>, <code>mx</code>에는 붙였다. 왜 다른가?</p>
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> 배열을 함수에 넘길 때 정확히 무엇이 넘어가는가?<br>
+    <b>②</b> 배열의 일부만 넘길 수 있는가?<br>
+    <b>③</b> 2차원 배열은 어떻게 넘기는가?
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">13.1</span>배열 이름은 함수에 넘어가면서 포인터가 된다</h3>
+  <p>배열 이름은 대부분의 식에서 <strong>첫 원소의 주소</strong>로 취급된다. 함수 호출도 그중 하나다.</p>
+  <div class="io">
+    <div><div class="lbl">main 에서</div><pre>int v[5] = {10,20,30,40,50};
+sizeof(v)        → 20
+sizeof(v)/sizeof(v[0]) → 5
+v == &amp;v[0]       → 참</pre></div>
+    <div><div class="lbl">함수 안에서</div><pre>void f(int a[], int n)
+{
+    sizeof(a)    → 8
+}</pre></div>
+  </div>
+  <p>같은 배열인데 <code>sizeof</code>가 20에서 8로 바뀐다. 함수가 받은 것은 <strong>배열 전체가 아니라 주소 하나</strong>이기 때문이다. 8은 포인터의 크기다(12.3절).</p>
+  <div class="note warn">
+    <span class="h">gcc가 경고해 준다</span>
+    <code>warning: 'sizeof' on array function parameter 'a' will return size of 'int *' [-Wsizeof-array-argument]</code><br>
+    10장 오류 5에서 만난 그 경고다. 이제 이유를 안다. <b>그래서 배열을 넘길 때는 크기 <code>n</code>을 함께 넘긴다.</b>
+  </div>
+  <p>이것으로 10장과 12장의 숙제가 모두 풀린다. 배열을 넘겨도 복사가 일어나지 않으니 <strong>함수 안에서 고치면 원본이 바뀌고</strong>, 100만 개짜리 배열을 넘겨도 <strong>전혀 느리지 않다</strong>.</p>
+
+  <h3><span class="tag">13.2</span>매개변수의 세 가지 표기는 모두 같다</h3>
+  <div class="io">
+    <div><div class="lbl">세 가지 선언</div><pre>void f(int a[],  int n)
+void f(int *a,   int n)
+void f(int a[5], int n)</pre></div>
+    <div><div class="lbl">함수 안에서의 sizeof(a)</div><pre>8
+8
+8</pre></div>
+  </div>
+  <p>세 번째가 특히 중요하다. <code>int a[5]</code>라고 써도 <strong>컴파일러는 5를 무시한다</strong>. 크기가 5인 배열만 받는 것이 아니고, 크기 검사도 하지 않는다.</p>
+  <table>
+    <thead><tr><th style="width:30%">표기</th><th>권장도</th></tr></thead>
+    <tbody>
+      <tr><td><code>int a[]</code></td><td><strong>권장</strong> — "배열을 받는다"는 의도가 드러난다</td></tr>
+      <tr><td><code>int *a</code></td><td>가능 — 실제 정체에 충실하다. 원소 하나를 가리킬 때는 이쪽</td></tr>
+      <tr><td><code>int a[5]</code></td><td><strong>피한다</strong> — 크기를 검사한다고 오해하게 만든다</td></tr>
+    </tbody>
+  </table>
+  <p>이 교재는 <strong><code>int a[]</code></strong>를 표준으로 쓴다. 다만 받는 쪽이 포인터라는 사실은 잊지 않는다.</p>
+
+  <h3><span class="tag">13.3</span>배열의 일부만 넘기기</h3>
+  <p>주소를 넘기는 것이므로 <strong>시작 위치를 바꿔 넘길 수 있다</strong>.</p>
+  <div class="io">
+    <div><div class="lbl">v = {10,20,30,40,50} 일 때</div><pre>f(v,     5);   // 전체
+f(v + 2, 3);   // 30,40,50
+f(&amp;v[2], 3);   // 같은 뜻</pre></div>
+    <div><div class="lbl">함수 안에서 a[0]은</div><pre>10
+30
+30</pre></div>
+  </div>
+  <p><code>v + 2</code>와 <code>&amp;v[2]</code>는 완전히 같다. 둘 다 "세 번째 원소의 주소"다. 길이를 <code>3</code>으로 함께 넘기는 것을 잊으면 안 된다.</p>
+  <p>이 기법은 PART 3의 <strong>분할 정복</strong>에서 핵심이 된다. 병합 정렬이 배열을 반으로 쪼개 재귀 호출할 때 정확히 이 방식을 쓴다.</p>
+
+  <h3><span class="tag">13.4</span>const — 읽기만 한다는 약속</h3>
+  <p>배열을 넘기면 함수가 원본을 고칠 수 있다. 고칠 생각이 없다면 <code>const</code>를 붙여 <strong>실수로 고치는 것을 컴파일러가 막게</strong> 한다.</p>
+  <div class="io">
+    <div><div class="lbl">CODE</div><pre>void f(const int a[], int n)
+{
+    a[0] = 999;
+}</pre></div>
+    <div><div class="lbl">컴파일 결과</div><pre>error: assignment of
+read-only location '*a'</pre></div>
+  </div>
+  <p>경고가 아니라 <strong>오류</strong>라서 반드시 걸린다. 함수의 선언만 봐도 "이 함수는 배열을 읽기만 한다"는 것이 드러나는 것도 큰 장점이다.</p>
+  <div class="note">
+    <span class="h">쓰는 기준</span>
+    배열을 <b>읽기만</b> 하는 함수(<code>arr_sum</code>, <code>arr_max</code>, <code>find</code>)에는 <code>const</code>를 붙인다. <b>고치는</b> 함수(<code>arr_reverse</code>, <code>sort</code>)에는 붙이지 않는다. 올림피아드에서 필수는 아니지만, 함수의 의도를 드러내므로 이 교재에서는 쓴다.
+  </div>
+
+  <h3><span class="tag">13.5</span>2차원 배열 넘기기</h3>
+  <p>2차원 배열도 넘어갈 때 포인터가 된다. 그런데 1차원과 달리 <strong>열 크기를 반드시 적어야</strong> 한다.</p>
+  <div class="io">
+    <div><div class="lbl">올바른 선언</div><pre>#define M 4
+
+void show(int a[][M], int n)
+void show(int (*a)[M], int n)   // 같은 뜻</pre></div>
+    <div><div class="lbl">열을 빼면 오류</div><pre>void show(int a[][], int n)
+
+error: array type has
+incomplete element type 'int[]'</pre></div>
+  </div>
+  <p>오류 메시지가 이유를 알려 준다. <code>must have bounds for all dimensions except the first</code> — <strong>첫 번째 차원을 뺀 나머지는 크기를 밝혀야 한다.</strong></p>
+  <h4>왜 열 크기가 필요한가</h4>
+  <p>9장에서 2차원 배열이 메모리에 <strong>한 줄로</strong> 놓인다고 배웠다. 행 우선이므로 <code>a[i][j]</code>를 찾으려면 "i번째 행의 시작"을 계산해야 하고, 그러려면 <strong>한 행이 몇 칸인지</strong> 알아야 한다.</p>
+  <div class="io">
+    <div><div class="lbl">컴파일러가 하는 계산</div><pre>a[i][j] 의 자리
+ = a 의 시작 + (i × M + j) × 4바이트</pre></div>
+    <div><div class="lbl">크기 확인 (int a[3][4])</div><pre>sizeof(a)       = 48  (전체)
+sizeof(a[0])    = 16  (한 행)
+a + 1 은 16바이트 이동</pre></div>
+  </div>
+  <p><code>M</code>을 모르면 이 계산을 할 수 없다. 반면 행 수는 몰라도 된다. 그래서 첫 번째 차원만 비울 수 있다.</p>
+  <h4>더 유연한 방법 — 1차원처럼 다루기</h4>
+  <figure>
+    <figcaption><span class="fn">열 크기도 매개변수로</span><span>크기가 바뀌는 문제에 쓴다</span></figcaption>
+<pre><code>void show(int *a, int n, int m)
+{
+    printf("%d\n", a[i * m + j]);     // 직접 계산한다
+}
+
+show(&amp;a[0][0], 3, 4);</code></pre>
+  </figure>
+  <p>7장 연습 13번에서 손으로 계산했던 <code>i*N + j</code>가 여기서 다시 나온다. 코드가 번거로워지므로 보통은 <code>int a[][M]</code> 형태를 쓰고, <strong>배열 크기를 <code>#define</code>으로 고정</strong>한다.</p>
+  <div class="note warn">
+    <span class="h">올림피아드에서의 실용 지침</span>
+    2차원 배열은 <b>전역으로 선언하고 함수에 넘기지 않는 것</b>이 가장 간단하다(9·10장). <code>board</code>, <code>n</code>, <code>m</code>을 전역으로 두면 매개변수가 사라진다. 넘겨야 할 때만 <code>int a[][M]</code> 형태를 쓴다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드: 한 번에 최솟값과 최댓값</h2>
+  <figure>
+    <figcaption><span class="fn">arrfn.c</span><span>표준 코드 · gcc 검증 완료</span></figcaption>
+<pre><code>#include &lt;stdio.h&gt;
+
+#define MAXN 100000
+
+void arr_minmax(const int a[], int n, int *mn, int *mx);
+
+void arr_minmax(const int a[], int n, int *mn, int *mx)
+{
+    *mn = a[0];
+    *mx = a[0];
+
+    for (int i = 1; i &lt; n; i++) {
+        if (a[i] &lt; *mn) { *mn = a[i]; }
+        if (a[i] &gt; *mx) { *mx = a[i]; }
+    }
+}
+
+int a[MAXN];
+
+int main(void)
+{
+    int n;
+    if (scanf("%d", &amp;n) != 1) return 1;
+
+    for (int i = 0; i &lt; n; i++) {
+        if (scanf("%d", &amp;a[i]) != 1) return 1;
+    }
+
+    int mn, mx;
+    arr_minmax(a, n, &amp;mn, &amp;mx);
+
+    printf("%d %d\n", mn, mx);
+    return 0;
+}</code></pre>
+  </figure>
+  <table>
+    <thead><tr><th style="width:32%">요소</th><th>설계 의도</th></tr></thead>
+    <tbody>
+      <tr><td><code>const int a[]</code></td><td>읽기만 한다는 약속. 실수로 고치면 <strong>컴파일 오류</strong>로 걸린다.</td></tr>
+      <tr><td><code>int n</code></td><td>크기를 함께 넘긴다. 함수 안에서는 <code>sizeof</code>로 알 수 없다(13.1절).</td></tr>
+      <tr><td><code>int *mn, int *mx</code></td><td>쓸 자리이므로 주소로 받는다(12.5절). <strong><code>a</code>에만 <code>&amp;</code>가 없는 이유</strong>가 도입 문제의 답이다 — 배열 이름이 이미 주소다.</td></tr>
+      <tr><td><code>*mn = a[0];</code></td><td><strong>0이 아니라 첫 원소로</strong> 초기화한다(8장 오류 5). 그래서 <code>n ≥ 1</code>이 전제다.</td></tr>
+      <tr><td><code>i = 1</code>부터</td><td><code>a[0]</code>은 이미 반영했으므로 1부터 비교한다. 0부터 해도 틀리지는 않는다.</td></tr>
+      <tr><td>전역 <code>a[MAXN]</code></td><td>10만 개이므로 전역(8장). 함수에는 주소만 넘어가므로 크기와 무관하게 빠르다.</td></tr>
+    </tbody>
+  </table>
+  <div class="io">
+    <div><div class="lbl">INPUT</div><pre>4
+-7 3 -1 5</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>-7 5</pre></div>
+  </div>
+  <div class="io">
+    <div><div class="lbl">INPUT — 경계</div><pre>1
+42</pre></div>
+    <div><div class="lbl">OUTPUT</div><pre>42 42</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">n = 0 이면 망가진다</span>
+    <code>a[0]</code>을 읽는 순간 아직 입력되지 않은 값을 쓴다. 문제에 <code>n ≥ 1</code>이 보장되어 있는지 확인하고, 아니면 <b>맨 앞에서 걸러야</b> 한다(5장). 반환값으로 성공 여부를 알리는 설계(12장 13번)가 그래서 필요하다.
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+
+  <h3><span class="tag">예제 1</span>sizeof가 달라지는 것 확인</h3>
+  <figure>
+    <figcaption><span class="fn">ex1.c</span><span>같은 배열, 다른 결과</span></figcaption>
+<pre><code>void f(int a[], int n)
+{
+    printf("함수 안 : sizeof(a) = %zu\n", sizeof(a));
+}
+
+int v[5] = {10,20,30,40,50};
+printf("main   : sizeof(v) = %zu\n", sizeof(v));
+f(v, 5);</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>main   : sizeof(v) = 20
+함수 안 : sizeof(a) = 8</pre></div>
+    <div><div class="lbl">결론</div><pre>배열은 복사되지 않는다.
+주소 하나만 넘어간다.
+→ 크기는 따로 넘긴다</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 2</span>배열을 고치는 함수</h3>
+  <figure>
+    <figcaption><span class="fn">ex2.c</span><span>const를 붙이지 않는다</span></figcaption>
+<pre><code>void arr_reverse(int a[], int n)
+{
+    for (int i = 0; i &lt; n / 2; i++) {
+        int t = a[i];
+        a[i] = a[n - 1 - i];
+        a[n - 1 - i] = t;
+    }
+}
+
+int v[5] = {1,2,3,4,5};
+arr_reverse(v, 5);
+// v 는 5 4 3 2 1 이 되어 있다</code></pre>
+  </figure>
+  <p>12장의 <code>swap</code>을 호출하는 형태로도 쓸 수 있다. <code>swap(&amp;a[i], &amp;a[n-1-i]);</code> — <strong>배열 원소에는 <code>&amp;</code>가 필요하다</strong>. <code>a</code>는 주소지만 <code>a[i]</code>는 값이기 때문이다.</p>
+
+  <h3><span class="tag">예제 3</span>부분 배열 넘기기</h3>
+  <figure>
+    <figcaption><span class="fn">ex3.c</span><span>시작 위치를 바꾼다</span></figcaption>
+<pre><code>long long arr_sum(const int a[], int n)
+{
+    long long s = 0;
+    for (int i = 0; i &lt; n; i++) { s += a[i]; }
+    return s;
+}
+
+int v[5] = {10,20,30,40,50};
+
+printf("%lld\n", arr_sum(v, 5));        // 150
+printf("%lld\n", arr_sum(v + 2, 3));    // 120
+printf("%lld\n", arr_sum(&amp;v[1], 2));    // 50</code></pre>
+  </figure>
+  <p>구간의 합을 구하는 함수를 따로 만들 필요가 없다. <strong>시작 주소와 길이만 바꾸면</strong> 같은 함수가 어떤 구간이든 처리한다.</p>
+
+  <h3><span class="tag">예제 4</span>2차원 배열 넘기기</h3>
+  <figure>
+    <figcaption><span class="fn">ex4.c</span><span>열 크기를 매크로로 고정한다</span></figcaption>
+<pre><code>#define M 4
+
+void show(int a[][M], int n)
+{
+    for (int i = 0; i &lt; n; i++) {
+        for (int j = 0; j &lt; M; j++) { printf("%3d", a[i][j]); }
+        printf("\n");
+    }
+}
+
+int a[3][M] = {{1,2,3,4},{5,6,7,8},{9,10,11,12}};
+show(a, 3);</code></pre>
+  </figure>
+  <div class="io">
+    <div><div class="lbl">OUTPUT</div><pre>  1  2  3  4
+  5  6  7  8
+  9 10 11 12</pre></div>
+    <div><div class="lbl">주소 확인</div><pre>a       = 0x7ffd…f30
+a[0]    = 0x7ffd…f30
+&amp;a[0][0]= 0x7ffd…f30
+a + 1   = 0x7ffd…f40  (+16)</pre></div>
+  </div>
+  <p>셋 다 같은 주소를 가리키지만 <strong>자료형이 다르다</strong>. <code>a</code>는 "행을 가리키는 포인터"라 1을 더하면 16바이트(한 행)를 건너뛰고, <code>&amp;a[0][0]</code>은 "<code>int</code>를 가리키는 포인터"라 4바이트를 건너뛴다.</p>
+
+  <h3><span class="tag">예제 5</span>결과를 여러 개 돌려받기</h3>
+  <figure>
+    <figcaption><span class="fn">ex5.c</span><span>통계 네 개를 한 번에</span></figcaption>
+<pre><code>void arr_stat(const int a[], int n,
+              long long *sum, int *mn, int *mx, int *zero_cnt)
+{
+    *sum = 0;
+    *mn = a[0];
+    *mx = a[0];
+    *zero_cnt = 0;
+
+    for (int i = 0; i &lt; n; i++) {
+        *sum += a[i];
+        if (a[i] &lt; *mn) { *mn = a[i]; }
+        if (a[i] &gt; *mx) { *mx = a[i]; }
+        if (a[i] == 0) { (*zero_cnt)++; }
+    }
+}</code></pre>
+  </figure>
+  <div class="note warn">
+    <span class="h">(*zero_cnt)++ 의 괄호를 빠뜨리지 않는다</span>
+    <code>*zero_cnt++</code>라고 쓰면 <b>포인터를 증가</b>시킨다. 4장의 우선순위에서 <code>++</code>가 <code>*</code>보다 먼저 묶이기 때문이다. 값을 늘리려면 <b>괄호가 필수</b>다.
+  </div>
+  <p>배열을 한 번만 훑고 네 가지를 모두 구한다. 네 번 훑는 것보다 네 배 빠르고, 무엇보다 <strong>호출이 한 줄</strong>이다.</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 1</span><span class="t">함수 안에서 sizeof로 크기를 구했다</span></div>
+    <div class="body">
+      <pre>void f(int a[]) {
+    int n = sizeof(a) / sizeof(a[0]);   // 8 / 4 = 2
+    for (int i = 0; i &lt; n; i++) { ... } // 두 칸만 돈다
+}
+
+warning: 'sizeof' on array function parameter 'a'
+         will return size of 'int *' [-Wsizeof-array-argument]</pre>
+      <p>경고는 나오지만 실행된다. 배열이 100개여도 <strong>앞의 두 개만</strong> 처리하고 끝난다.</p>
+      <div class="fix"><b>고치는 법</b> — 크기를 매개변수로 받는다. <code>void f(int a[], int n)</code>. 예외 없는 규칙이다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 2</span><span class="t">배열 원소에 &amp;를 빠뜨렸다</span></div>
+    <div class="body">
+      <pre>swap(a[i], a[j]);     // 값을 넘겼다
+swap(&amp;a[i], &amp;a[j]);   // 올바름</pre>
+      <p><code>a</code>는 주소지만 <code>a[i]</code>는 <strong>값</strong>이다. 헷갈리기 쉬운 지점이다. 12장 오류 1과 같은 경고가 나온다.</p>
+      <div class="fix"><b>고치는 법</b> — "배열 전체는 <code>a</code>, 원소 하나는 <code>&amp;a[i]</code>". 두 경우를 나란히 외운다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 3</span><span class="t">2차원 배열의 열 크기를 뺐다</span></div>
+    <div class="body">
+      <pre>void show(int a[][], int n) { ... }
+
+error: array type has incomplete element type 'int[]'
+note: declaration of 'a' as multidimensional array must have
+      bounds for all dimensions except the first</pre>
+      <p><strong>오류</strong>라서 반드시 걸린다. 메시지가 해결 방법까지 알려 준다. 행 수는 비울 수 있고 열 수는 비울 수 없다.</p>
+      <div class="fix"><b>고치는 법</b> — <code>void show(int a[][M], int n)</code>. <code>M</code>은 <code>#define</code>으로 정한 상수여야 한다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 4</span><span class="t">넘긴 배열 크기와 선언한 크기가 다르다</span></div>
+    <div class="body">
+      <pre>#define M 4
+void show(int a[][M], int n);
+
+int b[3][5];        // 열이 5다
+show(b, 3);         // 컴파일 경고만 나고 실행된다</pre>
+      <p>컴파일러가 계산하는 자리와 실제 자리가 어긋나 <strong>완전히 엉뚱한 값</strong>을 읽는다. 죽지 않고 틀린 답만 낸다.</p>
+      <div class="fix"><b>고치는 법</b> — 배열 선언과 함수 선언에 <b>같은 <code>#define</code> 이름</b>을 쓴다. 숫자를 직접 쓰지 않는다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 5</span><span class="t">(*p)++ 의 괄호를 빠뜨렸다</span></div>
+    <div class="body">
+      <pre>*cnt++;      // 포인터를 증가시킨다 (값은 그대로)
+(*cnt)++;    // 가리키는 값을 증가시킨다 (올바름)</pre>
+      <p>경고가 없다. <code>++</code>가 <code>*</code>보다 먼저 묶이기 때문이다(4장 우선순위). 카운터가 늘지 않아 결과가 항상 0이거나, 포인터가 엉뚱한 곳을 가리키게 된다.</p>
+      <div class="fix"><b>고치는 법</b> — 포인터가 가리키는 값을 증감할 때는 <b>항상 괄호</b>. 또는 <code>*cnt = *cnt + 1;</code>로 명확하게 쓴다.</div>
+    </div>
+  </div>
+
+  <div class="errcard">
+    <div class="top"><span class="n">오류 6</span><span class="t">배열을 복사한 줄 알았다</span></div>
+    <div class="body">
+      <pre>void f(int a[], int n) {
+    a[0] = 999;          // 원본이 바뀐다
+}
+
+int v[5] = {1,2,3,4,5};
+f(v, 5);
+printf("%d\n", v[0]);    // 999</pre>
+      <p>경고도 오류도 없다. "함수 안에서만 바꾸고 싶었는데" 원본이 망가진다. 정렬 함수를 호출한 뒤 원래 순서가 필요해져서 발견되는 경우가 많다.</p>
+      <div class="fix"><b>고치는 법</b> — 원본을 지키려면 <b>호출 전에 복사본을 만든다</b>. 읽기만 하는 함수에는 <code>const</code>를 붙여 의도를 분명히 한다.</div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    배열을 함수에 넘기면 <b>복사되지 않는다</b>. 이것이 장점(빠르다)이자 함정(원본이 바뀐다)이다. 함수를 만들 때마다 <b>"이 함수는 배열을 읽는가 고치는가"</b>를 정하고, 읽기만 하면 <code>const</code>를 붙인다. 그러면 오류 6이 컴파일 단계에서 걸린다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>배열을 받는 함수는 <strong>크기를 함께</strong> 받고, 읽기만 하면 <code>const</code>를 붙인다. 2차원 배열의 열 크기는 <code>#define</code>으로 정한다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>sizeof 비교</b> — <code>main</code>과 함수 안에서 같은 배열의 <code>sizeof</code>를 출력해 비교하고, 왜 다른지 주석으로 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>배열 출력 함수</b> — <code>void arr_print(const int a[], int n)</code>을 만들어 N개의 정수를 입력받아 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+1 2 3 4 5</pre></div><div><span>OUTPUT</span><pre>1 2 3 4 5</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>합 함수</b> — <code>long long arr_sum(const int a[], int n)</code>을 만들어라. 각 수는 10<sup>9</sup> 이하, N ≤ 10<sup>5</sup>이다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4
+1000000000 1000000000 1000000000 1000000000</pre></div><div><span>OUTPUT</span><pre>4000000000</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>최솟값과 최댓값</b> — 표준 코드를 작성하라. N = 1인 경우와 모두 음수인 경우를 반드시 시험하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4
+-7 3 -1 5</pre></div><div><span>OUTPUT</span><pre>-7 5</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>배열 뒤집기</b> — <code>void arr_reverse(int a[], int n)</code>을 만들어라. <code>const</code>를 붙이면 어떻게 되는지도 확인해 적어라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+1 2 3 4 5</pre></div><div><span>OUTPUT</span><pre>5 4 3 2 1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>부분 합</b> — 03번의 함수를 그대로 쓰되, 입력받은 두 인덱스 L, R(0부터)에 대해 그 구간의 합을 출력하라. <strong>새 함수를 만들지 말고</strong> 시작 주소와 길이만 바꿔 호출하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5 1 3
+10 20 30 40 50</pre></div><div><span>OUTPUT</span><pre>90</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>특정 값 세기</b> — <code>int arr_count(const int a[], int n, int t)</code>를 만들어 T가 몇 번 나오는지 세어라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>6 3
+1 3 5 3 3 2</pre></div><div><span>OUTPUT</span><pre>3</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>2차원 배열 출력</b> — <code>#define M 5</code>로 정하고 <code>void show(int a[][M], int n)</code>을 만들어 N행 M열을 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>2
+1 2 3 4 5
+6 7 8 9 10</pre></div><div><span>OUTPUT</span><pre>1 2 3 4 5
+6 7 8 9 10</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>통계 한 번에</b> — <code>void arr_stat(const int a[], int n, long long *sum, int *mn, int *mx, int *neg_cnt)</code>를 만들어 합·최솟값·최댓값·음수 개수를 한 번의 훑기로 구하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+-7 3 -1 5 0</pre></div><div><span>OUTPUT</span><pre>0 -7 5 2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>두 배열 비교</b> — <code>int arr_equal(const int a[], const int b[], int n)</code>을 만들어 두 배열이 같으면 1, 다르면 0을 반환하라. 다른 첫 위치도 포인터로 돌려받아라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4
+1 2 3 4
+1 2 9 4</pre></div><div><span>OUTPUT</span><pre>different at 2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>복사 함수</b> — <code>void arr_copy(const int src[], int dst[], int n)</code>을 만들어라. 그리고 05번의 뒤집기를 <strong>원본을 지키면서</strong> 수행해 원본과 뒤집은 결과를 모두 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+1 2 3 4 5</pre></div><div><span>OUTPUT</span><pre>1 2 3 4 5
+5 4 3 2 1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>행별·열별 합</b> — <code>#define M 100</code>으로 두고, <code>void row_sums(int a[][M], int n, int m, long long out[])</code>과 열 버전을 만들어라. 결과는 출력 배열로 돌려받는다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>2 3
+1 2 3
+4 5 6</pre></div><div><span>OUTPUT</span><pre>6 15
+5 7 9</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>격자 함수</b> — 9장 지뢰 찾기를 <code>int count_mines(int a[][M], int n, int m, int y, int x)</code> 함수로 분리해 다시 작성하라. 경계 검사도 함수 안에서 한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3 3
+1 0 0
+0 0 0
+0 0 1</pre></div><div><span>OUTPUT</span><pre>*10
+121
+01*</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>최댓값 두 개</b> — <code>void top2(const int a[], int n, int *first, int *second)</code>를 만들어 가장 큰 값과 두 번째로 큰 값을 구하라(같은 값이 여러 개면 중복을 허용한다). 배열을 한 번만 훑어야 한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+5 5 3 9 9</pre></div><div><span>OUTPUT</span><pre>9 9</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>구간 최댓값 질의</b> — N개의 수와 Q개의 질의(L, R)가 주어진다. 각 질의마다 구간의 최댓값을 출력하라. <strong>03번처럼 시작 주소를 바꿔</strong> 같은 함수를 재사용하라(N, Q ≤ 1,000).</p>
+    <div class="sample"><div><span>INPUT</span><pre>5 2
+3 1 4 1 5
+1 3
+0 4</pre></div><div><span>OUTPUT</span><pre>4
+5</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>(*p)++ 실험</b> — 카운터를 늘리는 함수를 ① <code>*cnt++;</code> ② <code>(*cnt)++;</code> 두 가지로 작성해 각각 실행하라. 결과가 어떻게 다른지 적고, 4장의 우선순위로 설명하라.</p>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>세 표기의 동치 확인</b> — 같은 함수를 <code>int a[]</code>, <code>int *a</code>, <code>int a[5]</code> 세 가지로 선언해 각각 <code>sizeof(a)</code>를 출력하라. 그리고 <code>int a[5]</code>로 선언한 함수에 <strong>크기 3짜리 배열</strong>을 넘겨 보고 컴파일되는지 확인하라. 그 결과가 뜻하는 바를 쓰라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>열 크기가 왜 필요한가</b> — <code>int a[3][4]</code>에 대해 ① <code>sizeof(a)</code>, <code>sizeof(a[0])</code>, <code>sizeof(a[0][0])</code> ② <code>a</code>, <code>a+1</code>, <code>a[0]</code>, <code>a[0]+1</code>의 주소를 모두 출력하라. ③ <code>a+1</code>과 <code>a[0]+1</code>이 왜 다르게 움직이는지 설명하고 ④ 그것이 함수 매개변수에 열 크기가 필요한 이유와 어떻게 연결되는지 쓰라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>원본이 망가지는 사고</b> — 정렬하는 함수를 만들어 호출한 뒤, 원래 순서로 출력하려다 실패하는 코드를 일부러 작성하라. ① 왜 그런지 설명하고 ② <code>const</code>를 붙이면 어느 단계에서 막히는지 확인하고 ③ 원본을 지키는 방법 두 가지를 제시하라.</p>
+    <p class="spec">※ 정렬 알고리즘은 5장 연습 12번의 세 수 교환을 확장하거나, 단순한 선택 정렬로 충분하다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>배열 함수 라이브러리</b> — 12장 20번의 함수 모음에 <strong>배열 함수</strong>를 추가해 완성하라. 각 함수마다 ① <code>const</code>를 붙일지 ② 어느 매개변수가 입력·출력인지 ③ 실패 조건과 알리는 방법 ④ 경계 입력(n = 0, n = 1, 모두 같은 값, 모두 음수)을 적어라.</p>
+    <p class="spec">※ 필수: <code>arr_print</code>, <code>arr_sum</code>, <code>arr_minmax</code>, <code>arr_reverse</code>, <code>arr_copy</code>, <code>arr_count</code>, <code>find</code>. 이 파일은 PART 2 전체와 PART 3 초반까지 쓰인다.</p>
+  </div></div>
+
+  </div>
+</section>
+
+<section class="pagebreak answers">
+  <span class="sec-no">07 — 확인 평가 해설</span>
+  <h2>정답과 해설</h2>
+  <p class="spec" style="color:var(--ink-faint);font-size:9pt">※ 이 절은 교사용 통합본에만 수록한다. 학생 배부용에서는 제거한다.</p>
+
+  <div class="ans"><span class="an">01</span><div class="ab">예제 1과 동일. <code>main</code>에서 20, 함수 안에서 8. 함수가 받은 것은 배열이 아니라 <b>주소</b>이기 때문이다. gcc 경고도 함께 확인시킨다.</div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab"><code>void arr_print(const int a[], int n)</code> — 읽기만 하므로 <code>const</code>. 끝의 공백 처리는 3장 출력 형식 점검표를 적용한다.</div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab">합이 4×10<sup>9</sup>이므로 반환형이 <code>long long</code>이어야 한다(2장). <b>흔한 오답</b> — <code>int</code> 반환, 또는 함수 안에서 <code>int s</code>로 누적.</div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab">표준 코드와 동일. <b>n = 1</b>이면 <code>42 42</code>. <b>모두 음수</b>면 <code>mx</code>가 음수로 나오는지 확인시킨다. <code>*mx = 0</code>으로 초기화한 답안이 여기서 걸린다(8장 오류 5).</div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab"><code>const</code>를 붙이면 <code>error: assignment of read-only location</code>으로 <b>컴파일이 되지 않는다</b>. 고치는 함수에는 붙이지 않는다는 기준을 몸으로 익히는 문제다.</div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab">
+    <code>printf("%lld\n", arr_sum(a + L, R - L + 1));</code><br>
+    길이가 <code>R - L + 1</code>인 것이 핵심이다. 양끝을 포함하므로 +1(6장 반복 횟수 세기). <b>지도 포인트</b> — 새 함수를 만들지 않고 호출 방식만 바꿔 해결하는 경험이 13.3절의 목적이다.
+  </div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab">8장 연습 4번의 함수 버전. <b>지도 포인트</b> — 8장에서 "배열에 담을 필요 없다"고 했던 문제다. 여기서는 함수 인터페이스를 연습하는 것이 목적이므로 배열을 쓴다.</div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab"><code>#define M 5</code>와 <code>void show(int a[][M], int n)</code>. 전역 배열도 <code>int a[100][M]</code>처럼 같은 <code>M</code>을 쓴다(오류 4 예방).</div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab">
+    예제 5의 변형. 합이 0으로 나오는 예제를 넣은 것은 "0이니까 틀렸나" 의심을 유도하기 위해서다.<br>
+    <b>흔한 오답</b> — <code>*neg_cnt++</code>(오류 5). 반드시 <code>(*neg_cnt)++</code>.
+  </div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab">
+<pre><code>int arr_equal(const int a[], const int b[], int n, int *pos)
+{
+    for (int i = 0; i &lt; n; i++) {
+        if (a[i] != b[i]) { *pos = i; return 0; }
+    }
+    return 1;
+}</code></pre>
+    두 배열 모두 <code>const</code>다. 12장 13번 <code>find</code>와 같은 설계(성공 여부는 반환값, 위치는 포인터)임을 짚는다.
+  </div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab">
+    <code>arr_copy(a, b, n);</code> 후 <code>arr_reverse(b, n);</code>. 원본 <code>a</code>는 그대로다.<br>
+    <b>지도 포인트</b> — 8장에서 "배열은 <code>=</code>로 복사할 수 없다"고 배웠다. 그 복사를 함수로 만들어 두면 매번 루프를 쓰지 않아도 된다. 19번의 해법이기도 하다.
+  </div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">
+    행별 합은 <code>out[i]</code>에, 열별 합은 <code>out[j]</code>에 누적한다. <b>출력 배열도 매개변수</b>로 받는 것이 요점이다. 반환할 수 없으므로(배열은 반환 불가) 이 방식뿐이다.<br>
+    <b>주의</b> — <code>out[]</code>은 고치므로 <code>const</code>를 붙이지 않는다. 입력 <code>a</code>에는 붙인다. 한 함수에 두 종류가 섞이는 첫 사례다.
+  </div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab">
+    9장 표준 코드를 함수로 분리한 것. 10장 15번과 비교하면, 거기서는 전역을 썼고 여기서는 매개변수로 넘긴다.<br>
+    <b>지도 포인트</b> — 두 방식을 모두 써 본 뒤 올림피아드에서는 <b>전역이 간단하다</b>는 결론을 학생이 스스로 내리게 한다(13.5절 실용 지침).
+  </div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab">
+<pre><code>*first = *second = a[0];   // 또는 INT_MIN
+for (int i = 0; i &lt; n; i++) {
+    if (a[i] &gt; *first)  { *second = *first; *first = a[i]; }
+    else if (a[i] &gt; *second) { *second = a[i]; }
+}</code></pre>
+    <b>핵심</b> — 1위가 바뀔 때 <b>기존 1위를 2위로 밀어내는</b> 순서다. 반대로 쓰면 2위가 사라진다. 8장 13번(두 번째로 큰 값)과 달리 중복을 허용하므로 <code>5 5 3 9 9</code>의 답이 <code>9 9</code>다.
+  </div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab">
+    <code>arr_minmax(a + L, R - L + 1, &amp;mn, &amp;mx);</code> 후 <code>mx</code>만 출력. 06번과 같은 기법이다.<br>
+    <b>반복 횟수</b> — 최악 <code>Q × N = 10<sup>6</sup></code>으로 통과한다. 8장 15번처럼 N, Q가 10만이면 불가능해지고, 그때 필요한 것이 PART 3의 세그먼트 트리임을 예고한다.
+  </div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">
+    ① <code>*cnt++;</code> — <code>++</code>가 먼저 묶여 <b>포인터가 다음 칸으로 이동</b>한다. 값은 그대로이고, 이후 역참조하면 엉뚱한 자리를 본다.<br>
+    ② <code>(*cnt)++;</code> — 가리키는 <b>값이 1 늘어난다</b>. 의도대로다.<br>
+    <b>4장 우선순위표</b>에서 <code>++</code>(단항, 1순위)가 <code>*</code>(역참조, 역시 단항)와 같은 순위지만 <b>후위 <code>++</code>가 더 강하게 묶인다</b>. 괄호로 명시하는 것이 유일한 해법이다.
+  </div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    세 경우 모두 <code>sizeof(a)</code>가 <b>8</b>이다.<br>
+    <code>int a[5]</code>로 선언한 함수에 크기 3짜리 배열을 넘겨도 <b>경고 없이 컴파일된다</b>.<br>
+    <b>뜻하는 바</b> — 매개변수의 <code>[5]</code>는 <b>컴파일러가 완전히 무시하는 장식</b>이다. 크기 검사를 해 줄 것이라 기대하면 안 된다. 그래서 이 교재는 <code>int a[]</code>를 쓰고 크기를 항상 따로 넘긴다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    ① 48 / 16 / 4.<br>
+    ② <code>a</code>, <code>a[0]</code>, <code>&amp;a[0][0]</code>은 모두 같은 주소. <code>a+1</code>은 <b>+16</b>, <code>a[0]+1</code>은 <b>+4</b>.<br>
+    ③ <code>a</code>는 "<b>한 행</b>을 가리키는 포인터"라 1을 더하면 행 하나(16바이트)를 건너뛴다. <code>a[0]</code>은 "<b><code>int</code></b>를 가리키는 포인터"라 4바이트를 건너뛴다. 같은 주소를 가리켜도 <b>자료형이 다르면 더하기의 보폭이 다르다</b>.<br>
+    ④ 함수가 <code>a[i][j]</code>를 찾으려면 "i번째 행의 시작"을 계산해야 하고, 그 보폭이 바로 <b>한 행의 크기 = M × 4바이트</b>다. <code>M</code>을 모르면 보폭을 모르므로 계산할 수 없다. 그래서 열 크기를 선언에 적어야 한다.<br>
+    <b>지도 포인트</b> — 9장의 "메모리는 한 줄이다"와 이 장의 "열 크기 필수"가 여기서 하나로 연결된다. 이 문제를 풀고 나면 <code>int a[][M]</code>을 외우지 않아도 된다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    ① 배열이 복사되지 않으므로 <b>정렬 함수가 원본을 바꿔 버렸다</b>. 호출 후의 <code>a</code>는 이미 정렬된 상태라 원래 순서가 남아 있지 않다.<br>
+    ② <code>const</code>를 붙이면 정렬 함수 <b>안에서 대입하는 줄</b>이 <code>error: assignment of read-only location</code>으로 막힌다. 즉 "이 함수는 고치는 함수"라는 것이 컴파일 단계에서 드러난다. (정렬 함수에는 <code>const</code>를 붙이면 안 된다. 이 실험의 목적은 <code>const</code>가 무엇을 막는지 보는 것이다.)<br>
+    ③ ⑴ 호출 전에 <code>arr_copy</code>로 복사본을 만들어 복사본을 정렬한다. ⑵ 원본을 출력한 뒤 정렬한다(순서를 바꾼다).<br>
+    <b>지도 포인트</b> — PART 3에서 "정렬하면 원래 인덱스가 사라진다"는 문제를 계속 만난다. 값과 인덱스를 함께 묶어 정렬하는 기법(구조체, 15장)이 그 해법임을 예고한다.
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    모범 구성 예.
+<pre><code>void arr_print  (const int a[], int n);
+    입력만 / 실패 없음 / 경계: n=0 이면 빈 줄
+long long arr_sum(const int a[], int n);
+    입력만 / 경계: n=0 → 0
+void arr_minmax (const int a[], int n, int *mn, int *mx);
+    출력 mn,mx / n&gt;=1 필요 / 경계: n=1, 모두 같은 값, 모두 음수
+void arr_reverse(int a[], int n);
+    고침 / 경계: n=0,1 (아무 일 없음)
+void arr_copy   (const int src[], int dst[], int n);
+    src 입력, dst 출력 / 겹치면 안 됨
+int  arr_count  (const int a[], int n, int t);
+    입력만 / 반환이 개수
+int  find       (const int a[], int n, int t, int *pos);
+    반환 1=찾음 / 못 찾으면 pos 미변경</code></pre>
+    <b>설계 원칙 정리</b> — 읽기만 하면 <code>const</code>, 고치면 안 붙인다. 크기는 항상 함께 넘긴다. 결과가 둘 이상이면 포인터, 하나면 반환값. 실패 가능성이 있으면 반환값으로 알린다.<br>
+    <b>지도 포인트</b> — PART 1에서 만든 세 번째이자 마지막 함수 모음이다(10장 수학 함수, 12장 출력 매개변수, 13장 배열 함수). PART 2 첫 시간에 이 파일을 열어 놓고 시작하게 한다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li>배열을 함수에 넘기면 주소만 넘어간다는 것을 안다</li>
+    <li>배열을 받는 함수는 <strong>크기를 함께</strong> 받는다</li>
+    <li>함수 안에서 <code>sizeof</code>로 배열 크기를 구하지 않는다</li>
+    <li>배열 전체는 <code>a</code>, 원소 하나는 <code>&amp;a[i]</code></li>
+    <li>읽기만 하는 배열 매개변수에 <code>const</code>를 붙인다</li>
+    <li>2차원 배열 매개변수에 열 크기를 적고 <code>#define</code>으로 통일한다</li>
+    <li>포인터가 가리키는 값을 증감할 때 <code>(*p)++</code>로 괄호를 친다</li>
+    <li>원본을 지켜야 하면 복사본을 만들어 넘긴다</li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 14장 문자열과 문자 처리</span>
+    문자열은 C에 따로 있는 자료형이 아니라 <strong><code>char</code> 배열</strong>이다. 그래서 이 장에서 배운 모든 규칙이 그대로 적용된다. 여기에 "끝을 알리는 특별한 문자" 하나가 더해지는데, 그 한 칸을 잊어서 생기는 사고가 문자열 문제 오답의 대부분이다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 1 · 13장 · 2026-10-12 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+
+</div>
+</body>
+</html>
