@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 2 · 12장 브론즈 실전 모의와 오답 유형 정리 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#9a5f1a;
+  --accent-soft:#f7ecdb;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#e8b670}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style></head><body><div class="sheet"><header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 2 · 브론즈급 해결 스킬 — 12 / 12</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">12</span>
+    <h1>브론즈 실전 모의와 오답 유형 정리</h1>
+  </div>
+  <p class="lede">PART 2의 마지막 장이다. 새로 배울 것은 없다. 열한 장에서 쌓은 도구를 <strong>시간 제한 안에서 꺼내 쓰는 훈련</strong>을 하고, 그동안 만난 <strong>오답 유형 66가지</strong>를 한 장으로 묶는다. 이 장의 점검표는 시험장에 들고 들어가는 종이다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li>PART 2에서 만든 <strong>도구 열한 개</strong>를 문제를 보고 골라 쓸 수 있다</li>
+    <li>오답 유형 <strong>66가지</strong>를 유형별로 분류해 자신의 약점을 찾을 수 있다</li>
+    <li><strong>제출 전 2분 점검</strong>을 절차로 수행할 수 있다</li>
+    <li>90분 안에 <strong>여섯 문항</strong>을 읽고 설계하고 작성하고 검증할 수 있다</li>
+    <li>틀린 문항을 <strong>어느 장의 어느 오류인지</strong> 되짚을 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도구 정리 · 오답 지도 66 · 제출 전 체크리스트</div>
+  <div><b>2차시</b>모의 세트 A (90분) · 채점</div>
+  <div><b>3차시</b>모의 세트 B (90분) · 채점 · 자가 진단</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 정리</span>
+  <h2>PART 2에서 만든 것</h2>
+
+  <p>열한 장에서 만든 것은 <strong>도구 열한 개</strong>와 <strong>검산 도구 다섯 개</strong>다. 문제를 받으면 이 표에서 고른다.</p>
+
+  <table>
+    <thead><tr><th style="width:8%">장</th><th style="width:28%">도구</th><th style="width:28%">쓸 때의 신호</th><th>핵심 한 줄</th></tr></thead>
+    <tbody>
+      <tr><td>01</td><td>입출력 형식 네 유형</td><td>항상</td><td>③ 명세 → ② 제약 → ① 조건 순으로 읽는다</td></tr>
+      <tr><td>02</td><td>복잡도 판단표</td><td>항상</td><td>N을 보고 알고리즘을 고른다. 제약을 곱한다</td></tr>
+      <tr><td>03</td><td>조건표와 경계 전수 검사</td><td>"등급", "판정", "분류"</td><td>좁은 조건을 위로, 마지막은 <code>else</code></td></tr>
+      <tr><td>04</td><td>집계 네 뼈대</td><td>"합", "최대", "개수", "평균"</td><td>최대·최소의 초기값은 <code>a[0]</code></td></tr>
+      <tr><td>05</td><td>√N 루프와 호제법</td><td>"약수", "소수", "최대공약수"</td><td><code>i * i &lt;= n</code>, <code>b ? gcd(b, a%b) : a</code></td></tr>
+      <tr><td>06</td><td>자릿수 분해</td><td>"자릿수", "진법", "회문"</td><td><code>n % b</code>와 <code>n /= b</code>, 0과 음수를 본다</td></tr>
+      <tr><td>07</td><td>카운팅·체크 배열</td><td>"있는가", "몇 번", 값 ≤ 10<sup>6</sup></td><td>배열 크기는 N이 아니라 <strong>값의 범위</strong></td></tr>
+      <tr><td>08</td><td>문자열 처리</td><td>문자열 입력</td><td>배열은 길이 +1, <code>for (i=0; s[i]; i++)</code></td></tr>
+      <tr><td>09</td><td>델타와 경계 검사</td><td>2차원 격자</td><td>이웃 탐색 세 줄을 통째로</td></tr>
+      <tr><td>10</td><td>완전탐색과 가지치기</td><td>N ≤ 20, "모든 경우"</td><td>가짓수를 먼저 센다. 되돌리기는 짝으로</td></tr>
+      <tr><td>11</td><td><code>qsort</code>와 이분 탐색</td><td>"정렬", 값 범위가 큼</td><td>비교는 <code>(a&gt;b) - (a&lt;b)</code>, 뺄셈 금지</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <span class="h">검산 도구 다섯 개 — 이쪽이 더 중요하다</span>
+    <table style="margin-top:6px">
+      <thead><tr><th style="width:12%">장</th><th style="width:30%">도구</th><th>무엇을 잡는가</th></tr></thead>
+      <tbody>
+        <tr><td>01</td><td><code>diff</code>로 예시 비교</td><td>출력 형식 오류 전부</td></tr>
+        <tr><td>03</td><td>경계 전수 검사</td><td>부등호·빠진 구간</td></tr>
+        <tr><td>06</td><td>왕복 검사</td><td>변환 함수의 짝이 맞는지</td></tr>
+        <tr><td>10</td><td>작은 N으로 개수 세기</td><td>2<sup>N</sup> / N! / C(N,M)과 비교</td></tr>
+        <tr><td>11</td><td>정렬 검산 세 줄</td><td>비교 함수의 오류</td></tr>
+      </tbody>
+    </table>
+    그리고 어디서나 쓰는 것 — <b>두 판 비교</b>(느린 정답지 대 빠른 코드)와 <b><code>-fsanitize=address</code></b>.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">02 — 오답 지도</span>
+  <h2>오답 유형 66가지</h2>
+  <p>각 장의 "흔한 오류" 여섯 가지를 모았다. <strong>틀린 문제가 생기면 이 표에서 번호를 찾는다.</strong> 번호를 찾을 수 없다면 새로운 유형이므로 공책에 추가한다.</p>
+
+  <table>
+    <thead><tr><th style="width:7%">장</th><th style="width:31%">오류 1 · 2</th><th style="width:31%">오류 3 · 4</th><th>오류 5 · 6</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>01</strong><br>형식</td>
+        <td>T를 데이터로 읽었다<br><span style="color:#8a7a68">출력을 루프 밖에 두었다</span></td>
+        <td>케이스 사이에 초기화를 안 했다<br><span style="color:#8a7a68">출력에 안내문을 넣었다</span></td>
+        <td>제약을 안 읽고 자료형을 정했다<br><span style="color:#8a7a68">예시 출력을 글자대로 안 베꼈다</span></td>
+      </tr>
+      <tr>
+        <td><strong>02</strong><br>복잡도</td>
+        <td>내 입력으로만 테스트했다<br><span style="color:#8a7a68">N이 작은 쪽만 보고 안심했다</span></td>
+        <td>합을 <code>int</code>로 받았다<br><span style="color:#8a7a68"><code>long long</code>을 <code>%d</code>로 출력했다</span></td>
+        <td>큰 배열을 함수 안에 선언했다<br><span style="color:#8a7a68">상수 줄이기로 복잡도를 고치려 했다</span></td>
+      </tr>
+      <tr>
+        <td><strong>03</strong><br>분기</td>
+        <td>넓은 조건을 위에 두어 가지가 죽었다<br><span style="color:#8a7a68">경계에서 <code>&gt;=</code> 대신 <code>&gt;</code></span></td>
+        <td>마지막을 <code>else</code>로 안 닫았다<br><span style="color:#8a7a68"><code>1 &lt;= x &lt;= 10</code>으로 썼다</span></td>
+        <td>조건식 안에서 오버플로가 났다<br><span style="color:#8a7a68">실수를 <code>==</code>나 <code>&gt;=</code>로 비교했다</span></td>
+      </tr>
+      <tr>
+        <td><strong>04</strong><br>집계</td>
+        <td>최댓값을 0으로 시작했다<br><span style="color:#8a7a68">"충분히 작은 값"을 임의로 골랐다</span></td>
+        <td>케이스마다 초기화하지 않았다<br><span style="color:#8a7a68">합을 <code>int</code>로 받았다</span></td>
+        <td>나눗셈을 먼저 했다<br><span style="color:#8a7a68">평균을 실수로 만들어 비교했다</span></td>
+      </tr>
+      <tr>
+        <td><strong>05</strong><br>수론</td>
+        <td><code>i &lt;= n</code>으로 끝까지 돌았다<br><span style="color:#8a7a68">제곱수에서 약수를 두 번 셌다</span></td>
+        <td>1을 소수로 판정했다<br><span style="color:#8a7a68">소인수분해의 <code>if (n &gt; 1)</code>을 빠뜨렸다</span></td>
+        <td>lcm을 <code>a * b / g</code>로 썼다<br><span style="color:#8a7a68"><code>i * i</code>를 <code>int</code>로 계산했다</span></td>
+      </tr>
+      <tr>
+        <td><strong>06</strong><br>자릿수</td>
+        <td><code>n = 0</code>에서 아무것도 안 했다<br><span style="color:#8a7a68">음수를 그대로 분해했다</span></td>
+        <td>진법 변환 결과를 안 뒤집었다<br><span style="color:#8a7a68">역순 수를 <code>int</code>로 받았다</span></td>
+        <td>10 이상의 자릿수를 숫자로 출력했다<br><span style="color:#8a7a68">자릿수 배열의 방향을 헷갈렸다</span></td>
+      </tr>
+      <tr>
+        <td><strong>07</strong><br>카운팅</td>
+        <td>배열 범위를 벗어났다<br><span style="color:#8a7a68">N을 보고 배열 크기를 정했다</span></td>
+        <td>음수 오프셋에서 <code>+1</code>을 빠뜨렸다<br><span style="color:#8a7a68">케이스마다 전체를 <code>memset</code>했다</span></td>
+        <td>표시와 검사의 순서를 바꿨다<br><span style="color:#8a7a68">카운팅 정렬을 아무 데나 썼다</span></td>
+      </tr>
+      <tr>
+        <td><strong>08</strong><br>문자열</td>
+        <td>배열 크기를 길이와 똑같이 잡았다<br><span style="color:#8a7a68"><code>strlen</code>을 루프 조건에 뒀다</span></td>
+        <td><code>scanf</code> 뒤에 바로 <code>fgets</code><br><span style="color:#8a7a68">문자열을 <code>==</code>로 비교했다</span></td>
+        <td><code>strlen(s)-1</code>을 <code>size_t</code>로 받았다<br><span style="color:#8a7a68">이미 대문자인 글자에 32를 뺐다</span></td>
+      </tr>
+      <tr>
+        <td><strong>09</strong><br>격자</td>
+        <td>경계 검사를 빠뜨렸다<br><span style="color:#8a7a68">행과 열의 한계를 바꿔 썼다</span></td>
+        <td>델타 배열에 오타가 있다<br><span style="color:#8a7a68">왼쪽 회전을 <code>(d-1)%4</code>로 썼다</span></td>
+        <td>열 우선으로 훑었다<br><span style="color:#8a7a68">회전을 제자리에서 했다</span></td>
+      </tr>
+      <tr>
+        <td><strong>10</strong><br>탐색</td>
+        <td>되돌리기를 빠뜨렸다<br><span style="color:#8a7a68">조합에서 <code>start</code> 대신 0부터 돌았다</span></td>
+        <td>가지치기가 정답을 잘랐다<br><span style="color:#8a7a68">비트마스크가 빠를 거라 생각했다</span></td>
+        <td>중복 원소를 처리하지 않았다<br><span style="color:#8a7a68">가짓수를 안 세고 코드부터 썼다</span></td>
+      </tr>
+      <tr>
+        <td><strong>11</strong><br>정렬</td>
+        <td>비교 함수에서 뺄셈을 했다<br><span style="color:#8a7a68"><code>qsort</code>의 셋째 인자를 틀렸다</span></td>
+        <td>내림차순을 <code>-cmp(...)</code>로 만들었다<br><span style="color:#8a7a68">안정성에 의존했다</span></td>
+        <td>원본을 날렸다<br><span style="color:#8a7a68">정렬하지 않고 이분 탐색했다</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note warn">
+    <span class="h">66가지를 네 묶음으로</span>
+    외울 것은 66개가 아니다. <b>원인별로 묶으면 네 가지</b>다.<br>
+    <b>① 자료형과 범위</b> (02-3, 02-4, 03-5, 04-4, 05-5, 05-6, 06-4, 08-5, 11-1) — <b>자릿수를 세지 않았다</b><br>
+    <b>② 초기값과 경계</b> (01-3, 03-2, 03-3, 04-1, 04-2, 04-3, 06-1, 07-3, 09-1, 10-1) — <b>양 끝을 보지 않았다</b><br>
+    <b>③ 형식과 순서</b> (01-1, 01-2, 01-4, 01-6, 06-3, 07-5, 09-2, 11-3) — <b>문제를 끝까지 읽지 않았다</b><br>
+    <b>④ 복잡도 판단</b> (02-1, 02-2, 02-6, 05-1, 07-4, 09-5, 10-6, 11-6) — <b>제약을 계산하지 않았다</b><br>
+    자신이 어느 묶음에서 자주 틀리는지 알면 <b>점검 시간을 거기에 쓴다</b>.
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">03 — 점검표</span>
+  <h2>제출 전 2분 점검</h2>
+  <p>코드를 다 쓴 뒤 <strong>제출 버튼을 누르기 전에</strong> 이 열두 줄을 읽는다. 2분이면 끝나고, 오답의 절반을 잡는다.</p>
+
+  <div class="io">
+    <div><div class="lbl">읽기 전에 (30초)</div><pre>□ 예시 입력을 그대로 넣어
+  예시 출력과 글자 단위로 같은가
+  ($ ./a &lt; in.txt | diff - out.txt)
+
+□ 출력 줄 수가 예시와 같은가
+
+□ 안내문·디버그 출력이 남아 있지 않은가
+  (stderr로 보냈는가)</pre></div>
+    <div><div class="lbl">자료형 (30초)</div><pre>□ 답의 최댓값이 10자리를 넘는가
+  → long long
+
+□ 중간 계산(합·곱·조건식)도 세었는가
+
+□ long long 을 %lld 로 출력하는가
+
+□ 실수 비교가 남아 있지 않은가</pre></div>
+  </div>
+  <div class="io">
+    <div><div class="lbl">경계 (30초)</div><pre>□ N = 1 을 넣어 봤는가
+
+□ 값이 제약의 양 끝일 때 맞는가
+
+□ 모두 음수 / 모두 같은 값은?
+
+□ 최대·최소의 초기값이 a[0]인가
+
+□ 배열 크기에 여유가 있는가 (+1, +2)</pre></div>
+    <div><div class="lbl">복잡도 (30초)</div><pre>□ 제약을 전부 곱해 봤는가 (T × N)
+
+□ 2장의 표에서 통과 구간인가
+
+□ 최악의 입력을 만들어 time으로 쟀는가
+
+□ 큰 배열이 함수 밖에 있는가</pre></div>
+  </div>
+
+  <div class="note">
+    <span class="h">시험장에서 쓰는 순서</span>
+    <b>①</b> 문제를 받으면 <b>입출력 명세 → 제약 → 조건</b> 순으로 읽는다(1장).<br>
+    <b>②</b> 종이에 <b>체크리스트 일곱 줄</b>을 적는다 — 입력 유형 / 한 케이스 / 출력 형식 / 범위 / 최악의 값 / 복잡도 / 경계 입력.<br>
+    <b>③</b> 코드를 쓴다.<br>
+    <b>④</b> <b>예시로 <code>diff</code></b>를 돌린다.<br>
+    <b>⑤</b> 위 열두 줄 점검.<br>
+    <b>⑥</b> 제출.<br>
+    ②를 건너뛰면 ⑤에서 걸리는 것이 많아지고, ⑤를 건너뛰면 채점에서 걸린다. <b>앞쪽에 쓰는 시간이 가장 싸다.</b>
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">04 — 모의 세트 A</span>
+  <h2>모의고사 A (90분 · 6문항)</h2>
+  <p>시간을 재고 푼다. <strong>한 문항에 15분</strong>이 기준이고, 막히면 넘어갔다가 돌아온다. 모든 문항의 시간 제한은 1초, 메모리 제한은 256MB다.</p>
+
+  <div class="pset">
+  <div class="prob"><span class="pn">A1</span><div class="pb">
+    <p><b>점수 집계</b> — T개의 테스트케이스. 각 케이스는 첫 줄에 N, 다음 줄에 N개의 정수. 케이스마다 <b>합, 최댓값, 최솟값, 평균을 초과하는 개수</b>를 한 줄에 공백으로 구분해 출력하라.</p>
+    <p>제약 — 1 ≤ T ≤ 100, 1 ≤ N ≤ 10<sup>5</sup>, −10<sup>9</sup> ≤ A[i] ≤ 10<sup>9</sup></p>
+    <div class="sample"><div><span>INPUT</span><pre>3
+5
+3 9 2 9 5
+3
+-1 -2 -3
+1
+-100</pre></div><div><span>OUTPUT</span><pre>28 9 2 2
+-6 -1 -3 1
+-100 -100 -100 0</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">A2</span><div class="pb">
+    <p><b>요금 계산</b> — T개의 케이스. 각 줄에 사용량 U와 무게 W. 기본료는 U ≤ 100이면 1000, U ≤ 200이면 2000, U ≤ 300이면 3000, 그 외 4000이다. 여기에 <b>W ÷ U가 2.5 이상이면 50% 할증</b>한다. 최종 금액을 출력하라. <b>실수 연산을 쓰지 말 것.</b></p>
+    <p>제약 — 1 ≤ T ≤ 10<sup>5</sup>, 1 ≤ U ≤ 10<sup>9</sup>, 1 ≤ W ≤ 4 × 10<sup>9</sup></p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+100 10
+101 10
+300 10
+301 10
+100 250</pre></div><div><span>OUTPUT</span><pre>1000
+2000
+3000
+4000
+1500</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">A3</span><div class="pb">
+    <p><b>약수의 개수가 K인 수</b> — L 이상 R 이하의 정수 중 <b>약수의 개수가 정확히 K인</b> 것이 몇 개인지, 그리고 그중 <b>가장 작은 수</b>를 두 줄에 출력하라. 없으면 둘째 줄에 <code>-1</code>.</p>
+    <p>제약 — 1 ≤ L ≤ R ≤ 10<sup>6</sup>, 1 ≤ K ≤ 240</p>
+    <div class="sample"><div><span>INPUT</span><pre>1 100 2</pre></div><div><span>OUTPUT</span><pre>25
+2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">A4</span><div class="pb">
+    <p><b>지뢰밭</b> — N × M 격자에서 <code>*</code>는 지뢰, <code>.</code>는 빈칸이다. ⑴ 모든 빈칸의 <b>8방향 이웃 지뢰 수의 총합</b>과 ⑵ 각 행에서 <b>이웃에 지뢰가 하나도 없는 칸이 연속한 최대 길이</b>를 두 줄에 출력하라.</p>
+    <p>제약 — 1 ≤ N, M ≤ 1,000</p>
+    <div class="sample"><div><span>INPUT</span><pre>5 5
+*....
+.....
+.*...
+.....
+....*</pre></div><div><span>OUTPUT</span><pre>14
+3</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">A5</span><div class="pb">
+    <p><b>물건 정렬</b> — N개의 물건에 이름, 무게 W, 값 V가 주어진다. <b>무게 내림차순 → 값 오름차순 → 이름 사전순 → 입력 순</b>으로 정렬해 이름만 한 줄씩 출력하고, 마지막 줄에 <b>서로 다른 V의 개수</b>를 출력하라.</p>
+    <p>제약 — 1 ≤ N ≤ 10<sup>5</sup>, 1 ≤ W ≤ 1,000, |V| ≤ 2 × 10<sup>9</sup>, 이름은 알파벳 20자 이하</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+alpha 3 2000000000
+beta 3 -2000000000
+gamma 1 5
+delta 3 2000000000
+epsilon 2 5</pre></div><div><span>OUTPUT</span><pre>beta
+alpha
+delta
+epsilon
+gamma
+3</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">A6</span><div class="pb">
+    <p><b>구간 질의</b> — 길이 N인 수열, Q개의 질의, 그리고 K가 주어진다. 각 질의 (L, R)마다 <b>구간 합과 버림한 구간 평균</b>을 출력하고, 마지막 줄에 <b>연속한 K개의 합의 최댓값</b>을 출력하라.</p>
+    <p>제약 — 1 ≤ K ≤ N ≤ 10<sup>6</sup>, 1 ≤ Q ≤ 10<sup>5</sup>, 1 ≤ A[i] ≤ 10<sup>9</sup></p>
+    <div class="sample"><div><span>INPUT</span><pre>5 2 2
+1 5 3 2 4
+1 5
+2 4</pre></div><div><span>OUTPUT</span><pre>15 3
+10 3
+8</pre></div></div>
+  </div></div>
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 모의 세트 B</span>
+  <h2>모의고사 B (90분 · 6문항)</h2>
+
+  <div class="pset">
+  <div class="prob"><span class="pn">B1</span><div class="pb">
+    <p><b>케이스 번호</b> — 두 정수 A, B가 여러 줄에 걸쳐 주어진다. <code>0 0</code>이 나오면 입력이 끝나고 <b>그 줄은 처리하지 않는다</b>. <code>0 0</code>이 없으면 <b>입력의 끝(EOF)까지</b> 처리한다. 각 줄마다 <code>Case #번호: 합</code> 형식으로 출력하라.</p>
+    <p>제약 — 줄 수 ≤ 10<sup>5</sup>, |A|, |B| ≤ 2 × 10<sup>9</sup></p>
+    <div class="sample"><div><span>INPUT</span><pre>1 2
+10 20
+2000000000 2000000000
+0 0
+5 5</pre></div><div><span>OUTPUT</span><pre>Case #1: 3
+Case #2: 30
+Case #3: 4000000000</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">B2</span><div class="pb">
+    <p><b>수의 다섯 가지 얼굴</b> — T개의 케이스. 각 줄에 정수 N과 진법 B. <b>자릿수의 합, 자릿수의 개수, 역순 수, B진법 표기, 회문 여부</b>를 한 줄에 공백으로 구분해 출력하라. N이 음수면 <b>부호를 떼고</b> 처리한다.</p>
+    <p>제약 — 1 ≤ T ≤ 10<sup>5</sup>, |N| ≤ 10<sup>18</sup>, 2 ≤ B ≤ 36</p>
+    <div class="sample"><div><span>INPUT</span><pre>4
+0 2
+-123 16
+1221 2
+1000000003 10</pre></div><div><span>OUTPUT</span><pre>0 1 0 0 YES
+6 3 321 7B NO
+6 4 1221 10011000101 YES
+4 10 3000000001 1000000003 NO</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">B3</span><div class="pb">
+    <p><b>줄 분석</b> — 첫 줄에 T, 이후 T개의 줄(공백 포함 가능)이 주어진다. 각 줄마다 <b>길이, 단어 수, 최빈 알파벳(대문자, 동점이면 <code>?</code>, 알파벳이 없으면 <code>-</code>), 회문 여부(기호·대소문자 무시)</b>를 출력하라.</p>
+    <p>제약 — 1 ≤ T ≤ 100, 각 줄의 길이 ≤ 10<sup>5</sup></p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+banana
+Mississippi
+A man, a plan, a canal: Panama
+
+123 !</pre></div><div><span>OUTPUT</span><pre>6 1 A NO
+11 1 ? NO
+30 7 A YES
+0 0 - YES
+5 2 - YES</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">B4</span><div class="pb">
+    <p><b>작은 케이스 많이</b> — T개의 케이스. 각 케이스는 첫 줄에 n과 K, 다음 줄에 n개의 정수. 케이스마다 <b>서로 다른 값의 개수, 최빈값(동점이면 가장 작은 값), 서로 다른 두 수의 합이 K인지(YES/NO)</b>를 출력하라.</p>
+    <p>제약 — 1 ≤ T ≤ 10<sup>5</sup>, 1 ≤ n ≤ 10, |A[i]| ≤ 10<sup>6</sup>, |K| ≤ 2 × 10<sup>6</sup></p>
+    <div class="sample"><div><span>INPUT</span><pre>3
+5 10
+3 1 7 9 4
+3 0
+-5 -5 5
+1 10
+5</pre></div><div><span>OUTPUT</span><pre>5 1 YES
+2 -5 YES
+1 5 NO</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">B5</span><div class="pb">
+    <p><b>부분집합</b> — N개의 양의 정수에서 <b>하나 이상</b>을 골라 ⑴ 합이 정확히 S가 되는 경우의 수 ⑵ 합이 S 이하이면서 최대인 값을 두 줄에 출력하라. ⑵가 불가능하면 <code>-1</code>.</p>
+    <p>제약 — 1 ≤ N ≤ 30, 1 ≤ A[i] ≤ 10<sup>5</sup>, 1 ≤ S ≤ 10<sup>5</sup></p>
+    <div class="sample"><div><span>INPUT</span><pre>5 10
+1 2 3 4 5</pre></div><div><span>OUTPUT</span><pre>3
+10</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">B6</span><div class="pb">
+    <p><b>로봇 청소</b> — N × M 격자의 각 칸에 점수가 있다. 로봇이 (r, c)에서 방향 d(0=상, 1=우, 2=하, 3=좌)로 시작해 명령을 따른다. <code>F</code>는 전진(격자 밖이면 무시), <code>R</code>·<code>L</code>은 90도 회전이다. <b>지나간 서로 다른 칸의 개수, 그 칸들의 점수 합, 최종 상태 r c d</b>를 세 줄에 출력하라.</p>
+    <p>제약 — 1 ≤ N, M ≤ 1,000, 명령 길이 ≤ 10<sup>5</sup>, 0 ≤ 점수 ≤ 10<sup>6</sup></p>
+    <div class="sample"><div><span>INPUT</span><pre>3 3 0 0 1
+1 2 3
+4 5 6
+7 8 9
+FFRFFL</pre></div><div><span>OUTPUT</span><pre>5
+21
+2 2 1</pre></div></div>
+  </div></div>
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 해설</span>
+  <h2>모의고사 해설</h2>
+  <p>각 문항이 <strong>어느 장의 어느 함정</strong>을 묻는지 표시했다. 틀렸다면 그 장으로 돌아간다.</p>
+
+  <div class="ans"><span class="an">A1</span><div class="ab">
+    <b>묻는 것</b> — 04장(집계 네 뼈대·초기값), 02장(자료형), 01장(케이스별 초기화)<br>
+    <b>핵심 세 가지</b><br>
+    ① 합은 10<sup>5</sup> × 10<sup>9</sup> = <b>10<sup>14</sup></b>이므로 <code>long long</code>, 출력은 <code>%lld</code>.<br>
+    ② 최대·최소의 초기값은 <b><code>a[0]</code></b>. 0으로 두면 둘째 케이스(모두 음수)에서 최댓값이 0으로 나온다.<br>
+    ③ 평균 초과는 <b><code>(long long)a[i] * n &gt; sum</code></b>으로 정수 비교. 실수로 하면 경계에서 틀린다.<br>
+    <b>반례</b> — 둘째 케이스가 모두 음수, 셋째가 N = 1(평균 초과 개수가 0).<br>
+    <b>틀렸다면</b> → 4장 오류 1·4·6, 2장 오류 3·4.
+  </div></div>
+
+  <div class="ans"><span class="an">A2</span><div class="ab">
+    <b>묻는 것</b> — 03장(경계·실수 금지), 02장(오버플로)<br>
+    <b>핵심</b> — "W ÷ U ≥ 2.5"를 양변에 <code>2U</code>를 곱해 <b><code>2*W &gt;= 5*U</code></b>로 바꾼다. <code>U</code>가 10<sup>9</sup>이므로 <code>5*U</code>는 5 × 10<sup>9</sup>으로 <b><code>int</code>를 넘는다</b> → <code>long long</code>.<br>
+    기본료 체인은 <b>오름차순 <code>&lt;=</code></b>로 쓰면 조건이 하나씩만 필요하다. 마지막은 <code>else</code>로 닫는다.<br>
+    <b>경계 검증</b> — U=100 W=250은 정확히 2.5라 <b>할증</b>(1000 × 1.5 = 1500). U=100 W=249는 할증 없음. U=100/101/300/301이 기본료 경계.<br>
+    <b>틀렸다면</b> → 3장 오류 2·3·5·6, 2장 오류 3.
+  </div></div>
+
+  <div class="ans"><span class="an">A3</span><div class="ab">
+    <b>묻는 것</b> — 05장(약수), 02장(복잡도 판단)<br>
+    <b>핵심</b> — 각 수마다 √N 루프를 돌면 10<sup>6</sup> × 10<sup>3</sup> = <b>10<sup>9</sup></b>으로 측정상 <b>2.549초</b>, 시간 초과다.<br>
+    <b>5장 19번의 약수 개수 체</b>를 쓴다 — <code>for (i=1..R) for (j=i; j&lt;=R; j+=i) d[j]++;</code> 복잡도 O(R ln R) ≈ 1.4 × 10<sup>7</sup>, 측정 <b>0.030초</b>. <b>85배</b> 차이다.<br>
+    <b>검산</b> — L=1, R=100, K=2면 소수의 개수 <b>25</b>, 가장 작은 수 <b>2</b>. K=3이면 소수의 제곱(4, 9, 25, 49) <b>4개</b>. K=1이면 1뿐.<br>
+    <b>틀렸다면</b> → 5장 오류 1, 2장 오류 1·2. "약수 개수"를 보고 √N만 떠올렸다면 <b>5장 19번을 다시 읽는다</b>.
+  </div></div>
+
+  <div class="ans"><span class="an">A4</span><div class="ab">
+    <b>묻는 것</b> — 09장(델타·경계 검사), 04장(연속 길이 집계)<br>
+    <b>핵심 세 가지</b><br>
+    ① 8방향 델타 16개를 <b>검산</b>한다(합이 0 / 3×3을 덮는가).<br>
+    ② 경계 검사 한 줄을 모든 이웃 탐색에 붙인다. 안 붙이면 격자 밖에서 <b>0이 나와 조용히 틀린다</b>.<br>
+    ③ 연속 길이는 <code>run</code> 변수를 쓰되 <b>지뢰 칸에서도 끊어야</b> 한다.<br>
+    <b>반례</b> — 1×1(답 0, 1), 1×5 지뢰 없음(답 0, 5), 2×2 전부 지뢰(답 0, 0).<br>
+    <b>틀렸다면</b> → 9장 오류 1·2·3, 4장 오류 1.
+  </div></div>
+
+  <div class="ans"><span class="an">A5</span><div class="ab">
+    <b>묻는 것</b> — 11장(비교 함수·다중 기준·중복 제거)<br>
+    <b>핵심</b> — V가 ±2 × 10<sup>9</sup>이므로 <b>뺄셈 비교를 쓰면 정렬이 깨진다</b>. <code>(a&gt;b) - (a&lt;b)</code>를 쓰고, V는 <code>long long</code>으로 받는다.<br>
+    기준 네 개를 <b>표로 먼저 그린다</b> — 무게 내림 / 값 오름 / 이름 사전순 / 입력 순. 방향이 번갈아 나오므로 표 없이 쓰면 반드시 헷갈린다.<br>
+    서로 다른 V의 개수는 <b>복사본을 따로 정렬</b>해 구한다(원본을 날리면 안 된다).<br>
+    <b>검산</b> — 샘플에서 무게 3인 셋 중 beta(−2×10<sup>9</sup>)가 먼저, alpha·delta는 값이 같아 이름순. 서로 다른 V는 −2×10<sup>9</sup>, 5, 2×10<sup>9</sup>로 <b>3개</b>.<br>
+    <b>틀렸다면</b> → 11장 오류 1·3·5.
+  </div></div>
+
+  <div class="ans"><span class="an">A6</span><div class="ab">
+    <b>묻는 것</b> — 02장(누적합), 04장(버림 평균)<br>
+    <b>핵심</b> — 질의마다 더하면 Q × N = 10<sup>11</sup>로 불가능. <b>누적합</b>으로 질의당 O(1)이 된다.<br>
+    합의 최댓값이 10<sup>6</sup> × 10<sup>9</sup> = <b>10<sup>15</sup></b>이므로 <code>p</code>는 <code>long long</code>.<br>
+    연속 K개의 합도 같은 누적합으로 <code>p[i] - p[i-K]</code> 한 줄이다. 최댓값의 초기값은 <b><code>p[K]</code></b>(첫 구간).<br>
+    <b>측정</b> — N=K=10<sup>6</sup>, 전부 10<sup>9</sup>인 최악 입력에서 <b>0.104초</b>, 답은 10<sup>15</sup>.<br>
+    <b>틀렸다면</b> → 2장 도입, 4장 오류 4.
+  </div></div>
+
+  <div class="ans"><span class="an">B1</span><div class="ab">
+    <b>묻는 것</b> — 01장(입력 유형 ④의 변형), 02장(자료형)<br>
+    <b>핵심</b> — 종료 조건이 둘이다 — <code>0 0</code>이거나 <b>EOF</b>. <code>while (scanf("%lld %lld", &amp;a, &amp;b) == 2) { if (a==0 &amp;&amp; b==0) break; ... }</code>로 둘 다 처리된다.<br>
+    A + B가 4 × 10<sup>9</sup>까지 가므로 <b><code>long long</code></b>이고 출력은 <code>%lld</code>다.<br>
+    <b>반례</b> — <code>0 0</code> 뒤에 줄이 더 있어도 <b>처리하지 않는다</b>. <code>0 0</code>이 아예 없으면 EOF까지.<br>
+    <b>틀렸다면</b> → 1장 오류 1, 2장 오류 3·4.
+  </div></div>
+
+  <div class="ans"><span class="an">B2</span><div class="ab">
+    <b>묻는 것</b> — 06장 전부<br>
+    <b>핵심 네 가지</b><br>
+    ① <b>N = 0</b> — 자릿수 개수가 1, B진법 표기가 <code>"0"</code>이어야 한다. <code>while (n)</code>이 안 돌기 때문에 둘 다 따로 처리한다.<br>
+    ② <b>음수</b> — 부호를 먼저 뗀다. <code>long long</code>으로 받아야 <code>n = -n</code>이 안전하다.<br>
+    ③ <b>역순 수</b> — <code>1000000003</code> → <code>3000000001</code>로 <code>int</code>를 넘는다.<br>
+    ④ <b>B ≥ 11</b> — 10 이상의 자릿수를 <code>'A' + d - 10</code>으로. <code>-123</code>의 16진법은 <b><code>7B</code></b>다.<br>
+    버퍼는 80칸(10<sup>18</sup>의 2진법이 60자리).<br>
+    <b>틀렸다면</b> → 6장 오류 1·2·3·4·5.
+  </div></div>
+
+  <div class="ans"><span class="an">B3</span><div class="ab">
+    <b>묻는 것</b> — 08장 전부<br>
+    <b>핵심 네 가지</b><br>
+    ① <code>scanf("%d", &amp;T)</code> 뒤에 <b>남은 개행을 비운다</b>. 안 그러면 첫 줄이 빈 줄로 읽혀 전부 어긋난다.<br>
+    ② <code>fgets</code>로 읽고 <b>개행을 제거</b>한다. 배열은 10<sup>5</sup> + 2.<br>
+    ③ 단어 수는 <code>in</code> 상태 변수로. 앞뒤·연속 공백이 있어도 맞아야 한다.<br>
+    ④ 최빈 알파벳의 <b>동점 처리</b>와 <code>mx &gt; 0</code> 검사. 샘플의 <code>Mississippi</code>가 동점(<code>i</code>와 <code>s</code>가 4번씩)이고, <code>123 !</code>은 알파벳이 없어 <code>-</code>다.<br>
+    <b>틀렸다면</b> → 8장 오류 1·2·3.
+  </div></div>
+
+  <div class="ans"><span class="an">B4</span><div class="ab">
+    <b>묻는 것</b> — 07장(카운팅 배열·초기화 비용), 02장(T × V)<br>
+    <b>핵심</b> — 값이 −10<sup>6</sup>~10<sup>6</sup>이므로 오프셋 10<sup>6</sup>, 배열 크기 <b>2,000,001</b>(<code>+1</code>을 빠뜨리면 양 끝에서 터진다).<br>
+    <b>케이스마다 <code>memset</code>하면 T × V = 10<sup>5</sup> × 2 × 10<sup>6</sup> = 2 × 10<sup>11</sup></b>로 확실한 시간 초과다. n ≤ 10이므로 <b>쓴 자리만 되돌린다</b> — 측정 <b>0.233초</b>.<br>
+    두 수의 합은 n ≤ 10이라 이중 루프(최대 45쌍)로 충분하다. "서로 다른 두 개"이므로 <code>j = i+1</code>부터.<br>
+    <b>반례</b> — n = 1(합 불가), 모두 같은 값, K가 범위 밖.<br>
+    <b>틀렸다면</b> → 7장 오류 3·4·5, 2장 오류 2.
+  </div></div>
+
+  <div class="ans"><span class="an">B5</span><div class="ab">
+    <b>묻는 것</b> — 10장(완전탐색·가지치기)<br>
+    <b>핵심</b> — N = 30이면 2<sup>30</sup>으로 <b>측정 5.772초</b>, 시간 초과다. 값이 모두 양수이므로 <b><code>if (s &gt; S) return;</code></b>이 유효하고, 같은 입력에서 <b>0.002초</b>가 된다.<br>
+    "하나 이상"이라는 조건 때문에 <b>고른 개수를 같이 들고 다닌다</b>. 빈 집합을 세면 S = 0일 때만 틀리지만, ⑵에서는 <b>항상</b> 틀린다(아무것도 안 고르면 합이 0).<br>
+    <b>검산</b> — N=30, S=20, 값 1..30에서 답이 <b>64</b>이고, 가지치기 유무에 관계없이 같다. 호출 수는 21억 → <b>15,303</b>.<br>
+    <b>틀렸다면</b> → 10장 오류 3·6, 2장 오류 1.
+  </div></div>
+
+  <div class="ans"><span class="an">B6</span><div class="ab">
+    <b>묻는 것</b> — 09장(델타·회전·경계), 07장(방문 배열)<br>
+    <b>핵심 네 가지</b><br>
+    ① 방향이 <b>0=상, 1=우, 2=하, 3=좌</b>로 시계 방향이므로 본문의 델타를 그대로 쓴다.<br>
+    ② 왼쪽 회전은 <b><code>(d+3)%4</code></b>. <code>(d-1)%4</code>로 쓰면 <code>d=0</code>에서 −1이 되어 격자 밖을 읽는다.<br>
+    ③ 전진을 "무시"해야 하므로 <b>패딩을 쓸 수 없다</b> — 밖인지 <b>알아야</b> 하기 때문이다.<br>
+    ④ 지나간 칸은 <b>방문 배열</b>로 중복을 거른다(7장의 체크 배열이 2차원으로). 점수 합도 <b>처음 방문할 때만</b> 더한다.<br>
+    <b>검산</b> — 3×3에서 (0,0),(0,1),(0,2),(1,2),(2,2) 다섯 칸, 합 1+2+3+6+9 = <b>21</b>, 최종 <b>2 2 1</b>. 1×1이면 1칸·시작 점수·방향 유지. 회전 명령만 있으면 1칸.<br>
+    <b>틀렸다면</b> → 9장 오류 1·4, 7장 오류 1.
+  </div></div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">07 — 자가 진단</span>
+  <h2>채점과 다음 단계</h2>
+
+  <table>
+    <thead><tr><th style="width:18%">점수</th><th style="width:30%">판정</th><th>다음에 할 일</th></tr></thead>
+    <tbody>
+      <tr><td><strong>11~12</strong></td><td>브론즈 완성</td><td><strong>PART 3(실버)으로 진급.</strong> 90분에 여유가 있었다면 더 그렇다</td></tr>
+      <tr><td><strong>9~10</strong></td><td>거의 완성</td><td>틀린 문항의 <strong>해당 장만</strong> 다시 보고 그 장의 연습 20문항을 재점검</td></tr>
+      <tr><td><strong>6~8</strong></td><td>도구는 있으나 점검이 부족</td><td><strong>제출 전 2분 점검</strong>을 몸에 붙인다. 오답 지도에서 자신의 묶음을 찾는다</td></tr>
+      <tr><td><strong>3~5</strong></td><td>도구가 손에 안 붙었다</td><td>각 장의 <strong>표준 코드를 손으로 베껴 쓴다</strong>. 특히 2·4·7·9·11장</td></tr>
+      <tr><td><strong>0~2</strong></td><td>처음부터</td><td>1장부터 다시. 단, <strong>연습 문제를 먼저 풀고</strong> 막힐 때 본문을 본다</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note warn">
+    <span class="h">점수보다 중요한 것 — 틀린 이유의 분포</span>
+    틀린 문항마다 <b>오답 지도의 번호</b>를 적어 본다. 그리고 02절의 <b>네 묶음</b> 중 어디에 몰려 있는지 센다.<br>
+    <b>① 자료형과 범위에 몰려 있다면</b> — 코드를 쓰기 전에 <b>최악의 값을 종이에 계산</b>하는 절차가 빠진 것이다. 1장 체크리스트 5번.<br>
+    <b>② 초기값과 경계에 몰려 있다면</b> — <b>반례 목록을 먼저 적는</b> 습관이 없는 것이다. 각 장의 "표준 반례"를 외운다.<br>
+    <b>③ 형식과 순서에 몰려 있다면</b> — <b><code>diff</code>로 예시를 비교</b>하지 않은 것이다. 1장으로 돌아간다.<br>
+    <b>④ 복잡도 판단에 몰려 있다면</b> — <b>2장의 표를 외우지 않은</b> 것이다. 여섯 줄짜리 표다.<br>
+    여섯 문제를 틀렸는데 원인이 전부 다르면 고칠 것이 여섯 개지만, <b>한 묶음에 몰려 있으면 고칠 것은 하나</b>다. 대개 후자다.
+  </div>
+
+  <h3><span class="tag">7.1</span>PART 3에서 만나는 것</h3>
+  <table>
+    <thead><tr><th style="width:26%">PART 2에서 미뤄 둔 것</th><th style="width:24%">PART 3의 주제</th><th>연결되는 장</th></tr></thead>
+    <tbody>
+      <tr><td>값의 범위가 커서 못 쓴 체크 배열</td><td>좌표 압축의 본격 활용</td><td>07 · 11</td></tr>
+      <tr><td>N이 커서 못 쓴 완전탐색</td><td><strong>동적 계획법</strong>(배낭·LIS)</td><td>10</td></tr>
+      <tr><td>가지치기로도 안 되는 탐색</td><td><strong>BFS · DFS</strong>와 그래프</td><td>09 · 10</td></tr>
+      <tr><td>정렬 기준이 답을 만든 문제</td><td><strong>그리디</strong>와 교환 논법</td><td>11</td></tr>
+      <tr><td>구간 질의가 많은 문제</td><td>세그먼트 트리의 입구</td><td>02 · 09</td></tr>
+      <tr><td>문자열 찾기 O(|S| × |P|)</td><td>KMP와 해싱</td><td>08</td></tr>
+      <tr><td>비트마스크를 인덱스로 쓰기</td><td>비트마스크 DP</td><td>10</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <span class="h">PART 2가 PART 3의 전제다</span>
+    실버 이상의 문제도 <b>입출력 형식·자료형·초기값·경계</b>에서 틀린다. 알고리즘이 어려워질수록 이 네 가지가 <b>더</b> 중요해진다 — 코드가 길어져서 실수할 자리가 늘기 때문이다.<br>
+    <b>이 장의 점검표는 PART 3에서도 그대로 쓴다.</b> 버리지 않는다.
+  </div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>PART 2를 마치며</h2>
+  <ul class="check">
+    <li>문제를 받으면 <strong>명세 → 제약 → 조건</strong> 순으로 읽는다</li>
+    <li>코드를 쓰기 전에 <strong>체크리스트 일곱 줄</strong>을 종이에 적는다</li>
+    <li>제약을 <strong>곱해서</strong> 복잡도를 계산한다</li>
+    <li>답의 최댓값이 <strong>10자리를 넘으면</strong> <code>long long</code></li>
+    <li>최대·최소의 초기값은 <strong><code>a[0]</code></strong></li>
+    <li>경계·반례를 <strong>먼저 적고</strong> 코드를 쓴다</li>
+    <li>예시 입출력을 <strong><code>diff</code>로</strong> 비교한다</li>
+    <li><strong>최악의 입력을 직접 만들어</strong> 시간을 잰다</li>
+    <li>제출 전 <strong>2분 점검 열두 줄</strong>을 읽는다</li>
+    <li>틀리면 <strong>오답 지도에서 번호를 찾아</strong> 공책에 적는다</li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">PART 2의 한 줄</span>
+    열두 장에서 반복된 말은 하나였다 — <strong>"출력이 나왔다는 것은 아무것도 보장하지 않는다."</strong><br>
+    1장의 T 오독, 3장의 윤년 순서, 4장의 초기값 0, 5장의 제곱수, 6장의 <code>n = 0</code>, 7장의 배열 밖, 9장의 격자 밖, 11장의 뺄셈 비교 — 전부 <strong>프로그램이 멀쩡히 끝나고 그럴듯한 답을 내는</strong> 오류였다. 그래서 PART 2는 도구를 늘리는 책인 동시에 <strong>검산 도구를 늘리는 책</strong>이었다.<br>
+    PART 3에서 다루는 알고리즘은 훨씬 강력하지만, 그것을 <strong>맞게</strong> 쓰는 힘은 여기서 만들어진다.
+  </div>
+  <div class="note warn" style="margin-top:14px">
+    <span class="h">다음 — PART 3 실버급 알고리즘</span>
+    자료구조(스택·큐·덱), 그래프 탐색(BFS·DFS), 동적 계획법, 그리디, 이분 탐색의 응용, 그리고 실전 모의. PART 2의 열한 개 도구 위에 <strong>알고리즘이라는 이름이 붙은 도구</strong>들이 올라간다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 2 · 12장 (완) · 2026-10-13 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+</div></body></html>

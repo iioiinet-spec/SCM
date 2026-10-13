@@ -1,0 +1,1026 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 2 · 10장 완전탐색 입문 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#9a5f1a;
+  --accent-soft:#f7ecdb;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#e8b670}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style></head><body><div class="sheet"><header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 2 · 브론즈급 해결 스킬 — 10 / 12</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">10</span>
+    <h1>완전탐색 입문</h1>
+  </div>
+  <p class="lede">2장에서 "N ≤ 20이면 O(2<sup>N</sup>), N ≤ 10이면 O(N!)"이라고 <strong>판정</strong>만 했다. 이 장은 그 <strong>허락</strong>을 실제로 쓰는 법을 다룬다. 그리고 허락 범위를 넘어선 N에서도, <strong>한 줄만 넣으면</strong> 돌아가는 경우가 있다는 것을 본다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li>완전탐색의 두 모양(<strong>부분집합 2<sup>N</sup></strong> / <strong>순열 N!</strong>)을 구분할 수 있다</li>
+    <li>모든 부분집합을 <strong>재귀와 비트마스크</strong> 두 가지로 만들 수 있다</li>
+    <li>모든 순열을 <code>used</code> 배열과 <strong>되돌리기</strong>로 만들 수 있다</li>
+    <li>조합에서 <strong>중복을 피하는</strong> 두 가지 기법을 쓸 수 있다</li>
+    <li><strong>가지치기</strong> 한 줄로 탐색을 수만 배 줄일 수 있다</li>
+    <li>되돌리기를 빠뜨리면 생기는 증상을 알아볼 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 측정 · 두 모양 · 부분집합(재귀·비트)</div>
+  <div><b>2차시</b>순열 · 조합 · 중복 처리 · 가지치기</div>
+  <div><b>3차시</b>표준 코드 · 단계 예제 · 흔한 오류 6종 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>한 줄이 14만 배</h2>
+
+  <div class="io">
+    <div><div class="lbl">문제</div><pre>N개의 수에서 일부를 골라
+합이 S가 되게 하는 경우의 수는?
+
+제약
+1 ≤ N ≤ 30
+1 ≤ A[i] ≤ 100,000
+1 ≤ S ≤ 100,000
+시간 제한 1초</pre></div>
+    <div><div class="lbl">완전탐색 — 넣거나 안 넣거나</div><pre>void rec(int i, int s) {
+    if (i == n) {
+        if (s == S) cnt++;
+        return;
+    }
+    rec(i+1, s);          /* 안 넣는다 */
+    rec(i+1, s + a[i]);   /* 넣는다 */
+}</pre></div>
+  </div>
+
+  <p>2장의 표로 보면 N ≤ 20이면 통과, N = 30이면 2<sup>30</sup> ≈ 10억으로 <strong>불가능</strong>이다. 실제로 재 보면 그렇다.</p>
+
+  <table>
+    <thead><tr><th style="width:12%">N</th><th style="width:24%">호출 수</th><th style="width:18%">시간</th><th style="width:24%">가지치기 후 호출 수</th><th>시간</th></tr></thead>
+    <tbody>
+      <tr><td>20</td><td>2,097,151</td><td>0.005초</td><td>7,883</td><td>0.0000초</td></tr>
+      <tr><td>24</td><td>33,554,431</td><td>0.086초</td><td>10,851</td><td>0.0000초</td></tr>
+      <tr><td>28</td><td>536,870,911</td><td>1.324초</td><td>13,819</td><td>0.0000초</td></tr>
+      <tr><td><strong>30</strong></td><td><strong>2,147,483,647</strong></td><td><strong>5.213초</strong></td><td><strong>15,303</strong></td><td><strong>0.0000초</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="io">
+    <div><div class="lbl">추가한 것은 이 한 줄</div><pre>void rec(int i, int s) {
+    if (s &gt; S) return;      /* ← 이것뿐 */
+    if (i == n) { ... }
+    rec(i+1, s);
+    rec(i+1, s + a[i]);
+}</pre></div>
+    <div><div class="lbl">결과</div><pre>N=30에서
+  호출 21억 → 15,303
+  시간 5.213초 → 0.0000초
+
+  140,331배
+
+그리고 답은 똑같다 (64가지).</pre></div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">왜 그렇게 줄어드는가</span>
+    합이 이미 S를 넘었다면 <b>뒤에 무엇을 더 넣어도 S가 될 수 없다</b>(값이 모두 양수이므로). 그 아래 가지 전체가 <b>볼 필요 없는 가지</b>다. 하나를 잘라 내면 그 밑에 달린 수천·수만 개가 통째로 사라진다.<br>
+    이것을 <b>가지치기</b>라고 한다. 완전탐색은 "모든 경우를 다 해 보는 것"이지만, <b>해 보지 않아도 아는 경우를 빼는 것</b>까지가 한 세트다.
+  </div>
+
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> 모든 부분집합·순열·조합을 어떻게 빠짐없이 만드는가?<br>
+    <b>②</b> 같은 경우를 두 번 세지 않으려면?<br>
+    <b>③</b> 어떤 조건이면 가지를 잘라도 되는가?
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">10.1</span>완전탐색의 두 모양</h3>
+  <table>
+    <thead><tr><th style="width:18%">모양</th><th style="width:20%">가짓수</th><th style="width:22%">허용 N (2장)</th><th>문제의 신호</th></tr></thead>
+    <tbody>
+      <tr><td><strong>부분집합</strong></td><td>2<sup>N</sup></td><td>N ≤ 20</td><td>"일부를 고른다", "뽑는다", "켜거나 끈다"</td></tr>
+      <tr><td><strong>순열</strong></td><td>N!</td><td>N ≤ 10</td><td>"순서를 정한다", "줄을 세운다", "방문 순서"</td></tr>
+      <tr><td><strong>조합</strong></td><td>C(N, M)</td><td>경우 수를 계산</td><td>"M개를 고른다" (순서 무관)</td></tr>
+      <tr><td><strong>중복 순열</strong></td><td>M<sup>N</sup></td><td>M<sup>N</sup> ≤ 10<sup>8</sup></td><td>"각 칸에 M가지 중 하나"</td></tr>
+    </tbody>
+  </table>
+  <p>측정값 — 순열은 N=10에서 362만 가지에 <strong>0.10초</strong>, N=11에서 3,992만 가지에 <strong>1.27초</strong>다. 2장에서 계산한 "N ≤ 10"이라는 기준이 그대로 확인된다.</p>
+  <div class="note">
+    <span class="h">먼저 가짓수를 센다</span>
+    코드를 쓰기 전에 <b>"몇 가지가 나오는가"</b>를 계산한다. 2<sup>N</sup>인가 N!인가 C(N,M)인가. 그 수가 2장의 표에서 통과 구간에 있으면 완전탐색을 쓰고, 아니면 <b>가지치기로 줄일 수 있는지</b> 본다. 그래도 안 되면 다른 알고리즘이다(PART 3).
+  </div>
+
+  <h3><span class="tag">10.2</span>부분집합 ① 재귀 — 넣거나 안 넣거나</h3>
+  <div class="code">
+    <div class="codehead"><span>부분집합 재귀</span><span>가장 중요한 뼈대</span></div>
+<pre class="c"><span class="kw">void</span> <span class="fn">rec</span>(<span class="kw">int</span> i, <span class="kw">int</span> s) {
+    <span class="kw">if</span> (i == n) {              <span class="cm">/* 바닥: 모든 원소를 결정했다 */</span>
+        <span class="cm">/* s 로 할 일 */</span>
+        <span class="kw">return</span>;
+    }
+    <span class="fn">rec</span>(i + <span class="nm">1</span>, s);             <span class="cm">/* i번째를 안 넣는다 */</span>
+    <span class="fn">rec</span>(i + <span class="nm">1</span>, s + a[i]);      <span class="cm">/* i번째를 넣는다 */</span>
+}</pre>
+  </div>
+  <div class="io">
+    <div><div class="lbl">호출 구조 (N=3)</div><pre>            rec(0)
+          /        \
+      rec(1)        rec(1)
+      /   \         /   \
+   rec(2) rec(2) rec(2) rec(2)
+    / \    / \    / \    / \
+   8개의 잎 = 2^3</pre></div>
+    <div><div class="lbl">호출 수</div><pre>잎 = 2^N
+전체 호출 = 2^(N+1) - 1
+
+N=20 → 2,097,151
+N=24 → 33,554,431
+N=30 → 2,147,483,647</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">합을 <strong>인자로 들고 다닌다</strong></span>
+    <code>s + a[i]</code>를 인자로 넘기면 <b>합을 매번 다시 계산할 필요가 없다</b>. 이것이 다음 절의 비트마스크보다 빠른 이유다. 재귀의 인자는 <b>"여기까지 결정한 상태"</b>를 담는 자리다.
+  </div>
+
+  <h3><span class="tag">10.3</span>부분집합 ② 비트마스크</h3>
+  <p>N개의 원소를 "넣음/안 넣음"으로 표시하면 <strong>N자리 2진수</strong>가 된다. 0부터 2<sup>N</sup>−1까지 세면 모든 부분집합이 한 번씩 나온다.</p>
+  <div class="io">
+    <div><div class="lbl">N=4일 때</div><pre>mask  2진   집합
+  0  0000   {}
+  5  0101   {0, 2}
+ 10  1010   {1, 3}
+ 15  1111   {0,1,2,3}</pre></div>
+    <div><div class="lbl">코드</div><pre>for (int mask = 0; mask &lt; (1 &lt;&lt; n); mask++) {
+    int s = 0;
+    for (int i = 0; i &lt; n; i++)
+        if (mask &amp; (1 &lt;&lt; i))
+            s += a[i];
+    /* s 로 할 일 */
+}</pre></div>
+  </div>
+  <table>
+    <thead><tr><th style="width:26%">식</th><th style="width:30%">뜻</th><th>예 (mask = 10, 2진 1010)</th></tr></thead>
+    <tbody>
+      <tr><td><code>1 &lt;&lt; i</code></td><td>i번 비트만 켜진 수</td><td><code>1&lt;&lt;0</code>=1, <code>1&lt;&lt;3</code>=8</td></tr>
+      <tr><td><code>(mask &gt;&gt; i) &amp; 1</code></td><td>i번이 켜져 있나</td><td>i=1 → 1, i=2 → 0</td></tr>
+      <tr><td><code>mask | (1 &lt;&lt; i)</code></td><td>i번을 켠다</td><td>i=0 → 11</td></tr>
+      <tr><td><code>mask &amp; ~(1 &lt;&lt; i)</code></td><td>i번을 끈다</td><td>i=1 → 8</td></tr>
+      <tr><td><code>1 &lt;&lt; n</code></td><td>부분집합의 개수</td><td>n=4 → 16</td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">비트마스크가 더 빠를 거라는 오해</span>
+    같은 문제(합이 S인 부분집합 세기)를 두 방법으로 측정했다.
+    <table style="margin-top:6px">
+      <thead><tr><th style="width:16%">N</th><th style="width:28%">재귀</th><th style="width:28%">비트마스크</th><th>비율</th></tr></thead>
+      <tbody>
+        <tr><td>20</td><td>0.005초</td><td>0.074초</td><td>14.8배</td></tr>
+        <tr><td>22</td><td>0.020초</td><td>0.311초</td><td>15.6배</td></tr>
+        <tr><td>24</td><td><b>0.087초</b></td><td><b>1.270초</b></td><td><b>14.6배</b></td></tr>
+      </tbody>
+    </table>
+    <b>재귀가 훨씬 빠르다.</b> 비트마스크는 mask마다 안쪽 루프를 N번 돌아 합을 <b>처음부터 다시 계산</b>하므로 O(N · 2<sup>N</sup>)이고, 재귀는 합을 들고 다니므로 O(2<sup>N</sup>)이다.<br>
+    <b>그럼 비트마스크는 언제 쓰나</b> — 코드가 짧고 재귀 없이 쓸 수 있으며, <b>가지치기가 불가능한 경우</b>(부분집합마다 독립적인 계산)에 편하다. 그리고 <b>mask 자체를 다른 자료의 인덱스로</b> 쓸 수 있다(PART 3의 비트마스크 DP).
+  </div>
+
+  <h3><span class="tag">10.4</span>순열 — <code>used</code>와 되돌리기</h3>
+  <div class="code">
+    <div class="codehead"><span>순열 생성</span><span>N! 가지</span></div>
+<pre class="c"><span class="kw">int</span> used[<span class="nm">12</span>], pick[<span class="nm">12</span>];
+
+<span class="kw">void</span> <span class="fn">perm</span>(<span class="kw">int</span> d) {
+    <span class="kw">if</span> (d == n) { <span class="cm">/* pick[0..n-1]이 완성된 순열 */</span> <span class="kw">return</span>; }
+
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+        <span class="kw">if</span> (used[i]) <span class="kw">continue</span>;      <span class="cm">/* 이미 쓴 원소는 건너뛴다 */</span>
+        used[i] = <span class="nm">1</span>;
+        pick[d] = a[i];
+        <span class="fn">perm</span>(d + <span class="nm">1</span>);
+        used[i] = <span class="nm">0</span>;              <span class="cm">/* ← 되돌리기 */</span>
+    }
+}</pre>
+  </div>
+  <div class="io">
+    <div><div class="lbl">N=3의 출력</div><pre>(123) (132) (213)
+(231) (312) (321)
+
+작은 인덱스부터 보므로
+사전 순으로 나온다.</pre></div>
+    <div><div class="lbl">되돌리기를 빠뜨리면</div><pre>(123)
+
+→ 한 가지만 나온다.
+
+한 번 쓴 원소가 영원히
+"쓴 것"으로 남기 때문이다.</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">되돌리기는 "다음 형제를 위한 것"이다</span>
+    <code>perm(d+1)</code>이 끝나고 돌아오면, <b>같은 자리에 다른 원소를 넣어 봐야</b> 한다. 그러려면 방금 쓴 원소를 <b>다시 쓸 수 있게</b> 돌려놓아야 한다.<br>
+    <b>규칙</b> — <b>바꾼 것은 반드시 되돌린다.</b> <code>used[i] = 1</code>과 <code>used[i] = 0</code>은 <b>항상 짝</b>으로 쓴다. 재귀 호출을 사이에 두고 위아래로.
+  </div>
+
+  <h3><span class="tag">10.5</span>조합 — 시작 인덱스로 중복을 막는다</h3>
+  <p>조합은 <strong>순서를 따지지 않는다</strong>. {1,2}와 {2,1}은 같은 것이다. 순열처럼 짜면 같은 조합이 여러 번 나온다. 해법은 <strong>"항상 뒤쪽에서만 고른다"</strong>는 규칙이다.</p>
+  <div class="code">
+    <div class="codehead"><span>조합 생성</span><span>N개 중 M개</span></div>
+<pre class="c"><span class="kw">void</span> <span class="fn">comb</span>(<span class="kw">int</span> start, <span class="kw">int</span> d) {
+    <span class="kw">if</span> (d == m) { <span class="cm">/* pick[0..m-1]이 완성된 조합 */</span> <span class="kw">return</span>; }
+
+    <span class="kw">for</span> (<span class="kw">int</span> i = start; i &lt; n; i++) {   <span class="cm">/* start 부터! */</span>
+        pick[d] = a[i];
+        <span class="fn">comb</span>(i + <span class="nm">1</span>, d + <span class="nm">1</span>);            <span class="cm">/* 자기 다음부터 */</span>
+    }
+}</pre>
+  </div>
+  <table>
+    <thead><tr><th style="width:24%">C(n, m)</th><th style="width:24%">측정 개수</th><th style="width:22%">공식값</th><th>시간</th></tr></thead>
+    <tbody>
+      <tr><td>C(10, 3)</td><td>120</td><td>120</td><td>0.0000초</td></tr>
+      <tr><td>C(20, 5)</td><td>15,504</td><td>15,504</td><td>0.0001초</td></tr>
+      <tr><td>C(20, 10)</td><td>184,756</td><td>184,756</td><td>0.0016초</td></tr>
+      <tr><td>C(24, 12)</td><td>2,704,156</td><td>2,704,156</td><td>0.0298초</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <span class="h"><code>used</code> 배열이 필요 없다</span>
+    <code>start</code>부터만 고르므로 <b>이미 고른 원소를 다시 고를 수 없다</b>. 되돌릴 것도 없다. 조합이 순열보다 코드가 짧은 이유다.<br>
+    <b>부분집합도 조합의 합이다</b> — C(n,0) + C(n,1) + … + C(n,n) = 2<sup>n</sup>. 그래서 <code>m</code>을 0부터 n까지 바꿔 가며 <code>comb</code>을 부르면 모든 부분집합이 나온다.
+  </div>
+
+  <h3><span class="tag">10.6</span>중복 원소가 있을 때</h3>
+  <p>입력에 같은 값이 섞여 있으면 <strong>같은 결과가 여러 번</strong> 나온다. {1, 1, 2}에서 2개를 고르면,</p>
+  <div class="io">
+    <div><div class="lbl">그냥 하면</div><pre>(11) (12) (12)
+            ↑
+     같은 조합이 두 번
+
+첫 번째 1과 짝지은 2,
+두 번째 1과 짝지은 2</pre></div>
+    <div><div class="lbl">정렬한 뒤 한 줄 추가</div><pre>for (int i = start; i &lt; n; i++) {
+    if (i &gt; start &amp;&amp; b[i] == b[i-1])
+        continue;      /* ← 추가 */
+    ...
+}
+
+→ (11) (12)</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">두 가지가 모두 필요하다</span>
+    <b>① 정렬</b> — 같은 값이 <b>붙어 있어야</b> <code>b[i] == b[i-1]</code>로 판별할 수 있다.<br>
+    <b>② <code>i &gt; start</code> 조건</b> — 이 자리의 <b>첫 번째</b> 후보는 써야 한다. 조건이 없으면 같은 값을 아예 한 번도 못 쓴다.<br>
+    읽는 법은 <b>"이 자리에서 같은 값은 한 번만"</b>이다. 중복 원소 처리가 필요한지는 <b>제약에 "서로 다른"이라는 말이 있는지</b>로 판단한다.
+  </div>
+
+  <h3><span class="tag">10.7</span>가지치기 — 이 장의 핵심</h3>
+  <p>도입에서 본 한 줄이다. 조건을 일반화하면 이렇다.</p>
+  <table>
+    <thead><tr><th style="width:26%">가지치기의 종류</th><th style="width:34%">조건</th><th>예</th></tr></thead>
+    <tbody>
+      <tr><td><strong>불가능</strong></td><td>지금 상태로는 답이 될 수 없다</td><td><code>if (s &gt; S) return;</code> (값이 모두 양수)</td></tr>
+      <tr><td><strong>이미 졌다</strong></td><td>최선을 다해도 현재 답보다 나쁘다</td><td><code>if (cost &gt;= best) return;</code></td></tr>
+      <tr><td><strong>중복</strong></td><td>같은 경우를 이미 봤다</td><td>10.6절의 <code>b[i] == b[i-1]</code></td></tr>
+      <tr><td><strong>대칭</strong></td><td>좌우·회전이 같은 경우</td><td>첫 선택을 절반으로 제한</td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">가지치기가 틀리면 답이 바뀐다</span>
+    <code>if (s &gt; S) return;</code>은 <b>값이 모두 양수일 때만</b> 옳다. 음수가 섞여 있으면 합이 S를 넘었다가 다시 내려올 수 있으므로 <b>정답을 잘라 버린다</b>.<br>
+    <b>검증 방법</b> — 가지치기 없는 판과 있는 판을 모두 만들어 <b>작은 N에서 답이 같은지</b> 비교한다. 도입의 측정에서도 양쪽 답이 <b>64가지</b>로 같음을 확인했다. 3장·6장에서 쓴 "두 판 비교"가 여기서도 검증 도구다.
+  </div>
+  <div class="note">
+    <span class="h">얼마나 줄어드는지는 입력에 달려 있다</span>
+    도입의 측정은 S = 20이고 값이 1..30이라 <b>대부분의 가지가 금방 S를 넘는다</b>. S가 매우 크면(전체 합에 가까우면) 가지치기가 거의 효과가 없다.<br>
+    <b>그래서 가지치기는 "최악의 경우 복잡도를 줄이지 못한다"</b>. 2장의 표로는 여전히 O(2<sup>N</sup>)이다. 그런데도 실전에서 통과시키는 일이 많다 — <b>이론과 실측을 둘 다 봐야 하는</b> 대표적인 자리다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드</h2>
+
+  <div class="code">
+    <div class="codehead"><span>subsum.c</span><span>부분집합의 합 — 가지치기 포함</span></div>
+<pre class="c"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> n, S, a[<span class="nm">31</span>];
+<span class="kw">long</span> <span class="kw">long</span> cnt;
+
+<span class="kw">void</span> <span class="fn">rec</span>(<span class="kw">int</span> i, <span class="kw">int</span> s) {
+    <span class="kw">if</span> (s &gt; S) <span class="kw">return</span>;                  <span class="cm">/* 가지치기 (값이 모두 양수일 때) */</span>
+    <span class="kw">if</span> (i == n) { <span class="kw">if</span> (s == S) cnt++; <span class="kw">return</span>; }
+    <span class="fn">rec</span>(i + <span class="nm">1</span>, s);
+    <span class="fn">rec</span>(i + <span class="nm">1</span>, s + a[i]);
+}
+
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+    <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d %d"</span>, &amp;n, &amp;S) != <span class="nm">2</span>) <span class="kw">return</span> <span class="nm">1</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++)
+        <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d"</span>, &amp;a[i]) != <span class="nm">1</span>) <span class="kw">return</span> <span class="nm">1</span>;
+    <span class="fn">rec</span>(<span class="nm">0</span>, <span class="nm">0</span>);
+    <span class="fn">printf</span>(<span class="st">"%lld\n"</span>, cnt);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+  </div>
+
+  <div class="code">
+    <div class="codehead"><span>perm.c</span><span>모든 순열 — 되돌리기를 짝으로</span></div>
+<pre class="c"><span class="kw">int</span> n, a[<span class="nm">11</span>], used[<span class="nm">11</span>], pick[<span class="nm">11</span>];
+
+<span class="kw">void</span> <span class="fn">perm</span>(<span class="kw">int</span> d) {
+    <span class="kw">if</span> (d == n) {
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+            <span class="kw">if</span> (i) <span class="fn">putchar</span>(<span class="st">' '</span>);
+            <span class="fn">printf</span>(<span class="st">"%d"</span>, pick[i]);
+        }
+        <span class="fn">putchar</span>(<span class="st">'\n'</span>);
+        <span class="kw">return</span>;
+    }
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+        <span class="kw">if</span> (used[i]) <span class="kw">continue</span>;
+        used[i] = <span class="nm">1</span>; pick[d] = a[i];
+        <span class="fn">perm</span>(d + <span class="nm">1</span>);
+        used[i] = <span class="nm">0</span>;
+    }
+}</pre>
+  </div>
+
+  <div class="code">
+    <div class="codehead"><span>comb.c</span><span>N개 중 M개 — 중복 원소 대응판</span></div>
+<pre class="c"><span class="kw">int</span> n, m, a[<span class="nm">25</span>], pick[<span class="nm">25</span>];
+
+<span class="kw">void</span> <span class="fn">comb</span>(<span class="kw">int</span> start, <span class="kw">int</span> d) {
+    <span class="kw">if</span> (d == m) {
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; m; i++) {
+            <span class="kw">if</span> (i) <span class="fn">putchar</span>(<span class="st">' '</span>);
+            <span class="fn">printf</span>(<span class="st">"%d"</span>, pick[i]);
+        }
+        <span class="fn">putchar</span>(<span class="st">'\n'</span>);
+        <span class="kw">return</span>;
+    }
+    <span class="kw">for</span> (<span class="kw">int</span> i = start; i &lt; n; i++) {
+        <span class="kw">if</span> (i &gt; start &amp;&amp; a[i] == a[i - <span class="nm">1</span>]) <span class="kw">continue</span>;  <span class="cm">/* 중복 (정렬 전제) */</span>
+        pick[d] = a[i];
+        <span class="fn">comb</span>(i + <span class="nm">1</span>, d + <span class="nm">1</span>);
+    }
+}</pre>
+  </div>
+  <div class="note warn">
+    <span class="h">세 코드의 공통 구조</span>
+    <b>① 바닥 조건</b>(<code>if (d == n)</code> 또는 <code>i == n</code>)이 <b>맨 위</b>에 있다.<br>
+    <b>② 선택</b>을 하고 <b>③ 재귀</b>를 부르고 <b>④ 되돌린다</b>(조합은 되돌릴 것이 없다).<br>
+    <b>⑤ 가지치기</b>는 바닥 조건보다 <b>앞에</b> 둔다. 먼저 걸러야 효과가 크다.<br>
+    PART 1 11장의 재귀 구조가 여기서 전부 쓰인다. <b>깊이는 최대 N(≤ 30)</b>이므로 스택 걱정은 없다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+
+  <h3><span class="tag">예제 1</span>가짓수를 먼저 센다</h3>
+  <table>
+    <thead><tr><th style="width:36%">문제의 문장</th><th style="width:20%">모양</th><th style="width:20%">가짓수</th><th>N ≤ ?</th></tr></thead>
+    <tbody>
+      <tr><td>"N개 중 일부를 골라"</td><td>부분집합</td><td>2<sup>N</sup></td><td>20</td></tr>
+      <tr><td>"N개를 모두 한 번씩 방문"</td><td>순열</td><td>N!</td><td>10</td></tr>
+      <tr><td>"N개 중 M개를 골라"</td><td>조합</td><td>C(N, M)</td><td>직접 계산</td></tr>
+      <tr><td>"N칸을 3가지 색으로"</td><td>중복 순열</td><td>3<sup>N</sup></td><td>약 17</td></tr>
+      <tr><td>"N명을 두 팀으로"</td><td>부분집합</td><td>2<sup>N</sup> (또는 2<sup>N−1</sup>)</td><td>20</td></tr>
+    </tbody>
+  </table>
+  <p>마지막 줄에 주의한다. 두 팀으로 나누는 것은 <strong>{A팀, B팀}과 {B팀, A팀}이 같으므로</strong> 실제 가짓수는 절반이다. <strong>"같은 것을 두 번 세고 있지 않은가"</strong>를 항상 묻는다.</p>
+
+  <h3><span class="tag">예제 2</span>가지치기 전후를 반드시 비교한다</h3>
+  <p>가지치기는 <strong>답을 바꿀 수 있는 위험한 최적화</strong>다. 반드시 두 판을 만들어 비교한다.</p>
+  <div class="io">
+    <div><div class="lbl">검증 절차</div><pre>① 가지치기 없는 판을 먼저 만든다
+② 작은 N(≤ 15)으로 답을 구한다
+③ 가지치기 판을 만든다
+④ 같은 입력으로 답이 같은지 본다
+⑤ 여러 입력으로 반복한다</pre></div>
+    <div><div class="lbl">도입 문제의 검증</div><pre>N=20  없음 64 / 있음 64
+N=24  없음 64 / 있음 64
+N=28  없음 64 / 있음 64
+N=30  없음 64 / 있음 64
+
+호출 수는 21억 → 15,303</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">반례를 만들어 본다</span>
+    값에 음수가 섞인 입력(<code>{5, -3, 2}</code>, S=4)으로 두 판을 돌려 보면 <b>답이 달라진다</b>. <code>5</code>를 넣은 순간 <code>s = 5 &gt; 4</code>라 잘리는데, <code>-3</code>을 더하면 2가 되고 거기에 2를 더하면 4가 되기 때문이다.<br>
+    <b>가지치기의 전제 조건을 코드 주석에 적는다.</b> "값이 모두 양수일 때만 유효" 같은 한 줄이 나중의 자신을 구한다.
+  </div>
+
+  <h3><span class="tag">예제 3</span>되돌리기가 빠졌는지 알아보는 법</h3>
+  <div class="io">
+    <div><div class="lbl">증상</div><pre>되돌리기 있음:
+(123) (132) (213) (231) (312) (321)
+→ 6가지
+
+되돌리기 없음:
+(123)
+→ 1가지</pre></div>
+    <div><div class="lbl">알아보는 법</div><pre>① 결과가 "첫 한 줄"만 나온다
+② 또는 개수가 N!보다 훨씬 적다
+
+→ used[i] = 0 을 찾아본다
+
+바꾼 것은 반드시 되돌린다.</pre></div>
+  </div>
+  <p>반대로 <strong>되돌리기를 재귀 호출 앞에 두면</strong> 아예 아무 제약이 없어져 <strong>N<sup>N</sup>가지</strong>가 나온다(중복 순열). 개수를 세어 보면 어느 쪽 실수인지 바로 알 수 있다.</p>
+
+  <h3><span class="tag">예제 4</span>두 팀으로 나누기</h3>
+  <p>부분집합 완전탐색의 전형이다. N명을 두 팀으로 나눠 <strong>능력치 합의 차이를 최소</strong>로 만든다.</p>
+  <div class="io">
+    <div><div class="lbl">코드</div><pre>void rec(int i, int s1, int c1) {
+    if (i == n) {
+        if (c1 == 0 || c1 == n) return;  /* 한쪽이 비면 안 됨 */
+        int d = abs(s1 - (total - s1));
+        if (d &lt; best) best = d;
+        return;
+    }
+    rec(i+1, s1 + a[i], c1 + 1);   /* 1팀 */
+    rec(i+1, s1,        c1);       /* 2팀 */
+}</pre></div>
+    <div><div class="lbl">검증</div><pre>10 20 30 40 50 60
+  합 210 → 최소 차이 10
+  ({10,20,30,40}=100 vs 110)
+
+1 2 3
+  합 6 → 최소 차이 0
+  ({1,2}=3 vs {3}=3)
+
+100 (한 명)
+  → 나눌 수 없다</pre></div>
+  </div>
+  <div class="note">
+    <span class="h">세 가지를 짚는다</span>
+    <b>①</b> <code>c1 == 0 || c1 == n</code> 검사가 없으면 <b>한쪽이 빈 팀</b>이 되어 차이가 전체 합이 된다. 그런데 그것이 최소일 리 없으므로 답에는 영향이 없다 — 다만 <b>N=1일 때</b>는 답이 없음을 알려야 한다.<br>
+    <b>②</b> <code>best</code>의 초기값은 4장대로 <b>충분히 큰 값</b>(<code>1&lt;&lt;30</code>)이거나 <b>첫 경우의 값</b>이다.<br>
+    <b>③</b> 1번 사람을 <b>항상 1팀에 고정</b>하면 가짓수가 절반(2<sup>N−1</sup>)이 된다. 대칭 가지치기다.
+  </div>
+
+  <h3><span class="tag">예제 5</span>부분집합을 조합으로 쪼개기</h3>
+  <p>"N개 중 <strong>정확히 M개</strong>를 고른다"와 "N개 중 <strong>일부</strong>를 고른다"는 다르다. 후자는 전자를 M=0부터 N까지 합친 것이다.</p>
+  <table>
+    <thead><tr><th style="width:24%">N</th><th style="width:30%">C(N,0)+…+C(N,N)</th><th style="width:22%">2<sup>N</sup></th><th>일치</th></tr></thead>
+    <tbody>
+      <tr><td>4</td><td>1+4+6+4+1 = 16</td><td>16</td><td>일치</td></tr>
+      <tr><td>5</td><td>1+5+10+10+5+1 = 32</td><td>32</td><td>일치</td></tr>
+      <tr><td>20</td><td>합 = 1,048,576</td><td>1,048,576</td><td>일치</td></tr>
+    </tbody>
+  </table>
+  <p>그래서 <strong>"합이 S인 부분집합"</strong>을 구할 때 크기별로 나눌 필요가 없다. 반대로 <strong>"정확히 M명을 뽑는다"</strong>는 제약이 있으면 조합으로 짜는 쪽이 가짓수가 훨씬 적다 — C(20,3)은 1,140가지로 2<sup>20</sup>의 <strong>1,000분의 1</strong>이다.</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+
+  <div class="errs">
+    <div class="err"><span class="en">1</span><div class="eb">
+      <b>되돌리기를 빠뜨린다</b><br>
+      <code>used[i] = 0;</code>이 없으면 <b>첫 한 줄만</b> 나온다. N=3이면 6가지 대신 1가지다.<br>
+      <span class="fix">대책</span> <code>used[i] = 1</code>과 <code>used[i] = 0</code>을 <b>항상 짝으로</b> 쓴다. 결과 개수가 N!인지 세어 확인한다.
+    </div></div>
+
+    <div class="err"><span class="en">2</span><div class="eb">
+      <b>조합에서 <code>start</code> 대신 0부터 돈다</b><br>
+      같은 조합이 여러 번 나온다. {1,2}와 {2,1}을 둘 다 세므로 개수가 C(n,m)이 아니라 <b>순열 수</b>가 된다.<br>
+      <span class="fix">대책</span> <code>for (i = start; ...)</code>, 재귀는 <code>comb(i+1, d+1)</code>. 개수를 <b>C(n,m) 공식과 비교</b>한다.
+    </div></div>
+
+    <div class="err"><span class="en">3</span><div class="eb">
+      <b>가지치기가 정답을 자른다</b><br>
+      <code>if (s &gt; S) return;</code>은 <b>값이 모두 양수일 때만</b> 옳다. 음수가 섞이면 <code>{5,-3,2}</code>, S=4에서 답을 놓친다.<br>
+      <span class="fix">대책</span> <b>가지치기 없는 판과 작은 N에서 비교</b>한다. 전제 조건을 주석에 적는다.
+    </div></div>
+
+    <div class="err"><span class="en">4</span><div class="eb">
+      <b>비트마스크가 더 빠를 거라고 생각한다</b><br>
+      mask마다 합을 다시 계산하면 <b>O(N · 2<sup>N</sup>)</b>이다. N=24에서 재귀 0.087초 대 비트마스크 <b>1.270초</b>로 14.6배 느렸다.<br>
+      <span class="fix">대책</span> 합이나 상태를 <b>인자로 들고 다닌다</b>. 비트마스크는 코드가 짧을 때, 또는 mask를 인덱스로 쓸 때 고른다.
+    </div></div>
+
+    <div class="err"><span class="en">5</span><div class="eb">
+      <b>중복 원소를 처리하지 않는다</b><br>
+      {1,1,2}에서 2개를 고르면 <code>(11) (12) (12)</code>로 같은 조합이 두 번 나온다. 제약에 "서로 다른"이 없으면 중복이 있을 수 있다.<br>
+      <span class="fix">대책</span> <b>정렬한 뒤</b> <code>if (i &gt; start &amp;&amp; a[i] == a[i-1]) continue;</code>. 두 조건이 모두 필요하다.
+    </div></div>
+
+    <div class="err"><span class="en">6</span><div class="eb">
+      <b>가짓수를 세지 않고 코드부터 쓴다</b><br>
+      N=25에서 순열을 만들려 하면 25!은 1.5 × 10<sup>25</sup>로 <b>우주가 끝나도 안 끝난다</b>. 코드는 멀쩡해 보인다.<br>
+      <span class="fix">대책</span> <b>코드를 쓰기 전에 가짓수를 계산</b>한다. 2장의 표에서 통과 구간인지 확인한 뒤 손을 댄다.
+    </div></div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    오류 1·2·5는 <b>개수를 세어 보면 전부 잡힌다</b>. 순열은 N!, 조합은 C(n,m), 부분집합은 2<sup>n</sup>이어야 한다. <b>작은 N(3~5)으로 돌려 개수를 세는 것</b>이 완전탐색의 기본 검산법이다.<br>
+    오류 3은 더 위험하다 — 개수가 맞아도 <b>답이 틀릴</b> 수 있다. 가지치기를 넣을 때는 <b>반드시 없는 판과 비교</b>한다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>모든 문제에서 <strong>작은 N(3~5)으로 개수를 세어</strong> 공식과 맞는지 먼저 확인한다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>모든 부분집합 출력</b> — N개의 수(N ≤ 15)의 모든 부분집합을 한 줄에 하나씩 출력하라. 빈 집합은 빈 줄로. 개수가 2<sup>N</sup>인지 확인하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3
+1 2 3</pre></div><div><span>OUTPUT</span><pre>
+3
+2
+2 3
+1
+1 3
+1 2
+1 2 3</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>부분집합의 합</b> — N개의 수(N ≤ 20, 1 ≤ 값 ≤ 100,000)에서 일부를 골라 합이 S가 되는 경우의 수를 출력하라. <b>빈 집합은 세지 않는다.</b></p>
+    <div class="sample"><div><span>INPUT</span><pre>5 0
+-7 -3 -2 5 8</pre></div><div><span>OUTPUT</span><pre>1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>비트마스크로 같은 문제</b> — 02번을 비트마스크로 작성하고 재귀판과 답이 같은지 확인하라. N = 20, 22, 24에서 두 방법의 시간을 재어 표로 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>모든 순열 출력</b> — 1부터 N(N ≤ 8)까지의 모든 순열을 <b>사전 순</b>으로 출력하라. 개수가 N!인지 확인하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3</pre></div><div><span>OUTPUT</span><pre>1 2 3
+1 3 2
+2 1 3
+2 3 1
+3 1 2
+3 2 1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>N개 중 M개 고르기</b> — 1부터 N까지에서 M개를 고르는 모든 조합을 <b>사전 순</b>으로 출력하라. N ≤ 8.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4 2</pre></div><div><span>OUTPUT</span><pre>1 2
+1 3
+1 4
+2 3
+2 4
+3 4</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>중복 순열</b> — 1부터 N까지에서 <b>중복을 허용해</b> M개를 뽑아 나열하는 모든 경우를 사전 순으로 출력하라. 개수가 N<sup>M</sup>인지 확인하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>2 2</pre></div><div><span>OUTPUT</span><pre>1 1
+1 2
+2 1
+2 2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>되돌리기 실험</b> — 04번 코드에서 <code>used[i] = 0;</code>을 ⑴ 지운 판 ⑵ 재귀 호출 <b>앞</b>으로 옮긴 판을 만들어 각각 몇 가지가 나오는지 세고, 왜 그런지 설명하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>비트 연산 연습</b> — <code>mask</code>와 <code>i</code>를 입력받아 ⑴ i번이 켜져 있는지 ⑵ i번을 켠 값 ⑶ i번을 끈 값 ⑷ 켜진 비트의 개수를 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>10 1</pre></div><div><span>OUTPUT</span><pre>1
+10
+8
+2</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>가지치기 측정</b> — 02번(값이 모두 양수인 판)에 <code>if (s &gt; S) return;</code>을 넣은 판과 뺀 판을 만들어, N = 20·24·28·30에서 <b>재귀 호출 횟수와 시간</b>을 재어 표로 적어라. 두 답이 같은지도 확인하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>가지치기 반례</b> — 09번의 가지치기 판에 <b>음수가 섞인 입력</b>을 넣어 답이 달라지는 경우를 찾아 적어라. 왜 그런지 설명하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>두 팀 나누기</b> — N명(N ≤ 20)의 능력치가 주어진다. 두 팀으로 나눠(각 팀에 최소 1명) 능력치 합의 차이를 최소로 하라. 그 차이를 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>6
+10 20 30 40 50 60</pre></div><div><span>OUTPUT</span><pre>10</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>중복 원소 조합</b> — N개의 수(중복 가능, N ≤ 10)에서 M개를 고르는 <b>서로 다른</b> 조합을 사전 순으로 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3 2
+1 1 2</pre></div><div><span>OUTPUT</span><pre>1 1
+1 2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>최대 합 부분집합</b> — N개의 수(N ≤ 20, 음수 포함)에서 일부를 골라 합이 <b>M 이하</b>이면서 최대가 되게 하라. 그 합을 출력하라. 가지치기가 가능한지 판단하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5 10
+3 5 7 -2 9</pre></div><div><span>OUTPUT</span><pre>10</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>순열로 최솟값</b> — N개의 수(N ≤ 8)를 한 줄로 늘어놓을 때, <b>이웃한 두 수의 차의 합</b>이 최소가 되는 배열을 찾아 그 합을 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4
+1 5 2 8</pre></div><div><span>OUTPUT</span><pre>7</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>가짓수 계산</b> — 다음 각 경우의 가짓수를 계산하고 1초 안에 가능한지 판정하라.<br>
+    ⑴ 18개 중 일부 &nbsp;⑵ 12개의 순열 &nbsp;⑶ 30개 중 4개 &nbsp;⑷ 10칸을 4색으로 &nbsp;⑸ 25개 중 일부</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>대칭 가지치기</b> — 11번에서 <b>1번 사람을 항상 1팀에 고정</b>하면 가짓수가 절반이 된다. 그렇게 고친 판을 만들어 ⑴ 답이 같은지 ⑵ 호출 수가 정확히 절반인지 확인하라.</p>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>N-Queens 맛보기</b> — N×N 체스판에 퀸 N개를 서로 공격하지 못하게 놓는 경우의 수를 출력하라(N ≤ 10). 각 행에 하나씩 놓으므로 <b>열의 순열</b>이고, 대각선 충돌을 <b>가지치기</b>로 거른다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>8</pre></div><div><span>OUTPUT</span><pre>92</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>연산자 끼워넣기</b> — N개의 수(N ≤ 11) 사이에 <code>+</code>, <code>-</code>, <code>×</code>를 주어진 개수만큼 끼워 넣는다. 결과의 최댓값과 최솟값을 출력하라. 연산은 <b>앞에서부터 순서대로</b> 한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3
+1 2 3
+1 0 1</pre></div><div><span>OUTPUT</span><pre>9
+5</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>가지치기의 한계</b> — 09번의 가지치기가 효과가 <b>거의 없는 입력</b>을 만들어 보라. S를 어떻게 잡으면 그렇게 되는지 설명하고, 그때의 호출 수를 측정하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>종합</b> — 아래 문제를 받았다. ⑴ 가짓수를 계산하고 ⑵ 모양(부분집합/순열/조합)을 정하고 ⑶ 가지치기가 가능한지 판단하고 ⑷ 코드를 작성한 뒤 ⑸ 작은 N으로 개수를 검산하라.</p>
+    <div class="sample"><div><span>PROBLEM</span><pre>N개의 물건이 있다.
+i번 물건의 무게는 W[i],
+가치는 V[i]다.
+
+무게의 합이 K 이하가 되도록
+일부를 골라 가치의 합을
+최대로 하라.
+
+제약
+1 ≤ N ≤ 20
+1 ≤ K ≤ 100,000
+1 ≤ W[i], V[i] ≤ 10,000
+시간 1초</pre></div><div><span>SAMPLE</span><pre>입력
+4 7
+6 13
+4 8
+3 6
+5 12
+
+출력
+14</pre></div></div>
+  </div></div>
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">07 — 확인 평가</span>
+  <h2>정답과 해설</h2>
+
+  <div class="ans"><span class="an">01</span><div class="ab">
+    재귀로 "안 넣는다 / 넣는다"를 하되 <code>pick</code> 배열에 담아 바닥에서 출력한다. 또는 비트마스크로 0부터 2<sup>N</sup>−1까지.<br>
+    N=3이면 <b>8가지</b>. 빈 집합(빈 줄)이 포함된다.<br>
+    <b>지도 포인트</b> — 출력 순서가 "안 넣는다 먼저"냐 "넣는다 먼저"냐에 따라 달라진다. 예제와 맞추려면 <b>안 넣는 쪽을 먼저</b> 부른다. 1장의 "출력 형식을 예제와 글자 단위로 맞춘다"가 완전탐색에도 적용된다.
+  </div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab">
+    본문 <code>subsum.c</code>에서 가지치기를 뺀 판(제약에 음수가 있을 수 있으므로). <b>빈 집합 제외</b>를 위해 고른 개수를 함께 들고 다니거나, 마지막에 S가 0이면 1을 뺀다.<br>
+    검증 — <code>-7 -3 -2 5 8</code>, S=0 → <code>{-7,-3,2...}</code> 중 합이 0인 것은 <b>1가지</b>(−7−3−2+5+8 = 1이 아니라, −3−2+5 = 0).<br>
+    <b>지도 포인트</b> — <b>"빈 집합을 세지 않는다"</b>는 한 줄이 S=0일 때만 영향을 준다. 1장대로 <b>문제를 끝까지 읽어야</b> 보이는 조건이고, S=0이 아닌 예제로는 절대 안 걸린다.
+  </div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab">
+    측정 (합이 S인 부분집합 세기, 값은 1..N) —
+    <table>
+      <thead><tr><th>N</th><th>재귀</th><th>비트마스크</th><th>비율</th></tr></thead>
+      <tbody>
+        <tr><td>20</td><td>0.005초</td><td>0.074초</td><td>14.8배</td></tr>
+        <tr><td>22</td><td>0.020초</td><td>0.311초</td><td>15.6배</td></tr>
+        <tr><td>24</td><td>0.087초</td><td>1.270초</td><td>14.6배</td></tr>
+      </tbody>
+    </table>
+    두 방법의 답은 모두 같았다(N=24에서 2,755가지).<br>
+    <b>지도 포인트</b> — 비율이 <b>약 N배</b>라는 점을 짚는다. 비트마스크가 O(N · 2<sup>N</sup>)이기 때문이다. "짧은 코드가 빠른 코드는 아니다"를 숫자로 보여 주는 자리다.
+  </div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab">
+    본문 <code>perm.c</code>. 작은 인덱스부터 보므로 <b>사전 순</b>으로 나온다.<br>
+    검증 — N=3 → <b>6가지</b>, N=5 → 120, N=8 → 40,320(0.0009초), N=10 → 3,628,800(0.1006초), N=11 → 39,916,800(<b>1.2677초</b>).<br>
+    <b>지도 포인트</b> — N=11에서 1.27초라는 측정값이 2장의 "N ≤ 10이면 순열"이라는 기준의 근거다. 출력까지 하면 훨씬 느려지므로 <b>N ≤ 8 정도가 출력 가능한 한계</b>라는 것도 짚는다.
+  </div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab">
+    본문 <code>comb.c</code>. <code>for (i = start; ...)</code>와 <code>comb(i+1, d+1)</code>.<br>
+    검증 — C(4,2) = <b>6가지</b>. C(10,3) = 120, C(20,10) = 184,756, C(24,12) = 2,704,156 모두 공식과 일치.<br>
+    <b>지도 포인트</b> — <code>start</code>를 0으로 두면 순열이 나와 <b>12가지</b>가 된다. 개수를 <b>C(n,m) 공식과 비교</b>하는 것이 이 유형의 표준 검산법이다.
+  </div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab">
+    <code>used</code>도 <code>start</code>도 쓰지 않는다. 매번 <b>1부터 N까지 전부</b> 시도한다.
+    <pre>void rep(int d) {
+    if (d == m) { 출력; return; }
+    for (int i = 1; i &lt;= n; i++) { pick[d] = i; rep(d+1); }
+}</pre>
+    검증 — N=2, M=2 → <b>4가지</b>(2² = 4).<br>
+    <b>지도 포인트</b> — 세 코드(순열·조합·중복순열)의 차이가 <b>딱 한 군데</b>라는 것을 표로 정리시킨다 — 순열은 <code>used</code>, 조합은 <code>start</code>, 중복순열은 <b>아무 제약 없음</b>. 이 비교가 완전탐색의 뼈대를 굳힌다.
+  </div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab">
+    ⑴ <code>used[i] = 0;</code>을 지우면 → <b>1가지</b>(<code>(123)</code>만). 한 번 쓴 원소가 영원히 막혀 되돌아온 뒤 쓸 것이 없다.<br>
+    ⑵ 재귀 호출 <b>앞</b>으로 옮기면 → 제약이 사라져 <b>N<sup>N</sup>가지</b>(N=3이면 27가지, 중복 순열).<br>
+    <b>지도 포인트</b> — 두 실수의 <b>증상이 정반대</b>라는 것이 이 문항의 핵심이다. 너무 적게 나오면 ⑴, 너무 많이 나오면 ⑵다. <b>개수만 세어도 어느 실수인지 안다</b>.
+  </div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab">
+    <code>(mask&gt;&gt;i)&amp;1</code>, <code>mask|(1&lt;&lt;i)</code>, <code>mask&amp;~(1&lt;&lt;i)</code>, <code>while(t){c+=t&amp;1;t&gt;&gt;=1;}</code>.<br>
+    검증 — mask=10(1010), i=1 → 켜짐 <b>1</b>, 켜기 <b>10</b>(이미 켜져 있음), 끄기 <b>8</b>, 개수 <b>2</b>.<br>
+    <b>지도 포인트</b> — "이미 켜진 비트를 또 켜도 그대로"라는 점을 확인시킨다(<code>|</code>의 성질). 그리고 6장 13번의 "1의 개수 세기"와 같은 코드라는 것 — <b>진법 분해와 비트 연산이 같은 일</b>이다.
+  </div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab">
+    측정 (S = 20, 값은 1..N) —
+    <table>
+      <thead><tr><th>N</th><th>가지치기 없음</th><th>가지치기 있음</th><th>비율</th><th>답</th></tr></thead>
+      <tbody>
+        <tr><td>20</td><td>2,097,151 / 0.005초</td><td>7,883 / 0.0000초</td><td>266배</td><td>64</td></tr>
+        <tr><td>24</td><td>33,554,431 / 0.086초</td><td>10,851 / 0.0000초</td><td>3,092배</td><td>64</td></tr>
+        <tr><td>28</td><td>536,870,911 / 1.324초</td><td>13,819 / 0.0000초</td><td>38,850배</td><td>64</td></tr>
+        <tr><td><b>30</b></td><td><b>2,147,483,647 / 5.213초</b></td><td><b>15,303 / 0.0000초</b></td><td><b>140,331배</b></td><td>64</td></tr>
+      </tbody>
+    </table>
+    <b>지도 포인트</b> — <b>N이 커질수록 비율이 더 커진다</b>는 점을 짚는다. 가지치기 판의 호출 수는 거의 늘지 않는데(7,883 → 15,303) 없는 판은 2배씩 늘기 때문이다. 그리고 <b>답이 네 경우 모두 64로 같다</b>는 것을 반드시 확인시킨다.
+  </div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab">
+    <b>반례</b> — <code>{5, -3, 2}</code>, S = 4. 정답은 <code>{5, -3, 2}</code> 전체(5−3+2 = 4)로 <b>1가지</b>인데, 가지치기 판은 5를 넣은 순간 <code>s = 5 &gt; 4</code>라 그 아래를 전부 잘라 <b>0가지</b>를 낸다.<br>
+    <b>이유</b> — 음수가 있으면 합이 <b>올라갔다 내려올 수 있다</b>. "지금 넘었으면 영영 못 돌아온다"는 전제가 깨진다.<br>
+    <b>지도 포인트</b> — <b>가지치기는 성능 최적화가 아니라 "논리적 추론"</b>이다. 추론의 전제가 틀리면 답이 틀린다. 코드 주석에 <b>전제를 적는 습관</b>을 여기서 만든다.
+  </div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab">
+    예제 4의 코드. <code>best</code>의 초기값은 <code>1&lt;&lt;30</code>.<br>
+    검증 — <code>10 20 30 40 50 60</code>(합 210) → <b>10</b>. <code>1 2 3</code>(합 6) → <b>0</b>. N=1이면 나눌 수 없다.<br>
+    <b>지도 포인트</b> — <code>abs(s1 - (total - s1))</code>이 <code>abs(2*s1 - total)</code>과 같다는 것도 보여 준다. <code>2*s1</code>이 10<sup>9</sup>을 넘을 수 있으면 <b><code>long long</code></b>이 필요하다(2장). 그리고 <b>한쪽이 빈 경우</b>를 걸러야 하는지는 문제가 정한다.
+  </div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">
+    <b>정렬한 뒤</b> <code>if (i &gt; start &amp;&amp; a[i] == a[i-1]) continue;</code><br>
+    검증 — <code>{1,1,2}</code>에서 2개 → <b><code>1 1</code>, <code>1 2</code></b> 두 가지. 처리하지 않으면 <code>1 1</code>, <code>1 2</code>, <code>1 2</code> 세 가지.<br>
+    <b>지도 포인트</b> — <code>i &gt; start</code> 조건을 빼면 <b><code>1 1</code>이 사라진다</b>(같은 값을 아예 못 쓰게 되므로). 두 조건이 <b>모두</b> 필요한 이유를 직접 돌려 확인시킨다. 그리고 <b>정렬이 전제</b>라는 것도 — 정렬하지 않으면 같은 값이 떨어져 있어 판별이 안 된다.
+  </div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab">
+    음수가 있으므로 <b><code>if (s &gt; M) return;</code>은 쓸 수 없다</b>(10번의 반례와 같은 이유). 전부 탐색한 뒤 <code>s &lt;= M</code>인 것 중 최대를 취한다.<br>
+    검증 — <code>3 5 7 -2 9</code>, M=10 → <b>10</b>(3+5+9−7 = 10 또는 3+7 = 10).<br>
+    <b>지도 포인트</b> — <b>"가지치기를 쓸 수 없다"고 판단하는 것도 실력</b>이다. 2<sup>20</sup> = 10<sup>6</sup>이라 가지치기 없이도 통과하므로 억지로 넣을 이유가 없다. <b>필요 없는 최적화는 버그만 만든다</b>.
+  </div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab">
+    모든 순열(최대 8! = 40,320가지)을 만들어 이웃 차의 합을 구하고 최소를 취한다.<br>
+    검증 — <code>1 5 2 8</code> → 정렬한 <code>1 2 5 8</code>일 때 1+3+3 = <b>7</b>이 최소다.<br>
+    <b>지도 포인트</b> — 답이 <b>정렬한 순서</b>라는 것을 학생이 발견하면, "그럼 순열을 다 만들 필요가 없지 않나?"라는 질문이 나온다. 맞는 질문이다. 그러나 <b>증명하기 전까지는</b> 완전탐색이 안전하고, N ≤ 8이면 충분하다. <b>완전탐색은 추측을 검증하는 도구이기도 하다</b>.
+  </div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab">
+    ⑴ 2<sup>18</sup> = <b>262,144</b> → 여유<br>
+    ⑵ 12! = <b>479,001,600</b> → 측정상 약 13초, <b>불가능</b>(2장 15번)<br>
+    ⑶ C(30,4) = <b>27,405</b> → 여유<br>
+    ⑷ 4<sup>10</sup> = <b>1,048,576</b> → 여유<br>
+    ⑸ 2<sup>25</sup> = <b>33,554,432</b> → 가능하나 각 경우의 처리가 가벼워야 한다<br>
+    <b>지도 포인트</b> — ⑶이 핵심이다. N = 30이면 2<sup>30</sup>은 불가능한데 <b>C(30,4)는 2만 7천</b>이다. <b>"N개 중 몇 개"라는 제약이 가짓수를 극적으로 줄인다</b>. 문제에 M이 명시되어 있는지 반드시 확인한다(예제 5).
+  </div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">
+    1번 사람을 1팀에 고정하면 나머지 N−1명만 선택하므로 <b>2<sup>N−1</sup></b>가지다. 답은 같다 — {A,B}와 {B,A}는 같은 분할이고, 1번이 어느 쪽에 있든 <b>차이는 같기</b> 때문이다.<br>
+    <b>지도 포인트</b> — <b>대칭 가지치기</b>의 가장 단순한 형태다. 호출 수가 정확히 절반인지 세어 확인시킨다. 그리고 "왜 답이 안 바뀌는가"를 <b>말로 설명</b>하게 한다 — 가지치기는 언제나 <b>근거를 말할 수 있어야</b> 한다(10번).
+  </div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    각 행에 퀸을 하나씩 놓으므로 <b>열 번호의 순열</b>이다. 같은 열은 <code>used</code>로 막고, 대각선은 <code>abs(행차) == abs(열차)</code>로 검사한다.
+    <pre>void go(int r) {
+    if (r == n) { cnt++; return; }
+    for (int c = 0; c &lt; n; c++) {
+        if (used[c]) continue;
+        int ok = 1;
+        for (int k = 0; k &lt; r; k++)
+            if (abs(r - k) == abs(c - col[k])) { ok = 0; break; }
+        if (!ok) continue;                    /* ← 가지치기 */
+        used[c] = 1; col[r] = c;
+        go(r + 1);
+        used[c] = 0;
+    }
+}</pre>
+    검증 — N=4 → <b>2</b>, N=5 → <b>10</b>, N=6 → <b>4</b>, N=7 → <b>40</b>, N=8 → <b>92</b>. (N=6이 N=5보다 <b>적다</b>는 것이 재미있는 지점이다 — 가짓수가 N에 대해 단조롭지 않다.)<br>
+    <b>지도 포인트</b> — 가지치기가 <b>없으면 8! = 40,320가지</b>를 다 만들어 끝에서 검사해야 한다. 있으면 중간에 잘려 훨씬 적다. <b>"판정을 마지막이 아니라 가능한 한 일찍"</b>이 가지치기의 본질이다. 대각선 검사를 배열로 바꾸면 더 빨라지는데, 그것은 PART 3에서 다룬다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    연산자 개수를 배열로 들고 다니며 남은 것을 하나씩 써 본다. 가짓수는 최대 <b>3<sup>10</sup> = 59,049</b>(연산자 자리가 N−1개).
+    <pre>void go(int i, long long cur) {
+    if (i == n) { if (cur &gt; mx) mx = cur; if (cur &lt; mn) mn = cur; return; }
+    for (int op = 0; op &lt; 3; op++) {
+        if (!left[op]) continue;
+        left[op]--;
+        go(i+1, op==0 ? cur+a[i] : op==1 ? cur-a[i] : cur*a[i]);
+        left[op]++;                      /* 되돌리기 */
+    }
+}</pre>
+    검증 — <code>1 2 3</code>에 <code>+</code> 1개, <code>×</code> 1개를 끼우면 가능한 식이 둘뿐이다 — <code>(1+2)×3 = 9</code>와 <code>(1×2)+3 = 5</code>. 따라서 최대 <b>9</b>, 최소 <b>5</b>.<br>
+    <b>지도 포인트</b> — <b><code>left[op]--</code>와 <code>left[op]++</code>가 짝</b>이라는 것이 핵심이다. 순열의 <code>used</code>와 완전히 같은 구조다. 그리고 <b>앞에서부터 순서대로</b> 계산하므로 곱셈 우선순위가 없다는 조건을 빠뜨리면 안 된다 — 1장의 "문제를 끝까지 읽는다".
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    <b>S를 전체 합에 가깝게</b> 잡으면 가지치기가 거의 걸리지 않는다. 값이 1..30이면 전체 합은 465이므로 <b>S = 465</b>로 두면 <code>s &gt; S</code>가 거의 참이 되지 않아 <b>호출 수가 가지치기 없는 판과 비슷해진다</b>.<br>
+    <b>지도 포인트</b> — 이것이 10.7절의 "가지치기는 최악 복잡도를 줄이지 못한다"의 실증이다. <b>이론(2장의 O 표기)과 실측이 둘 다 필요한</b> 이유이기도 하다. 제출 전에 <b>최악의 입력을 직접 만들어</b> 재 보는 2장 예제 4의 습관이 여기서도 유효하다.
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    <b>⑴ 가짓수</b> — 각 물건을 "넣거나 안 넣거나"이므로 <b>2<sup>20</sup> = 1,048,576</b>. 2장의 표에서 여유롭게 통과.<br>
+    <b>⑵ 모양</b> — <b>부분집합</b>. M이 정해져 있지 않으므로 조합이 아니다.<br>
+    <b>⑶ 가지치기</b> — 무게가 모두 <b>양수</b>이므로 <code>if (w &gt; K) return;</code>이 <b>유효하다</b>. 10번의 반례(음수)가 여기서는 생기지 않는다. 전제를 주석에 적는다.<br>
+    <b>⑷ 자료형</b> — 가치의 합은 최대 20 × 10,000 = 200,000으로 <code>int</code>로 충분하지만, <b>무게의 합</b>도 200,000이라 <code>K</code>와 비교할 때 문제없다. <code>best</code>의 초기값은 <b>0</b>이 안전하다(아무것도 안 고르면 가치 0이고, 가치가 모두 양수이므로).<br>
+    <b>⑸ 검산</b> — 샘플에서 (무게 4, 가치 8)과 (무게 3, 가치 6)을 고르면 무게 7 ≤ 7, 가치 <b>14</b>. (무게 6, 가치 13) 하나만 고르면 13, (무게 3,6)+(무게 5,12)는 무게 8로 초과. 따라서 <b>14</b>가 최대다.<br>
+    <b>지도 포인트</b> — 이것이 <b>배낭 문제</b>의 가장 작은 형태다. N ≤ 20이라 완전탐색으로 풀리지만, N이 100이면 2<sup>100</sup>으로 불가능하고 <b>동적 계획법</b>이 필요하다(PART 3). <b>같은 문제가 제약 하나로 완전히 다른 알고리즘을 요구한다</b>는 것을 보여 주는 자리다. 2장의 "제약은 힌트다"가 여기서 완성된다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li>코드를 쓰기 전에 <strong>가짓수를 센다</strong> (2<sup>N</sup> / N! / C(N,M))</li>
+    <li>부분집합은 <strong>"넣거나 안 넣거나"</strong> 재귀, 상태는 <strong>인자로</strong> 들고 다닌다</li>
+    <li>순열은 <code>used</code>와 <strong>되돌리기를 짝으로</strong></li>
+    <li>조합은 <strong><code>start</code>부터</strong>, 되돌릴 것이 없다</li>
+    <li>중복 원소는 <strong>정렬 + <code>i &gt; start &amp;&amp; a[i]==a[i-1]</code></strong></li>
+    <li>가지치기는 <strong>바닥 조건보다 앞</strong>에 둔다</li>
+    <li>가지치기의 <strong>전제를 주석에 적고</strong>, 없는 판과 답을 비교한다</li>
+    <li>작은 N으로 <strong>개수를 세어</strong> 공식과 맞춰 본다</li>
+    <li>비트마스크가 <strong>항상 빠른 것은 아니다</strong> (14.6배 느릴 수 있다)</li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 11장 qsort와 정렬 기반 문제</span>
+    7장에서 "값의 범위가 크면 체크 배열을 포기한다"고 했고, 그때 미뤄 둔 답이 <strong>정렬</strong>이었다. 다음 장은 C의 <code>qsort</code>를 쓰는 법, 특히 <strong>비교 함수를 쓰는 요령</strong>을 다룬다. 구조체를 여러 기준으로 정렬하는 법, 그리고 정렬해 두면 저절로 풀리는 문제 유형을 정리한다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 2 · 10장 · 2026-10-13 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+</div></body></html>

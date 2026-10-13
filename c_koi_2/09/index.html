@@ -1,0 +1,998 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 2 · 09장 2차원 격자 시뮬레이션 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#9a5f1a;
+  --accent-soft:#f7ecdb;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#e8b670}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style></head><body><div class="sheet"><header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 2 · 브론즈급 해결 스킬 — 09 / 12</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">09</span>
+    <h1>2차원 격자 시뮬레이션</h1>
+  </div>
+  <p class="lede">지금까지 다룬 것은 한 줄짜리 데이터였다. 이 장은 <strong>평면</strong>으로 간다. PART 1 9장에서 배운 델타 배열이 본격적으로 쓰이고, <strong>경계 검사 한 줄</strong>이 거의 모든 격자 문제의 공통 뼈대가 된다. 그 한 줄을 빠뜨리면 어떻게 되는지부터 본다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li>문자 격자와 정수 격자를 올바르게 <strong>입력</strong>할 수 있다</li>
+    <li><strong>델타 배열</strong>을 시계 방향으로 외워 쓰고 회전을 <code>(d+1)%4</code>로 처리할 수 있다</li>
+    <li><strong>경계 검사 한 줄</strong>을 모든 이웃 탐색에 붙일 수 있다</li>
+    <li><strong>패딩</strong>으로 경계 검사를 아예 없애는 기법을 쓸 수 있다</li>
+    <li><strong>행 우선 순회</strong>가 왜 빠른지 측정으로 설명할 수 있다</li>
+    <li>전치·반전·90도 회전의 <strong>인덱스 식</strong>을 유도할 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 측정 · 격자 입력 · 델타 배열 · 경계 검사</div>
+  <div><b>2차시</b>패딩 · 8방향과 회전 · 순회 순서 · 격자 변환</div>
+  <div><b>3차시</b>표준 코드 · 단계 예제 · 흔한 오류 6종 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>격자 밖을 읽어도 아무 일이 없다</h2>
+
+  <div class="io">
+    <div><div class="lbl">3×3 격자</div><pre>  1 2 3
+  4 5 6
+  7 8 9
+
+(0,0) 칸의 이웃 네 개를
+읽어 보자.</pre></div>
+    <div><div class="lbl">검사 없이 쓴 코드</div><pre>int dr[4]={-1,0,1,0};
+int dc[4]={0,1,0,-1};
+
+for (int d = 0; d &lt; 4; d++) {
+    int nr = r + dr[d];
+    int nc = c + dc[d];
+    printf("%d ", g[nr][nc]);
+}</pre></div>
+  </div>
+
+  <div class="io">
+    <div><div class="lbl">실행 결과</div><pre>d=0 → (-1, 0) : 0   ← 격자 밖
+d=1 → ( 0, 1) : 2
+d=2 → ( 1, 0) : 4
+d=3 → ( 0,-1) : 0   ← 격자 밖
+
+프로그램은 죽지 않았다.</pre></div>
+    <div><div class="lbl">sanitizer로 보면</div><pre>AddressSanitizer:
+  global-buffer-overflow
+  READ of size 4
+
+PART 1 16장의 도구가
+범인을 바로 가리킨다.</pre></div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">왜 위험한가</span>
+    출력된 <b>0은 격자에 없는 값</b>이다. 그런데 프로그램은 멀쩡히 끝났고 경고도 없었다. 1장의 도입 문제, 4장의 초기값 버그와 <b>같은 증상</b>이다 — <b>그럴듯한 숫자가 나오고 채점만 틀린다</b>.<br>
+    더 나쁜 경우도 있다. 격자 밖에 <b>다른 변수</b>가 있으면 그 값이 읽히고, <b>쓰기</b>라면 그 변수가 망가진다. 어디서 틀렸는지 추적조차 어려워진다.
+  </div>
+
+  <p>해결은 한 줄이다. 그리고 이 한 줄은 이 장의 거의 모든 코드에 들어간다.</p>
+  <div class="code">
+    <div class="codehead"><span>경계 검사</span><span>격자 문제의 공통 뼈대</span></div>
+<pre class="c"><span class="kw">if</span> (nr &lt; <span class="nm">0</span> || nr &gt;= n || nc &lt; <span class="nm">0</span> || nc &gt;= m) <span class="kw">continue</span>;</pre>
+  </div>
+
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> 네 방향·여덟 방향을 어떻게 외워 쓰는가?<br>
+    <b>②</b> 경계 검사를 매번 쓰지 않는 방법이 있는가?<br>
+    <b>③</b> 격자를 돌리거나 뒤집는 식은 어떻게 유도하는가?
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">9.1</span>격자를 읽는 두 가지</h3>
+  <div class="io">
+    <div><div class="lbl">정수가 공백으로 구분될 때</div><pre>int a[102][102];
+
+for (int i = 0; i &lt; n; i++)
+    for (int j = 0; j &lt; m; j++)
+        scanf("%d", &amp;a[i][j]);</pre></div>
+    <div><div class="lbl">숫자나 기호가 붙어 있을 때</div><pre>char g[102][102];
+
+for (int i = 0; i &lt; n; i++)
+    scanf("%101s", g[i]);
+            ↑ 한 줄이 문자열 하나
+
+a[i][j] = g[i][j] - '0';   /* 필요하면 */</pre></div>
+  </div>
+  <p>입력이 <code>1234 / 5678 / 9012</code>처럼 <strong>붙어서</strong> 들어오면 <code>%d</code>로는 1234를 통째로 읽어 버린다. 이럴 때는 <strong>한 줄을 문자열로 읽은 뒤</strong> 8장의 <code>- '0'</code> 관용구로 숫자를 꺼낸다. 검증 — 위 입력에서 <code>g[1][2]</code>는 <code>'7'</code>이고, 정수로 바꾼 첫 행은 <code>1 2 3 4</code>다.</p>
+  <div class="note warn">
+    <span class="h">배열 크기는 넉넉하게 +2</span>
+    문자열로 읽으면 <code>'\0'</code> 자리가 필요하고(8장), 패딩을 쓰면 테두리 자리도 필요하다. 제약이 100이면 <b><code>[102][102]</code></b>로 잡는다. 메모리는 어차피 작다 — <code>char</code>면 10KB, <code>int</code>여도 41KB다.
+  </div>
+
+  <h3><span class="tag">9.2</span>델타 배열 — 시계 방향으로 외운다</h3>
+  <div class="code">
+    <div class="codehead"><span>4방향</span><span>상 → 우 → 하 → 좌 (시계 방향)</span></div>
+<pre class="c"><span class="kw">int</span> dr[<span class="nm">4</span>] = {<span class="nm">-1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>};   <span class="cm">/* 행 변화 */</span>
+<span class="kw">int</span> dc[<span class="nm">4</span>] = { <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">-1</span>};   <span class="cm">/* 열 변화 */</span></pre>
+  </div>
+  <table>
+    <thead><tr><th style="width:14%">d</th><th style="width:16%">방향</th><th style="width:22%">(dr, dc)</th><th>행이 줄면 위, 열이 늘면 오른쪽</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>상</td><td>(−1, 0)</td><td rowspan="4">행 번호는 <strong>아래로 갈수록 커진다</strong>. 수학의 y축과 반대이므로 "위 = −1"이다</td></tr>
+      <tr><td>1</td><td>우</td><td>(0, +1)</td></tr>
+      <tr><td>2</td><td>하</td><td>(+1, 0)</td></tr>
+      <tr><td>3</td><td>좌</td><td>(0, −1)</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <span class="h">시계 방향으로 적는 이유 — 회전이 공짜가 된다</span>
+    <table style="margin-top:6px">
+      <thead><tr><th style="width:34%">회전</th><th style="width:26%">식</th><th>검증</th></tr></thead>
+      <tbody>
+        <tr><td>오른쪽 90°</td><td><code>d = (d + 1) % 4</code></td><td>상→우, 우→하, 하→좌, 좌→상</td></tr>
+        <tr><td>왼쪽 90°</td><td><code>d = (d + 3) % 4</code></td><td>상→좌, 좌→하, 하→우, 우→상</td></tr>
+        <tr><td>반대 방향</td><td><code>d = (d + 2) % 4</code></td><td>상→하, 우→좌</td></tr>
+      </tbody>
+    </table>
+    왼쪽 90°를 <code>(d - 1) % 4</code>로 쓰면 <code>d = 0</code>에서 <b>−1</b>이 된다(4장에서 본 C의 음수 나머지). <b><code>+3</code>을 더하는 것</b>이 안전하다.
+  </div>
+
+  <h3><span class="tag">9.3</span>8방향</h3>
+  <div class="code">
+    <div class="codehead"><span>8방향</span><span>상 → 우상 → 우 → 우하 → 하 → 좌하 → 좌 → 좌상</span></div>
+<pre class="c"><span class="kw">int</span> dr8[<span class="nm">8</span>] = {<span class="nm">-1</span>, <span class="nm">-1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>,  <span class="nm">1</span>,  <span class="nm">0</span>, <span class="nm">-1</span>};
+<span class="kw">int</span> dc8[<span class="nm">8</span>] = { <span class="nm">0</span>,  <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">-1</span>, <span class="nm">-1</span>, <span class="nm">-1</span>};</pre>
+  </div>
+  <div class="note warn">
+    <span class="h">델타 배열은 반드시 검산한다</span>
+    8방향은 숫자가 16개라 하나만 틀려도 <b>어떤 칸을 두 번 보거나 한 칸을 빠뜨린다</b>. 두 가지로 검산한다.<br>
+    <b>① 합이 0인가</b> — 대칭이므로 <code>dr</code>의 합도 <code>dc</code>의 합도 0이어야 한다. 측정 결과 둘 다 0.<br>
+    <b>② 3×3을 덮는가</b> — 중앙 (0,0)을 뺀 <b>8칸이 정확히 한 번씩</b> 나오는지 세어 본다. 측정 결과 일치.<br>
+    이 두 줄짜리 검산을 하면 델타 오타로 몇 시간을 잃는 일이 사라진다.
+  </div>
+
+  <h3><span class="tag">9.4</span>경계 검사 — 네 조건을 한 줄로</h3>
+  <div class="code">
+    <div class="codehead"><span>이웃 탐색의 표준형</span><span>이 모양을 통째로 외운다</span></div>
+<pre class="c"><span class="kw">for</span> (<span class="kw">int</span> d = <span class="nm">0</span>; d &lt; <span class="nm">4</span>; d++) {
+    <span class="kw">int</span> nr = r + dr[d];
+    <span class="kw">int</span> nc = c + dc[d];
+    <span class="kw">if</span> (nr &lt; <span class="nm">0</span> || nr &gt;= n || nc &lt; <span class="nm">0</span> || nc &gt;= m) <span class="kw">continue</span>;
+    <span class="cm">/* 여기서부터 (nr, nc)는 안전하다 */</span>
+}</pre>
+  </div>
+  <div class="note">
+    <span class="h">세 가지를 같이 기억한다</span>
+    <b>①</b> 조건은 <b><code>||</code>로 네 개</b>다. 3장에서 배운 대로 <code>0 &lt;= nr &lt; n</code>처럼 쓰면 안 된다.<br>
+    <b>②</b> 행의 한계는 <code>n</code>, 열의 한계는 <code>m</code>이다. <b>정사각형이 아닐 때</b> 둘을 바꿔 쓰는 실수가 가장 많다.<br>
+    <b>③</b> <code>continue</code>로 건너뛰는 형태가 기본이다. 뒤집어서 <code>if (안쪽이면) { ... }</code>로 써도 되지만, <b>조건이 길어지면 들여쓰기가 깊어진다</b>.
+  </div>
+
+  <h3><span class="tag">9.5</span>패딩 — 경계 검사를 아예 없앤다</h3>
+  <p>격자의 <strong>사방에 한 칸씩 테두리</strong>를 두고 그 자리를 "아무것도 없음"으로 채우면, 밖으로 나가도 테두리에 떨어지므로 <strong>검사가 필요 없어진다</strong>.</p>
+  <div class="io">
+    <div><div class="lbl">검사판</div><pre>char m[N][N];
+/* 데이터는 [0..N-1] */
+
+for (d = 0; d &lt; 8; d++) {
+    ni = i+dr8[d]; nj = j+dc8[d];
+    if (ni&lt;0||ni&gt;=N||nj&lt;0||nj&gt;=N)
+        continue;
+    if (m[ni][nj]=='*') c++;
+}</pre></div>
+    <div><div class="lbl">패딩판</div><pre>char m[N+2][N+2];
+/* 데이터는 [1..N], 테두리는 '.' */
+
+for (d = 0; d &lt; 8; d++)
+    if (m[i+dr8[d]][j+dc8[d]]=='*') c++;
+
+           ↑ if 가 사라졌다</pre></div>
+  </div>
+  <table>
+    <thead><tr><th style="width:30%">방법 (1000×1000, 20회 반복)</th><th style="width:22%">시간</th><th>결과</th></tr></thead>
+    <tbody>
+      <tr><td>경계 검사판</td><td>0.116초</td><td rowspan="2">합이 <strong>79,920,000</strong>으로 동일</td></tr>
+      <tr><td><strong>패딩판</strong></td><td><strong>0.075초</strong> (약 1.5배)</td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">패딩의 진짜 이득은 속도가 아니라 코드다</span>
+    1.5배는 큰 차이가 아니다. 진짜 이득은 <b>경계 검사를 빠뜨릴 수 없게</b> 된다는 것이다. 이 장 오류의 절반이 "검사를 한 군데 빠뜨림"에서 나온다.<br>
+    <b>쓸 수 있는 조건</b> — 테두리 값이 <b>답에 영향을 주지 않아야</b> 한다. 지뢰 세기에서 테두리를 <code>'.'</code>로 두면 안전하고, 합을 구할 때 테두리를 0으로 두면 안전하다. 반대로 <b>최솟값</b>을 구하는데 테두리가 0이면 틀린다(4장의 초기값 판단과 같은 질문).<br>
+    그리고 <b>인덱스가 1부터</b>가 된다. 2장의 누적합에서 1부터 쓴 것과 같은 이유다.
+  </div>
+
+  <h3><span class="tag">9.6</span>행 우선으로 훑는다</h3>
+  <p>C의 2차원 배열은 메모리에 <strong>한 행씩 이어서</strong> 놓인다. 그래서 순회 순서가 속도를 바꾼다. 4000×4000 격자(61MB)로 측정했다.</p>
+  <table>
+    <thead><tr><th style="width:38%">순회 순서</th><th style="width:22%">시간</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td><code>for i: for j: a[i][j]</code> (행 우선)</td><td><strong>0.010초</strong></td><td>메모리 순서대로 읽는다</td></tr>
+      <tr><td><code>for j: for i: a[i][j]</code> (열 우선)</td><td>0.112초</td><td><strong>11.2배 느리다</strong></td></tr>
+    </tbody>
+  </table>
+  <p>더한 합은 <strong>같다</strong>(48,000,006). 같은 칸을 전부 더하므로 당연하다. <strong>답은 같고 시간만 11배 차이</strong>라는 점이 핵심이다.</p>
+  <div class="note">
+    <span class="h">2장의 "상수 최적화"에 해당한다</span>
+    복잡도는 양쪽 다 O(N²)다. 바뀐 것은 <b>상수</b>인데 11배다. 2장에서 "상수 최적화는 최대 4배"라고 했지만, <b>캐시가 걸린 경우에는 10배를 넘기도 한다</b>.<br>
+    <b>습관</b> — 2차원 배열은 <b>항상 <code>i</code>를 바깥, <code>j</code>를 안쪽</b>에 둔다. 특별한 이유가 없으면 순서를 바꾸지 않는다.
+  </div>
+
+  <h3><span class="tag">9.7</span>격자 변환 — 식을 외우지 말고 유도한다</h3>
+  <table>
+    <thead><tr><th style="width:22%">변환</th><th style="width:28%">식</th><th>유도</th></tr></thead>
+    <tbody>
+      <tr><td>전치</td><td><code>t[j][i] = a[i][j]</code></td><td>행과 열을 바꾼다</td></tr>
+      <tr><td>상하 반전</td><td><code>t[n-1-i][j] = a[i][j]</code></td><td>행 번호만 뒤집는다</td></tr>
+      <tr><td>좌우 반전</td><td><code>t[i][m-1-j] = a[i][j]</code></td><td>열 번호만 뒤집는다</td></tr>
+      <tr><td><strong>90° 시계</strong></td><td><code>t[j][n-1-i] = a[i][j]</code></td><td><strong>전치 + 좌우 반전</strong></td></tr>
+      <tr><td>90° 반시계</td><td><code>t[m-1-j][i] = a[i][j]</code></td><td>전치 + 상하 반전</td></tr>
+    </tbody>
+  </table>
+  <div class="io">
+    <div><div class="lbl">검증: 90° 시계</div><pre>원본        회전
+1 2 3   →   7 4 1
+4 5 6   →   8 5 2
+7 8 9   →   9 6 3
+
+1행이 마지막 열이 된다.</pre></div>
+    <div><div class="lbl">검산법</div><pre>"전치 후 좌우 반전"으로 두 번
+돌린 결과와, 식 하나로 직접
+돌린 결과를 비교한다.
+
+4×4로 확인 → 완전히 일치</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">식을 외우지 말고 한 칸으로 확인한다</span>
+    다섯 식을 외우면 반드시 헷갈린다. <b>왼쪽 위 <code>a[0][0]</code>이 어디로 가는지</b> 한 칸만 따져 본다. 90° 시계면 <code>a[0][0]</code>은 <b>오른쪽 위</b>, 즉 <code>t[0][n-1]</code>로 간다. 식 <code>t[j][n-1-i]</code>에 <code>i=0, j=0</code>을 넣으면 <code>t[0][n-1]</code>이다. 맞다.<br>
+    <b>정사각형이 아니면</b> 결과의 크기가 <code>n×m</code>에서 <code>m×n</code>으로 바뀐다는 것도 잊지 않는다.
+  </div>
+
+  <h3><span class="tag">9.8</span>(행, 열)과 (x, y)를 섞지 않는다</h3>
+  <table>
+    <thead><tr><th style="width:26%">표기</th><th style="width:24%">첫 번째</th><th style="width:24%">두 번째</th><th>위쪽은?</th></tr></thead>
+    <tbody>
+      <tr><td>(행, 열) — 배열</td><td>행 <code>r</code> (세로)</td><td>열 <code>c</code> (가로)</td><td>r이 <strong>작은</strong> 쪽</td></tr>
+      <tr><td>(x, y) — 수학</td><td>x (가로)</td><td>y (세로)</td><td>y가 <strong>큰</strong> 쪽</td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">문제가 (x, y)로 말하면 종이에 적는다</span>
+    "좌표 (3, 5)에 있다"는 문장이 <code>a[3][5]</code>인지 <code>a[5][3]</code>인지는 <b>문제가 정한다</b>. 예제 입출력으로 확인하고 <b>종이에 변환 규칙을 적은 뒤</b> 코드를 쓴다.<br>
+    <b>권장</b> — 코드 안에서는 무조건 <b>(행, 열)</b>로 통일한다. 입력을 받는 순간 변환하고, 그 뒤로는 <code>r</code>, <code>c</code>라는 이름만 쓴다. 변수 이름을 <code>x</code>, <code>y</code>로 두면 반드시 어느 순간 헷갈린다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드</h2>
+
+  <div class="code">
+    <div class="codehead"><span>minesweeper.c</span><span>8방향 세기 — 경계 검사판</span></div>
+<pre class="c"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">char</span> g[<span class="nm">102</span>][<span class="nm">102</span>];
+<span class="kw">int</span> n, m;
+<span class="kw">int</span> dr8[<span class="nm">8</span>] = {<span class="nm">-1</span>,<span class="nm">-1</span>,<span class="nm">0</span>,<span class="nm">1</span>,<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>,<span class="nm">-1</span>};
+<span class="kw">int</span> dc8[<span class="nm">8</span>] = { <span class="nm">0</span>, <span class="nm">1</span>,<span class="nm">1</span>,<span class="nm">1</span>,<span class="nm">0</span>,<span class="nm">-1</span>,<span class="nm">-1</span>,<span class="nm">-1</span>};
+
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+    <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d %d"</span>, &amp;n, &amp;m) != <span class="nm">2</span>) <span class="kw">return</span> <span class="nm">1</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++)
+        <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%101s"</span>, g[i]) != <span class="nm">1</span>) <span class="kw">return</span> <span class="nm">1</span>;
+
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {          <span class="cm">/* 행 우선 */</span>
+        <span class="kw">for</span> (<span class="kw">int</span> j = <span class="nm">0</span>; j &lt; m; j++) {
+            <span class="kw">if</span> (g[i][j] == <span class="st">'*'</span>) { <span class="fn">putchar</span>(<span class="st">'*'</span>); <span class="kw">continue</span>; }
+            <span class="kw">int</span> c = <span class="nm">0</span>;
+            <span class="kw">for</span> (<span class="kw">int</span> d = <span class="nm">0</span>; d &lt; <span class="nm">8</span>; d++) {
+                <span class="kw">int</span> ni = i + dr8[d], nj = j + dc8[d];
+                <span class="kw">if</span> (ni &lt; <span class="nm">0</span> || ni &gt;= n || nj &lt; <span class="nm">0</span> || nj &gt;= m) <span class="kw">continue</span>;
+                <span class="kw">if</span> (g[ni][nj] == <span class="st">'*'</span>) c++;
+            }
+            <span class="fn">putchar</span>(<span class="st">'0'</span> + c);
+        }
+        <span class="fn">putchar</span>(<span class="st">'\n'</span>);
+    }
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+  </div>
+  <div class="io">
+    <div><div class="lbl">입력</div><pre>5 5
+*....
+.....
+.*...
+.....
+....*</pre></div>
+    <div><div class="lbl">출력 (검증 완료)</div><pre>*1000
+22100
+1*100
+11111
+0001*</pre></div>
+  </div>
+
+  <div class="code">
+    <div class="codehead"><span>minesweeper_pad.c</span><span>같은 문제 — 패딩판</span></div>
+<pre class="c"><span class="kw">char</span> m2[<span class="nm">102</span>][<span class="nm">102</span>];                  <span class="cm">/* 데이터는 [1..n][1..m] */</span>
+
+<span class="fn">memset</span>(m2, <span class="st">'.'</span>, <span class="kw">sizeof</span> m2);          <span class="cm">/* 테두리까지 전부 '.' */</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">1</span>; i &lt;= n; i++)
+    <span class="fn">scanf</span>(<span class="st">"%101s"</span>, m2[i] + <span class="nm">1</span>);         <span class="cm">/* 1번 칸부터 채운다 */</span>
+
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">1</span>; i &lt;= n; i++) {
+    <span class="kw">for</span> (<span class="kw">int</span> j = <span class="nm">1</span>; j &lt;= m; j++) {
+        <span class="kw">if</span> (m2[i][j] == <span class="st">'*'</span>) { <span class="fn">putchar</span>(<span class="st">'*'</span>); <span class="kw">continue</span>; }
+        <span class="kw">int</span> c = <span class="nm">0</span>;
+        <span class="kw">for</span> (<span class="kw">int</span> d = <span class="nm">0</span>; d &lt; <span class="nm">8</span>; d++)
+            <span class="kw">if</span> (m2[i + dr8[d]][j + dc8[d]] == <span class="st">'*'</span>) c++;   <span class="cm">/* 검사 없음 */</span>
+        <span class="fn">putchar</span>(<span class="st">'0'</span> + c);
+    }
+    <span class="fn">putchar</span>(<span class="st">'\n'</span>);
+}</pre>
+  </div>
+  <p>두 판의 출력이 <strong>완전히 같다</strong>는 것을 확인했다. 패딩판은 <code>if</code>가 하나 사라졌고, <strong><code>scanf</code>에 <code>m2[i] + 1</code>을 넘기는 것</strong>이 요령이다.</p>
+
+  <div class="code">
+    <div class="codehead"><span>walk.c</span><span>이동 시뮬레이션 — 벽에 부딪히면 제자리</span></div>
+<pre class="c"><span class="kw">const</span> <span class="kw">char</span> *ds = <span class="st">"UDLR"</span>;             <span class="cm">/* 명령 문자 */</span>
+<span class="kw">int</span> mr[<span class="nm">4</span>] = {<span class="nm">-1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>};
+<span class="kw">int</span> mc[<span class="nm">4</span>] = { <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">-1</span>, <span class="nm">1</span>};
+
+<span class="kw">int</span> r = <span class="nm">0</span>, c = <span class="nm">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> k = <span class="nm">0</span>; cmd[k]; k++) {
+    <span class="kw">int</span> d = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> t = <span class="nm">0</span>; t &lt; <span class="nm">4</span>; t++) <span class="kw">if</span> (ds[t] == cmd[k]) d = t;
+
+    <span class="kw">int</span> nr = r + mr[d], nc = c + mc[d];
+    <span class="kw">if</span> (nr &lt; <span class="nm">0</span> || nr &gt;= n || nc &lt; <span class="nm">0</span> || nc &gt;= m) <span class="kw">continue</span>;  <span class="cm">/* 제자리 */</span>
+    r = nr; c = nc;
+}</pre>
+  </div>
+  <div class="note warn">
+    <span class="h">"벽이면 제자리"와 "벽이면 무시"는 다르다</span>
+    위 코드는 <b>이동만 취소</b>하고 다음 명령으로 넘어간다. 문제에 따라 <b>그 자리에서 멈춘다</b>(남은 명령을 버린다)일 수도 있다. 1장에서 배운 대로 <b>문제 문장을 끝까지 읽고</b> 어느 쪽인지 확인한다.<br>
+    검증 — 5×5 격자에서 <code>(0,0)</code> 시작, 명령 <code>RRDDLU</code> → <code>(0,1) → (0,2) → (1,2) → (2,2) → (2,1) → (1,1)</code>.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+
+  <h3><span class="tag">예제 1</span>델타 배열 검산 두 줄</h3>
+  <p>코드를 쓰기 전에 델타가 맞는지 확인한다. 2분이면 되고, 틀린 델타로 몇 시간을 잃는 일을 막는다.</p>
+  <div class="io">
+    <div><div class="lbl">검산 ① 합이 0</div><pre>int sr=0, sc=0;
+for (d = 0; d &lt; 8; d++) {
+    sr += dr8[d];
+    sc += dc8[d];
+}
+printf("%d %d\n", sr, sc);
+→ 0 0</pre></div>
+    <div><div class="lbl">검산 ② 3×3을 덮는가</div><pre>int seen[3][3] = {0};
+for (d = 0; d &lt; 8; d++)
+    seen[dr8[d]+1][dc8[d]+1]++;
+
+/* 가운데만 0, 나머지 8칸이 1 */
+→ 일치</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 2</span>경계 검사를 뒤집어 쓰기</h3>
+  <p>같은 조건을 두 가지로 쓸 수 있다. 3장의 드모르간이 여기서 쓰인다.</p>
+  <div class="io">
+    <div><div class="lbl">밖이면 건너뛴다 (권장)</div><pre>if (nr &lt; 0 || nr &gt;= n ||
+    nc &lt; 0 || nc &gt;= m) continue;
+
+/* 본문 */</pre></div>
+    <div><div class="lbl">안이면 처리한다</div><pre>if (0 &lt;= nr &amp;&amp; nr &lt; n &amp;&amp;
+    0 &lt;= nc &amp;&amp; nc &lt; m) {
+    /* 본문 */
+}</pre></div>
+  </div>
+  <p>둘은 완전히 같다. 다만 <strong>본문이 길어지면 왼쪽이 읽기 쉽다</strong> — 들여쓰기가 늘지 않기 때문이다. 그리고 <strong><code>&amp;&amp;</code>를 <code>||</code>로 바꾸는 것을 잊지 않는 것</strong>이 3장의 교훈이다.</p>
+  <div class="note warn">
+    <span class="h">자주 나오는 오타</span>
+    <code>nr &gt;= n</code>을 <code>nr &gt; n</code>으로 쓰면 <b>마지막 행 바로 밖</b>을 읽는다. 3장의 경계 판단 그대로다. <b>1×1 격자</b>를 넣어 보면 즉시 드러난다.
+  </div>
+
+  <h3><span class="tag">예제 3</span>지뢰찾기를 두 판으로 만들어 비교한다</h3>
+  <p>검사판과 패딩판을 모두 작성해 <strong>출력이 완전히 같은지</strong> 확인한다. 3장·6장에서 쓴 "두 판 비교" 검증법이다.</p>
+  <div class="io">
+    <div><div class="lbl">패딩판에서 주의할 세 가지</div><pre>① memset 으로 테두리까지
+   '.'을 채운다
+
+② 입력은 m2[i] + 1 로 받는다
+
+③ 루프가 1부터 n까지다</pre></div>
+    <div><div class="lbl">두 판의 출력</div><pre>*1000      *1000
+22100      22100
+1*100  =   1*100
+11111      11111
+0001*      0001*</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 4</span>90도 회전을 한 칸으로 확인한다</h3>
+  <p>식을 외우지 않는다. <strong><code>a[0][0]</code>이 어디로 가는가</strong>만 본다.</p>
+  <table>
+    <thead><tr><th style="width:26%">변환</th><th style="width:26%"><code>a[0][0]</code>의 행선지</th><th style="width:24%">식에 i=0, j=0</th><th>일치?</th></tr></thead>
+    <tbody>
+      <tr><td>90° 시계</td><td>오른쪽 위 <code>t[0][n-1]</code></td><td><code>t[0][n-1-0]</code></td><td>일치</td></tr>
+      <tr><td>90° 반시계</td><td>왼쪽 아래 <code>t[m-1][0]</code></td><td><code>t[m-1-0][0]</code></td><td>일치</td></tr>
+      <tr><td>상하 반전</td><td>왼쪽 아래 <code>t[n-1][0]</code></td><td><code>t[n-1-0][0]</code></td><td>일치</td></tr>
+      <tr><td>좌우 반전</td><td>오른쪽 위 <code>t[0][m-1]</code></td><td><code>t[0][m-1-0]</code></td><td>일치</td></tr>
+    </tbody>
+  </table>
+  <p>검증 — 4×4 격자를 "전치 후 좌우 반전"으로 두 번 돌린 결과와 <code>t[j][n-1-i]</code> 식으로 한 번에 돌린 결과가 <strong>완전히 일치</strong>했다.</p>
+
+  <h3><span class="tag">예제 5</span>제자리 변환은 조심한다</h3>
+  <div class="io">
+    <div><div class="lbl">새 배열에 담으면 안전</div><pre>for (i = 0; i &lt; n; i++)
+    for (j = 0; j &lt; n; j++)
+        t[j][n-1-i] = a[i][j];
+
+/* 그다음 a에 복사하거나
+   t를 그대로 쓴다 */</pre></div>
+    <div><div class="lbl">제자리로 하면 덮어쓴다</div><pre>a[j][n-1-i] = a[i][j];
+
+→ 아직 읽지 않은 칸을
+  먼저 덮어써서 망가진다
+
+좌우 반전처럼 "쌍으로 교환"
+되는 변환만 제자리가 가능하다.</pre></div>
+  </div>
+  <div class="note">
+    <span class="h">메모리는 충분하다</span>
+    N ≤ 1,000이면 <code>int</code> 격자 하나가 4MB다(2장). 두 개를 써도 8MB이므로 <b>새 배열을 만드는 쪽이 안전하고 빠르다</b>. 제자리 회전은 코드가 까다롭고 얻는 것이 적다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+
+  <div class="errs">
+    <div class="err"><span class="en">1</span><div class="eb">
+      <b>경계 검사를 빠뜨린다</b><br>
+      격자 밖을 읽어도 <b>크래시하지 않고 0이 나온다</b>. 쓰기라면 옆 변수가 조용히 망가진다. 안쪽 칸만 테스트하면 절대 안 걸린다.<br>
+      <span class="fix">대책</span> 이웃 탐색 세 줄을 <b>통째로 외운다</b>. <code>-fsanitize=address</code>로 한 번 돌려 본다. 또는 <b>패딩</b>으로 검사 자체를 없앤다.
+    </div></div>
+
+    <div class="err"><span class="en">2</span><div class="eb">
+      <b>행과 열의 한계를 바꿔 쓴다</b><br>
+      <code>nr &gt;= m</code>, <code>nc &gt;= n</code>처럼 쓰면 <b>정사각형에서는 멀쩡</b>하고 직사각형에서만 틀린다. 예제가 정사각형이면 끝까지 안 보인다.<br>
+      <span class="fix">대책</span> <b><code>n</code>은 행, <code>m</code>은 열</b>로 고정한다. 그리고 <b>n ≠ m인 격자</b>(예: 3×5)를 반드시 테스트한다.
+    </div></div>
+
+    <div class="err"><span class="en">3</span><div class="eb">
+      <b>델타 배열에 오타가 있다</b><br>
+      8방향은 숫자가 16개다. 하나만 틀려도 <b>어떤 칸을 두 번 보거나 한 칸을 빠뜨린다</b>. 결과가 미묘하게만 달라 찾기 어렵다.<br>
+      <span class="fix">대책</span> 예제 1의 <b>검산 두 줄</b>(합이 0 / 3×3을 덮는가)을 코드 쓰기 전에 돌린다.
+    </div></div>
+
+    <div class="err"><span class="en">4</span><div class="eb">
+      <b>왼쪽 회전을 <code>(d-1)%4</code>로 쓴다</b><br>
+      <code>d = 0</code>일 때 <code>-1 % 4</code>는 C에서 <b>−1</b>이다(4장). 배열 인덱스로 쓰면 격자 밖이다.<br>
+      <span class="fix">대책</span> <b><code>(d + 3) % 4</code></b>. 음수 나머지가 나올 수 있는 모든 자리에서 <b>법만큼 더하고</b> 나눈다.
+    </div></div>
+
+    <div class="err"><span class="en">5</span><div class="eb">
+      <b>열 우선으로 훑는다</b><br>
+      <code>for j: for i:</code> 순서면 답은 같은데 <b>11.2배</b> 느리다. 작은 격자에서는 안 보이고 큰 격자에서만 시간 초과가 난다.<br>
+      <span class="fix">대책</span> <b><code>i</code>를 바깥, <code>j</code>를 안쪽</b>으로 고정한다. 특별한 이유 없이 바꾸지 않는다.
+    </div></div>
+
+    <div class="err"><span class="en">6</span><div class="eb">
+      <b>회전을 제자리에서 한다</b><br>
+      <code>a[j][n-1-i] = a[i][j]</code>는 <b>아직 읽지 않은 칸을 먼저 덮어쓴다</b>. 결과가 뒤죽박죽이 되는데 작은 격자에서는 우연히 맞기도 한다.<br>
+      <span class="fix">대책</span> <b>새 배열에 담는다</b>. 메모리는 충분하다(1000×1000 <code>int</code>가 4MB).
+    </div></div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    오류 1·2·3은 <b>전부 "안쪽 칸만 보면 멀쩡"</b>하다. 격자 문제의 반례는 항상 <b>테두리</b>에 있다.<br>
+    <b>격자 문제의 표준 반례 다섯 개</b> — ① <b>1×1</b> ② <b>1×m</b>(한 줄짜리) ③ <b>n×1</b>(한 열짜리) ④ <b>n ≠ m인 직사각형</b> ⑤ <b>네 모서리</b>. 다섯 개를 넣으면 이 장의 오류가 거의 전부 걸린다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>모든 문제에서 <strong>1×1 / 1×m / n×1 / 직사각형 / 네 모서리</strong>를 넣어 본다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>격자 입력과 합</b> — N×M 정수 격자를 입력받아 전체 합, 행별 합, 열별 합을 출력하라. N, M ≤ 1,000, 각 값 ≤ 10<sup>9</sup>.</p>
+    <div class="sample"><div><span>INPUT</span><pre>2 3
+1 2 3
+4 5 6</pre></div><div><span>OUTPUT</span><pre>21
+6 15
+5 7 9</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>문자 격자 읽기</b> — N×M 격자가 <b>붙어서</b> 들어온다. <code>#</code>의 개수를 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3 4
+.#..
+##.#
+...#</pre></div><div><span>OUTPUT</span><pre>5</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>델타 검산</b> — 4방향과 8방향 델타 배열을 선언하고 ⑴ 합이 0인지 ⑵ 3×3을 빠짐없이 덮는지 검사하는 코드를 작성하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>이웃의 합</b> — N×M 격자에서 각 칸의 <b>4방향 이웃의 합</b>을 출력하라. 격자 밖은 더하지 않는다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3 3
+1 2 3
+4 5 6
+7 8 9</pre></div><div><span>OUTPUT</span><pre>6 9 8
+13 20 17
+12 21 14</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>지뢰찾기</b> — <code>*</code>는 지뢰, <code>.</code>는 빈칸이다. 빈칸을 <b>8방향 이웃의 지뢰 수</b>로 바꿔 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5 5
+*....
+.....
+.*...
+.....
+....*</pre></div><div><span>OUTPUT</span><pre>*1000
+22100
+1*100
+11111
+0001*</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>대각선 합</b> — N×N 격자의 주대각선 합과 반대각선 합을 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4
+1 2 3 4
+5 6 7 8
+9 10 11 12
+13 14 15 16</pre></div><div><span>OUTPUT</span><pre>34
+34</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>90도 회전</b> — N×M 격자를 시계 방향으로 90도 돌려 출력하라. 결과는 M×N이다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3 3
+1 2 3
+4 5 6
+7 8 9</pre></div><div><span>OUTPUT</span><pre>7 4 1
+8 5 2
+9 6 3</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>이동 시뮬레이션</b> — N×M 격자에서 (0,0)에서 시작해 명령 문자열(<code>U D L R</code>)을 따라 움직인다. 격자 밖으로 나가는 명령은 <b>무시</b>한다. 최종 위치를 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5 5
+RRDDLU</pre></div><div><span>OUTPUT</span><pre>1 1</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>패딩판 지뢰찾기</b> — 05번을 <b>테두리를 한 칸씩 두어</b> 경계 검사 없이 작성하라. 05번과 출력이 완전히 같은지 비교하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>순회 순서 측정</b> — 4000×4000 <code>int</code> 격자의 합을 ⑴ 행 우선 ⑵ 열 우선으로 구해 시간을 재고 몇 배인지 적어라. 두 합이 같은지도 확인하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>경계 검사 없이 돌려 보기</b> — 04번에서 경계 검사를 <b>빼고</b> 실행해 결과가 어떻게 달라지는지 적어라. <code>-fsanitize=address</code>로도 돌려 메시지를 확인하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>방향 회전</b> — (0,0)에서 <b>오른쪽(d=1)</b>을 보며 시작한다. 명령 <code>F</code>는 한 칸 전진, <code>R</code>은 오른쪽 90도, <code>L</code>은 왼쪽 90도다. 격자 밖으로 나가는 전진은 무시한다. 최종 위치와 방향을 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5 5
+FFRFFL</pre></div><div><span>OUTPUT</span><pre>2 2 1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>테두리만 출력</b> — N×M 격자에서 <b>가장자리에 있는 칸</b>의 합을 출력하라. 1×1, 1×M, N×1을 반드시 확인하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3 3
+1 2 3
+4 5 6
+7 8 9</pre></div><div><span>OUTPUT</span><pre>40</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>격자 변환 네 가지</b> — N×M 격자를 ⑴ 전치 ⑵ 상하 반전 ⑶ 좌우 반전 ⑷ 90도 반시계로 각각 변환해 출력하라. 각 결과의 크기도 함께 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>두 격자 비교</b> — 두 N×M 격자가 <b>90도 회전 관계</b>인지 판정하라. 0도·90도·180도·270도 중 하나로 일치하면 그 각도를, 아니면 <code>-1</code>을 출력하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>2차원 누적합</b> — N×M 격자와 Q개의 직사각형 질의 (r1, c1, r2, c2)가 주어진다. 각 질의마다 직사각형 안의 합을 출력하라. N, M ≤ 1,000, Q ≤ 10<sup>5</sup>. 2장 18번의 식을 쓴다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3 3 2
+1 2 3
+4 5 6
+7 8 9
+1 1 2 2
+2 2 3 3</pre></div><div><span>OUTPUT</span><pre>12
+28</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>달팽이 순회</b> — N×M 격자를 바깥에서 안쪽으로 <b>시계 방향 달팽이 순서</b>로 훑어 값을 출력하라. 방향 전환은 <b>격자 밖이거나 이미 방문한 칸</b>일 때 일어난다. <code>(d+1)%4</code>를 쓴다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3 4
+1 2 3 4
+5 6 7 8
+9 10 11 12</pre></div><div><span>OUTPUT</span><pre>1 2 3 4 8 12 11 10 9 5 6 7</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>생명 게임 한 세대</b> — <code>#</code>는 살아 있음, <code>.</code>는 죽음이다. 한 세대 뒤의 격자를 출력하라. 규칙 — 살아 있는 칸은 8방향 이웃 중 산 것이 2개나 3개면 살고, 죽은 칸은 정확히 3개면 살아난다. <b>새 배열에 써야 하는 이유</b>를 설명하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5 5
+.....
+..#..
+..#..
+..#..
+.....</pre></div><div><span>OUTPUT</span><pre>.....
+.....
+.###.
+.....
+.....</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>최대 정사각형 변의 합</b> — N×M 격자에서 크기 K×K인 정사각형 중 <b>합이 최대</b>인 것을 찾아 그 합을 출력하라. N, M ≤ 1,000, K ≤ min(N, M). ⑴ 단순 방법의 복잡도를 계산하고 ⑵ 16번의 2차원 누적합으로 O(N·M)에 푸는 코드를 작성하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>종합</b> — 아래 문제를 받았다. ⑴ 좌표계를 종이에 적고 ⑵ 배열 크기와 패딩 여부를 정하고 ⑶ 반례 다섯 개를 적은 뒤 ⑷ 코드를 작성하라.</p>
+    <div class="sample"><div><span>PROBLEM</span><pre>N×M 격자에 로봇이 있다.
+첫 줄에 N, M, 시작 행 r, 시작 열 c,
+시작 방향 d (0=상,1=우,2=하,3=좌).
+둘째 줄에 명령 문자열.
+
+  F : 바라보는 방향으로 한 칸 전진
+      (격자 밖이면 무시)
+  R : 오른쪽 90도 회전
+  L : 왼쪽 90도 회전
+
+로봇이 지나간 칸(시작 칸 포함)의
+개수와 최종 상태 r c d 를
+두 줄로 출력하라.
+
+제약
+1 ≤ N, M ≤ 1,000
+명령 길이 ≤ 100,000
+시간 1초</pre></div><div><span>SAMPLE</span><pre>입력
+5 5 0 0 1
+FFRFFL
+
+출력
+5
+2 2 1</pre></div></div>
+  </div></div>
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">07 — 확인 평가</span>
+  <h2>정답과 해설</h2>
+
+  <div class="ans"><span class="an">01</span><div class="ab">
+    한 번 훑으며 전체 합, 행별 합, 열별 합을 동시에 모은다(4장 8.4절).<br>
+    검증 — <code>1 2 3 / 4 5 6</code> → 전체 21, 행별 6 15, 열별 5 7 9.<br>
+    <b>지도 포인트</b> — 값이 10<sup>9</sup>이고 칸이 10<sup>6</sup>개이므로 전체 합은 최대 <b>10<sup>15</sup></b>다. <code>long long</code>이 필요하다(2장·4장). 그리고 <b>행 우선</b>으로 훑으면 세 가지를 한 번에 모을 수 있다는 점도 짚는다.
+  </div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab">
+    <code>scanf("%s", g[i])</code>로 한 줄씩 읽는다. 배열은 <code>char g[1002][1002]</code>.<br>
+    검증 — 예제에서 <code>#</code>이 <b>5</b>개.<br>
+    <b>지도 포인트</b> — <code>%d</code>로 읽으려 하면 <code>.#..</code>에서 막힌다. <b>붙어 있는 격자는 문자열</b>이라는 것을 여기서 못 박는다. 그리고 각 행의 길이가 <code>m</code>과 같은지 <code>strlen</code>으로 확인하는 것도 좋은 검산이다(8장).
+  </div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab">
+    예제 1의 두 검산. 4방향은 합이 (0, 0), 8방향도 (0, 0). 3×3 덮기는 8방향에서만 의미가 있고 가운데를 뺀 8칸이 한 번씩 나온다.<br>
+    <b>지도 포인트</b> — 이 두 줄을 <b>습관으로 만드는 것</b>이 목적이다. 학생에게 일부러 델타 하나를 틀리게 적은 뒤 검산이 잡아내는지 보여 주면 효과가 크다. 3장의 "전수 검사"가 델타 배열에 적용된 형태다.
+  </div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab">
+    4방향 델타 + 경계 검사.<br>
+    검증 — 3×3 격자 <code>1..9</code>에서 (0,0)의 이웃은 2와 4이므로 <b>6</b>, (0,1)은 1+3+5 = <b>9</b>, (1,1)은 2+4+6+8 = <b>20</b>, (2,1)은 7+9+5 = <b>21</b>. 전체 출력은 <code>6 9 8 / 13 20 17 / 12 21 14</code>.<br>
+    <b>지도 포인트</b> — 모서리 칸은 이웃이 <b>2개</b>, 변 위의 칸은 <b>3개</b>, 안쪽은 <b>4개</b>다. 출력을 보며 이것을 확인시키면 경계 검사가 실제로 동작하는지 눈으로 검산할 수 있다.
+  </div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab">
+    본문 <code>minesweeper.c</code>.<br>
+    검증 — 출력 <code>*1000 / 22100 / 1*100 / 11111 / 0001*</code>.<br>
+    <b>지도 포인트</b> — 지뢰 칸은 <b>세지 말고 그대로 <code>*</code>를 출력</b>해야 한다. 지뢰 칸에도 숫자를 쓰면 틀린다. 그리고 <code>putchar('0' + c)</code>가 6장의 숫자→문자 변환이라는 점을 연결한다.
+  </div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab">
+    <code>for (i=0;i&lt;n;i++) { d1 += a[i][i]; d2 += a[i][n-1-i]; }</code><br>
+    검증 — 4×4 격자 <code>1..16</code>에서 주대각선 1+6+11+16 = <b>34</b>, 반대각선 4+7+10+13 = <b>34</b>.<br>
+    <b>지도 포인트</b> — <code>a[i][n-1-i]</code>가 반대각선이라는 것을 <b>i=0과 i=n-1을 넣어</b> 확인시킨다. i=0이면 <code>a[0][n-1]</code>(오른쪽 위), i=n-1이면 <code>a[n-1][0]</code>(왼쪽 아래)다. 9.7절의 "한 칸으로 확인" 습관이다.
+  </div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab">
+    <code>t[j][n-1-i] = a[i][j]</code>, 결과는 <b>M×N</b>.<br>
+    검증 — <code>1 2 3 / 4 5 6 / 7 8 9</code> → <code>7 4 1 / 8 5 2 / 9 6 3</code>.<br>
+    <b>지도 포인트</b> — <b>결과의 크기가 바뀐다</b>는 것을 반드시 짚는다. N≠M인 입력(3×4)을 넣어 결과가 4×3이 되는지 확인시킨다. 정사각형만 테스트하면 이 오류가 안 보인다(오류 2와 같은 성질).
+  </div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab">
+    명령 문자를 방향 번호로 바꾼 뒤 이동, 격자 밖이면 <code>continue</code>.<br>
+    검증 — 5×5에서 <code>RRDDLU</code> → (0,1) → (0,2) → (1,2) → (2,2) → (2,1) → <b>(1,1)</b>.<br>
+    <b>지도 포인트</b> — "무시"와 "멈춤"의 차이를 다시 묻는다(본문 walk.c). 그리고 <b>1×1 격자</b>를 넣으면 모든 명령이 무시되어 (0,0)이 나와야 한다 — 표준 반례 ①이다.
+  </div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab">
+    본문 <code>minesweeper_pad.c</code>. 세 가지가 핵심 — <code>memset</code>으로 테두리를 <code>'.'</code>로, 입력을 <code>m2[i] + 1</code>로, 루프를 1부터.<br>
+    두 판의 출력이 <b>완전히 일치</b>함을 확인했다.<br>
+    <b>지도 포인트</b> — 패딩의 이득이 <b>1.5배의 속도가 아니라 "검사를 빠뜨릴 수 없게 되는 것"</b>임을 강조한다. 그리고 <b>테두리 값이 답에 영향을 주지 않는지</b> 따져 보게 한다 — 여기서는 <code>'.'</code>이라 안전하지만, 최솟값 문제였다면 테두리를 0으로 두면 틀린다.
+  </div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab">
+    측정 (4000×4000, 61MB) — 행 우선 <b>0.010초</b> / 열 우선 <b>0.112초</b> → <b>11.2배</b>. 합은 둘 다 48,000,006으로 동일.<br>
+    <b>지도 포인트</b> — <b>답은 같고 시간만 11배</b>라는 점이 전부다. 복잡도는 둘 다 O(N²)이므로 2장의 표로는 구분되지 않는다. <b>복잡도가 같아도 상수가 다르다</b>는 것을 캐시로 설명한다(PART 1 9장). 작은 격자에서는 차이가 안 나므로 큰 격자로 재야 한다는 것도 짚는다.
+  </div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab">
+    경계 검사를 빼면 (0,0)에서 <code>g[-1][0]</code>과 <code>g[0][-1]</code>을 읽는다. 측정에서는 <b>0이 나오고 크래시하지 않았다</b>.<br>
+    sanitizer 메시지 — <code>AddressSanitizer: global-buffer-overflow, READ of size 4</code>.<br>
+    <b>지도 포인트</b> — <b>"오류가 안 난다"가 "맞다"가 아니다</b>. 7장 15번과 같은 교훈이다. 그리고 <code>g[-1][0]</code>이 왜 <code>g[0][-1]</code>과 같은 자리를 가리키는지(2차원 배열이 메모리에 한 줄로 놓이므로) 설명하면 9.6절의 캐시 이야기와 자연스럽게 이어진다.
+  </div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">
+    <code>R</code>이면 <code>d = (d+1)%4</code>, <code>L</code>이면 <code>d = (d+3)%4</code>, <code>F</code>면 전진하되 밖이면 무시.<br>
+    검증 — 5×5, (0,0) 방향 1(우)에서 <code>FFRFFL</code> → F:(0,1), F:(0,2), R:d=2(하), F:(1,2), F:(2,2), L:d=1(우) → <b>2 2 1</b>.<br>
+    <b>지도 포인트</b> — <code>(d-1)%4</code>로 쓰면 <code>d=0</code>에서 <b>−1</b>이 되어 <code>dr[-1]</code>을 읽는다(오류 4). 이것도 크래시 없이 쓰레기가 나온다. <b>음수 나머지</b>는 4장에서 이미 다뤘으므로 학생이 스스로 떠올리게 유도한다.
+  </div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab">
+    <code>if (i == 0 || i == n-1 || j == 0 || j == m-1) sum += a[i][j];</code><br>
+    검증 — 3×3 <code>1..9</code>에서 가운데 5를 뺀 나머지 합 = 45 − 5 = <b>40</b>.<br>
+    <b>지도 포인트</b> — <b>1×1</b>이면 유일한 칸이 가장자리이므로 그 값이 답이다. <b>1×M</b>이면 모든 칸이 가장자리다. "네 변을 따로 더하기"로 짜면 <b>모서리를 두 번 세거나</b> 1×M에서 틀린다. <b>조건 하나로 판정</b>하는 쪽이 경계를 자동으로 처리한다 — 3장의 "빠짐없이·겹치지 않게"다.
+  </div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab">
+    <table>
+      <thead><tr><th>변환</th><th>식</th><th>결과 크기</th></tr></thead>
+      <tbody>
+        <tr><td>전치</td><td><code>t[j][i] = a[i][j]</code></td><td><b>M×N</b></td></tr>
+        <tr><td>상하 반전</td><td><code>t[n-1-i][j] = a[i][j]</code></td><td>N×M</td></tr>
+        <tr><td>좌우 반전</td><td><code>t[i][m-1-j] = a[i][j]</code></td><td>N×M</td></tr>
+        <tr><td>90° 반시계</td><td><code>t[m-1-j][i] = a[i][j]</code></td><td><b>M×N</b></td></tr>
+      </tbody>
+    </table>
+    <b>지도 포인트</b> — <b>크기가 바뀌는 둘(전치·회전)과 안 바뀌는 둘(반전)</b>을 구분시킨다. 그리고 각 식을 <code>a[0][0]</code> 한 칸으로 검산하게 한다(예제 4). 4×4로 "전치 후 좌우 반전 = 90° 시계"를 확인한 결과와 맞춰 보면 식 사이의 관계가 보인다.
+  </div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab">
+    0도(그대로)부터 시작해 90도씩 네 번 돌리며 매번 비교한다. 돌릴 때마다 크기가 바뀌므로 <b>크기가 다르면 바로 건너뛴다</b>.<br>
+    <b>지도 포인트</b> — <b>크기 비교를 먼저</b> 하는 것이 요령이다. N≠M이면 90도와 270도는 크기가 달라 애초에 비교할 필요가 없다. 1장의 "먼저 걸러 내기"이고, 8장 아나그램의 길이 비교와 같은 발상이다.
+  </div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">
+    <code>P[i][j] = a[i][j] + P[i-1][j] + P[i][j-1] - P[i-1][j-1]</code>, 질의는<br>
+    <code>P[r2][c2] - P[r1-1][c2] - P[r2][c1-1] + P[r1-1][c1-1]</code>.<br>
+    검증 — 3×3 <code>1..9</code>에서 (1,1)~(2,2) → 1+2+4+5 = <b>12</b>, (2,2)~(3,3) → 5+6+8+9 = <b>28</b>.<br>
+    복잡도 — 전처리 O(N·M) = 10<sup>6</sup>, 질의마다 O(1). 전체 통과.<br>
+    <b>지도 포인트</b> — 2장 18번에서 식만 보았던 것을 여기서 <b>직접 작성</b>한다. <b>인덱스를 1부터</b> 쓰면 <code>P[0][*]</code>와 <code>P[*][0]</code>이 전부 0이라 경계 검사가 사라진다 — 9.5절의 패딩과 같은 발상이다. <code>P</code>는 <code>long long</code>이어야 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    방문 배열을 두고, <b>격자 밖이거나 이미 방문했으면</b> <code>d = (d+1)%4</code>로 꺾는다. N×M번 반복한다.
+    <pre>int r=0, c=0, d=1;              /* 오른쪽부터 */
+for (int k = 0; k &lt; n*m; k++) {
+    출력(a[r][c]); vis[r][c] = 1;
+    int nr = r+dr[d], nc = c+dc[d];
+    if (nr&lt;0||nr&gt;=n||nc&lt;0||nc&gt;=m||vis[nr][nc]) {
+        d = (d+1)%4;
+        nr = r+dr[d]; nc = c+dc[d];
+    }
+    r = nr; c = nc;
+}</pre>
+    검증 — 3×4 격자 → <code>1 2 3 4 8 12 11 10 9 5 6 7</code>.<br>
+    <b>지도 포인트</b> — PART 1 7장에서는 <b>닫힌 식</b>으로 달팽이를 풀었다. 여기서는 <b>시뮬레이션</b>으로 푼다. 같은 문제를 두 방법으로 풀어 본 셈인데, <b>시뮬레이션이 훨씬 쉽고 변형에 강하다</b>는 것을 체감시킨다. 방향 전환 조건이 "밖 <b>또는</b> 방문함" 두 가지라는 점이 핵심이다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    8방향 이웃을 세어 규칙을 적용한다. <b>반드시 새 배열에 쓴다</b>.<br>
+    검증 — 세로 막대 3개 → 가로 막대 3개(점멸기).<br>
+    <b>왜 새 배열인가</b> — 제자리에 쓰면 <b>이미 바뀐 칸을 이웃으로 세게</b> 된다. (1,2)를 갱신한 뒤 (2,2)를 계산할 때 (1,2)의 <b>새 값</b>을 보게 되어, "한 세대 뒤"가 아니라 뒤죽박죽이 된다.<br>
+    <b>지도 포인트</b> — 오류 6번(제자리 회전)과 <b>같은 원리</b>다. <b>"읽는 배열과 쓰는 배열을 분리"</b>는 시뮬레이션의 기본 규칙이다. 여러 세대를 돌릴 때는 두 배열을 번갈아 쓰거나 매번 복사한다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    <b>⑴ 단순 방법</b> — 시작 위치 N·M개마다 K²칸을 더하면 <b>O(N·M·K²)</b>. N=M=K/2=1,000이면 10<sup>6</sup> × 10<sup>6</sup>으로 불가능하다.<br>
+    <b>⑵ 누적합</b> — 16번의 2차원 누적합을 만든 뒤, 각 시작 위치마다 <b>O(1)</b>로 합을 구한다. 전체 <b>O(N·M)</b> = 10<sup>6</sup>.<br>
+    <pre>for (i = K; i &lt;= n; i++)
+  for (j = K; j &lt;= m; j++) {
+    long long s = P[i][j] - P[i-K][j] - P[i][j-K] + P[i-K][j-K];
+    if (s &gt; best) best = s;
+  }</pre>
+    <b>지도 포인트</b> — 2장 도입(구간 합)의 2차원판이다. <b>질의가 미리 주어지지 않아도</b> 누적합이 쓰인다는 것 — "모든 위치를 다 보는 것"이 곧 10<sup>6</sup>개의 질의다. 그리고 <code>best</code>의 초기값은 4장대로 <b>첫 정사각형의 합</b>으로 둔다(값이 음수일 수 있다면 0은 틀린다).
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    <b>⑴ 좌표계</b> — 문제가 (행, 열)로 말하고 방향도 0=상, 1=우, 2=하, 3=좌로 <b>시계 방향</b>이다. 본문 9.2절의 델타를 그대로 쓸 수 있다. 종이에 <code>dr = {-1,0,1,0}</code>, <code>dc = {0,1,0,-1}</code>을 적고 시작한다.<br>
+    <b>⑵ 배열과 패딩</b> — <code>char vis[1001][1001]</code> = 1MB. <b>패딩은 쓰지 않는다</b> — 전진을 "무시"해야 하므로 <b>경계를 명시적으로 판정</b>해야 하기 때문이다(패딩은 "밖을 읽어도 안전"일 뿐 "밖인지 알려 주지" 않는다). 방문 배열은 전역(2장).<br>
+    <b>⑶ 반례 다섯</b> — ① 1×1(모든 F가 무시, 지나간 칸 1) ② 1×M(상하 이동이 전부 무시) ③ N×1 ④ N≠M인 직사각형 ⑤ 네 모서리에서 시작. 추가로 <b>명령이 회전뿐</b>인 경우(지나간 칸 1)와 <b>같은 칸을 여러 번</b> 지나는 경우(중복으로 세면 안 된다).<br>
+    <b>⑷ 복잡도</b> — 명령마다 O(1)이므로 <b>10<sup>5</sup></b>. 통과.<br>
+    <b>⑸ 샘플 검산</b> — 5×5, (0,0) 방향 1에서 <code>FFRFFL</code>: F→(0,1), F→(0,2), R→d=2, F→(1,2), F→(2,2), L→d=1. 지나간 칸은 (0,0),(0,1),(0,2),(1,2),(2,2)로 <b>5개</b>, 최종 <b>2 2 1</b>.<br>
+    <b>지도 포인트</b> — <b>⑵의 판단</b>이 이 문제의 함정이다. 패딩이 항상 좋은 것이 아니라 <b>"밖인지 알아야 하는 문제"에서는 쓸 수 없다</b>는 것을 깨닫는 자리다. 그리고 지나간 칸을 세는 데 <b>방문 배열</b>이 필요하다는 것은 7장의 체크 배열이 2차원으로 확장된 것이다 — <b>도구가 차원을 넘어 따라온다</b>.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li>델타는 <strong>시계 방향</strong>으로 적고 회전은 <code>(d+1)%4</code>, <code>(d+3)%4</code></li>
+    <li>델타 배열은 <strong>합이 0인지 / 3×3을 덮는지</strong> 검산한다</li>
+    <li>이웃 탐색에 <strong>경계 검사 한 줄</strong>을 반드시 붙인다</li>
+    <li>행의 한계는 <code>n</code>, 열의 한계는 <code>m</code> — <strong>바꿔 쓰지 않는다</strong></li>
+    <li>테두리 값이 답에 영향이 없으면 <strong>패딩</strong>으로 검사를 없앤다</li>
+    <li>순회는 <strong><code>i</code> 바깥, <code>j</code> 안쪽</strong> (11.2배)</li>
+    <li>변환 식은 <strong><code>a[0][0]</code>이 어디로 가는지</strong>로 확인한다</li>
+    <li>시뮬레이션은 <strong>읽는 배열과 쓰는 배열을 분리</strong>한다</li>
+    <li>반례 — <strong>1×1 / 1×m / n×1 / 직사각형 / 네 모서리</strong></li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 10장 완전탐색 입문</span>
+    2장에서 "N ≤ 20이면 O(2<sup>N</sup>), N ≤ 10이면 O(N!)"이라고 했다. 다음 장은 그 <strong>허락</strong>을 실제로 쓰는 법을 다룬다. 모든 부분집합을 만드는 두 가지 방법(재귀와 비트), 모든 순열을 만드는 법, 그리고 <strong>중복을 어떻게 피하는가</strong>가 핵심이다. PART 1 11장의 재귀가 여기서 제값을 한다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 2 · 09장 · 2026-10-13 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+</div></body></html>

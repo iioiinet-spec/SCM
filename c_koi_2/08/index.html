@@ -1,0 +1,954 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 2 · 08장 문자열 기초 처리 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#9a5f1a;
+  --accent-soft:#f7ecdb;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#e8b670}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style></head><body><div class="sheet"><header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 2 · 브론즈급 해결 스킬 — 08 / 12</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">08</span>
+    <h1>문자열 기초 처리</h1>
+  </div>
+  <p class="lede">7장에서 <strong>값을 인덱스로</strong> 썼다. 이 장에서는 <strong>문자를 인덱스로</strong> 쓴다. 알파벳은 26칸이면 충분하니 카운팅 배열이 가장 잘 맞는 자리다. 그런데 그 전에, C의 문자열에는 <strong>보이지 않는 글자가 하나</strong> 있다는 것부터 알아야 한다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li><code>'\0'</code>의 역할을 설명하고 배열 크기를 <strong>N+1</strong>로 잡을 수 있다</li>
+    <li><code>strlen</code>이 <strong>O(N)</strong>임을 알고 루프 조건에 쓰지 않는다</li>
+    <li><code>scanf("%s")</code>와 <code>fgets</code>의 차이를 알고 상황에 맞게 고를 수 있다</li>
+    <li>아스키 코드로 <strong>문자 분류와 대소문자 변환</strong>을 할 수 있다</li>
+    <li><strong>문자를 인덱스로</strong> 써서 26칸 카운팅 배열을 만들 수 있다</li>
+    <li>문자열 비교에 <code>==</code> 대신 <code>strcmp</code>를 쓰는 이유를 설명할 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 측정 · <code>'\0'</code>과 배열 크기 · <code>strlen</code>의 비용</div>
+  <div><b>2차시</b>입력 두 가지 · 문자 분류와 변환 · 문자를 인덱스로 · 비교</div>
+  <div><b>3차시</b>표준 코드 · 단계 예제 · 흔한 오류 6종 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>대문자로 바꾸는 데 0.4초</h2>
+
+  <div class="io">
+    <div><div class="lbl">문제</div><pre>문자열을 모두 대문자로 바꿔 출력하라.
+
+제약
+문자열의 길이 ≤ 200,000</pre></div>
+    <div><div class="lbl">자연스러운 코드</div><pre>for (int i = 0; i &lt; strlen(s); i++)
+    s[i] = toupper(s[i]);
+
+printf("%s\n", s);</pre></div>
+  </div>
+
+  <p>길이 20만인 문자열로 돌려 보면,</p>
+
+  <div class="io">
+    <div><div class="lbl">측정</div><pre>조건에 strlen        0.417초
+길이를 미리 저장     0.00009초
+
+배수 = 4,537배</pre></div>
+    <div><div class="lbl">고친 코드 — 한 줄 차이</div><pre>int len = strlen(s);        /* 한 번만 */
+for (int i = 0; i &lt; len; i++)
+    s[i] = toupper(s[i]);</pre></div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">왜 그렇게 느린가</span>
+    <code>strlen(s)</code>은 <b>문자열의 길이를 어딘가에서 꺼내 오는 것이 아니다.</b> 맨 앞부터 한 글자씩 보며 <code>'\0'</code>을 찾을 때까지 세는 <b>O(N) 함수</b>다.<br>
+    그것을 루프 조건에 두면 <b>매 반복마다</b> 처음부터 끝까지 다시 센다. 전체는 N + (N−1) + … ≈ <b>N²/2 = 2 × 10<sup>10</sup>번</b>이다. 2장의 표로 보면 확실한 시간 초과다.
+  </div>
+
+  <p>이 한 줄짜리 버그의 뿌리는 <strong><code>'\0'</code></strong>이라는 보이지 않는 글자에 있다. C는 문자열의 길이를 따로 저장하지 않는다. 대신 <strong>끝에 0을 하나 놓아 두고</strong> 거기까지가 문자열이라고 약속한다. 이 장의 거의 모든 오류가 그 약속에서 나온다.</p>
+
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> 문자열을 담을 배열은 몇 칸이어야 하는가?<br>
+    <b>②</b> 공백이 포함된 한 줄은 어떻게 읽는가?<br>
+    <b>③</b> 문자를 어떻게 배열의 인덱스로 쓰는가?
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">8.1</span><code>'\0'</code> — 보이지 않는 마지막 글자</h3>
+  <div class="io">
+    <div><div class="lbl">실제 메모리</div><pre>char s[20] = "abc";
+
+s[0] = 97  ('a')
+s[1] = 98  ('b')
+s[2] = 99  ('c')
+s[3] = 0   ('\0')  ← 끝 표시
+s[4] = 0
+...</pre></div>
+    <div><div class="lbl">두 가지 "크기"</div><pre>sizeof(s) = 20   배열의 칸 수
+strlen(s) = 3    '\0' 전까지의 글자 수
+
+둘은 전혀 다른 것이다.</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">길이 N인 문자열은 N+1칸이 필요하다</span>
+    <code>char t[4] = "abc";</code>는 딱 맞는다 — 글자 3개 + <code>'\0'</code> 하나.<br>
+    문제에 "문자열의 길이 ≤ 100"이라고 적혀 있으면 <b><code>char s[101]</code></b>로 선언한다. 100으로 잡으면 가장 긴 입력에서 <code>'\0'</code>이 들어갈 자리가 없어 <b>옆 메모리를 덮어쓴다</b>.<br>
+    <b>습관</b> — 제약의 길이에 <b>항상 +1</b>, 불안하면 넉넉하게 +10.
+  </div>
+
+  <h3><span class="tag">8.2</span>문자 하나와 문자열은 다르다</h3>
+  <table>
+    <thead><tr><th style="width:18%">표기</th><th style="width:22%">무엇인가</th><th style="width:18%">크기</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td><code>'a'</code></td><td>문자 하나</td><td>값 97</td><td>작은따옴표. C에서는 <code>int</code>로 다룬다</td></tr>
+      <tr><td><code>"a"</code></td><td>문자열</td><td>2바이트</td><td>큰따옴표. <code>'a'</code>와 <code>'\0'</code></td></tr>
+      <tr><td><code>'\0'</code></td><td>값이 0인 문자</td><td>값 0</td><td><code>'0'</code>(값 48)과 전혀 다르다</td></tr>
+    </tbody>
+  </table>
+  <p><code>s[i] == "a"</code>라고 쓰면 컴파일 오류이거나 엉뚱한 비교가 된다. <strong>한 글자를 비교할 때는 반드시 작은따옴표</strong>다.</p>
+
+  <h3><span class="tag">8.3</span><code>strlen</code>은 O(N)이다</h3>
+  <p>도입 문제의 원인이다. 올바른 루프 조건은 두 가지다.</p>
+  <div class="io">
+    <div><div class="lbl">① 길이를 미리 저장</div><pre>int len = strlen(s);
+for (int i = 0; i &lt; len; i++)
+    ...
+
+루프 안에서 길이가 바뀌지 않을 때</pre></div>
+    <div><div class="lbl">② <code>'\0'</code>까지 (더 간결)</div><pre>for (int i = 0; s[i]; i++)
+    ...
+         ↑
+  s[i] 가 '\0'(=0)이면 거짓
+
+strlen 을 아예 안 쓴다</pre></div>
+  </div>
+  <div class="note">
+    <span class="h">②를 기본으로 쓴다</span>
+    <code>for (int i = 0; s[i]; i++)</code>는 <b>한 번만 훑고</b> 길이를 따로 구할 필요도 없다. 6장의 <code>while (n)</code>과 같은 관용구다 — <b>0이면 거짓</b>이라는 C의 성질을 쓴 것이다.<br>
+    길이 자체가 필요할 때만 <code>strlen</code>을 부르고, 그 결과를 <b>변수에 담아</b> 쓴다.
+  </div>
+
+  <h3><span class="tag">8.4</span>읽는 법 두 가지</h3>
+  <table>
+    <thead><tr><th style="width:20%">방법</th><th style="width:26%">어디까지 읽나</th><th style="width:22%">개행은?</th><th>쓸 때</th></tr></thead>
+    <tbody>
+      <tr><td><code>scanf("%s", s)</code></td><td><strong>공백 전까지</strong></td><td>안 들어온다</td><td>단어 하나씩</td></tr>
+      <tr><td><code>fgets(s, n, stdin)</code></td><td><strong>줄 끝까지</strong></td><td><strong>들어온다</strong></td><td>공백 포함 한 줄</td></tr>
+    </tbody>
+  </table>
+  <div class="io">
+    <div><div class="lbl">입력이 <code>hello world</code>일 때</div><pre>scanf("%s", a);  → a = "hello"
+scanf("%s", b);  → b = "world"
+
+fgets(line, ...) → line = "hello world\n"
+                   길이 12 (개행 포함!)</pre></div>
+    <div><div class="lbl"><code>fgets</code> 뒤에는 개행을 지운다</div><pre>size_t L = strlen(line);
+if (L &gt; 0 &amp;&amp; line[L-1] == '\n')
+    line[L-1] = '\0';
+
+→ 길이 11</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h"><code>scanf</code> 뒤에 <code>fgets</code>를 쓰면 빈 줄이 들어온다</span>
+    <code>scanf("%d", &amp;n)</code>은 숫자만 읽고 <b>그 줄의 개행을 남긴다</b>. 바로 <code>fgets</code>를 부르면 그 개행을 만나 <b>빈 줄</b>을 읽고 끝난다.
+    <pre>입력: 3 (개행) hello world (개행)
+scanf("%d") 후 fgets  → line = "\n"  (길이 1)   ← 빈 줄</pre>
+    <b>대책</b> — 사이에 남은 줄을 비운다.
+    <pre>int ch; while ((ch = getchar()) != '\n' &amp;&amp; ch != EOF) { }</pre>
+    또는 <b>처음부터 끝까지 한 가지만</b> 쓴다. 섞어 쓰지 않는 것이 가장 안전하다.
+  </div>
+  <div class="note">
+    <span class="h"><code>scanf</code>에는 길이 제한을 붙인다</span>
+    <code>scanf("%s", s)</code>는 배열 크기를 모르므로 <b>얼마든지 넘쳐 쓴다</b>. <code>char s[101]</code>이면 <code>scanf("%100s", s)</code>로 쓴다 — 100글자 + <code>'\0'</code>이다.<br>
+    올림피아드에서는 제약을 지킨 입력만 들어오므로 생략해도 통과하지만, <b>버퍼 넘침을 막는 습관</b>은 들여 두는 편이 좋다.
+  </div>
+
+  <h3><span class="tag">8.5</span>아스키 코드와 문자 변환</h3>
+  <table>
+    <thead><tr><th style="width:24%">문자</th><th style="width:20%">코드</th><th>기억할 것</th></tr></thead>
+    <tbody>
+      <tr><td><code>' '</code> (공백)</td><td>32</td><td rowspan="2">대소문자 차이가 <strong>정확히 32</strong></td></tr>
+      <tr><td><code>'0'</code> ~ <code>'9'</code></td><td>48 ~ 57</td></tr>
+      <tr><td><code>'A'</code> ~ <code>'Z'</code></td><td>65 ~ 90</td><td rowspan="2"><code>'a'</code> − <code>'A'</code> = <strong>32</strong></td></tr>
+      <tr><td><code>'a'</code> ~ <code>'z'</code></td><td>97 ~ 122</td></tr>
+    </tbody>
+  </table>
+  <div class="io">
+    <div><div class="lbl">세 가지 표기 (모두 같은 결과)</div><pre>/* 소문자 → 대문자 */
+c - 'a' + 'A'
+toupper(c)          /* ctype.h */
+c - 32</pre></div>
+    <div><div class="lbl">그런데 안전성이 다르다</div><pre>toupper('A') = 'A'   안전
+'A' - 32     = '!'   ← 깨진다
+               (코드 33)
+
+이미 대문자인 글자에
+32를 빼면 엉뚱한 기호가 된다.</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h"><code>toupper</code>/<code>tolower</code>를 쓴다</span>
+    <code>&lt;ctype.h&gt;</code>의 <code>toupper</code>는 <b>알파벳이 아니면 그대로 둔다</b>. 숫자나 공백이 섞인 문자열에서도 안전하다. 직접 32를 더하거나 빼면 <b>조건 검사를 반드시 같이</b> 해야 한다.<br>
+    <b>분류 함수</b>도 함께 알아 둔다 — <code>isalpha</code>(알파벳), <code>isdigit</code>(숫자), <code>isupper</code>, <code>islower</code>, <code>isspace</code>(공백류). 직접 쓰면 <code>'a' &lt;= c &amp;&amp; c &lt;= 'z'</code>인데, 3장에서 배운 대로 <b><code>&amp;&amp;</code>로</b> 쓴다.
+  </div>
+
+  <h3><span class="tag">8.6</span>문자를 인덱스로 — 26칸</h3>
+  <p>7장의 카운팅 배열이 문자열에서 가장 잘 맞는다. <strong>값의 범위가 26(또는 128)밖에 안 되기 때문</strong>이다.</p>
+  <div class="code">
+    <div class="codehead"><span>알파벳 카운팅</span><span>7장 기법의 문자열판</span></div>
+<pre class="c"><span class="kw">int</span> cnt[<span class="nm">26</span>] = {<span class="nm">0</span>};
+
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; s[i]; i++) {
+    <span class="kw">char</span> x = <span class="fn">tolower</span>((<span class="kw">unsigned</span> <span class="kw">char</span>)s[i]);
+    <span class="kw">if</span> (x &gt;= <span class="st">'a'</span> &amp;&amp; x &lt;= <span class="st">'z'</span>)
+        cnt[x - <span class="st">'a'</span>]++;          <span class="cm">/* ← 문자를 인덱스로 */</span>
+}</pre>
+  </div>
+  <div class="io">
+    <div><div class="lbl">검증: "Mississippi"</div><pre>i:4  m:1  p:2  s:4
+
+합 = 11 = 문자열 길이
+(자체 검산)</pre></div>
+    <div><div class="lbl">범위에 따른 배열 크기</div><pre>알파벳만        26칸
+알파벳 대소 구분  52칸
+숫자까지         62칸
+아스키 전체     128칸
+
+전부 아주 작다 — 7장의
+"값의 범위" 걱정이 없다</pre></div>
+  </div>
+  <div class="note">
+    <span class="h">가장 단순한 방법은 128칸</span>
+    문자 종류를 구분하기 귀찮으면 <b><code>int cnt[128] = {0};</code>에 <code>cnt[(unsigned char)s[i]]++</code></b> 한 줄이면 끝난다. 알파벳·숫자·기호가 전부 제자리에 세어진다. 메모리는 512바이트다.<br>
+    <code>(unsigned char)</code> 캐스팅은 <b>한글이나 특수문자가 음수가 되는 것</b>을 막는다. C의 <code>char</code>는 부호가 있을 수 있어서 128 이상의 바이트가 음수로 읽힌다.
+  </div>
+
+  <h3><span class="tag">8.7</span>비교는 <code>strcmp</code>로</h3>
+  <div class="io">
+    <div><div class="lbl"><code>==</code>는 내용을 비교하지 않는다</div><pre>char s1[] = "abc";
+char s2[] = "abc";
+
+s1 == s2            → 거짓
+  (주소를 비교한다)
+
+strcmp(s1, s2) == 0 → 참
+  (내용을 비교한다)</pre></div>
+    <div><div class="lbl"><code>strcmp</code>의 반환값</div><pre>strcmp("apple","banana")  = -1
+strcmp("banana","apple")  =  1
+strcmp("abc","abc")       =  0
+strcmp("abc","abcd")      = -100
+strcmp("ABC","abc")       = -32
+strcmp("Z","a")           = -7</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">반환값은 <strong>부호만</strong> 본다</span>
+    측정 결과에서 보듯 <code>-1</code>이 아니라 <code>-100</code>이나 <code>-32</code>가 나오기도 한다. <b>구체적인 값은 보장되지 않는다</b>. 반드시 <code>&lt; 0</code>, <code>== 0</code>, <code>&gt; 0</code>으로만 판정한다.<br>
+    그리고 사전 순 비교는 <b>아스키 코드 순</b>이므로 <b>대문자가 소문자보다 앞</b>이다(<code>'Z'</code>=90 &lt; <code>'a'</code>=97). 대소문자를 구분하지 않고 비교해야 한다면 양쪽을 모두 <code>tolower</code>한 뒤 비교한다.
+  </div>
+
+  <h3><span class="tag">8.8</span>버퍼를 넘기면</h3>
+  <div class="io">
+    <div><div class="lbl">8칸에 17바이트를 쓰면</div><pre>char buf[8];
+char after[8] = "SAFE";
+
+strcpy(buf, "0123456789ABCDEF");
+
+→ *** buffer overflow detected ***
+   종료 코드 134</pre></div>
+    <div><div class="lbl">sanitizer로 보면</div><pre>AddressSanitizer:
+  global-buffer-overflow
+  WRITE of size 17
+
+PART 1 16장에서 배운 도구가
+여기서도 범인을 바로 가리킨다.</pre></div>
+  </div>
+  <p>운이 좋으면 위처럼 즉시 멈추지만, <strong>운이 나쁘면 옆 변수가 조용히 바뀐 채 계속 실행된다</strong>. 7장 오류 1번과 같은 성질이다 — <strong>C는 범위를 검사하지 않는다</strong>.</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드</h2>
+
+  <div class="code">
+    <div class="codehead"><span>readline.c</span><span>공백 포함 한 줄 읽기 — 가장 많이 쓰는 뼈대</span></div>
+<pre class="c"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="pp">#include</span> <span class="st">&lt;string.h&gt;</span>
+
+<span class="kw">char</span> line[<span class="nm">1000001</span>];              <span class="cm">/* 길이 10^6 + '\0' + 여유 */</span>
+
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+    <span class="kw">if</span> (!<span class="fn">fgets</span>(line, <span class="kw">sizeof</span> line, stdin)) <span class="kw">return</span> <span class="nm">1</span>;
+
+    <span class="kw">size_t</span> L = <span class="fn">strlen</span>(line);
+    <span class="kw">if</span> (L &gt; <span class="nm">0</span> &amp;&amp; line[L - <span class="nm">1</span>] == <span class="st">'\n'</span>)
+        line[--L] = <span class="st">'\0'</span>;          <span class="cm">/* 개행 제거 + 길이도 줄인다 */</span>
+
+    <span class="fn">printf</span>(<span class="st">"[%s] 길이 %zu\n"</span>, line, L);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+  </div>
+  <div class="note">
+    <span class="h"><code>L &gt; 0</code> 검사가 왜 필요한가</span>
+    빈 입력이면 <code>L</code>이 0이고, <code>line[L-1]</code>은 <code>line[-1]</code>이 되어 <b>배열 밖</b>이다. 8.1절의 "+1"과 더불어 <b>문자열의 양 끝</b>을 늘 조심한다.<br>
+    그리고 <code>L</code>을 <code>size_t</code>로 받았다면 <code>L - 1</code>이 0에서 <b>엄청나게 큰 값</b>이 된다(부호 없는 정수). 그래서 <code>L &gt; 0</code>을 먼저 쓰거나, 아예 <code>int</code>로 받는다.
+  </div>
+
+  <div class="code">
+    <div class="codehead"><span>strlib.c</span><span>문자열 처리 모음</span></div>
+<pre class="c"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="pp">#include</span> <span class="st">&lt;string.h&gt;</span>
+<span class="pp">#include</span> <span class="st">&lt;ctype.h&gt;</span>
+
+<span class="cm">/* ① 뒤집기 — j는 반드시 int */</span>
+<span class="kw">void</span> <span class="fn">reverse</span>(<span class="kw">char</span> *s) {
+    <span class="kw">int</span> i = <span class="nm">0</span>, j = (<span class="kw">int</span>)<span class="fn">strlen</span>(s) - <span class="nm">1</span>;
+    <span class="kw">while</span> (i &lt; j) {
+        <span class="kw">char</span> t = s[i]; s[i] = s[j]; s[j] = t;
+        i++; j--;
+    }
+}
+
+<span class="cm">/* ② 회문 판정 */</span>
+<span class="kw">int</span> <span class="fn">is_palindrome</span>(<span class="kw">const</span> <span class="kw">char</span> *s) {
+    <span class="kw">int</span> i = <span class="nm">0</span>, j = (<span class="kw">int</span>)<span class="fn">strlen</span>(s) - <span class="nm">1</span>;
+    <span class="kw">while</span> (i &lt; j) {
+        <span class="kw">if</span> (s[i] != s[j]) <span class="kw">return</span> <span class="nm">0</span>;
+        i++; j--;
+    }
+    <span class="kw">return</span> <span class="nm">1</span>;
+}
+
+<span class="cm">/* ③ 알파벳 세기 (대소문자 구분 없이) */</span>
+<span class="kw">void</span> <span class="fn">count_alpha</span>(<span class="kw">const</span> <span class="kw">char</span> *s, <span class="kw">int</span> cnt[<span class="nm">26</span>]) {
+    <span class="kw">for</span> (<span class="kw">int</span> k = <span class="nm">0</span>; k &lt; <span class="nm">26</span>; k++) cnt[k] = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; s[i]; i++) {
+        <span class="kw">int</span> x = <span class="fn">tolower</span>((<span class="kw">unsigned</span> <span class="kw">char</span>)s[i]);
+        <span class="kw">if</span> (x &gt;= <span class="st">'a'</span> &amp;&amp; x &lt;= <span class="st">'z'</span>) cnt[x - <span class="st">'a'</span>]++;
+    }
+}
+
+<span class="cm">/* ④ 단어 세기 — 공백이 여러 개여도 된다 */</span>
+<span class="kw">int</span> <span class="fn">count_words</span>(<span class="kw">const</span> <span class="kw">char</span> *s) {
+    <span class="kw">int</span> w = <span class="nm">0</span>, in = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; s[i]; i++) {
+        <span class="kw">if</span> (s[i] != <span class="st">' '</span>) { <span class="kw">if</span> (!in) { w++; in = <span class="nm">1</span>; } }
+        <span class="kw">else</span> in = <span class="nm">0</span>;
+    }
+    <span class="kw">return</span> w;
+}</pre>
+  </div>
+  <div class="note warn">
+    <span class="h">④의 <code>in</code>이 핵심이다</span>
+    "공백을 세면 단어 수"라고 생각하면 <b>공백이 연속하거나 앞뒤에 붙은 입력</b>에서 틀린다. <b>"공백이 아닌 글자가 나왔는데 직전이 공백이었으면 새 단어"</b>로 세어야 한다.<br>
+    검증 — <code>"The Curious Case of Benjamin Button"</code> → 6, <code>"  hello   world  "</code> → <b>2</b>, <code>" "</code> → <b>0</b>, <code>"a"</code> → 1.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+
+  <h3><span class="tag">예제 1</span>회문 — 수가 아니라 문자열로</h3>
+  <p>6장에서는 수를 뒤집어 비교했다. 문자열판은 <strong>양 끝에서 안쪽으로</strong> 좁혀 온다. 오버플로가 없고 길이 제한도 없다.</p>
+  <div class="io">
+    <div><div class="lbl">검증</div><pre>"level" → 회문
+"abba"  → 회문
+"abc"   → 아님
+"a"     → 회문
+""      → 회문 (루프가 안 돈다)
+"Able"  → 아님 (대소문자 구분)</pre></div>
+    <div><div class="lbl">왜 <code>i &lt; j</code>인가</div><pre>길이가 홀수면 가운데 글자는
+자기 자신과 비교할 필요가 없다.
+
+"aba" → i=0,j=2 비교 후
+        i=1,j=1 이 되어 종료
+
+i &lt;= j 로 써도 답은 같지만
+한 번 더 비교한다.</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 2</span>아나그램 — 카운팅 배열 두 번</h3>
+  <p>"두 문자열이 같은 글자로 이루어졌는가"는 <strong>한 쪽은 더하고 다른 쪽은 빼서 전부 0인지</strong> 보면 된다.</p>
+  <div class="io">
+    <div><div class="lbl">코드</div><pre>int c[26] = {0};
+for (i = 0; a[i]; i++) c[a[i]-'a']++;
+for (i = 0; b[i]; i++) c[b[i]-'a']--;
+
+int ok = 1;
+for (k = 0; k &lt; 26; k++)
+    if (c[k]) ok = 0;</pre></div>
+    <div><div class="lbl">검증</div><pre>"listen" vs "silent" → 아나그램
+"abc"    vs "cab"    → 아나그램
+"abc"    vs "abd"    → 아님
+"aab"    vs "abb"    → 아님</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">길이 검사를 빼먹지 않는다</span>
+    길이가 다르면 아나그램일 수 없다. 위 코드는 26칸이 전부 0인지만 보므로 <b>길이가 다른데 우연히 상쇄되는 일은 없지만</b>, 길이를 먼저 비교하면 <b>대부분의 경우를 O(1)에 걸러</b> 낼 수 있다. 1장의 "먼저 걸러 내기"다.
+  </div>
+
+  <h3><span class="tag">예제 3</span>최빈 알파벳 — 동점 처리</h3>
+  <p>7장 예제 3의 문자열판이다. 동점일 때 무엇을 출력할지가 문제의 핵심이 된다.</p>
+  <div class="io">
+    <div><div class="lbl">측정</div><pre>"Mississippi" → i:4, s:4  동점!
+"Zbaba"       → a:2, b:2  동점!
+"aAbB"        → a:2, b:2  동점!</pre></div>
+    <div><div class="lbl">동점 판정</div><pre>int mx = 0, best = -1, dup = 0;
+for (k = 0; k &lt; 26; k++) {
+    if (cnt[k] &gt; mx) {
+        mx = cnt[k]; best = k; dup = 0;
+    } else if (cnt[k] == mx &amp;&amp; mx &gt; 0)
+        dup = 1;
+}
+/* dup 이면 '?' 출력 */</pre></div>
+  </div>
+  <div class="note">
+    <span class="h"><code>mx &gt; 0</code> 조건이 필요한 이유</span>
+    등장하지 않은 알파벳은 전부 0이다. <code>mx</code>가 0인 상태에서 <code>cnt[k] == mx</code>를 만나면 <b>나오지도 않은 글자끼리 동점</b>이 되어 버린다. <b>초기값과 비교하는 순간을 조심</b>하는 것은 4장에서 배운 그대로다.
+  </div>
+
+  <h3><span class="tag">예제 4</span><code>size_t</code>의 함정</h3>
+  <p><code>strlen</code>의 반환형은 <code>size_t</code>인데, 이것은 <strong>부호 없는 정수</strong>다. 0에서 1을 빼면 음수가 아니라 <strong>엄청나게 큰 수</strong>가 된다.</p>
+  <div class="io">
+    <div><div class="lbl">빈 문자열에서</div><pre>char s[8] = "";
+
+int    j = strlen(s) - 1;
+  → -1            (정상)
+
+size_t j = strlen(s) - 1;
+  → 18446744073709551615</pre></div>
+    <div><div class="lbl">무슨 일이 일어나나</div><pre>뒤집기 코드의
+  while (i &lt; j)
+에서 j 가 거대한 값이면
+배열 밖을 마구 건드린다.
+
+→ 즉시 크래시하거나
+  조용히 메모리를 망가뜨린다</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">규칙 한 줄</span>
+    <b>인덱스로 쓸 값은 <code>int</code>로 받는다.</b> <code>strlen</code>의 결과를 바로 빼서 쓰지 말고 <code>int len = (int)strlen(s);</code>처럼 한 번 담는다.<br>
+    이것은 2장에서 다룬 오버플로와 같은 종류의 문제다 — <b>자료형의 경계에서 조용히 깨진다</b>.
+  </div>
+
+  <h3><span class="tag">예제 5</span>대소문자 뒤집기</h3>
+  <div class="io">
+    <div><div class="lbl">코드</div><pre>for (int i = 0; s[i]; i++) {
+    unsigned char c = s[i];
+    s[i] = isupper(c) ? tolower(c)
+                      : toupper(c);
+}</pre></div>
+    <div><div class="lbl">검증</div><pre>"StuDY" → "sTUdy"
+
+알파벳이 아닌 글자는
+toupper 가 그대로 두므로
+숫자·공백·기호도 안전하다.</pre></div>
+  </div>
+  <p>직접 32를 더하고 빼는 방법으로 쓰면 <code>if</code>가 두 번 필요하고, <strong>알파벳이 아닌 글자에서 깨진다</strong>. <code>ctype.h</code>를 쓰는 편이 짧고 안전하다.</p>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+
+  <div class="errs">
+    <div class="err"><span class="en">1</span><div class="eb">
+      <b>배열 크기를 길이와 똑같이 잡는다</b><br>
+      "길이 ≤ 100"인데 <code>char s[100]</code>으로 선언하면 가장 긴 입력에서 <code>'\0'</code>이 들어갈 자리가 없어 <b>옆 메모리를 덮어쓴다</b>. 짧은 입력으로는 멀쩡하다.<br>
+      <span class="fix">대책</span> <b>항상 +1</b>, 불안하면 +10. 그리고 <b>최대 길이 입력</b>으로 반드시 테스트한다.
+    </div></div>
+
+    <div class="err"><span class="en">2</span><div class="eb">
+      <b><code>strlen</code>을 루프 조건에 둔다</b><br>
+      <code>strlen</code>은 O(N)이므로 전체가 <b>O(N²)</b>가 된다. 길이 20만에서 <b>0.417초</b>, 짧은 입력으로는 안 보인다.<br>
+      <span class="fix">대책</span> <code>for (int i = 0; s[i]; i++)</code>를 기본으로. 길이가 필요하면 <b>변수에 담아</b> 쓴다.
+    </div></div>
+
+    <div class="err"><span class="en">3</span><div class="eb">
+      <b><code>scanf</code> 뒤에 바로 <code>fgets</code>를 쓴다</b><br>
+      <code>scanf</code>가 남긴 개행을 <code>fgets</code>가 읽어 <b>빈 줄</b>이 들어온다. 길이 1짜리 <code>"\n"</code>이 되어 모든 처리가 어긋난다.<br>
+      <span class="fix">대책</span> 사이에 <code>while ((ch=getchar()) != '\n' &amp;&amp; ch != EOF);</code>를 넣거나 <b>한 가지만 쓴다</b>.
+    </div></div>
+
+    <div class="err"><span class="en">4</span><div class="eb">
+      <b>문자열을 <code>==</code>로 비교한다</b><br>
+      <code>s1 == s2</code>는 <b>주소</b>를 비교하므로 내용이 같아도 거짓이다. 컴파일 경고(<code>-Warray-compare</code>)가 나오지만 그냥 지나치기 쉽다.<br>
+      <span class="fix">대책</span> <code>strcmp(s1, s2) == 0</code>. 반환값은 <b>부호만</b> 본다(<code>-1</code>이 아니라 <code>-100</code>이 나올 수 있다).
+    </div></div>
+
+    <div class="err"><span class="en">5</span><div class="eb">
+      <b><code>strlen(s) - 1</code>을 <code>size_t</code>로 받는다</b><br>
+      빈 문자열에서 <code>-1</code>이 아니라 <b>18446744073709551615</b>가 된다. 뒤집기·회문 코드가 배열 밖을 휘젓는다.<br>
+      <span class="fix">대책</span> <b>인덱스는 <code>int</code>로</b>. <code>int j = (int)strlen(s) - 1;</code>
+    </div></div>
+
+    <div class="err"><span class="en">6</span><div class="eb">
+      <b>이미 대문자인 글자에 32를 뺀다</b><br>
+      <code>'A' - 32</code>는 <code>'!'</code>(코드 33)이다. 알파벳이 아닌 글자(숫자·공백)에서도 깨진다.<br>
+      <span class="fix">대책</span> <code>toupper</code>/<code>tolower</code>를 쓴다. 직접 계산하려면 <b>조건 검사를 반드시 같이</b> 한다.
+    </div></div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    오류 1·2·5는 <b>전부 <code>'\0'</code>에서 나온다</b>. 끝을 표시하는 글자가 하나 있기 때문에 칸이 하나 더 필요하고(1), 길이를 세려면 끝까지 훑어야 하고(2), 길이가 0일 때 "마지막 글자의 위치"가 존재하지 않는다(5).<br>
+    <b>문자열 문제의 반례는 넷이다</b> — <b>빈 문자열 / 한 글자 / 최대 길이 / 공백이 섞인 입력</b>. 네 개를 넣으면 이 장의 오류가 거의 전부 걸린다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>모든 문제에서 <strong>빈 문자열 / 한 글자 / 최대 길이 / 공백이 섞인 입력</strong>을 넣어 본다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>길이 재기</b> — 한 줄을 입력받아 <b>개행을 제외한</b> 길이를 출력하라. 공백도 글자로 센다. 길이 ≤ 10<sup>6</sup>.</p>
+    <div class="sample"><div><span>INPUT</span><pre>hello world</pre></div><div><span>OUTPUT</span><pre>11</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>대문자로</b> — 문자열을 모두 대문자로 바꿔 출력하라. 알파벳이 아닌 글자는 그대로 둔다. <code>strlen</code>을 루프 조건에 쓰지 말 것.</p>
+    <div class="sample"><div><span>INPUT</span><pre>Hello, World 123!</pre></div><div><span>OUTPUT</span><pre>HELLO, WORLD 123!</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>뒤집기</b> — 문자열을 뒤집어 출력하라. 빈 문자열과 한 글자를 반드시 확인하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>abcde</pre></div><div><span>OUTPUT</span><pre>edcba</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>회문 판정</b> — 문자열이 회문이면 <code>YES</code>, 아니면 <code>NO</code>. 대소문자를 구분한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>level</pre></div><div><span>OUTPUT</span><pre>YES</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>알파벳 세기</b> — 문자열에서 <code>a</code>~<code>z</code>가 각각 몇 번 나왔는지 한 줄에 26개의 수로 출력하라. 대문자는 소문자로 간주한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>Mississippi</pre></div><div><span>OUTPUT</span><pre>0 0 0 0 0 0 0 0 4 0 0 0 1 0 0 2 0 0 4 0 0 0 0 0 0 0</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>단어 세기</b> — 공백으로 구분된 단어가 몇 개인지 출력하라. 공백이 연속하거나 앞뒤에 붙어 있을 수 있다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>  hello   world  </pre></div><div><span>OUTPUT</span><pre>2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>문자 분류</b> — 문자열에서 소문자·대문자·숫자·공백·그 외의 개수를 각각 한 줄씩 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>aZ3 !</pre></div><div><span>OUTPUT</span><pre>1
+1
+1
+1
+1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>문자열 비교</b> — 두 문자열을 입력받아 사전 순으로 앞서는 것을 출력하라. 같으면 <code>SAME</code>. <code>==</code>를 쓰지 말 것.</p>
+    <div class="sample"><div><span>INPUT</span><pre>apple
+banana</pre></div><div><span>OUTPUT</span><pre>apple</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>두 코드 시간 비교</b> — 02번을 ⑴ <code>strlen</code>을 조건에 둔 판 ⑵ 미리 저장한 판으로 모두 작성해 길이 200,000 문자열로 시간을 재고 몇 배인지 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>최빈 알파벳</b> — 문자열에서 가장 많이 나온 알파벳을 <b>대문자로</b> 출력하라. 여러 개면 <code>?</code>를 출력한다. 대소문자는 구분하지 않는다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>Mississippi</pre></div><div><span>OUTPUT</span><pre>?</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>아나그램</b> — 두 문자열(소문자만)이 아나그램이면 <code>YES</code>, 아니면 <code>NO</code>. 길이가 다른 경우도 처리하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>listen
+silent</pre></div><div><span>OUTPUT</span><pre>YES</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>대소문자 뒤집기</b> — 대문자는 소문자로, 소문자는 대문자로 바꿔 출력하라. 그 외는 그대로.</p>
+    <div class="sample"><div><span>INPUT</span><pre>StuDY 2026!</pre></div><div><span>OUTPUT</span><pre>sTUdy 2026!</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>숫자만 뽑아 더하기</b> — 문자열에서 숫자 문자를 모두 찾아 <b>각 자리의 합</b>을 출력하라. 6장의 <code>- '0'</code> 관용구를 쓴다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>a1b22c333</pre></div><div><span>OUTPUT</span><pre>14</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>단어별 출력</b> — 한 줄을 읽어 단어마다 한 줄씩 출력하라. <code>fgets</code>로 읽고 직접 쪼갠다(<code>strtok</code>를 쓰지 말 것).</p>
+    <div class="sample"><div><span>INPUT</span><pre>  the quick  brown </pre></div><div><span>OUTPUT</span><pre>the
+quick
+brown</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b><code>size_t</code> 함정 재현</b> — 03번 뒤집기 코드에서 <code>j</code>를 <code>size_t</code>로 선언하고 <b>빈 문자열</b>을 넣어 무슨 일이 일어나는지 관찰하라. <code>-fsanitize=address</code>로도 돌려 메시지를 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>중복 없는 첫 글자</b> — 문자열에서 <b>한 번만 나타나는 첫 번째 글자</b>를 출력하라. 없으면 <code>-1</code>. 두 번 훑는다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>baabcd</pre></div><div><span>OUTPUT</span><pre>c</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>대소문자 무시 회문</b> — 알파벳이 아닌 글자(공백·기호)를 <b>무시</b>하고, 대소문자도 구분하지 않고 회문인지 판정하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>A man, a plan, a canal: Panama</pre></div><div><span>OUTPUT</span><pre>YES</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>문자열 찾기</b> — 문자열 S 안에 문자열 P가 몇 번 나타나는지 출력하라(겹치는 것도 센다). |S| ≤ 10<sup>4</sup>, |P| ≤ 100. ⑴ 복잡도를 계산하고 ⑵ 작성한 뒤 ⑶ <code>S = "aaaa"</code>, <code>P = "aa"</code>로 검증하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>aaaa
+aa</pre></div><div><span>OUTPUT</span><pre>3</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>단어 뒤집기</b> — 한 줄의 각 단어를 <b>제자리에서 뒤집어</b> 출력하라. 단어 사이의 공백은 하나로 맞춘다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>the quick brown</pre></div><div><span>OUTPUT</span><pre>eht kciuq nworb</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>종합</b> — 아래 문제를 받았다. ⑴ 배열 크기와 입력 방법을 정하고 ⑵ 반례 목록을 적고 ⑶ 코드를 작성한 뒤 ⑷ 복잡도를 계산하라.</p>
+    <div class="sample"><div><span>PROBLEM</span><pre>T개의 줄이 주어진다.
+각 줄마다 한 줄에
+
+  길이  단어수  최빈알파벳  회문여부
+
+를 공백으로 구분해 출력하라.
+길이는 개행을 제외하고,
+최빈 알파벳은 대문자로
+(여러 개면 ?, 알파벳이 없으면 -),
+회문은 대소문자·기호를 무시하고
+판정한다.
+
+제약
+1 ≤ T ≤ 100
+각 줄의 길이 ≤ 100,000
+줄에는 공백이 포함될 수 있다
+시간 1초</pre></div><div><span>SAMPLE</span><pre>입력
+3
+banana
+Mississippi
+A man, a plan, a canal: Panama
+
+출력
+6 1 A NO
+11 1 ? NO
+30 7 A YES</pre></div></div>
+  </div></div>
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">07 — 확인 평가</span>
+  <h2>정답과 해설</h2>
+
+  <div class="ans"><span class="an">01</span><div class="ab">
+    <code>fgets</code>로 읽고 개행을 제거한 뒤 <code>strlen</code>. 배열은 <b><code>char line[1000002]</code></b>(길이 10<sup>6</sup> + 개행 + <code>'\0'</code>).<br>
+    검증 — <code>"hello world"</code> → <b>11</b>. 빈 줄 → 0.<br>
+    <b>지도 포인트</b> — <code>scanf("%s")</code>로 읽으면 <code>hello</code>만 읽혀 5가 나온다. <b>공백이 포함된 한 줄은 <code>fgets</code></b>라는 원칙을 여기서 못 박는다. 그리고 배열 크기가 왜 +2인지 설명하게 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab">
+    <code>for (int i = 0; s[i]; i++) s[i] = toupper((unsigned char)s[i]);</code><br>
+    검증 — <code>"Hello, World 123!"</code> → <code>"HELLO, WORLD 123!"</code>. 쉼표·공백·숫자가 그대로다.<br>
+    <b>지도 포인트</b> — <code>toupper</code>가 알파벳이 아닌 글자를 그대로 둔다는 것이 핵심이다. <code>s[i] - 32</code>로 쓰면 쉼표가 <code>'\f'</code>가 되고 공백이 <code>'\0'</code>이 되어 <b>문자열이 거기서 끊긴다</b>. 실연해 보이면 강렬하다.
+  </div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab">
+    본문 <code>reverse</code>. <code>int i = 0, j = (int)strlen(s) - 1;</code>로 받는 것이 핵심.<br>
+    검증 — <code>"abcde"</code>→<code>"edcba"</code>, <code>"ab"</code>→<code>"ba"</code>, <code>"a"</code>→<code>"a"</code>, <code>""</code>→<code>""</code>.<br>
+    <b>지도 포인트</b> — 빈 문자열에서 <code>j = -1</code>이 되어 <code>i &lt; j</code>가 처음부터 거짓이 되는 것이 <b>정상 동작</b>이다. <code>size_t</code>로 받으면 여기서 터진다(15번). 두 경계(<code>""</code>와 <code>"a"</code>)를 반드시 넣게 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab">
+    본문 <code>is_palindrome</code>. 양 끝에서 좁혀 오며 비교.<br>
+    검증 — <code>"level"</code>→YES, <code>"abba"</code>→YES, <code>"abc"</code>→NO, <code>"a"</code>→YES, <code>""</code>→YES, <code>"Able"</code>→NO.<br>
+    <b>지도 포인트</b> — 6장에서 수를 뒤집어 비교했던 것과 <b>목적은 같고 방법이 다르다</b>. 문자열판은 오버플로가 없고 길이 제한도 없다는 점을 짚는다. 6장 예제 1의 "수로 풀까 문자열로 풀까" 표를 다시 편다.
+  </div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab">
+    본문 <code>count_alpha</code>. <code>cnt[tolower(s[i]) - 'a']++</code>.<br>
+    검증 — <code>"Mississippi"</code> → i:4, m:1, p:2, s:4. <b>합이 11로 문자열 길이와 일치</b>한다.<br>
+    <b>지도 포인트</b> — 합으로 자체 검산하는 습관(4장 6번, 6장 8번)을 또 쓴다. 다만 알파벳이 아닌 글자가 섞이면 합이 길이보다 <b>작아진다</b>는 점도 짚는다 — 검산식은 "합 ≤ 길이"다.
+  </div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab">
+    본문 <code>count_words</code>. <code>in</code> 상태 변수로 "새 단어의 시작"만 센다.<br>
+    검증 — <code>"The Curious Case of Benjamin Button"</code>→6, <code>"  hello   world  "</code>→<b>2</b>, <code>" "</code>→<b>0</b>, <code>"a"</code>→1.<br>
+    <b>지도 포인트</b> — "공백 개수 + 1"로 세면 <code>"  hello   world  "</code>에서 <b>8</b>이 나온다. 앞뒤 공백과 연속 공백이 표준 반례다. 문제에 "공백이 연속할 수 있다"는 말이 없어도 <b>넣어 봐야 한다</b>.
+  </div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab">
+    <code>islower</code>, <code>isupper</code>, <code>isdigit</code>, <code>c == ' '</code>, 나머지로 분류한다.<br>
+    검증 — <code>"aZ3 !"</code> → 1, 1, 1, 1, 1.<br>
+    <b>지도 포인트</b> — 다섯 분류가 <b>빠짐없이·겹치지 않게</b> 되어 있는지 확인시킨다(3장). 개수의 합이 문자열 길이와 같아야 한다. 그리고 <code>ctype.h</code> 함수에 <code>(unsigned char)</code> 캐스팅을 붙이는 이유(음수 입력 방지)도 함께 다룬다.
+  </div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab">
+    <code>int r = strcmp(a, b); if (r &lt; 0) puts(a); else if (r &gt; 0) puts(b); else puts("SAME");</code><br>
+    검증 — <code>strcmp("apple","banana")</code> = −1, <code>strcmp("abc","abcd")</code> = <b>−100</b>, <code>strcmp("ABC","abc")</code> = <b>−32</b>.<br>
+    <b>지도 포인트</b> — 반환값이 <b>−1이 아닐 수 있다</b>는 것이 핵심이다. <code>if (strcmp(a,b) == -1)</code>로 쓰면 <code>"abc"</code>와 <code>"abcd"</code>에서 틀린다. <b>부호만 본다.</b> 그리고 대문자가 소문자보다 앞선다는 것(<code>'Z'</code>=90 &lt; <code>'a'</code>=97)도 확인시킨다.
+  </div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab">
+    측정 (길이 200,000) — <code>strlen</code>을 조건에 둔 판 <b>0.417초</b> / 미리 저장한 판 <b>0.00009초</b> → 약 <b>4,537배</b>.<br>
+    연산 횟수로는 N²/2 = 2 × 10<sup>10</sup> 대 2 × 10<sup>5</sup>이다.<br>
+    <b>지도 포인트</b> — 루프 <b>안에서 문자열을 바꾸지 않으면</b> 컴파일러가 <code>strlen</code>을 밖으로 빼 버려 차이가 안 보일 수 있다. 대문자 변환처럼 <b>문자열을 수정하는</b> 루프로 측정해야 한다. 2장 3.1절의 "<code>volatile</code>을 빼면 0초가 나온다"와 같은 종류의 함정이다.
+  </div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab">
+    예제 3의 동점 판정. 검증 — <code>"Mississippi"</code>는 i:4, s:4로 <b>동점</b>이라 <code>?</code>. <code>"Zbaba"</code>도 a:2, b:2로 <code>?</code>. <code>"aAbB"</code>도 <code>?</code>.<br>
+    <b>지도 포인트</b> — 예제로 주어진 유명한 단어들이 <b>대부분 동점</b>이라는 것이 이 문제의 함정이다. 동점 처리를 빼먹으면 예제조차 통과하지 못한다. 그리고 <code>mx &gt; 0</code> 조건 없이 짜면 <b>알파벳이 하나도 없는 입력</b>에서 엉뚱한 답이 나온다.
+  </div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab">
+    예제 2. 길이를 먼저 비교하고, 26칸 배열에 한쪽은 +1 다른 쪽은 −1.<br>
+    검증 — listen/silent→YES, abc/cab→YES, abc/abd→NO, aab/abb→NO.<br>
+    <b>지도 포인트</b> — <code>"aab"</code>와 <code>"abb"</code>는 길이가 같고 글자 종류도 같지만 <b>개수가 다르다</b>. 체크 배열(있나)이 아니라 <b>카운팅 배열(몇 개)</b>이어야 하는 이유다. 7장 7.1절의 표를 다시 편다.
+  </div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">
+    <code>s[i] = isupper(c) ? tolower(c) : toupper(c);</code><br>
+    검증 — <code>"StuDY 2026!"</code> → <code>"sTUdy 2026!"</code>.<br>
+    <b>지도 포인트</b> — 삼항 연산자 한 줄로 끝난다. 직접 ±32로 쓰려면 <code>if (islower) +32 else if (isupper) -32</code>로 조건이 둘 필요하고, 조건을 빠뜨리면 숫자와 기호가 깨진다. <b>라이브러리가 경계 처리를 대신해 준다.</b>
+  </div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab">
+    <code>if (isdigit(c)) sum += c - '0';</code> — 6장의 관용구.<br>
+    검증 — <code>"a1b22c333"</code> → 1+2+2+3+3+3 = <b>14</b>.<br>
+    <b>지도 포인트</b> — <code>c - '0'</code>이 왜 숫자가 되는지(아스키 연속) 다시 설명하게 한다. 그리고 <b>여러 자리 수로 읽는 것이 아니라</b> 자릿수 하나씩 더한다는 점 — 문제가 "22를 22로 볼지 2+2로 볼지"를 명시했는지 확인시킨다(1장).
+  </div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab">
+    <pre>int i = 0;
+while (s[i]) {
+    while (s[i] == ' ') i++;              /* 공백 건너뛰기 */
+    if (!s[i]) break;
+    while (s[i] &amp;&amp; s[i] != ' ') putchar(s[i++]);
+    putchar('\n');
+}</pre>
+    검증 — <code>"  the quick  brown "</code> → the / quick / brown 세 줄.<br>
+    <b>지도 포인트</b> — <b>"공백 건너뛰기 → 단어 출력"의 반복</b>이라는 구조를 잡는 것이 전부다. 06번의 <code>in</code> 변수 방식과 다른 접근인데 둘 다 맞다. <b>끝의 <code>if (!s[i]) break;</code></b>를 빼면 마지막 공백 뒤에 빈 줄이 하나 더 나온다 — 1장의 출력 형식 오류다.
+  </div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab">
+    <code>size_t j = strlen(s) - 1;</code>로 빈 문자열을 넣으면 <code>j</code> = <b>18446744073709551615</b>. <code>while (i &lt; j)</code>가 참이 되어 <code>s[j]</code>, 즉 배열에서 한참 떨어진 메모리를 읽고 쓴다.<br>
+    sanitizer 메시지 — <code>AddressSanitizer: ... buffer-overflow</code> 또는 <code>SEGV</code>.<br>
+    <b>지도 포인트</b> — <b>부호 없는 정수에서 0 − 1</b>이 어떤 값이 되는지를 2장의 오버플로와 연결해 설명한다. 같은 원리이고 방향만 반대다. 그리고 <code>-Wall</code>로는 안 잡히지만 sanitizer로는 잡힌다는 점 — <b>도구마다 잡는 것이 다르다</b>.
+  </div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">
+    첫 루프에서 <code>cnt[c]++</code>, 둘째 루프에서 <code>if (cnt[s[i]] == 1) { 출력; break; }</code>.<br>
+    검증 — <code>"baabcd"</code> → b는 2번, a는 2번, c가 1번 → <b>c</b>. 모두 중복이면 <code>-1</code>.<br>
+    <b>지도 포인트</b> — <b>두 번 훑어야 하는</b> 전형적인 문제다(4장 8.4절의 판별 질문: "뒤에 올 입력이 필요한가" → 필요하다). 그리고 둘째 루프를 <b>원래 순서대로</b> 돌아야 "첫 번째"가 나온다 — 카운팅 배열을 훑으면 알파벳 순이 되어 틀린다.
+  </div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    양 끝 포인터를 쓰되 <b>알파벳이 아니면 건너뛴다</b>.
+    <pre>int i = 0, j = (int)strlen(s) - 1;
+while (i &lt; j) {
+    while (i &lt; j &amp;&amp; !isalpha((unsigned char)s[i])) i++;
+    while (i &lt; j &amp;&amp; !isalpha((unsigned char)s[j])) j--;
+    if (tolower(s[i]) != tolower(s[j])) return 0;
+    i++; j--;
+}
+return 1;</pre>
+    검증 — <code>"A man, a plan, a canal: Panama"</code> → <b>YES</b>.<br>
+    <b>지도 포인트</b> — 안쪽 <code>while</code>에도 <b><code>i &lt; j</code> 조건이 들어가야</b> 한다. 빼면 알파벳이 하나도 없는 입력에서 양 포인터가 서로를 지나쳐 배열 밖으로 나간다. <b>중첩된 루프의 경계</b>를 조심하는 문항이다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    <b>⑴ 복잡도</b> — 시작 위치마다 P를 비교하므로 <b>O(|S| × |P|)</b> = 10<sup>4</sup> × 100 = <b>10<sup>6</sup></b>. 2장의 기준으로 여유롭다.<br>
+    <b>⑵ 코드</b> — <code>for (i = 0; i + plen &lt;= slen; i++) if (strncmp(s+i, p, plen) == 0) cnt++;</code><br>
+    <b>⑶ 검증</b> — <code>S = "aaaa"</code>, <code>P = "aa"</code> → 위치 0, 1, 2에서 모두 일치하므로 <b>3</b>.<br>
+    <b>지도 포인트</b> — 루프 조건이 <code>i + plen &lt;= slen</code>인 것이 핵심이다. <code>i &lt; slen</code>으로 쓰면 끝부분에서 <b>배열 밖을 비교</b>한다. 그리고 "겹치는 것도 센다"는 조건 때문에 찾은 뒤 <code>i</code>를 <code>plen</code>만큼 건너뛰면 안 된다 — 1장의 "문제를 끝까지 읽는다"다. |S|가 10<sup>6</sup>급이면 이 방법으로는 부족하고 PART 3의 KMP가 필요하다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    14번처럼 단어의 시작과 끝을 찾은 뒤, <b>그 구간만 뒤집어</b> 출력한다. 또는 단어를 임시 배열에 담아 <code>reverse</code>를 부른다.<br>
+    검증 — <code>"the quick brown"</code> → <code>"eht kciuq nworb"</code>.<br>
+    <b>지도 포인트</b> — "문자열 전체를 뒤집는 것"과 "각 단어를 뒤집는 것"이 완전히 다르다는 것을 먼저 확인시킨다(전체를 뒤집으면 <code>"nworb kciuq eht"</code>). 그리고 <b>구간 [l, r]을 제자리에서 뒤집는 함수</b>를 따로 만들면 03번 코드를 그대로 재사용할 수 있다 — <b>도구를 함수로 떼어 내는</b> 연습이다(PART 1 10장).
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    <b>⑴ 배열과 입력</b> — 길이 ≤ 10<sup>5</sup>이고 공백이 포함되므로 <b><code>fgets</code></b>, 배열은 <code>char line[100002]</code>(10<sup>5</sup> + 개행 + <code>'\0'</code>). <b>전역</b>에 둔다(2장).<br>
+    첫 줄의 T는 <code>scanf("%d", &amp;T)</code>로 읽으므로 <b>그 뒤에 남은 개행을 비워야</b> 한다(오류 3). 아니면 T도 <code>fgets</code>로 읽는다.<br>
+    <b>⑵ 반례 목록</b> — ① 빈 줄(길이 0, 단어 0, 최빈 <code>-</code>, 회문 YES) ② 공백만 있는 줄 ③ 알파벳이 없는 줄(<code>"123 !"</code>) ④ 한 글자 ⑤ 최대 길이 10<sup>5</sup> ⑥ 최빈 알파벳 동점<br>
+    <b>⑶ 네 가지를 한 번씩 훑어 구한다</b> — 길이(<code>strlen</code> 한 번), 단어 수, 알파벳 카운팅, 회문 판정. 각각 O(길이)이므로 줄마다 O(4 × 길이)다.<br>
+    <b>⑷ 복잡도</b> — T × 길이 = 100 × 10<sup>5</sup> = <b>10<sup>7</sup></b>. 통과.<br>
+    <b>⑸ 샘플 검산</b> — <code>"banana"</code>: 길이 6, 단어 1, a가 3번으로 최빈 <b>A</b>, 회문 NO. <code>"Mississippi"</code>: 길이 11, 단어 1, i와 s가 4번씩이라 <b>동점 ?</b>, 회문 NO. 세 번째 줄: 길이 30, 단어 7, a가 10번으로 최빈 <b>A</b>, 기호·대소문자를 무시하면 회문 YES.<br>참고로 <code>"level"</code>을 넣으면 <b>l과 e가 둘 다 2번</b>이라 답이 <code>?</code>다 — 회문은 글자가 쌍으로 나타나므로 <b>동점이 되기 쉽다</b>. 동점 처리를 빼면 회문 예제부터 틀린다.<br>
+    <b>지도 포인트</b> — 이 문제는 <b>이 장의 다섯 도구를 한 줄 입력에 전부 적용</b>한다. 특히 ⑴의 "T를 읽은 뒤 개행 비우기"를 빠뜨리면 <b>첫 줄이 빈 줄로 읽혀</b> 전부 어긋난다 — 오류 3번이 실전에서 어떻게 나타나는지 보여 주는 자리다. 그리고 "알파벳이 없으면 <code>-</code>"라는 조건 한 줄이 <code>mx &gt; 0</code> 검사를 강제한다는 것도 짚어 준다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li>배열 크기는 <strong>최대 길이 + 1</strong> 이상 (개행까지 받으면 +2)</li>
+    <li>루프는 <strong><code>for (int i = 0; s[i]; i++)</code></strong>를 기본으로</li>
+    <li><code>strlen</code>은 <strong>O(N)</strong> — 조건에 두지 않는다</li>
+    <li>공백 포함 한 줄은 <strong><code>fgets</code></strong>, 단어 하나는 <code>scanf("%s")</code></li>
+    <li><code>fgets</code> 뒤에는 <strong>개행을 제거</strong>한다</li>
+    <li><code>scanf</code>와 <code>fgets</code>를 <strong>섞어 쓸 때 남은 개행</strong>을 비운다</li>
+    <li>인덱스로 쓸 값은 <strong><code>int</code></strong>로 받는다 (<code>size_t</code> 금지)</li>
+    <li>문자 변환은 <strong><code>toupper</code>/<code>tolower</code></strong>, 비교는 <strong><code>strcmp</code></strong></li>
+    <li>반례 — <strong>빈 문자열 / 한 글자 / 최대 길이 / 공백 섞인 입력</strong></li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 09장 2차원 격자 시뮬레이션</span>
+    지금까지 다룬 것은 한 줄짜리 데이터였다. 다음 장은 <strong>평면</strong>으로 간다. PART 1 9장에서 배운 델타 배열이 본격적으로 쓰이고, 격자 바깥으로 나가는 것을 막는 <strong>경계 검사 한 줄</strong>이 모든 문제의 공통 뼈대가 된다. 좌표계가 뒤집히는 문제, 테두리를 한 칸 더 두는 기법도 함께 다룬다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 2 · 08장 · 2026-10-13 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+</div></body></html>

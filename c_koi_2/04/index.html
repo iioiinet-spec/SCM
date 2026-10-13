@@ -1,0 +1,966 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 2 · 04장 누적·집계형 문제 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#9a5f1a;
+  --accent-soft:#f7ecdb;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#e8b670}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style></head><body><div class="sheet"><header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 2 · 브론즈급 해결 스킬 — 04 / 12</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">04</span>
+    <h1>누적·집계형 문제</h1>
+  </div>
+  <p class="lede">합·최댓값·최솟값·개수·평균. 코드는 세 줄이면 끝나는데 오답이 가장 많은 유형이다. 원인은 거의 하나다 — <strong>초기값</strong>. 이 장은 집계의 뼈대를 네 가지로 정리하고, <strong>초기값을 무엇으로 두어야 하는지를 반례로 결정</strong>하는 법을 다룬다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li>합·최대·최소·개수의 <strong>네 가지 뼈대</strong>를 외워서 쓸 수 있다</li>
+    <li>각 집계의 <strong>초기값</strong>을 근거를 대며 결정할 수 있다</li>
+    <li>"입력에 없는 값이 답으로 나온다"는 증상에서 초기값 버그를 찾아낼 수 있다</li>
+    <li>테스트케이스마다 누적 변수를 <strong>초기화</strong>해야 하는 이유를 설명할 수 있다</li>
+    <li>나눗셈과 곱셈의 <strong>순서</strong>를 정하고 오버플로를 피할 수 있다</li>
+    <li>평균의 <strong>버림·반올림</strong>을 정수 연산으로 구현할 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 문제 · 집계 네 뼈대 · 초기값 결정표</div>
+  <div><b>2차시</b>케이스별 초기화 · 자료형 · 나눗셈 순서 · 평균과 반올림</div>
+  <div><b>3차시</b>표준 코드 · 단계 예제 · 흔한 오류 6종 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>입력에 없는 숫자가 답으로 나온다</h2>
+
+  <div class="io">
+    <div><div class="lbl">문제</div><pre>N개의 정수가 주어진다.
+가장 큰 값을 출력하라.
+
+제약
+1 ≤ N ≤ 100,000
+-1,000,000,000 ≤ A[i] ≤ 1,000,000,000</pre></div>
+    <div><div class="lbl">거의 모든 학생이 쓰는 코드</div><pre>int mx = 0;
+for (int i = 0; i &lt; n; i++) {
+    scanf("%d", &amp;x);
+    if (x &gt; mx) mx = x;
+}
+printf("%d\n", mx);</pre></div>
+  </div>
+
+  <p>예제 입력 <code>3 9 2 9 5</code>를 넣으면 <code>9</code>가 나온다. 맞다. 그런데 이 입력을 넣어 보자.</p>
+
+  <div class="io">
+    <div><div class="lbl">입력</div><pre>5
+-5 -3 -9 -1 -7</pre></div>
+    <div><div class="lbl">실행 결과</div><pre>mx = 0      으로 시작 → 0   ← 오답
+mx = INT_MIN으로 시작 → -1
+mx = a[0]   으로 시작 → -1</pre></div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">증상을 알아보는 법</span>
+    출력된 <b>0은 입력 어디에도 없는 숫자</b>다. 다섯 개 모두 음수인데 답이 0이라는 것은, 프로그램이 <b>한 번도 갱신하지 않았다</b>는 뜻이다. 즉 초기값이 그대로 나온 것이다.<br>
+    <b>이 증상은 모든 집계 문제에서 똑같이 나타난다.</b> "입력에 없는 값이 답으로 나오면 초기값을 의심한다" — 이 한 줄이 이 장의 핵심이다.
+  </div>
+
+  <p>최솟값도 똑같다. <code>mn = 0</code>으로 시작하면 입력이 <code>5 3 9 1 7</code>일 때 답이 <strong>0</strong>이 된다. 모두 양수인데 0이 최솟값일 수는 없다.</p>
+
+  <p>그런데 왜 이 버그가 끝까지 살아남을까. <strong>예제 입력에는 양수와 음수가 섞여 있기 때문</strong>이다. 문제에 적힌 예시로는 절대 걸리지 않고, 채점에서만 틀린다. 3장에서 본 구조와 같다 — <strong>드물어서 안전한 것이 아니라 드물어서 못 찾는 것</strong>이다.</p>
+
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> 집계의 초기값은 무엇을 기준으로 정하는가?<br>
+    <b>②</b> 테스트케이스가 여러 개일 때 무엇을 다시 0으로 돌려야 하는가?<br>
+    <b>③</b> 평균을 구할 때 나눗셈을 언제 하는가?
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">4.1</span>집계는 네 가지뿐이다</h3>
+  <p>브론즈 구간의 집계 문제는 아래 네 뼈대의 조합이다. 외워서 손이 먼저 움직이게 한다.</p>
+  <div class="io">
+    <div><div class="lbl">① 합 / ② 개수</div><pre>long long sum = 0;
+int cnt = 0;
+for (i = 0; i &lt; n; i++) {
+    sum += a[i];
+    if (조건) cnt++;
+}</pre></div>
+    <div><div class="lbl">③ 최대 / ④ 최소</div><pre>int mx = a[0];
+int mn = a[0];
+for (i = 1; i &lt; n; i++) {   /* 1부터 */
+    if (a[i] &gt; mx) mx = a[i];
+    if (a[i] &lt; mn) mn = a[i];
+}</pre></div>
+  </div>
+  <p>왼쪽은 <code>0</code>부터, 오른쪽은 <code>1</code>부터 시작한다는 점에 주목한다. <strong>최대·최소는 첫 값을 이미 써 버렸으므로</strong> 두 번째부터 돌면 된다. <code>0</code>부터 돌아도 결과는 같지만(자기 자신과의 비교는 무해하다), 1부터 쓰는 것이 의도를 더 잘 드러낸다.</p>
+
+  <h3><span class="tag">4.2</span>초기값 결정표</h3>
+  <p>이 표가 이 장의 핵심이다. <strong>근거</strong> 열을 반드시 같이 외운다.</p>
+  <table>
+    <thead><tr><th style="width:16%">집계</th><th style="width:22%">초기값</th><th style="width:28%">근거</th><th>0으로 두면 틀리는 입력</th></tr></thead>
+    <tbody>
+      <tr><td><strong>합</strong></td><td><code>0</code></td><td>아무것도 더하지 않은 상태</td><td>— (0이 맞다)</td></tr>
+      <tr><td><strong>곱</strong></td><td><code>1</code></td><td>아무것도 곱하지 않은 상태</td><td><strong>모든 입력</strong> (답이 항상 0)</td></tr>
+      <tr><td><strong>개수</strong></td><td><code>0</code></td><td>아직 센 것이 없다</td><td>— (0이 맞다)</td></tr>
+      <tr><td><strong>최대</strong></td><td><code>a[0]</code> 또는 <code>INT_MIN</code></td><td>어떤 입력보다 작아야 갱신된다</td><td><strong>모두 음수</strong></td></tr>
+      <tr><td><strong>최소</strong></td><td><code>a[0]</code> 또는 <code>INT_MAX</code></td><td>어떤 입력보다 커야 갱신된다</td><td><strong>모두 양수</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <span class="h"><code>a[0]</code>과 <code>INT_MIN</code> 중 무엇을 쓸까</span>
+    <b><code>a[0]</code>을 권한다.</b> 이유는 셋이다.<br>
+    <b>①</b> <code>&lt;limits.h&gt;</code>를 포함할 필요가 없다.<br>
+    <b>②</b> 값의 범위가 <code>int</code>보다 크거나(<code>long long</code>) 실수여도 그대로 통한다.<br>
+    <b>③</b> <b>답이 반드시 입력 안의 값</b>이 된다. 입력에 없는 값이 나올 수가 없으므로 도입 문제의 버그 자체가 생기지 않는다.<br>
+    단 <code>a[0]</code>을 쓰려면 <b>값을 배열에 저장</b>하거나 <b>첫 값을 먼저 읽어</b> 두어야 한다. 배열 없이 읽으면서 처리할 때는 <code>INT_MIN</code>/<code>INT_MAX</code>가 편하다.
+  </div>
+
+  <div class="note warn">
+    <span class="h"><code>INT_MIN</code>을 쓸 때의 주의</span>
+    값의 범위가 <code>long long</code>이면 <code>INT_MIN</code>으로는 부족하다. <code>LLONG_MIN</code>을 쓴다. 그리고 "충분히 작은 값"이라며 <code>-1000000</code> 같은 숫자를 임의로 쓰면, 제약이 10<sup>9</sup>인 문제에서 바로 틀린다. <b>직접 고른 숫자 대신 <code>a[0]</code>이나 <code>limits.h</code>의 상수</b>를 쓴다.
+  </div>
+
+  <h3><span class="tag">4.3</span>개수를 셀 때의 초기값은 조건 쪽에 있다</h3>
+  <p>개수의 초기값은 언제나 0이라 안전해 보이지만, <strong>"무엇을 세는가"의 기준</strong>에서 틀린다. 평균보다 큰 사람의 수를 세는 문제가 대표적이다.</p>
+  <div class="io">
+    <div><div class="lbl">실수로 쓰면</div><pre>double avg = (double)sum / n;
+for (i = 0; i &lt; n; i++)
+    if (a[i] &gt; avg) cnt++;
+
+← 3장에서 본 실수 비교</pre></div>
+    <div><div class="lbl">정수로 바꾸면</div><pre>/* a[i] &gt; sum/n  의 양변에 n */
+for (i = 0; i &lt; n; i++)
+    if ((long long)a[i] * n &gt; sum)
+        cnt++;
+
+← 나눗셈이 사라진다</pre></div>
+  </div>
+  <p>검증 결과 — <code>50 50 70 80 100</code>(합 350, 평균 70) → 초과 <strong>2명, 40.000%</strong>. <code>100 95 90 80 70 60</code>(합 495, 평균 82.5) → 초과 <strong>3명, 50.000%</strong>.</p>
+
+  <h3><span class="tag">4.4</span>케이스마다 초기화한다</h3>
+  <p>1장에서 다룬 내용이지만, 집계 문제에서는 증상이 훨씬 교묘하다. 테스트케이스 세 개를 주고 초기화를 빠뜨린 코드와 올바른 코드를 비교했다.</p>
+  <div class="io">
+    <div><div class="lbl">입력</div><pre>3
+3
+1 2 3
+2
+10 20
+3
+-1 -2 -3</pre></div>
+    <div><div class="lbl">출력 (합, 최댓값)</div><pre>초기화 빠뜨림 │ 올바름
+──────────────┼──────────
+   6  3       │   6  3    ← 같다
+  36 20       │  30 20
+  30 20       │  -6 -1</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">첫 케이스는 반드시 맞는다</span>
+    이것이 이 버그가 발견되지 않는 이유다. 문제의 예제가 케이스 하나뿐이거나, 학생이 첫 줄만 보고 "맞네" 하면 끝이다.<br>
+    세 번째 케이스를 보라. 입력이 모두 음수인데 합이 <b>30</b>, 최댓값이 <b>20</b>이다. 둘 다 <b>이전 케이스의 값</b>이다.<br>
+    <b>대책</b> — 누적 변수를 <b>케이스 루프 안에서 선언</b>한다. 선언하는 자리가 곧 초기화하는 자리다. 밖에 두면 "초기화를 잊었나"를 매번 확인해야 한다.
+  </div>
+
+  <h3><span class="tag">4.5</span>합은 <code>long long</code>, 최대·최소는 원래 자료형</h3>
+  <p>2장의 자릿수 계산이 그대로 적용된다. 다만 집계마다 결론이 다르다.</p>
+  <table>
+    <thead><tr><th style="width:18%">집계</th><th style="width:26%">자료형</th><th>이유</th></tr></thead>
+    <tbody>
+      <tr><td>합</td><td><strong><code>long long</code></strong></td><td>N × (최댓값)만큼 커진다. 10<sup>5</sup> × 10<sup>9</sup> = 10<sup>14</sup></td></tr>
+      <tr><td>곱</td><td><strong><code>long long</code>도 모자랄 수 있다</strong></td><td>값이 몇 개만 곱해져도 넘친다. 문제가 나머지를 요구하는지 확인한다</td></tr>
+      <tr><td>개수</td><td><code>int</code></td><td>최대 N개. N ≤ 10<sup>9</sup>이면 <code>long long</code></td></tr>
+      <tr><td>최대·최소</td><td><strong>입력과 같은 자료형</strong></td><td>답이 입력 안의 값이므로 더 커지지 않는다</td></tr>
+      <tr><td>평균</td><td>합을 <code>long long</code>으로</td><td>나누기 전에 넘치면 끝이다</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="tag">4.6</span>나눗셈은 맨 마지막에, 그러나 올림한 뒤에</h3>
+  <p>정답률을 백분율로 구하는 상황을 보자. 순서를 바꾸면 두 가지 서로 다른 오류가 난다.</p>
+  <div class="io">
+    <div><div class="lbl">나눗셈을 먼저 하면</div><pre>correct = 17, total = 20
+
+(correct / total) * 100
+ = (17/20) * 100
+ = 0 * 100
+ = 0        ← 정보가 사라진다</pre></div>
+    <div><div class="lbl">곱셈을 먼저 하면</div><pre>correct = 10^8, total = 3*10^8
+
+correct * 100 (int)
+ = 1410065408   ← 넘친다
+
+(long long)correct * 100 / total
+ = 33           ← 정답</pre></div>
+  </div>
+  <div class="note">
+    <span class="h">결론 한 줄</span>
+    <b>"<code>long long</code>으로 올리고, 곱셈을 먼저, 나눗셈을 마지막에."</b><br>
+    <code>correct * 100 / total</code>은 맞고 <code>correct / total * 100</code>은 틀린다. C는 왼쪽부터 계산하므로 <b>쓰는 순서가 곧 계산 순서</b>다. 그리고 곱셈 결과가 커지므로 <code>long long</code> 캐스팅을 <b>맨 앞에</b> 붙인다.
+  </div>
+
+  <h3><span class="tag">4.7</span>평균: 버림과 반올림</h3>
+  <p>C의 정수 나눗셈은 <strong>내림이 아니라 0 쪽으로 자른다</strong>. 음수에서 차이가 난다.</p>
+  <div class="io">
+    <div><div class="lbl">측정</div><pre> 7 / 2 =  3      -7 / 2 = -3
+ 7 % 2 =  1      -7 % 2 = -1
+
+내림이라면 -7/2 = -4 여야 한다.
+C는 -3이다.</pre></div>
+    <div><div class="lbl">반올림 공식 (s ≥ 0 전용)</div><pre>(2 * s + n) / (2 * n)
+
+s=7 n=2 → 4    (3.5 → 4)
+s=9 n=2 → 5    (4.5 → 5)
+s=5 n=3 → 2    (1.667 → 2)
+s=10 n=3 → 3   (3.333 → 3)</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">이 공식은 음수에서 틀린다</span>
+    <code>s = -7, n = 2</code>일 때 수학적 반올림은 <b>−4</b>인데 공식은 <b>−3</b>을 준다. 합이 음수일 수 있는 문제에서는 쓰지 않는다.<br>
+    <b>안전한 방법</b> — 문제가 "소수점 아래 버림"인지 "반올림"인지 <b>먼저 확인</b>한다. 대부분의 브론즈 문제는 <b>버림</b>이거나 <code>%.2f</code> 같은 <b>실수 출력</b>이다. 반올림을 요구하면서 음수가 가능한 문제는 드물다.
+  </div>
+
+  <h3><span class="tag">4.8</span>한 번 훑으며 여러 개를 동시에</h3>
+  <p>합도 구하고 최댓값도 구해야 한다면 루프를 두 번 돌 필요가 없다. 같은 루프 안에서 전부 처리한다.</p>
+  <div class="code">
+    <div class="codehead"><span>한 번 훑기</span><span>합·최대·최소·조건 개수를 동시에</span></div>
+<pre class="c"><span class="kw">long</span> <span class="kw">long</span> sum = <span class="nm">0</span>;
+<span class="kw">int</span> mx = a[<span class="nm">0</span>], mn = a[<span class="nm">0</span>], cnt = <span class="nm">0</span>;
+
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+    sum += a[i];
+    <span class="kw">if</span> (a[i] &gt; mx) mx = a[i];
+    <span class="kw">if</span> (a[i] &lt; mn) mn = a[i];
+    <span class="kw">if</span> (a[i] % <span class="nm">2</span> == <span class="nm">0</span>) cnt++;
+}</pre>
+  </div>
+  <div class="note">
+    <span class="h">두 번 훑어야 하는 경우도 있다</span>
+    <b>평균보다 큰 수의 개수</b>처럼 <b>먼저 전체를 알아야</b> 세기 시작할 수 있는 것은 두 번 훑는다. 첫 번째 루프에서 합을, 두 번째 루프에서 개수를 센다. O(2N)이고 이것도 O(N)이다(2장).<br>
+    <b>판별 질문</b> — "이 값을 구하는 데 <b>뒤에 올 입력</b>이 필요한가?" 필요하면 두 번 훑는다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드</h2>
+
+  <div class="code">
+    <div class="codehead"><span>aggregate.c</span><span>집계 뼈대 — 배열에 저장하는 판</span></div>
+<pre class="c"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> a[<span class="nm">100001</span>];                 <span class="cm">/* 큰 배열은 전역 (2장) */</span>
+
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+    <span class="kw">int</span> n;
+    <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d"</span>, &amp;n) != <span class="nm">1</span>) <span class="kw">return</span> <span class="nm">1</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++)
+        <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d"</span>, &amp;a[i]) != <span class="nm">1</span>) <span class="kw">return</span> <span class="nm">1</span>;
+
+    <span class="kw">long</span> <span class="kw">long</span> sum = <span class="nm">0</span>;        <span class="cm">/* 합은 long long */</span>
+    <span class="kw">int</span> mx = a[<span class="nm">0</span>], mn = a[<span class="nm">0</span>];  <span class="cm">/* 최대·최소는 첫 값으로 */</span>
+
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+        sum += a[i];
+        <span class="kw">if</span> (a[i] &gt; mx) mx = a[i];
+        <span class="kw">if</span> (a[i] &lt; mn) mn = a[i];
+    }
+
+    <span class="fn">printf</span>(<span class="st">"%lld %d %d\n"</span>, sum, mx, mn);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+  </div>
+
+  <div class="code">
+    <div class="codehead"><span>stream.c</span><span>집계 뼈대 — 배열 없이 읽으면서 처리하는 판</span></div>
+<pre class="c"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+    <span class="kw">int</span> n, x;
+    <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d"</span>, &amp;n) != <span class="nm">1</span>) <span class="kw">return</span> <span class="nm">1</span>;
+
+    <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d"</span>, &amp;x) != <span class="nm">1</span>) <span class="kw">return</span> <span class="nm">1</span>;   <span class="cm">/* 첫 값을 먼저 읽는다 */</span>
+    <span class="kw">long</span> <span class="kw">long</span> sum = x;
+    <span class="kw">int</span> mx = x, mn = x;                     <span class="cm">/* 그 값으로 초기화 */</span>
+
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">1</span>; i &lt; n; i++) {           <span class="cm">/* 1부터 n-1까지 */</span>
+        <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d"</span>, &amp;x) != <span class="nm">1</span>) <span class="kw">return</span> <span class="nm">1</span>;
+        sum += x;
+        <span class="kw">if</span> (x &gt; mx) mx = x;
+        <span class="kw">if</span> (x &lt; mn) mn = x;
+    }
+
+    <span class="fn">printf</span>(<span class="st">"%lld %d %d\n"</span>, sum, mx, mn);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+  </div>
+  <div class="note">
+    <span class="h">어느 쪽을 쓸까</span>
+    <b>값을 두 번 이상 봐야 하면 배열</b>(평균보다 큰 개수 세기, 정렬, 구간 합), <b>한 번만 보면 되면 스트림</b>(합·최대·최소만). 스트림판은 메모리를 전혀 쓰지 않으므로 N이 10<sup>7</sup>을 넘을 때 유용하다.<br>
+    스트림판의 핵심은 <b>첫 값을 루프 밖에서 읽는 것</b>이다. 그 값이 곧 <code>mx</code>와 <code>mn</code>의 초기값이 된다. 루프가 <code>i = 1</code>부터인 이유다.
+  </div>
+
+  <div class="code">
+    <div class="codehead"><span>above_avg.c</span><span>평균보다 큰 수의 비율 — 두 번 훑기</span></div>
+<pre class="c"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> a[<span class="nm">1001</span>];
+
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+    <span class="kw">int</span> T;
+    <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d"</span>, &amp;T) != <span class="nm">1</span>) <span class="kw">return</span> <span class="nm">1</span>;
+
+    <span class="kw">for</span> (<span class="kw">int</span> t = <span class="nm">0</span>; t &lt; T; t++) {
+        <span class="kw">int</span> n;
+        <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d"</span>, &amp;n) != <span class="nm">1</span>) <span class="kw">return</span> <span class="nm">1</span>;
+
+        <span class="kw">long</span> <span class="kw">long</span> sum = <span class="nm">0</span>;              <span class="cm">/* 케이스 안에서 선언 = 매번 초기화 */</span>
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++) {
+            <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d"</span>, &amp;a[i]) != <span class="nm">1</span>) <span class="kw">return</span> <span class="nm">1</span>;
+            sum += a[i];
+        }
+
+        <span class="kw">int</span> cnt = <span class="nm">0</span>;                     <span class="cm">/* 두 번째 훑기 */</span>
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">0</span>; i &lt; n; i++)
+            <span class="kw">if</span> ((<span class="kw">long</span> <span class="kw">long</span>)a[i] * n &gt; sum)  <span class="cm">/* a[i] &gt; sum/n 의 양변에 n */</span>
+                cnt++;
+
+        <span class="fn">printf</span>(<span class="st">"%.3f%%\n"</span>, cnt * <span class="nm">100.0</span> / n);
+    }
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+  </div>
+  <p>검증 — <code>50 50 70 80 100</code> → <code>40.000%</code>, <code>100 95 90 80 70 60</code> → <code>50.000%</code>, <code>1 1 1 1 1 1 1 1 1 10</code> → <code>10.000%</code>.</p>
+  <div class="note warn">
+    <span class="h">마지막 출력만 실수를 쓴다</span>
+    비교는 전부 정수로 하고, <b>출력 한 줄에서만</b> <code>100.0</code>을 곱해 실수로 만든다. 중간 계산에 <code>double</code>이 끼어들지 않으므로 3장의 실수 비교 함정이 생기지 않는다.<br>
+    <code>cnt * 100.0 / n</code>에서 <code>100.0</code>이 실수라 <code>cnt</code>가 실수로 승격되고, 그 다음 나눗셈도 실수 나눗셈이 된다. <code>cnt * 100 / n</code>으로 쓰면 <b>정수 나눗셈</b>이 되어 소수점이 사라진다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+
+  <h3><span class="tag">예제 1</span>초기값을 반례로 결정한다</h3>
+  <p>초기값을 고를 때 "느낌"으로 정하지 않는다. <strong>그 초기값이 그대로 출력되는 입력</strong>을 만들어 본다.</p>
+  <table>
+    <thead><tr><th style="width:24%">초기값 후보</th><th style="width:34%">그대로 출력되는 입력</th><th>판정</th></tr></thead>
+    <tbody>
+      <tr><td><code>mx = 0</code></td><td>모두 음수 — <code>-5 -3 -9</code></td><td><strong>탈락</strong></td></tr>
+      <tr><td><code>mx = -1000000</code></td><td>모두 −10<sup>6</sup>보다 작음 — <code>-2000000000</code></td><td><strong>탈락</strong></td></tr>
+      <tr><td><code>mx = INT_MIN</code></td><td>없음 (<code>int</code> 입력이면)</td><td>통과</td></tr>
+      <tr><td><code>mx = a[0]</code></td><td>없음 (답이 항상 입력 안의 값)</td><td><strong>통과 · 권장</strong></td></tr>
+    </tbody>
+  </table>
+  <p>이 절차를 거치면 "충분히 작은 값"을 임의로 고르는 습관이 사라진다. <strong>반례를 만들 수 없는 초기값</strong>만 쓴다.</p>
+
+  <h3><span class="tag">예제 2</span>최댓값과 함께 위치도 구하기</h3>
+  <p>"가장 큰 값과 그것이 몇 번째인지"를 함께 묻는 문제가 많다. 같은 루프에서 처리한다.</p>
+  <div class="io">
+    <div><div class="lbl">코드</div><pre>int mx = a[0], pos = 0;
+for (int i = 1; i &lt; n; i++)
+    if (a[i] &gt; mx) {
+        mx = a[i];
+        pos = i;        /* 같이 갱신 */
+    }
+printf("%d %d\n", mx, pos + 1);</pre></div>
+    <div><div class="lbl">검증: 3 9 2 9 5</div><pre>최댓값 9
+첫 위치 0-기준 1 → 1-기준 2
+최댓값의 개수 2
+
+&gt; 를 쓰면 첫 번째 위치
+&gt;= 를 쓰면 마지막 위치</pre></div>
+  </div>
+  <div class="note">
+    <span class="h"><code>&gt;</code> 와 <code>&gt;=</code> 가 답을 바꾼다</span>
+    같은 최댓값이 여러 개일 때, <code>&gt;</code>는 <b>처음 나온 위치</b>를, <code>&gt;=</code>는 <b>마지막 위치</b>를 남긴다. 문제가 "가장 먼저 나오는 위치"를 묻는지 확인하고 부등호를 고른다. 3장의 경계 판단과 같은 종류다.
+  </div>
+
+  <h3><span class="tag">예제 3</span>개수 세기는 배열로</h3>
+  <p>"어떤 값이 몇 번 나왔는가"를 셀 때, 값의 범위가 좁으면 <strong>배열 하나</strong>로 끝난다.</p>
+  <div class="io">
+    <div><div class="lbl">자릿수별 개수</div><pre>char s[] = "3141592653589793";
+int c[10] = {0};
+
+for (int i = 0; s[i]; i++)
+    c[s[i] - '0']++;      /* 문자를 인덱스로 */</pre></div>
+    <div><div class="lbl">결과</div><pre>0:0  1:2  2:1  3:3  4:1
+5:3  6:1  7:1  8:1  9:3
+
+합 = 16 (문자열 길이와 일치)</pre></div>
+  </div>
+  <p>이 기법이 <strong>카운팅 배열</strong>이다. 값을 인덱스로 쓴다는 발상이 핵심이고, 7장에서 본격적으로 다룬다. 지금 기억할 것은 <strong>"세는 문제에서 <code>if</code>를 열 개 쓰고 있으면 배열을 의심한다"</strong>이다.</p>
+
+  <h3><span class="tag">예제 4</span>최빈값</h3>
+  <p>카운팅 배열을 만든 뒤, 그 배열에서 다시 최댓값을 찾는다. <strong>집계 위의 집계</strong>다.</p>
+  <div class="io">
+    <div><div class="lbl">코드</div><pre>int cnt[101] = {0};
+for (i = 0; i &lt; n; i++) cnt[a[i]]++;
+
+int best = -1, bc = 0;
+for (int v = 0; v &lt;= 100; v++)
+    if (cnt[v] &gt; bc) { bc = cnt[v]; best = v; }</pre></div>
+    <div><div class="lbl">검증: 1 3 3 5 5 5 7</div><pre>cnt[1]=1 cnt[3]=2 cnt[5]=3 cnt[7]=1
+
+→ 최빈값 5 (3번)
+
+작은 값부터 보므로
+동점이면 가장 작은 값이 남는다</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">여기서는 <code>bc = 0</code> 초기화가 안전하다</span>
+    4.2절의 표와 모순처럼 보이지만 아니다. <b>개수는 음수가 될 수 없고</b>, N ≥ 1이면 반드시 어떤 값의 개수가 1 이상이므로 <b>반드시 갱신된다</b>. 초기값의 안전성은 <b>"답이 그보다 작을 수 있는가"</b>로 판정한다. 표를 외우는 것이 아니라 <b>판정 기준을 외운다</b>.
+  </div>
+
+  <h3><span class="tag">예제 5</span>최대 연속 부분합</h3>
+  <p>"연속한 구간을 골라 합을 최대로"는 브론즈 후반에 자주 나온다. 집계 변수 두 개로 한 번에 푼다.</p>
+  <div class="io">
+    <div><div class="lbl">코드</div><pre>long long cur = a[0], best = a[0];
+for (int i = 1; i &lt; n; i++) {
+    cur = (a[i] &gt; cur + a[i])
+          ? a[i] : cur + a[i];
+    if (cur &gt; best) best = cur;
+}</pre></div>
+    <div><div class="lbl">검증</div><pre>-2 1 -3 4 -1 2 1 -5 4
+  → 6   (4 -1 2 1)
+
+-5 -3 -9 -1 -7  (모두 음수)
+  → -1  (한 개만 고른다)</pre></div>
+  </div>
+  <div class="note">
+    <span class="h">여기서도 <code>best = 0</code>이 함정이다</span>
+    <code>best = 0</code>으로 시작하면 모두 음수인 입력에서 <b>0</b>이 나온다. 문제가 "적어도 하나는 골라야 한다"고 했다면 오답이다. <b>도입 문제와 똑같은 버그가 다른 옷을 입고 나온 것</b>이다.<br>
+    <code>cur</code>의 의미는 "<b>i번째로 끝나는</b> 구간 중 최대 합"이다. 직전까지의 합에 이어 붙일지, 여기서 새로 시작할지를 매번 고른다. 이 발상은 PART 3의 동적 계획법으로 이어진다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+
+  <div class="errs">
+    <div class="err"><span class="en">1</span><div class="eb">
+      <b>최댓값을 0으로 시작한다</b><br>
+      모두 음수인 입력에서 <b>0</b>이 나온다. 최솟값을 0으로 시작하면 모두 양수인 입력에서 0이 나온다. 예제 입력에는 양수와 음수가 섞여 있어 걸리지 않는다.<br>
+      <span class="fix">대책</span> <b><code>a[0]</code>으로 초기화</b>한다. 답이 반드시 입력 안의 값이 된다.
+    </div></div>
+
+    <div class="err"><span class="en">2</span><div class="eb">
+      <b>"충분히 작은 값"을 임의로 고른다</b><br>
+      <code>mx = -1000000</code>으로 썼는데 제약이 10<sup>9</sup>이면 틀린다. <code>-999999999</code>로 써도 입력이 <code>-1000000000</code>이면 틀린다.<br>
+      <span class="fix">대책</span> <code>a[0]</code>이나 <code>&lt;limits.h&gt;</code>의 <code>INT_MIN</code>/<code>LLONG_MIN</code>. <b>직접 고른 숫자는 쓰지 않는다.</b>
+    </div></div>
+
+    <div class="err"><span class="en">3</span><div class="eb">
+      <b>케이스마다 초기화하지 않는다</b><br>
+      누적 변수를 케이스 루프 <b>밖</b>에 선언하면 이전 케이스의 값이 남는다. <b>첫 케이스는 반드시 맞고</b> 두 번째부터 틀린다.<br>
+      <span class="fix">대책</span> <b>케이스 루프 안에서 선언</b>한다. 선언하는 자리가 초기화하는 자리다.
+    </div></div>
+
+    <div class="err"><span class="en">4</span><div class="eb">
+      <b>합을 <code>int</code>로 받는다</b><br>
+      N = 10<sup>5</sup>, 값 ≤ 10<sup>9</sup>이면 합은 10<sup>14</sup>다(2장). 최댓값은 <code>int</code>로 충분한데 합만 넘친다. 그래서 <b>최댓값은 맞고 합만 이상한</b> 출력이 나온다.<br>
+      <span class="fix">대책</span> <b>합·곱·누적은 <code>long long</code></b>, 최대·최소는 입력과 같은 자료형.
+    </div></div>
+
+    <div class="err"><span class="en">5</span><div class="eb">
+      <b>나눗셈을 먼저 한다</b><br>
+      <code>(correct / total) * 100</code>은 <code>17/20 = 0</code>이 되어 <b>0</b>을 출력한다. 반대로 곱셈을 먼저 하면서 <code>long long</code>을 안 붙이면 넘친다.<br>
+      <span class="fix">대책</span> <b><code>long long</code>으로 올리고, 곱셈 먼저, 나눗셈 마지막.</b>
+    </div></div>
+
+    <div class="err"><span class="en">6</span><div class="eb">
+      <b>평균을 실수로 만들어 비교한다</b><br>
+      <code>a[i] &gt; (double)sum/n</code>은 3장에서 본 실수 비교다. 평균이 정확히 경계에 걸리는 입력에서만 틀린다.<br>
+      <span class="fix">대책</span> <b>양변에 <code>n</code>을 곱해</b> <code>(long long)a[i] * n &gt; sum</code>으로 쓴다. 실수는 <b>마지막 출력에서만</b> 쓴다.
+    </div></div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    여섯 가지 중 <b>1·2·3번은 모두 초기값 문제</b>이고, 증상도 같다 — <b>입력 어디에도 없는 값이 답으로 나온다</b>. 출력을 보고 "이 숫자가 입력에 있었나?"를 묻는 것만으로 세 가지가 동시에 걸린다.<br>
+    그리고 1·3번은 <b>예제 입력으로는 반드시 통과</b>한다. 직접 반례를 만들어야 한다 — <b>모두 음수 / 모두 양수 / 케이스 두 개 이상</b>, 이 셋이 집계 문제의 표준 반례다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>모든 문제에서 코드를 쓴 뒤 <strong>표준 반례 세 개</strong>(모두 음수 / 모두 양수 / 케이스 두 개)를 반드시 넣어 본다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>합·최대·최소</b> — N개의 정수를 입력받아 합, 최댓값, 최솟값을 한 줄에 출력하라. N ≤ 10<sup>5</sup>, |값| ≤ 10<sup>9</sup>.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+3 9 2 9 5</pre></div><div><span>OUTPUT</span><pre>28 9 2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>모두 음수 반례</b> — 01번 코드에 <code>5 / -5 -3 -9 -1 -7</code>을 넣어 결과를 적어라. 최댓값을 <code>0</code>으로 초기화한 판도 함께 만들어 두 결과를 비교하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+-5 -3 -9 -1 -7</pre></div><div><span>OUTPUT</span><pre>-25 -1 -9</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>최댓값과 위치</b> — N개의 정수 중 최댓값과 그것이 <b>처음 나오는 위치</b>(1부터)를 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+3 9 2 9 5</pre></div><div><span>OUTPUT</span><pre>9 2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>조건 개수</b> — N개의 정수 중 ⑴ 짝수의 개수 ⑵ 음수의 개수 ⑶ 0의 개수를 각각 한 줄에 출력하라. <b>루프는 한 번만</b> 돌아라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>6
+-4 0 3 -7 8 0</pre></div><div><span>OUTPUT</span><pre>4
+2
+2</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>평균 (버림)</b> — N개의 정수(모두 0 이상)의 평균을 <b>소수점 아래 버림</b>해 출력하라. 그다음 <b>반올림</b> 판도 만들어 두 결과가 다른 입력을 하나 찾아라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3
+1 2 2</pre></div><div><span>OUTPUT</span><pre>1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>자릿수 세기</b> — 숫자로만 이루어진 문자열을 입력받아 0부터 9까지 각 숫자가 몇 번 나왔는지 한 줄에 공백으로 구분해 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3141592653589793</pre></div><div><span>OUTPUT</span><pre>0 2 1 3 1 3 1 1 1 3</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>테스트케이스별 합</b> — 첫 줄에 T. 각 케이스는 첫 줄에 N, 다음 줄에 N개의 정수. 케이스마다 합과 최댓값을 출력하라. <b>초기화를 빠뜨린 판</b>도 만들어 두 출력을 비교하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3
+3
+1 2 3
+2
+10 20
+3
+-1 -2 -3</pre></div><div><span>OUTPUT</span><pre>6 3
+30 20
+-6 -1</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>최빈값</b> — N개의 정수(0 ≤ 값 ≤ 100)에서 가장 많이 나온 값을 출력하라. 여러 개면 <b>가장 작은 값</b>을 출력한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>7
+1 3 3 5 5 5 7</pre></div><div><span>OUTPUT</span><pre>5</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>평균보다 큰 수의 비율</b> — T개의 케이스. 각 케이스마다 평균을 <b>초과</b>하는 수의 비율을 소수 셋째 자리까지 <code>%</code>와 함께 출력하라. <b>실수 비교를 쓰지 말 것.</b></p>
+    <div class="sample"><div><span>INPUT</span><pre>2
+5
+50 50 70 80 100
+6
+100 95 90 80 70 60</pre></div><div><span>OUTPUT</span><pre>40.000%
+50.000%</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>정답률</b> — 맞힌 개수 c와 전체 개수 t(1 ≤ c ≤ t ≤ 10<sup>9</sup>)를 입력받아 백분율을 <b>소수점 아래 버림</b>한 정수로 출력하라. <code>(c/t)*100</code>으로 쓴 판과 비교해 왜 다른지 적어라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>17 20</pre></div><div><span>OUTPUT</span><pre>85</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>최대 연속 부분합</b> — N개의 정수에서 <b>연속한 한 개 이상</b>을 골라 합을 최대로 만들어라. |값| ≤ 10<sup>9</sup>, N ≤ 10<sup>5</sup>.</p>
+    <div class="sample"><div><span>INPUT</span><pre>9
+-2 1 -3 4 -1 2 1 -5 4</pre></div><div><span>OUTPUT</span><pre>6</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>구간 합과 구간 평균</b> — N개의 정수(모두 0 이상)와 Q개의 질문 (L, R). 각 질문에 구간 합과 <b>버림한 구간 평균</b>을 출력하라. 2장의 누적합을 쓴다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5 2
+10 20 30 40 50
+2 4
+1 5</pre></div><div><span>OUTPUT</span><pre>90 30
+150 30</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>최솟값 두 개</b> — N개의 정수에서 <b>가장 작은 값과 두 번째로 작은 값</b>을 출력하라. 같은 값이 여러 개면 중복을 허용한다(<code>3 3 5</code> → <code>3 3</code>). 루프는 한 번만 돌아라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+7 3 9 3 5</pre></div><div><span>OUTPUT</span><pre>3 3</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>누적 최대</b> — N개의 정수를 읽으면서 <b>그 시점까지의 최댓값</b>을 매번 출력하라. 출력은 한 줄에 공백으로 구분한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+3 9 2 9 5</pre></div><div><span>OUTPUT</span><pre>3 9 9 9 9</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>곱의 초기값</b> — N개의 정수(1 ≤ 값 ≤ 10)의 곱을 출력하라. 초기값을 <code>0</code>으로 두면 어떤 결과가 나오는지도 확인해 적어라. 곱이 <code>long long</code>을 넘지 않도록 N ≤ 18이다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4
+2 3 4 5</pre></div><div><span>OUTPUT</span><pre>120</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>정수 나눗셈 관찰</b> — <code>7/2</code>, <code>-7/2</code>, <code>7%2</code>, <code>-7%2</code>를 출력하는 프로그램을 작성하고, C의 정수 나눗셈이 <b>내림인지 0 방향 절삭인지</b> 판정하라. 그 차이가 평균 계산에 어떤 영향을 주는지 한 줄로 적어라.</p>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>반올림 공식 검증</b> — 공식 <code>(2*s + n) / (2*n)</code>이 <code>s = 0..100</code>, <code>n = 1..10</code>의 모든 쌍에서 <code>lround((double)s/n)</code>과 일치하는지 전수 비교하라. 그다음 <code>s</code>를 음수까지 넓혀 <b>어긋나는 쌍</b>을 찾아 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>구간별 집계</b> — N개의 점수(0~100)를 입력받아 <b>10점 단위 구간별 개수</b>를 출력하라. 100점은 마지막 구간에 넣는다. <code>if</code>를 쓰지 말고 <b>나눗셈 한 번</b>으로 구간 번호를 구하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5
+100 95 90 85 0</pre></div><div><span>OUTPUT</span><pre>0: 1
+8: 1
+9: 3</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>두 번 훑기가 필요한가</b> — 아래 각 과제가 <b>한 번 훑기</b>로 가능한지 <b>두 번</b> 필요한지 판정하고 근거를 적어라.<br>
+    ⑴ 합과 최댓값 &nbsp;⑵ 평균보다 큰 수의 개수 &nbsp;⑶ 최댓값과 두 번째 최댓값<br>
+    ⑷ 최댓값이 몇 번 나왔는지 &nbsp;⑸ 모든 수에서 최솟값을 뺀 값들의 합</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>종합</b> — 아래 문제를 받았다. ⑴ 각 집계의 초기값과 자료형을 표로 적고 ⑵ 한 번 훑기로 되는지 판정하고 ⑶ 표준 반례 세 개를 적은 뒤 ⑷ 코드를 작성하라.</p>
+    <div class="sample"><div><span>PROBLEM</span><pre>T개의 테스트케이스.
+각 케이스는 첫 줄에 N,
+다음 줄에 N개의 정수.
+
+케이스마다 한 줄에
+  합  최댓값  최솟값  평균초과개수
+를 공백으로 구분해 출력하라.
+
+제약
+1 ≤ T ≤ 100
+1 ≤ N ≤ 100,000
+-10^9 ≤ A[i] ≤ 10^9
+시간 1초</pre></div><div><span>SAMPLE</span><pre>입력
+2
+5
+3 9 2 9 5
+3
+-1 -2 -3
+
+출력
+28 9 2 2
+-6 -1 -3 1</pre></div></div>
+  </div></div>
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">07 — 확인 평가</span>
+  <h2>정답과 해설</h2>
+
+  <div class="ans"><span class="an">01</span><div class="ab">
+    본문 <code>aggregate.c</code>와 동일. 채점 포인트 — <code>sum</code>이 <code>long long</code>인가, <code>mx</code>·<code>mn</code>이 <code>a[0]</code>으로 초기화되었는가, 출력 서식이 <code>%lld %d %d</code>인가.<br>
+    <b>지도 포인트</b> — 합만 <code>long long</code>이고 최대·최소는 <code>int</code>라는 점을 반드시 짚는다. "전부 <code>long long</code>으로 하면 되지 않나"는 맞는 말이지만, <b>왜 그래도 되는지</b>를 설명할 수 있어야 한다 — 최댓값은 입력 안의 값이므로 입력 자료형을 넘지 않는다.
+  </div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab">
+    정답 — <code>-25 -1 -9</code>.<br>
+    <code>mx = 0</code>판 — <code>-25 0 -9</code>. 최댓값만 <b>0</b>이 된다.<br>
+    <b>지도 포인트</b> — 출력된 <code>0</code>이 <b>입력 다섯 개 어디에도 없다</b>는 것을 손가락으로 짚어 확인시킨다. 이 장 전체가 이 한 장면에서 출발한다. 그리고 합과 최솟값은 멀쩡하다는 점 — <b>한 변수만 틀리면 다른 값이 맞아서 더 안 보인다</b>.
+  </div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab">
+    <code>int mx = a[0], pos = 0; for (i=1;i&lt;n;i++) if (a[i] &gt; mx) { mx = a[i]; pos = i; }</code> 출력은 <code>pos + 1</code>.<br>
+    검증 — <code>3 9 2 9 5</code> → <code>9 2</code>.<br>
+    <b>지도 포인트</b> — <code>&gt;=</code>로 쓰면 <code>9 4</code>가 나온다. <b>부등호 하나가 "처음"과 "마지막"을 가른다.</b> 문제 문장에 "가장 먼저"가 있는지 다시 읽게 한다. 그리고 <code>mx</code>와 <code>pos</code>를 <b>같은 <code>if</code> 안에서</b> 갱신해야 한다는 점 — 따로 쓰면 어긋난다.
+  </div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab">
+    루프 한 번 안에 <code>if</code> 세 개. <code>-4 0 3 -7 8 0</code> → 짝수 4개(−4, 0, 8, 0), 음수 2개, 0이 2개.<br>
+    <b>지도 포인트</b> — <b>0은 짝수</b>다. <code>0 % 2 == 0</code>이므로 자동으로 세어진다. 그리고 음수의 나머지는 C에서 음수이므로(4.7절) <code>a[i] % 2 == 1</code>로 홀수를 판정하면 <b>음의 홀수를 놓친다</b>. <code>-7 % 2</code>는 <code>-1</code>이다. 홀수는 <code>a[i] % 2 != 0</code>으로 쓴다.
+  </div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab">
+    버림 — <code>sum / n</code>. 합 5, n = 3이므로 <b>1</b>.<br>
+    반올림 — <code>(2*sum + n) / (2*n)</code> = (10+3)/6 = <b>2</b>.<br>
+    두 결과가 다른 입력은 <b>나머지가 n/2 이상</b>일 때다. 예 — <code>1 2 2</code>(합 5, n 3): 버림 1, 반올림 2.<br>
+    <b>지도 포인트</b> — 문제가 "버림"인지 "반올림"인지 <b>명시하지 않은 경우</b>가 실전에서 가장 위험하다. 예제 입출력을 보고 역산해 확인한다. 1장의 "입출력 명세를 먼저 읽는다"가 여기서 쓰인다.
+  </div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab">
+    <code>int c[10] = {0}; for (i=0; s[i]; i++) c[s[i]-'0']++;</code><br>
+    검증 — <code>3141592653589793</code> → <code>0 2 1 3 1 3 1 1 1 3</code>. 합이 16으로 문자열 길이와 일치한다.<br>
+    <b>지도 포인트</b> — <code>s[i] - '0'</code>이 문자를 숫자로 바꾸는 관용구다(14장에서 다시 다룬다). <b>개수의 합이 입력 길이와 같은지</b> 확인하는 것이 이런 문제의 자체 검산법이다. 하나라도 빠졌으면 합이 모자란다.
+  </div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab">
+    올바른 출력 — <code>6 3 / 30 20 / -6 -1</code>.<br>
+    초기화 빠뜨린 판 — <code>6 3 / 36 20 / 30 20</code>.<br>
+    <b>첫 줄이 같다</b>는 것이 핵심이다. 두 번째 줄의 36은 6+30, 세 번째 줄의 30은 36+(−6)이다. 최댓값 20도 두 번째 케이스의 값이 그대로 남았다.<br>
+    <b>지도 포인트</b> — 세 번째 케이스가 <b>모두 음수인데 답이 양수</b>라는 점에서 02번과 같은 증상을 보인다. <b>"입력에 없는 값"</b> 점검이 여기서도 통한다는 것을 연결시킨다.
+  </div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab">
+    카운팅 배열 <code>cnt[101]</code>을 만든 뒤 <code>cnt</code>에서 최댓값을 찾는다. <code>v</code>를 <b>작은 값부터</b> 보고 <code>&gt;</code>(<code>&gt;=</code>가 아니라)로 비교하면 동점 시 가장 작은 값이 남는다.<br>
+    검증 — <code>1 3 3 5 5 5 7</code> → <b>5</b>(3번).<br>
+    <b>지도 포인트</b> — 이 문제는 <b>집계를 두 번</b> 한다. 첫 번째는 개수 세기, 두 번째는 그 개수의 최댓값 찾기. 두 번째 집계의 초기값 <code>bc = 0</code>이 안전한 이유(개수는 음수가 될 수 없다)를 예제 4의 판정 기준으로 설명하게 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab">
+    본문 <code>above_avg.c</code>와 동일. 핵심은 <code>(long long)a[i] * n &gt; sum</code>.<br>
+    검증 — 40.000% / 50.000%. 추가로 <code>1 1 1 1 1 1 1 1 1 10</code>(n=10, 합 19) → <b>10.000%</b>.<br>
+    <b>지도 포인트</b> — 캐스팅을 <code>a[i]</code>에 붙이는 이유를 묻는다. <code>a[i] * n</code>이 먼저 <code>int</code>로 계산된 뒤 <code>long long</code>이 되면 이미 늦다. <b>캐스팅은 곱하기 전에</b> 붙인다. 10<sup>9</sup> × 10<sup>5</sup> = 10<sup>14</sup>이므로 실제로 넘친다.
+  </div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab">
+    <code>printf("%lld\n", (long long)c * 100 / t);</code> — 17, 20 → <b>85</b>.<br>
+    <code>(c/t)*100</code>판 — <code>17/20 = 0</code>이므로 <b>0</b>. 정수 나눗셈이 소수를 버려 <b>정보가 사라진 뒤</b> 100을 곱하므로 복구되지 않는다.<br>
+    <code>long long</code> 없이 <code>c*100</code>만 쓰면 — c = 10<sup>8</sup>에서 <code>1410065408</code>로 넘친다.<br>
+    <b>지도 포인트</b> — <b>두 오류가 정반대 방향</b>이라는 점이 이 문제의 요령이다. 나눗셈을 먼저 하면 정보가 사라지고, 곱셈을 먼저 하면 넘친다. 해법은 하나 — <b><code>long long</code>으로 올린 뒤 곱셈 먼저</b>.
+  </div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab">
+    예제 5의 코드. <code>cur</code>과 <code>best</code> 모두 <b><code>a[0]</code>으로 초기화</b>하고 <code>i = 1</code>부터 돈다.<br>
+    검증 — <code>-2 1 -3 4 -1 2 1 -5 4</code> → <b>6</b>(4 −1 2 1). <code>-5 -3 -9 -1 -7</code> → <b>−1</b>.<br>
+    <b>지도 포인트</b> — <code>best = 0</code>으로 시작하면 두 번째 입력에서 <b>0</b>이 나온다. 도입 문제와 <b>완전히 같은 버그</b>다. 모양만 다를 뿐 "입력에 없는 값"이 나온다는 증상까지 같다는 것을 학생이 스스로 말하게 한다. 합이 10<sup>5</sup> × 10<sup>9</sup> = 10<sup>14</sup>까지 가므로 <code>long long</code>도 필요하다.
+  </div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">
+    누적합 <code>p[i] = p[i-1] + a[i]</code>를 만든 뒤, 구간 합은 <code>p[r] - p[l-1]</code>, 개수는 <code>r - l + 1</code>, 평균은 <code>합 / 개수</code>.<br>
+    검증 — <code>[2,4]</code> 합 90, 개수 3, 평균 <b>30</b>. <code>[1,5]</code> 합 150, 개수 5, 평균 <b>30</b>.<br>
+    <b>지도 포인트</b> — <b>개수를 <code>r - l + 1</code>로 세는 것</b>이 경계 실수의 단골이다. <code>l = r</code>이면 1개여야 한다. 그리고 2장에서 만든 누적합이 여기서 평균의 분자가 된다 — <b>도구가 쌓여 간다</b>는 것을 보여 주는 문제다.
+  </div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab">
+    <pre>int m1 = a[0], m2 = INT_MAX;          /* m1 ≤ m2 */
+for (i = 1; i &lt; n; i++) {
+    if (a[i] &lt; m1) { m2 = m1; m1 = a[i]; }   /* 밀어낸다 */
+    else if (a[i] &lt; m2) m2 = a[i];
+}</pre>
+    검증 — <code>7 3 9 3 5</code> → <b>3 3</b>. 중복을 허용하므로 <code>&lt;=</code>가 아니라 <code>&lt;</code>와 <code>else if</code> 조합으로 충분하다.<br>
+    <b>지도 포인트</b> — 가장 작은 값이 갱신될 때 <b>이전 1등을 2등으로 밀어내는</b> 두 줄이 핵심이다. 순서를 바꿔 <code>m1 = a[i]</code>를 먼저 쓰면 이전 값이 사라진다. 3장의 "조건의 순서"가 대입문의 순서로 나타난 경우다.
+  </div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab">
+    <code>mx = a[0]</code>로 시작해 매 반복에서 갱신한 뒤 출력. 첫 값은 자기 자신이 최댓값이다.<br>
+    검증 — <code>3 9 2 9 5</code> → <code>3 9 9 9 9</code>.<br>
+    <b>지도 포인트</b> — 출력 형식이 <b>공백 구분 한 줄</b>이므로 1장의 관용구를 쓴다 — <code>if (i &gt; 0) printf(" "); printf("%d", mx);</code> 뒤에 마지막 <code>printf("\n")</code>. 끝에 공백이 붙지 않게 하는 것이 포인트다.
+  </div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab">
+    <code>long long prod = 1;</code>로 시작. <code>2 3 4 5</code> → <b>120</b>.<br>
+    <code>prod = 0</code>으로 두면 — <b>어떤 입력에서도 0</b>이 나온다. 0에 무엇을 곱해도 0이기 때문이다.<br>
+    <b>지도 포인트</b> — 합의 초기값 0과 곱의 초기값 1은 <b>같은 원리</b>다 — <b>"아무것도 처리하지 않은 상태"</b>의 값이다. 더하기에서 그 값은 0이고 곱하기에서는 1이다. 이 원리를 알면 외울 것이 없다. 값이 최대 10이고 N ≤ 18이므로 곱은 최대 10<sup>18</sup>이다. <code>LLONG_MAX</code>는 약 9.2 × 10<sup>18</sup>이므로 <b>간신히 안전</b>하다 — 제약의 18이라는 숫자가 여기서 나온 것이다.
+  </div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">
+    <code>7/2 = 3</code>, <code>-7/2 = -3</code>, <code>7%2 = 1</code>, <code>-7%2 = -1</code>.<br>
+    내림이라면 <code>-7/2</code>는 <b>−4</b>여야 한다. C는 <b>0 방향 절삭</b>이다.<br>
+    <b>평균에 미치는 영향</b> — 합이 음수일 때 "버림한 평균"이 수학적 내림과 달라진다. 합 −7, n = 2면 C는 −3, 내림은 −4다.<br>
+    <b>지도 포인트</b> — 대부분의 브론즈 문제는 값이 0 이상이라 이 차이가 드러나지 않는다. 그래서 <b>제약에 음수가 있는지</b> 확인하는 습관이 중요하다. 음수가 가능하면 "버림"의 정의를 문제에서 다시 확인한다.
+  </div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    <code>s = 0..100</code>, <code>n = 1..10</code>의 <b>1,010쌍 전부</b>에서 공식과 <code>lround</code>가 일치한다(불일치 0쌍).<br>
+    음수로 넓히면 어긋난다 — <code>s = -7, n = 2</code>: <code>lround(-3.5) = -4</code>, 공식 <b>−3</b>. <code>s = -5, n = 3</code>: <code>lround(-1.667) = -2</code>, 공식 <b>−1</b>.<br>
+    <b>지도 포인트</b> — 공식이 "반올림"하는 방향은 <b>+∞ 쪽</b>이고, <code>lround</code>는 <b>0에서 먼 쪽</b>이다. 양수에서는 둘이 같지만 음수에서 갈린다. <b>공식을 외우기 전에 적용 범위를 외운다</b>는 것이 이 문항의 목적이다. 그리고 3장에서 배운 <b>전수 비교</b>가 여기서도 검증 도구로 쓰인다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    <code>int g = s / 10; if (g == 10) g = 9;</code> 또는 <code>int g = (s == 100) ? 9 : s / 10;</code><br>
+    검증 — <code>100 95 90 85 0</code> → 0번 구간 1개, 8번 구간 1개, 9번 구간 3개(100·95·90).<br>
+    <b>지도 포인트</b> — <b>나눗셈으로 구간 번호를 만드는 것</b>이 이 문항의 기법이다. <code>if</code> 열 개가 한 줄이 된다(3장 예제 4의 "분기 대신 배열"의 변형). 그리고 100이 <code>s/10 = 10</code>이 되어 <b>배열 범위를 벗어나는</b> 것이 유일한 경계다 — 이것을 못 보면 런타임 에러가 난다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    ⑴ <b>한 번</b> — 둘 다 지금까지의 값만으로 갱신된다.<br>
+    ⑵ <b>두 번</b> — 평균을 알려면 전체 합이 필요하다.<br>
+    ⑶ <b>한 번</b> — 13번처럼 변수 두 개로 밀어내면 된다.<br>
+    ⑷ <b>한 번</b> — 두 번이 필요해 보이지만, "최댓값이 갱신되면 개수를 1로 되돌리고, 같은 값이면 +1"로 처리하면 한 번에 된다.<br>
+    ⑸ <b>한 번</b> — 최솟값을 먼저 알아야 할 것 같지만, 구하는 값이 <code>합 − 최솟값 × N</code>이므로 합과 최솟값만 모으면 된다.<br>
+    <b>지도 포인트</b> — ⑷와 ⑸처럼 <b>"두 번이 필요해 보이지만 식을 바꾸면 한 번"</b>인 경우가 있다는 것이 이 문항의 핵심이다. 판별 질문("뒤에 올 입력이 필요한가")은 출발점이고, 그다음 <b>식을 변형할 수 있는지</b>를 한 번 더 묻는다. ⑸의 변형은 2장의 "나눗셈을 곱셈으로"와 같은 종류의 사고다.
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    <b>⑴ 초기값·자료형 표</b>
+    <table>
+      <thead><tr><th>집계</th><th>초기값</th><th>자료형</th><th>근거</th></tr></thead>
+      <tbody>
+        <tr><td>합</td><td><code>0</code></td><td><code>long long</code></td><td>10<sup>5</sup> × 10<sup>9</sup> = 10<sup>14</sup></td></tr>
+        <tr><td>최댓값</td><td><code>a[0]</code></td><td><code>int</code></td><td>입력 안의 값</td></tr>
+        <tr><td>최솟값</td><td><code>a[0]</code></td><td><code>int</code></td><td>입력 안의 값</td></tr>
+        <tr><td>평균초과개수</td><td><code>0</code></td><td><code>int</code></td><td>최대 N = 10<sup>5</sup></td></tr>
+      </tbody>
+    </table>
+    <b>⑵ 훑는 횟수</b> — 평균초과개수 때문에 <b>두 번</b>. 첫 루프에서 합·최대·최소를, 둘째 루프에서 개수를 센다. 값을 다시 봐야 하므로 <b>배열에 저장</b>해야 한다.<br>
+    <b>⑶ 표준 반례</b> — ① 모두 음수(<code>-1 -2 -3</code>) ② 모두 양수 ③ 케이스 두 개 이상. 추가로 <b>N = 1</b>(평균초과개수가 0이 된다)과 <b>모든 값이 같은 경우</b>(역시 0).<br>
+    <b>⑷ 복잡도</b> — T × N = 100 × 10<sup>5</sup> = <b>10<sup>7</sup></b>. 2장의 표로 O(T·N)은 여유롭게 통과.<br>
+    <b>⑸ 샘플 검산</b> — <code>3 9 2 9 5</code>: 합 28, 평균 5.6, 초과는 9와 9 → <b>2</b>. <code>-1 -2 -3</code>: 합 −6, 평균 −2, 초과는 −1 → <b>1</b>.<br>
+    <b>지도 포인트</b> — 두 번째 케이스가 이 문제의 전부다. <b>모두 음수</b>이고, 최댓값이 <code>-1</code>이며, 평균이 <code>-2</code>이고, 평균을 초과하는 수가 <b>있다</b>. <code>mx = 0</code>·<code>cnt</code> 초기화 누락·실수 비교 중 하나라도 어기면 여기서 틀린다. 이 장의 모든 오류가 한 줄의 입력에 모여 있다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li>최대·최소의 초기값은 <strong><code>a[0]</code></strong>로 둔다</li>
+    <li>"충분히 작은 값"을 <strong>직접 고르지 않는다</strong></li>
+    <li>합·곱은 <code>long long</code>, 최대·최소는 <strong>입력과 같은 자료형</strong></li>
+    <li>곱의 초기값은 <strong>1</strong>이다 (아무것도 곱하지 않은 상태)</li>
+    <li>누적 변수는 <strong>케이스 루프 안에서 선언</strong>한다</li>
+    <li><strong>곱셈 먼저, 나눗셈 마지막</strong>, 캐스팅은 곱하기 전에</li>
+    <li>평균 비교는 <strong>양변에 n을 곱해</strong> 정수로 한다</li>
+    <li>출력된 값이 <strong>입력에 없는 숫자</strong>이면 초기값을 의심한다</li>
+    <li>표준 반례 — <strong>모두 음수 / 모두 양수 / 케이스 두 개</strong></li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 05장 약수·배수·소수와 유클리드 호제법</span>
+    여기까지는 입력을 <strong>그대로 모으는</strong> 문제였다. 다음은 수 자체의 성질을 묻는다. 약수를 구할 때 왜 <strong>√N까지만</strong> 돌면 되는지, 소수 판정을 왜 2부터 하나씩 나누면 안 되는지를 2장의 복잡도 표로 계산해 결정한다. 최대공약수는 반복문 대신 <strong>세 줄짜리 호제법</strong>으로 끝난다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 2 · 04장 · 2026-10-13 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+</div></body></html>

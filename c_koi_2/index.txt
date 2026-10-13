@@ -1,0 +1,45 @@
+중등 KOI 를 위한 C언어
+
+PART I : 브론즈급 해결 스킬 — 끝까지 푸는 구현력
+
+
+01 문제 읽는 법과 입출력 형식 설계
+https://iioiinet-spec.github.io/SCM/c_koi_2/01
+
+02 제약 조건과 시간복잡도 감각
+https://iioiinet-spec.github.io/SCM/c_koi_2/02
+
+03 조건 분기형 문제
+https://iioiinet-spec.github.io/SCM/c_koi_2/03
+
+04 누적·집계형 문제
+https://iioiinet-spec.github.io/SCM/c_koi_2/04
+
+05 약수·배수·소수와 유클리드 호제법
+https://iioiinet-spec.github.io/SCM/c_koi_2/05
+
+06 진법 변환과 자릿수 처리
+https://iioiinet-spec.github.io/SCM/c_koi_2/06
+
+07 배열 카운팅과 체크 배열
+https://iioiinet-spec.github.io/SCM/c_koi_2/07
+
+08 문자열 기초 처리
+https://iioiinet-spec.github.io/SCM/c_koi_2/08
+
+09 2차원 격자 시뮬레이션
+https://iioiinet-spec.github.io/SCM/c_koi_2/09
+
+10 완전탐색 입문
+https://iioiinet-spec.github.io/SCM/c_koi_2/10
+
+11 qsort와 정렬 기반 문제
+https://iioiinet-spec.github.io/SCM/c_koi_2/11
+
+12 브론즈 실전 모의와 오답 유형 정리
+https://iioiinet-spec.github.io/SCM/c_koi_2/12
+
+
+세영코딩연구소 컴퓨터공학박사 KIM 이 제공하는 html의 index.html 을 만들어줘, 
+디자인은 AI시대의 코딩의 중요성을 담은 디자인으로 
+

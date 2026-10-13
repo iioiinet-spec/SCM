@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>중등 KOI를 위한 C언어 - PART II : 브론즈급 해결 스킬 | 세영코딩연구소</title>
+    <!-- Google Fonts: Orbitron & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #030712;
+            --bg-card: rgba(17, 24, 39, 0.75);
+            --primary: #00f0ff;
+            --secondary: #7000ff;
+            --accent: #00ff66;
+            --text-main: #f3f4f6;
+            --text-sub: #9ca3af;
+            --border-color: rgba(0, 240, 255, 0.2);
+            --glow: 0 0 20px rgba(0, 240, 255, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        /* AI 네온 그리드 배경 효과 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+        }
+
+        /* 상단 네온 광원 효과 */
+        .cyber-glow-bg {
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(112, 0, 255, 0.25) 0%, rgba(0, 240, 255, 0.1) 50%, transparent 80%);
+            filter: blur(80px);
+            z-index: -1;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .badge {
+            display: inline-block;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            color: var(--primary);
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--primary);
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.3rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ffffff 30%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-sub);
+            margin-bottom: 30px;
+        }
+
+        /* AI 시대 코딩 중요성 메시지 박스 */
+        .ai-vision-box {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.8), rgba(30, 27, 75, 0.6));
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px 30px;
+            margin: 0 auto 40px;
+            max-width: 800px;
+            box-shadow: var(--glow);
+            text-align: left;
+            position: relative;
+        }
+
+        .ai-vision-box h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-vision-box p {
+            font-size: 0.95rem;
+            color: #d1d5db;
+        }
+
+        /* 커리큘럼 리스트 그리드 */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+            padding-left: 12px;
+        }
+
+        .curriculum-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 16px;
+        }
+
+        @media (max-width: 650px) {
+            .curriculum-grid {
+                grid-template-columns: 1fr;
+            }
+            h1 { font-size: 1.6rem; }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 240, 255, 0.15);
+            background: rgba(17, 24, 39, 0.9);
+        }
+
+        .card-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .chapter-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--secondary);
+            background: rgba(112, 0, 255, 0.15);
+            border: 1px solid rgba(112, 0, 255, 0.3);
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .chapter-num {
+            color: var(--primary);
+            background: rgba(0, 240, 255, 0.15);
+            border-color: var(--primary);
+        }
+
+        .chapter-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .arrow-icon {
+            color: var(--text-sub);
+            font-size: 1.2rem;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .card:hover .arrow-icon {
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-sub);
+            font-size: 0.9rem;
+        }
+
+        footer span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cyber-glow-bg"></div>
+
+    <header>
+        <div class="badge">SEYYOUNG CODING LAB</div>
+        <h1>중등 KOI를 위한 C언어</h1>
+        <p class="subtitle">PART II : 브론즈급 해결 스킬 — 끝까지 푸는 구현력</p>
+
+        <!-- AI 시대 코딩 중요성 메시지 -->
+        <div class="ai-vision-box">
+            <h3>⚡ AI 시대, 끝까지 완성하는 코딩 역량</h3>
+            <p>인공지능이 코드를 보조하는 시대일수록, 문제를 정확히 분석하고 제약 조건 안에서 논리적 오류 없이 구현해내는 '진짜 실력'이 엔지니어의 가치를 결정합니다. 브론즈급 실전 구현력을 완성하여 알고리즘 정복의 발판을 다지세요.</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <h2 class="section-title">CURRICULUM MODULES</h2>
+        
+        <div class="curriculum-grid">
+            <!-- 01 -->
+            <a href="https://iioiinet-spec.github.io/SCM/c_koi_2/01" class="card">
+                <div class="card-content">
+                    <div class="chapter-num">01</div>
+                    <div class="chapter-title">문제 읽는 법과 입출력 형식 설계</div>
+                </div>
+                <div class="arrow-icon">→</div>
+            </a>
+
+            <!-- 02 -->
+            <a href="https://iioiinet-spec.github.io/SCM/c_koi_2/02" class="card">
+                <div class="card-content">
+                    <div class="chapter-num">02</div>
+                    <div class="chapter-title">제약 조건과 시간복잡도 감각</div>
+                </div>
+                <div class="arrow-icon">→</div>
+            </a>
+
+            <!-- 03 -->
+            <a href="https://iioiinet-spec.github.io/SCM/c_koi_2/03" class="card">
+                <div class="card-content">
+                    <div class="chapter-num">03</div>
+                    <div class="chapter-title">조건 분기형 문제</div>
+                </div>
+                <div class="arrow-icon">→</div>
+            </a>
+
+            <!-- 04 -->
+            <a href="https://iioiinet-spec.github.io/SCM/c_koi_2/04" class="card">
+                <div class="card-content">
+                    <div class="chapter-num">04</div>
+                    <div class="chapter-title">누적·집계형 문제</div>
+                </div>
+                <div class="arrow-icon">→</div>
+            </a>
+
+            <!-- 05 -->
+            <a href="https://iioiinet-spec.github.io/SCM/c_koi_2/05" class="card">
+                <div class="card-content">
+                    <div class="chapter-num">05</div>
+                    <div class="chapter-title">약수·배수·소수와 유클리드 호제법</div>
+                </div>
+                <div class="arrow-icon">→</div>
+            </a>
+
+            <!-- 06 -->
+            <a href="https://iioiinet-spec.github.io/SCM/c_koi_2/06" class="card">
+                <div class="card-content">
+                    <div class="chapter-num">06</div>
+                    <div class="chapter-title">진법 변환과 자릿수 처리</div>
+                </div>
+                <div class="arrow-icon">→</div>
+            </a>
+
+            <!-- 07 -->
+            <a href="https://iioiinet-spec.github.io/SCM/c_koi_2/07" class="card">
+                <div class="card-content">
+                    <div class="chapter-num">07</div>
+                    <div class="chapter-title">배열 카운팅과 체크 배열</div>
+                </div>
+                <div class="arrow-icon">→</div>
+            </a>
+
+            <!-- 08 -->
+            <a href="https://iioiinet-spec.github.io/SCM/c_koi_2/08" class="card">
+                <div class="card-content">
+                    <div class="chapter-num">08</div>
+                    <div class="chapter-title">문자열 기초 처리</div>
+                </div>
+                <div class="arrow-icon">→</div>
+            </a>
+
+            <!-- 09 -->
+            <a href="https://iioiinet-spec.github.io/SCM/c_koi_2/09" class="card">
+                <div class="card-content">
+                    <div class="chapter-num">09</div>
+                    <div class="chapter-title">2차원 격자 시뮬레이션</div>
+                </div>
+                <div class="arrow-icon">→</div>
+            </a>
+
+            <!-- 10 -->
+            <a href="https://iioiinet-spec.github.io/SCM/c_koi_2/10" class="card">
+                <div class="card-content">
+                    <div class="chapter-num">10</div>
+                    <div class="chapter-title">완전탐색 입문</div>
+                </div>
+                <div class="arrow-icon">→</div>
+            </a>
+
+            <!-- 11 -->
+            <a href="https://iioiinet-spec.github.io/SCM/c_koi_2/11" class="card">
+                <div class="card-content">
+                    <div class="chapter-num">11</div>
+                    <div class="chapter-title">qsort와 정렬 기반 문제</div>
+                </div>
+                <div class="arrow-icon">→</div>
+            </a>
+
+            <!-- 12 -->
+            <a href="https://iioiinet-spec.github.io/SCM/c_koi_2/12" class="card">
+                <div class="card-content">
+                    <div class="chapter-num">12</div>
+                    <div class="chapter-title">브론즈 실전 모의와 오답 유형 정리</div>
+                </div>
+                <div class="arrow-icon">→</div>
+            </a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 <span>세영코딩연구소 (SEYYOUNG Coding Lab)</span> | 컴퓨터공학박사 KIM</p>
+    </footer>
+
+</body>
+</html>

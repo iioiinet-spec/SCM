@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 2 · 05장 약수·배수·소수와 유클리드 호제법 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#9a5f1a;
+  --accent-soft:#f7ecdb;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#e8b670}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style></head><body><div class="sheet"><header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 2 · 브론즈급 해결 스킬 — 05 / 12</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">05</span>
+    <h1>약수·배수·소수와 유클리드 호제법</h1>
+  </div>
+  <p class="lede">여기부터는 입력을 모으는 것이 아니라 <strong>수 자체의 성질</strong>을 묻는다. 그런데 이 유형의 코드는 대부분 <strong>한 줄만 바꾸면 3만 배 빨라진다</strong>. 어떤 한 줄인지, 왜 그런지를 2장의 복잡도 표로 계산해 결정한다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li>약수를 구할 때 <strong>√N까지만</strong> 돌면 되는 이유를 설명할 수 있다</li>
+    <li>제곱수에서 약수를 두 번 세지 않도록 경계를 처리할 수 있다</li>
+    <li>소수 판정의 <strong>경계값 0, 1, 2</strong>를 올바르게 처리할 수 있다</li>
+    <li>여러 수를 판정할 때 <strong>에라토스테네스의 체</strong>로 바꿀 줄 안다</li>
+    <li><strong>유클리드 호제법</strong>을 세 줄로 쓰고 왜 빠른지 설명할 수 있다</li>
+    <li>최소공배수에서 <strong>나누기를 먼저</strong> 해 오버플로를 피할 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 측정 · √N의 원리 · 제곱수 경계 · 소수 판정</div>
+  <div><b>2차시</b>에라토스테네스의 체 · 소인수분해 · 유클리드 호제법 · 최소공배수</div>
+  <div><b>3차시</b>표준 코드 · 단계 예제 · 흔한 오류 6종 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>한 줄을 바꾸면 3만 배</h2>
+
+  <div class="io">
+    <div><div class="lbl">문제</div><pre>N의 약수가 몇 개인지 출력하라.
+
+제약
+1 ≤ N ≤ 1,000,000,000
+시간 제한 1초</pre></div>
+    <div><div class="lbl">정의 그대로 옮긴 코드</div><pre>int c = 0;
+for (long long i = 1; i &lt;= n; i++)
+    if (n % i == 0) c++;
+printf("%d\n", c);</pre></div>
+  </div>
+
+  <p>맞는 코드다. 작은 N으로 테스트하면 전부 통과한다. 그런데 N이 10<sup>9</sup>이면 루프가 <strong>10억 번</strong> 돈다. 2장의 표에서 10<sup>9</sup>은 "아슬아슬"이었다. 실제로 재 보면,</p>
+
+  <div class="io">
+    <div><div class="lbl">측정 (N = 1,000,000,000)</div><pre>O(N)   약수 100개   3.5612초   ← 시간 초과
+O(√N)  약수 100개   0.0001초
+
+배수 = 31,515배</pre></div>
+    <div><div class="lbl">바뀐 것은 조건 한 줄</div><pre>/* 전 */
+for (i = 1; i &lt;= n; i++)
+
+/* 후 */
+for (i = 1; i * i &lt;= n; i++)
+             ↑
+         이것뿐이다</pre></div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">왜 √N까지면 충분한가</span>
+    <b>약수는 반드시 짝으로 나온다.</b> <code>i</code>가 <code>n</code>의 약수이면 <code>n/i</code>도 약수다. 그리고 둘 중 <b>작은 쪽은 반드시 √n 이하</b>다. 둘 다 √n보다 크면 곱이 n보다 커지기 때문이다.<br>
+    그러므로 1부터 √n까지만 돌면서 <code>i</code>를 찾을 때마다 <code>n/i</code>를 짝으로 함께 세면 <b>빠짐없이</b> 전부 구해진다. 100 = 1×100 = 2×50 = 4×25 = 5×20 = 10×10 — 왼쪽 수는 전부 10 이하다.
+  </div>
+
+  <p>√(10<sup>9</sup>) ≈ 31,623이므로 루프가 10억 번에서 <strong>3만 번</strong>으로 줄었다. 2장에서 만든 복잡도 표가 여기서 그대로 쓰인다 — <strong>N ≤ 10<sup>9</sup>이면 O(N)은 불가능하고 O(√N)이나 O(log N)을 찾아야 한다.</strong></p>
+
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> 약수·소수 문제에서 루프를 어디까지 돌려야 하는가?<br>
+    <b>②</b> 수 하나가 아니라 100만 개를 판정해야 하면?<br>
+    <b>③</b> 최대공약수를 반복문 없이 구할 수 있는가?
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">5.1</span>약수는 짝으로 — 그런데 제곱수가 문제다</h3>
+  <p><code>i</code>를 찾을 때마다 <code>n/i</code>를 함께 세면 된다. 단 <strong><code>i</code>와 <code>n/i</code>가 같은 경우</strong>를 두 번 세면 안 된다.</p>
+  <div class="code">
+    <div class="codehead"><span>약수의 개수</span><span>O(√N)</span></div>
+<pre class="c"><span class="kw">int</span> <span class="fn">count_divisors</span>(<span class="kw">long</span> <span class="kw">long</span> n) {
+    <span class="kw">int</span> c = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">long</span> <span class="kw">long</span> i = <span class="nm">1</span>; i * i &lt;= n; i++) {
+        <span class="kw">if</span> (n % i == <span class="nm">0</span>) {
+            c++;                      <span class="cm">/* i 자신 */</span>
+            <span class="kw">if</span> (i != n / i) c++;      <span class="cm">/* 짝꿍 — 같으면 세지 않는다 */</span>
+        }
+    }
+    <span class="kw">return</span> c;
+}</pre>
+  </div>
+  <table>
+    <thead><tr><th style="width:14%">n</th><th style="width:36%">약수</th><th style="width:16%">개수</th><th>i == n/i 인 지점</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>1</td><td><strong>1</strong></td><td>1 = 1/1</td></tr>
+      <tr><td>4</td><td>1, 2, 4</td><td><strong>3</strong></td><td>2 = 4/2</td></tr>
+      <tr><td>9</td><td>1, 3, 9</td><td><strong>3</strong></td><td>3 = 9/3</td></tr>
+      <tr><td>16</td><td>1, 2, 4, 8, 16</td><td><strong>5</strong></td><td>4 = 16/4</td></tr>
+      <tr><td>36</td><td>1, 2, 3, 4, 6, 9, 12, 18, 36</td><td><strong>9</strong></td><td>6 = 36/6</td></tr>
+      <tr><td>100</td><td>1, 2, 4, 5, 10, 20, 25, 50, 100</td><td><strong>9</strong></td><td>10 = 100/10</td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">제곱수만 약수의 개수가 홀수다</span>
+    표를 보면 제곱수(1, 4, 9, 16, 36, 100)의 약수 개수가 전부 <b>홀수</b>다. 짝이 하나 모자라기 때문이다. 이것이 <b>"짝을 지을 수 없는 수는 제곱수뿐"</b>이라는 성질이고, 사물함 문제·전구 문제 같은 유명한 문제의 답이 여기서 나온다.<br>
+    <code>if (i != n/i)</code>를 빠뜨리면 <b>제곱수에서만</b> 답이 1 커진다. n = 36을 넣어야 걸린다. <b>제곱수가 이 유형의 표준 반례</b>다.
+  </div>
+  <p>n = 1부터 20,000까지 O(N)판과 O(√N)판을 전수 비교해 <strong>불일치 0건</strong>임을 확인했다.</p>
+
+  <h3><span class="tag">5.2</span>소수 판정도 같은 원리, 단 경계가 더 까다롭다</h3>
+  <div class="code">
+    <div class="codehead"><span>소수 판정</span><span>O(√N)</span></div>
+<pre class="c"><span class="kw">int</span> <span class="fn">is_prime</span>(<span class="kw">long</span> <span class="kw">long</span> n) {
+    <span class="kw">if</span> (n &lt; <span class="nm">2</span>) <span class="kw">return</span> <span class="nm">0</span>;              <span class="cm">/* 0, 1, 음수는 소수가 아니다 */</span>
+    <span class="kw">for</span> (<span class="kw">long</span> <span class="kw">long</span> i = <span class="nm">2</span>; i * i &lt;= n; i++)
+        <span class="kw">if</span> (n % i == <span class="nm">0</span>) <span class="kw">return</span> <span class="nm">0</span>;
+    <span class="kw">return</span> <span class="nm">1</span>;
+}</pre>
+  </div>
+  <div class="io">
+    <div><div class="lbl">경계값 확인</div><pre>  0 → 소수 아님
+  1 → 소수 아님   ← 가장 흔한 실수
+  2 → 소수        ← 유일한 짝수 소수
+  3 → 소수
+  4 → 소수 아님
+  9 → 소수 아님   ← i=3 에서 걸린다
+ 25 → 소수 아님
+ 97 → 소수</pre></div>
+    <div><div class="lbl">왜 n=2에서 루프가 안 도는가</div><pre>n = 2 일 때
+  i = 2 에서 i*i = 4 &gt; 2
+  → 루프를 한 번도 돌지 않고
+    return 1
+
+즉 2는 자동으로 소수가 된다.
+따로 처리할 필요가 없다.</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">1을 소수로 처리하는 오류</span>
+    <code>if (n &lt; 2) return 0;</code>을 빼면 n = 1에서 루프가 돌지 않고 <code>return 1</code>이 되어 <b>1이 소수</b>가 된다. 그리고 n = 0에서도 1이 된다.<br>
+    이 한 줄이 없어도 <b>2 이상의 모든 입력에서는 정답</b>이 나온다. 그래서 예제로는 안 걸린다. <b>소수 문제의 표준 반례는 0, 1, 2</b>다.
+  </div>
+  <p>n = 0부터 100,000까지 O(N)판과 O(√N)판을 전수 비교해 <strong>불일치 0건</strong>이었다. 10<sup>9</sup>에 가까운 소수 999,999,937을 판정하면 O(√N)은 <strong>0.00011초</strong>, O(N)은 <strong>3.557초</strong>다.</p>
+
+  <h3><span class="tag">5.3</span>여러 개를 판정하면 체로 바꾼다</h3>
+  <p>"1부터 N까지 소수가 몇 개인가"를 묻는다면 이야기가 달라진다. 수 하나마다 O(√N)이면 전체가 O(N√N)이다. N = 10<sup>6</sup>이면 10<sup>9</sup>으로 2장의 기준에서 위험하다.</p>
+  <div class="code">
+    <div class="codehead"><span>에라토스테네스의 체</span><span>O(N log log N) — 사실상 O(N)</span></div>
+<pre class="c"><span class="kw">char</span> comp[<span class="nm">1000001</span>];                    <span class="cm">/* 전역 — 0으로 자동 초기화 */</span>
+
+<span class="fn">comp</span>[<span class="nm">0</span>] = comp[<span class="nm">1</span>] = <span class="nm">1</span>;                  <span class="cm">/* 0과 1은 소수가 아니다 */</span>
+<span class="kw">for</span> (<span class="kw">long</span> <span class="kw">long</span> i = <span class="nm">2</span>; i * i &lt;= N; i++)     <span class="cm">/* 여기도 √N 까지 */</span>
+    <span class="kw">if</span> (!comp[i])                        <span class="cm">/* i가 아직 소수이면 */</span>
+        <span class="kw">for</span> (<span class="kw">long</span> <span class="kw">long</span> j = i * i; j &lt;= N; j += i)  <span class="cm">/* i*i 부터 */</span>
+            comp[j] = <span class="nm">1</span>;                 <span class="cm">/* 배수를 지운다 */</span></pre>
+  </div>
+  <table>
+    <thead><tr><th style="width:30%">방법 (N = 1,000,000)</th><th style="width:20%">결과</th><th style="width:18%">시간</th><th>판정</th></tr></thead>
+    <tbody>
+      <tr><td>하나씩 O(√N) 판정</td><td>78,498개</td><td>0.2430초</td><td>가능하지만 느리다</td></tr>
+      <tr><td><strong>에라토스테네스의 체</strong></td><td>78,498개</td><td><strong>0.0022초</strong></td><td><strong>111배 빠르다</strong></td></tr>
+    </tbody>
+  </table>
+  <p>N = 10<sup>7</sup>에서도 체는 <strong>0.0335초</strong>에 664,579개를 찾는다.</p>
+  <div class="note">
+    <span class="h">두 가지 <code>i * i</code></span>
+    체에는 <code>i * i</code>가 두 번 나오는데 의미가 다르다.<br>
+    <b>①</b> 바깥 루프 <code>i * i &lt;= N</code> — √N보다 큰 수의 배수는 이미 작은 소수에게 지워졌다.<br>
+    <b>②</b> 안쪽 시작 <code>j = i * i</code> — <code>2i</code>, <code>3i</code>… 는 이미 2, 3…에게 지워졌으므로 <code>i²</code>부터 시작하면 된다.<br>
+    <b>판별 기준</b> — 수 하나만 판정하면 <code>is_prime</code>, 범위 전체가 필요하면 체. 메모리는 <code>char</code> 배열로 N바이트다(10<sup>7</sup>이면 10MB, 2장의 메모리 계산).
+  </div>
+
+  <h3><span class="tag">5.4</span>소인수분해</h3>
+  <p>작은 소인수부터 <strong>나누어떨어지는 동안 계속 나눈다</strong>. 역시 √n까지만 돌되, <strong>남은 수가 1보다 크면 그것도 소인수</strong>라는 처리가 핵심이다.</p>
+  <div class="code">
+    <div class="codehead"><span>factorize.c</span><span>O(√N)</span></div>
+<pre class="c"><span class="kw">for</span> (<span class="kw">long</span> <span class="kw">long</span> p = <span class="nm">2</span>; p * p &lt;= n; p++)
+    <span class="kw">while</span> (n % p == <span class="nm">0</span>) {              <span class="cm">/* if 가 아니라 while */</span>
+        <span class="fn">printf</span>(<span class="st">"%lld "</span>, p);
+        n /= p;
+    }
+<span class="kw">if</span> (n &gt; <span class="nm">1</span>) <span class="fn">printf</span>(<span class="st">"%lld "</span>, n);        <span class="cm">/* 남은 것은 큰 소인수 하나 */</span></pre>
+  </div>
+  <div class="io">
+    <div><div class="lbl">검증</div><pre>     12 = 2 x 2 x 3
+    100 = 2 x 2 x 5 x 5
+     97 = 97
+   1024 = 2 x 2 x ... x 2  (10개)
+  30030 = 2 x 3 x 5 x 7 x 11 x 13
+999999937 = 999999937</pre></div>
+    <div><div class="lbl">마지막 if 가 없으면</div><pre>97 → (아무것도 출력 안 됨)
+999999937 → (출력 없음)
+
+√n 까지 돌아도 97의
+약수를 못 찾기 때문이다.
+소수를 입력하면 침묵한다.</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h"><code>while</code>이어야 하는 이유, 마지막 <code>if</code>가 있어야 하는 이유</span>
+    <b><code>while</code></b> — 12는 2로 두 번 나뉜다. <code>if</code>로 쓰면 <code>2 x 6</code>이 되어 6이 소인수로 남는다.<br>
+    <b>마지막 <code>if</code></b> — n이 소수이거나, 나누고 남은 몫이 √n보다 큰 소수인 경우다. 반드시 <b>하나만</b> 남는다(둘 이상이면 곱이 원래 n보다 커진다).<br>
+    <b>표준 반례</b> — <b>소수 자체를 입력</b>하는 것. 97이나 999999937을 넣어 본다.
+  </div>
+
+  <h3><span class="tag">5.5</span>유클리드 호제법</h3>
+  <p>최대공약수를 구하는 데 반복문으로 1부터 훑을 필요가 없다. <strong>gcd(a, b) = gcd(b, a mod b)</strong>라는 성질 하나면 끝난다.</p>
+  <div class="io">
+    <div><div class="lbl">gcd(1071, 462)의 과정</div><pre>1071 = 462 x 2 + 147
+ 462 = 147 x 3 +  21
+ 147 =  21 x 7 +   0
+                   ↑
+            나머지가 0이면
+            직전 나누는 수가 답
+
+→ gcd = 21</pre></div>
+    <div><div class="lbl">코드 (두 가지 다 외운다)</div><pre>/* 반복판 */
+while (b) {
+    long long t = a % b;
+    a = b;
+    b = t;
+}
+return a;
+
+/* 재귀판 — 한 줄 */
+return b ? gcd(b, a % b) : a;</pre></div>
+  </div>
+
+  <h3><span class="tag">5.6</span>호제법은 왜 그렇게 빠른가</h3>
+  <p>반복 횟수의 <strong>최악</strong>은 두 수가 <strong>연속한 피보나치 수</strong>일 때다. 직접 재 보면,</p>
+  <table>
+    <thead><tr><th style="width:12%">k</th><th style="width:30%">F(k)</th><th style="width:30%">F(k+1)</th><th>반복 횟수</th></tr></thead>
+    <tbody>
+      <tr><td>10</td><td>55</td><td>89</td><td>9회</td></tr>
+      <tr><td>25</td><td>75,025</td><td>121,393</td><td>24회</td></tr>
+      <tr><td>40</td><td>102,334,155</td><td>165,580,141</td><td>39회</td></tr>
+      <tr><td>70</td><td>190,392,490,709,135</td><td>308,061,521,170,129</td><td>69회</td></tr>
+      <tr><td>85</td><td>259,695,496,911,122,585</td><td>420,196,140,727,489,673</td><td><strong>84회</strong></td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <span class="h">4 × 10<sup>17</sup>짜리 두 수를 84번 만에</span>
+    <code>long long</code>이 담을 수 있는 거의 최대치의 두 수에서도 <b>84회</b>다. 복잡도로는 <b>O(log min(a, b))</b>다. 2장의 표에서 O(log N)은 <b>N이 10<sup>18</sup>이어도 가능한</b> 유일한 구간이었다.<br>
+    그래서 최대공약수 문제에서는 제약을 볼 필요도 없다 — <b>호제법은 항상 통과한다</b>.
+  </div>
+
+  <h3><span class="tag">5.7</span>뺄셈으로 하면 안 되는 이유</h3>
+  <p>gcd(a, b) = gcd(a−b, b)도 참이다. 그래서 나머지 대신 뺄셈으로 써도 답은 맞는다. 그런데,</p>
+  <div class="io">
+    <div><div class="lbl">측정: gcd(1,000,000,000, 1)</div><pre>나머지판: 반복      1회  0.00000초
+뺄셈판  : 반복 999,999,999회  0.51028초</pre></div>
+    <div><div class="lbl">무슨 일이 일어나는가</div><pre>뺄셈판은
+  10^9 - 1 → 999999999
+  999999999 - 1 → 999999998
+  ... 1씩 줄어든다
+
+나머지판은
+  10^9 % 1 = 0 → 한 번에 끝</pre></div>
+  </div>
+  <p><strong>나머지 연산은 뺄셈을 한 번에 몰아서 한 것</strong>이다. 그래서 O(N)이 O(log N)이 된다. 2장에서 "나머지는 덧셈보다 4배 비싸다"고 했지만, 여기서는 <strong>그 4배를 내고 10억 배를 산다</strong>.</p>
+
+  <h3><span class="tag">5.8</span>최소공배수 — 나누기를 먼저</h3>
+  <p>lcm(a, b) = a × b ÷ gcd(a, b)다. 그런데 <strong>쓰는 순서</strong>에 따라 결과가 달라진다.</p>
+  <div class="io">
+    <div><div class="lbl">a = 4×10⁹, b = 6×10⁹, gcd = 2×10⁹</div><pre>a * b / g
+  a*b = 5553255926290448384
+        ← long long도 넘침
+
+a / g * b
+  4000000000 / 2000000000 = 2
+  2 * 6000000000 = 12000000000
+        ← 정답</pre></div>
+    <div><div class="lbl">왜 나누어떨어지는가</div><pre>g는 a의 약수다.
+따라서 a % g == 0 이 항상 참.
+
+→ a / g 는 정수 나눗셈이지만
+  정보가 전혀 손실되지 않는다.
+
+(4장의 "나눗셈을 먼저 하면
+ 정보가 사라진다"의 예외)</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">4장의 규칙과 반대로 보이지만 아니다</span>
+    4장에서 "<b>곱셈 먼저, 나눗셈 마지막</b>"이라고 했다. 그 이유는 <b>나눗셈이 소수점을 버려 정보가 사라지기</b> 때문이었다. 여기서는 <b>나누어떨어지는 것이 보장</b>되므로 정보 손실이 없다.<br>
+    <b>정리</b> — 나누어떨어지는 것이 수학적으로 보장되면 <b>먼저 나눠서 수를 작게</b> 만든다. 보장되지 않으면 나눗셈은 마지막에.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드</h2>
+
+  <div class="code">
+    <div class="codehead"><span>numlib.c</span><span>이 장의 함수 모음 — 외워서 쓴다</span></div>
+<pre class="c"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="cm">/* ① 소수 판정 — O(√N) */</span>
+<span class="kw">int</span> <span class="fn">is_prime</span>(<span class="kw">long</span> <span class="kw">long</span> n) {
+    <span class="kw">if</span> (n &lt; <span class="nm">2</span>) <span class="kw">return</span> <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">long</span> <span class="kw">long</span> i = <span class="nm">2</span>; i * i &lt;= n; i++)
+        <span class="kw">if</span> (n % i == <span class="nm">0</span>) <span class="kw">return</span> <span class="nm">0</span>;
+    <span class="kw">return</span> <span class="nm">1</span>;
+}
+
+<span class="cm">/* ② 약수의 개수 — O(√N) */</span>
+<span class="kw">int</span> <span class="fn">count_divisors</span>(<span class="kw">long</span> <span class="kw">long</span> n) {
+    <span class="kw">int</span> c = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">long</span> <span class="kw">long</span> i = <span class="nm">1</span>; i * i &lt;= n; i++)
+        <span class="kw">if</span> (n % i == <span class="nm">0</span>) { c++; <span class="kw">if</span> (i != n / i) c++; }
+    <span class="kw">return</span> c;
+}
+
+<span class="cm">/* ③ 약수의 합 — long long 주의 */</span>
+<span class="kw">long</span> <span class="kw">long</span> <span class="fn">sum_divisors</span>(<span class="kw">long</span> <span class="kw">long</span> n) {
+    <span class="kw">long</span> <span class="kw">long</span> s = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">long</span> <span class="kw">long</span> i = <span class="nm">1</span>; i * i &lt;= n; i++)
+        <span class="kw">if</span> (n % i == <span class="nm">0</span>) { s += i; <span class="kw">if</span> (i != n / i) s += n / i; }
+    <span class="kw">return</span> s;
+}
+
+<span class="cm">/* ④ 최대공약수 — O(log N) */</span>
+<span class="kw">long</span> <span class="kw">long</span> <span class="fn">gcd</span>(<span class="kw">long</span> <span class="kw">long</span> a, <span class="kw">long</span> <span class="kw">long</span> b) {
+    <span class="kw">return</span> b ? <span class="fn">gcd</span>(b, a % b) : a;
+}
+
+<span class="cm">/* ⑤ 최소공배수 — 나누기 먼저! */</span>
+<span class="kw">long</span> <span class="kw">long</span> <span class="fn">lcm</span>(<span class="kw">long</span> <span class="kw">long</span> a, <span class="kw">long</span> <span class="kw">long</span> b) {
+    <span class="kw">return</span> a / <span class="fn">gcd</span>(a, b) * b;
+}</pre>
+  </div>
+
+  <div class="note">
+    <span class="h">이 다섯 개가 브론즈 수론의 전부다</span>
+    05장에서 나오는 거의 모든 문제가 이 다섯 함수의 조합이다. <b>손으로 다섯 번씩 써 보고 외운다.</b> 특히 ②④⑤의 한 줄짜리 요령 — <code>if (i != n/i)</code>, <code>b ? gcd(b, a%b) : a</code>, <code>a / gcd(a,b) * b</code> — 는 토씨까지 외운다.
+  </div>
+
+  <div class="code">
+    <div class="codehead"><span>sieve.c</span><span>범위 전체의 소수가 필요할 때</span></div>
+<pre class="c"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="pp">#define</span> MAXN <span class="nm">1000000</span>
+
+<span class="kw">char</span> comp[MAXN + <span class="nm">1</span>];              <span class="cm">/* 전역 → 전부 0 */</span>
+
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+    <span class="kw">int</span> n;
+    <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d"</span>, &amp;n) != <span class="nm">1</span>) <span class="kw">return</span> <span class="nm">1</span>;
+
+    comp[<span class="nm">0</span>] = comp[<span class="nm">1</span>] = <span class="nm">1</span>;
+    <span class="kw">for</span> (<span class="kw">long</span> <span class="kw">long</span> i = <span class="nm">2</span>; i * i &lt;= n; i++)
+        <span class="kw">if</span> (!comp[i])
+            <span class="kw">for</span> (<span class="kw">long</span> <span class="kw">long</span> j = i * i; j &lt;= n; j += i)
+                comp[j] = <span class="nm">1</span>;
+
+    <span class="kw">int</span> cnt = <span class="nm">0</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">2</span>; i &lt;= n; i++)
+        <span class="kw">if</span> (!comp[i]) cnt++;
+
+    <span class="fn">printf</span>(<span class="st">"%d\n"</span>, cnt);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+  </div>
+  <div class="note warn">
+    <span class="h"><code>j = i * i</code>에서 <code>long long</code>을 빼면</span>
+    <code>i</code>가 <code>int</code>이고 N이 10<sup>9</sup>에 가까우면 <code>i * i</code>가 <b><code>int</code> 범위를 넘어</b> 음수가 된다. 그러면 안쪽 루프가 아예 돌지 않거나 엉뚱한 곳을 건드린다. 3장의 "조건식 안의 오버플로"가 여기서도 나온다.<br>
+    <b>습관</b> — <code>i * i</code>를 쓰는 모든 자리에서 <code>i</code>를 <code>long long</code>으로 선언한다. 비용은 0이다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+
+  <h3><span class="tag">예제 1</span>제약을 보고 방법을 고른다</h3>
+  <p>2장의 표를 수론 문제에 적용하면 이렇게 된다. <strong>제약만 보고 셋 중 하나를 고르는 훈련</strong>이다.</p>
+  <table>
+    <thead><tr><th style="width:36%">문제가 요구하는 것</th><th style="width:22%">제약</th><th>방법</th></tr></thead>
+    <tbody>
+      <tr><td>수 <strong>하나</strong>가 소수인가</td><td>N ≤ 10<sup>12</sup></td><td><code>is_prime</code> — √N = 10<sup>6</sup>번</td></tr>
+      <tr><td>수 <strong>M개</strong>가 각각 소수인가</td><td>M ≤ 100, N ≤ 10<sup>9</sup></td><td><code>is_prime</code>을 M번 — 100 × 31,623 = 3 × 10<sup>6</sup></td></tr>
+      <tr><td>1부터 N까지 <strong>소수 개수</strong></td><td>N ≤ 10<sup>7</sup></td><td><strong>체</strong> — 하나씩 하면 10<sup>10</sup>으로 불가</td></tr>
+      <tr><td>N의 <strong>약수 전부</strong></td><td>N ≤ 10<sup>12</sup></td><td>√N 루프 — 10<sup>6</sup>번</td></tr>
+      <tr><td>두 수의 <strong>최대공약수</strong></td><td>제약 무관</td><td>호제법 — 항상 통과</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="tag">예제 2</span>제곱수 반례로 검산한다</h3>
+  <p><code>count_divisors</code>를 쓴 뒤에는 <strong>반드시 제곱수를 넣어 본다</strong>. 틀린 코드는 제곱수에서만 1 크게 나온다.</p>
+  <div class="io">
+    <div><div class="lbl">검산 입력</div><pre>  1 → 1    (틀린 코드는 2)
+  4 → 3    (틀린 코드는 4)
+  9 → 3
+ 16 → 5
+ 36 → 9
+100 → 9
+ 49 → 3</pre></div>
+    <div><div class="lbl">또 하나의 검산법</div><pre>약수의 개수가 홀수인 수는
+제곱수뿐이다.
+
+1..100 을 전부 돌려
+홀수가 나오는 n을 세면
+1,4,9,16,25,36,49,64,81,100
+→ 정확히 10개여야 한다
+  (√100 = 10)</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 3</span>최대공약수를 여러 개로 확장</h3>
+  <p>세 수 이상의 gcd와 lcm은 <strong>앞에서부터 두 개씩</strong> 접으면 된다.</p>
+  <div class="io">
+    <div><div class="lbl">코드</div><pre>long long g = a[0], l = a[0];
+for (int i = 1; i &lt; n; i++) {
+    g = gcd(g, a[i]);
+    l = l / gcd(l, a[i]) * a[i];
+}</pre></div>
+    <div><div class="lbl">검증: 12, 18, 24</div><pre>gcd = 6
+  gcd(12,18)=6, gcd(6,24)=6
+
+lcm = 72
+  lcm(12,18)=36, lcm(36,24)=72</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">lcm을 접을 때가 오버플로의 단골</span>
+    <code>l</code>이 매번 커지므로 수가 몇 개만 되어도 금방 넘친다. <b>반드시 <code>long long</code></b>이고, <b>반드시 나누기를 먼저</b>다. 문제가 "나머지를 출력하라"고 했다면 중간마다 나머지를 취해야 한다.<br>
+    초기값에도 주의한다. 4장의 원리대로 <b>gcd와 lcm의 초기값은 <code>a[0]</code></b>이다. gcd를 0으로 시작해도 <code>gcd(0, x) = x</code>라 우연히 맞지만, lcm을 0으로 시작하면 <b>항상 0</b>이 된다.
+  </div>
+
+  <h3><span class="tag">예제 4</span>약수의 합과 완전수</h3>
+  <p><code>sum_divisors</code>는 <strong>자기 자신을 포함</strong>한다. "진약수의 합"을 묻는다면 <strong>n을 빼야</strong> 한다.</p>
+  <div class="io">
+    <div><div class="lbl">측정</div><pre> n : 약수의 합 (자신 포함)
+ 6 → 12      진약수 합 6
+28 → 56      진약수 합 28
+496 → 992    진약수 합 496
+
+세 수 모두 진약수의 합이
+자기 자신 → 완전수</pre></div>
+    <div><div class="lbl">자료형 주의</div><pre>n ≤ 10^12 이면
+약수의 합은 10^12를 훌쩍 넘는다.
+
+→ sum_divisors 의 반환형은
+  반드시 long long</pre></div>
+  </div>
+
+  <h3><span class="tag">예제 5</span>호제법의 과정을 출력해 본다</h3>
+  <p>호제법을 "외워서 쓰는 주문"이 아니라 <strong>보이는 절차</strong>로 만든다. 과정을 찍어 보는 코드다.</p>
+  <div class="code">
+    <div class="codehead"><span>호제법 추적</span><span>gcd(1071, 462)</span></div>
+<pre class="c"><span class="kw">while</span> (b) {
+    <span class="fn">printf</span>(<span class="st">"%lld = %lld x %lld + %lld\n"</span>, a, b, a / b, a % b);
+    <span class="kw">long</span> <span class="kw">long</span> t = a % b;
+    a = b;
+    b = t;
+}
+<span class="fn">printf</span>(<span class="st">"→ gcd = %lld\n"</span>, a);</pre>
+  </div>
+  <div class="io">
+    <div><div class="lbl">출력</div><pre>1071 = 462 x 2 + 147
+ 462 = 147 x 3 +  21
+ 147 =  21 x 7 +   0
+→ gcd = 21</pre></div>
+    <div><div class="lbl">눈으로 확인할 것</div><pre>① 나누는 수가 다음 줄의
+   나뉘는 수가 된다
+② 나머지가 다음 줄의
+   나누는 수가 된다
+③ 나머지가 0이 되는 줄의
+   "나누는 수"가 답
+④ 세 줄 만에 끝났다</pre></div>
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+
+  <div class="errs">
+    <div class="err"><span class="en">1</span><div class="eb">
+      <b><code>i &lt;= n</code>으로 끝까지 돈다</b><br>
+      정의 그대로라 맞는 답이 나오지만, N = 10<sup>9</sup>에서 <b>3.56초</b>다. 작은 예제로는 전부 통과한다.<br>
+      <span class="fix">대책</span> <code>i * i &lt;= n</code>으로 바꾸고 짝꿍 <code>n/i</code>를 함께 센다. 측정값은 <b>0.0001초</b>, 3만 배 차이다.
+    </div></div>
+
+    <div class="err"><span class="en">2</span><div class="eb">
+      <b>제곱수에서 약수를 두 번 센다</b><br>
+      <code>if (i != n/i)</code>를 빠뜨리면 n = 36의 약수가 <b>10개</b>로 나온다(정답 9개). 제곱수가 아닌 입력에서는 전부 맞는다.<br>
+      <span class="fix">대책</span> <b>제곱수를 반례로</b> 넣는다 — 1, 4, 9, 16, 36, 100.
+    </div></div>
+
+    <div class="err"><span class="en">3</span><div class="eb">
+      <b>1을 소수로 판정한다</b><br>
+      <code>if (n &lt; 2) return 0;</code>이 없으면 n = 1에서 루프가 돌지 않고 <code>return 1</code>이 된다. 0에서도 마찬가지다.<br>
+      <span class="fix">대책</span> <b>소수 문제의 표준 반례는 0, 1, 2</b>. 셋을 반드시 넣어 본다.
+    </div></div>
+
+    <div class="err"><span class="en">4</span><div class="eb">
+      <b>소인수분해에서 마지막 <code>if (n &gt; 1)</code>을 빠뜨린다</b><br>
+      97이나 999999937처럼 <b>소수를 입력하면 아무것도 출력되지 않는다</b>. 합성수에서는 전부 맞는다.<br>
+      <span class="fix">대책</span> <b>소수 자체를 반례로</b> 넣는다. 그리고 <code>if</code>가 아니라 <code>while</code>로 나누는지 확인한다(12 = 2×2×3).
+    </div></div>
+
+    <div class="err"><span class="en">5</span><div class="eb">
+      <b>최소공배수를 <code>a * b / g</code>로 쓴다</b><br>
+      <code>a</code>, <code>b</code>가 4 × 10<sup>9</sup>급이면 <code>a * b</code>가 <b><code>long long</code>도 넘는다</b>. 측정 결과 <code>5553255926290448384</code>라는 쓰레기 값이 나왔다.<br>
+      <span class="fix">대책</span> <code>a / gcd(a,b) * b</code>. <b>g는 a의 약수이므로 나누어떨어진다</b>는 것이 근거다.
+    </div></div>
+
+    <div class="err"><span class="en">6</span><div class="eb">
+      <b><code>i * i</code>를 <code>int</code>로 계산한다</b><br>
+      <code>int i</code>로 쓰고 N이 10<sup>9</sup> 근처면 <code>i * i</code>가 음수가 되어 루프 조건이 깨진다. 작은 N에서는 멀쩡하다.<br>
+      <span class="fix">대책</span> <code>i * i</code>가 나오는 자리의 <code>i</code>는 <b>항상 <code>long long</code></b>으로 선언한다. 또는 <code>i &lt;= n / i</code>로 쓴다.
+    </div></div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    오류 2·3·4는 <b>딱 한 종류의 입력에서만</b> 틀린다 — 제곱수 / 0·1 / 소수. 공통점은 <b>"특별한 수"</b>라는 것이다.<br>
+    수론 문제의 테스트 입력 목록은 항상 이렇게 시작한다 — <b>0, 1, 2, 제곱수 하나, 소수 하나, 제약의 최댓값</b>. 여섯 개면 이 장의 오류가 거의 전부 걸린다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>모든 문제에서 <strong>0, 1, 2, 제곱수, 소수, 제약의 최댓값</strong>을 반례로 넣어 본다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p><b>약수의 개수</b> — N(1 ≤ N ≤ 10<sup>12</sup>)의 약수가 몇 개인지 출력하라. 1, 4, 36, 100을 반드시 확인하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>36</pre></div><div><span>OUTPUT</span><pre>9</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p><b>약수 모두 출력</b> — N의 약수를 <b>오름차순</b>으로 한 줄에 출력하라. √N 루프를 쓰되 순서가 맞아야 한다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>100</pre></div><div><span>OUTPUT</span><pre>1 2 4 5 10 20 25 50 100</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p><b>소수 판정</b> — M개의 수가 주어진다. 각각 소수이면 <code>YES</code>, 아니면 <code>NO</code>를 출력하라. M ≤ 100, 0 ≤ 값 ≤ 10<sup>12</sup>.</p>
+    <div class="sample"><div><span>INPUT</span><pre>4
+0 1 2 97</pre></div><div><span>OUTPUT</span><pre>NO
+NO
+YES
+YES</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p><b>소수 개수</b> — 1부터 N(N ≤ 10<sup>7</sup>)까지 소수가 몇 개인지 출력하라. 하나씩 판정하면 왜 안 되는지 복잡도로 설명한 뒤 체로 작성하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>1000000</pre></div><div><span>OUTPUT</span><pre>78498</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p><b>소인수분해</b> — N(1 ≤ N ≤ 10<sup>12</sup>)을 소인수의 곱으로 분해해 <b>작은 것부터 한 줄에 하나씩</b> 출력하라. N = 1이면 아무것도 출력하지 않는다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>12</pre></div><div><span>OUTPUT</span><pre>2
+2
+3</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p><b>최대공약수와 최소공배수</b> — 두 수 A, B(1 ≤ A, B ≤ 10<sup>9</sup>)의 gcd와 lcm을 두 줄에 출력하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>24 18</pre></div><div><span>OUTPUT</span><pre>6
+72</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p><b>호제법 추적</b> — gcd(1071, 462)의 과정을 <code>a = b x 몫 + 나머지</code> 형식으로 한 줄씩 출력하고 마지막에 gcd를 출력하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p><b>약수의 합</b> — N(1 ≤ N ≤ 10<sup>12</sup>)의 약수의 합을 출력하라. 자료형에 주의하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>12</pre></div><div><span>OUTPUT</span><pre>28</pre></div></div>
+  </div></div>
+
+  <span class="pgroup">응용 8문항</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>두 코드의 시간 비교</b> — 01번을 O(N)판과 O(√N)판으로 모두 작성해 N = 10<sup>9</sup>에서 시간을 측정하고 몇 배인지 적어라. 2장의 측정 뼈대를 쓴다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>완전수</b> — N 이하의 완전수(자기 자신을 제외한 약수의 합이 자기 자신인 수)를 모두 출력하라. N ≤ 10,000.</p>
+    <div class="sample"><div><span>INPUT</span><pre>1000</pre></div><div><span>OUTPUT</span><pre>6
+28
+496</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>여러 수의 gcd·lcm</b> — N개의 수(N ≤ 100, 값 ≤ 10<sup>6</sup>)의 최대공약수와 최소공배수를 출력하라. lcm이 <code>long long</code>을 넘지 않음이 보장된다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3
+12 18 24</pre></div><div><span>OUTPUT</span><pre>6
+72</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>구간의 소수</b> — A 이상 B 이하(1 ≤ A ≤ B ≤ 10<sup>6</sup>)의 소수를 한 줄에 하나씩 출력하라. 체를 B까지 만든 뒤 A부터 훑는다.</p>
+    <div class="sample"><div><span>INPUT</span><pre>20 30</pre></div><div><span>OUTPUT</span><pre>23
+29</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>서로소 개수</b> — N(1 ≤ N ≤ 10<sup>5</sup>) 이하의 양의 정수 중 N과 서로소인 것의 개수를 출력하라. gcd를 N번 호출해도 되는지 복잡도로 판정한 뒤 작성하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>12</pre></div><div><span>OUTPUT</span><pre>4</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>제곱수 판정</b> — N(1 ≤ N ≤ 10<sup>18</sup>)이 제곱수인지 판정하라. <code>sqrt()</code>를 쓰되 <b>실수 오차</b>를 어떻게 보정할지 설명하고, 보정 없이 쓴 판과 비교하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>뺄셈판 호제법</b> — gcd를 뺄셈으로 구현해 gcd(10<sup>9</sup>, 1)의 반복 횟수와 시간을 측정하고, 나머지판과 비교해 표로 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>오버플로 재현</b> — <code>a = 4000000000</code>, <code>b = 6000000000</code>에 대해 <code>a*b/gcd</code>판과 <code>a/gcd*b</code>판의 결과를 각각 출력해 비교하라. <code>LLONG_MAX</code>도 함께 출력하라.</p>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>약수 개수가 홀수인 수</b> — 1부터 N(N ≤ 10<sup>6</sup>)까지 중 약수의 개수가 <b>홀수</b>인 수가 몇 개인지 출력하라. 먼저 <b>모든 수의 약수를 세는 방법</b>의 복잡도를 계산하고, 그다음 <b>한 줄로 답이 나오는 성질</b>을 찾아 증명하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>100</pre></div><div><span>OUTPUT</span><pre>10</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>최소공배수의 누적</b> — 1부터 N(N ≤ 40)까지 모든 수의 최소공배수를 출력하라. <code>long long</code>을 넘는 N을 찾아 적고, 넘기 직전의 N과 그 값도 함께 출력하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>체의 변형: 약수 개수 표</b> — 1부터 N(N ≤ 10<sup>6</sup>)까지 <b>모든 수의 약수 개수</b>를 한 번에 구하라. 각 수마다 √N 루프를 돌면 O(N√N)으로 불가능하다. <b>체와 같은 발상</b>으로 O(N log N)에 구하는 방법을 찾아 작성하고, 가장 약수가 많은 수와 그 개수를 출력하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>종합</b> — 아래 문제를 받았다. ⑴ 각 질의의 복잡도를 계산하고 ⑵ 어떤 것을 미리 계산해 둘지 정한 뒤 ⑶ 반례 목록을 적고 ⑷ 코드를 작성하라.</p>
+    <div class="sample"><div><span>PROBLEM</span><pre>Q개의 질의가 주어진다.
+각 질의는 다음 셋 중 하나다.
+
+  1 x      : x가 소수인가 (YES/NO)
+  2 x      : x의 약수 개수
+  3 x y    : gcd(x, y) 와 lcm(x, y)
+
+제약
+1 ≤ Q ≤ 100,000
+1 ≤ x, y ≤ 1,000,000
+시간 1초 / 메모리 256MB</pre></div><div><span>SAMPLE</span><pre>입력
+4
+1 97
+2 36
+3 24 18
+1 1
+
+출력
+YES
+9
+6 72
+NO</pre></div></div>
+  </div></div>
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">07 — 확인 평가</span>
+  <h2>정답과 해설</h2>
+
+  <div class="ans"><span class="an">01</span><div class="ab">
+    본문 <code>count_divisors</code>. 검증 — 1→1, 4→3, 9→3, 16→5, 36→9, 100→9, 49→3.<br>
+    <b>지도 포인트</b> — <code>i * i &lt;= n</code>에서 <code>i</code>가 <code>long long</code>인지 확인시킨다. N이 10<sup>12</sup>이면 <code>i</code>가 10<sup>6</sup>까지 가므로 <code>i*i</code>는 10<sup>12</sup>로 <code>int</code>를 넘는다. 오류 6번이 여기서 실제로 발생한다.
+  </div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab">
+    √N 루프는 약수를 <b>작은 것과 큰 것이 번갈아</b> 나온다. 오름차순으로 출력하려면 <b>작은 쪽은 바로, 큰 쪽은 배열에 모았다가 역순</b>으로 출력한다.
+    <pre>long long big[100]; int bc = 0;
+for (i = 1; i * i &lt;= n; i++)
+    if (n % i == 0) {
+        printf("%lld ", i);
+        if (i != n / i) big[bc++] = n / i;
+    }
+for (int k = bc - 1; k &gt;= 0; k--) printf("%lld ", big[k]);</pre>
+    검증 — 100 → <code>1 2 4 5 10 20 25 50 100</code>.<br>
+    <b>지도 포인트</b> — <b>약수의 개수는 아무리 많아도 작다</b>. 10<sup>12</sup> 이하에서 최대는 <code>963761198400</code> = 2<sup>6</sup>·3<sup>4</sup>·5<sup>2</sup>·7·11·13·17·19·23 의 <b>6,720개</b>이므로 배열 크기 걱정은 없다. 참고로 10<sup>6</sup> 이하의 최대는 <code>720720</code>의 <b>240개</b>다. 그리고 출력 순서가 역순이라는 점에서 <b>"구하는 순서와 출력 순서가 다를 수 있다"</b>를 배운다.
+  </div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab">
+    본문 <code>is_prime</code>. 검증 — 0→NO, 1→NO, 2→YES, 97→YES, 999999937→YES.<br>
+    복잡도 — 100 × √(10<sup>12</sup>) = 100 × 10<sup>6</sup> = <b>10<sup>8</sup></b>. 2장의 기준으로 통과한다.<br>
+    <b>지도 포인트</b> — M과 √N을 <b>곱해서</b> 판단하는 것이 2장 오류 2의 적용이다. M이 10<sup>5</sup>였다면 10<sup>11</sup>로 불가능하고, 그때는 체로 바꿔야 한다(값의 범위가 작다면).
+  </div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab">
+    하나씩 판정하면 N × √N = 10<sup>7</sup> × 3,163 ≈ <b>3 × 10<sup>10</sup></b>으로 불가능하다. 체는 O(N log log N)으로 사실상 O(N)이다.<br>
+    측정 — N = 10<sup>6</sup>: 하나씩 0.2430초 / 체 <b>0.0022초</b>(111배). N = 10<sup>7</sup>: 체 <b>0.0335초</b>로 664,579개.<br>
+    <b>지도 포인트</b> — 78,498이라는 숫자를 외우게 할 필요는 없지만, <b>자신의 코드가 이 값을 내는지</b>로 검산할 수 있다는 것은 알려 준다. 체의 메모리는 <code>char</code> 배열로 10<sup>7</sup>바이트 = 9.5MB다(2장).
+  </div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab">
+    본문 5.4절. <code>while</code>로 나누고 마지막에 <code>if (n &gt; 1)</code>.<br>
+    검증 — 12 → 2 2 3 / 100 → 2 2 5 5 / 97 → 97 / 1024 → 2가 10개 / 30030 → 2 3 5 7 11 13 / 1 → 출력 없음.<br>
+    <b>지도 포인트</b> — <b>N = 1</b>이 숨은 경계다. 루프가 돌지 않고 <code>n &gt; 1</code>도 거짓이라 아무것도 출력되지 않는데, 그것이 정답이다. 그리고 소인수의 개수는 아무리 많아도 <b>log₂(10<sup>12</sup>) ≈ 40개</b>를 넘지 않는다(전부 2일 때 최대).
+  </div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab">
+    <code>gcd</code>는 한 줄 재귀, <code>lcm</code>은 <code>a / gcd(a,b) * b</code>. 검증 — 24, 18 → gcd 6, lcm 72.<br>
+    <b>지도 포인트</b> — A, B가 10<sup>9</sup>이면 lcm은 최대 10<sup>18</sup>이다. <code>long long</code> 범위(9.2 × 10<sup>18</sup>)에는 들어가지만 <code>a*b</code>를 먼저 하면 10<sup>18</sup>이라 아슬아슬하다. <b>나누기를 먼저 하면 걱정할 필요가 없어진다</b>는 것이 요점이다.
+  </div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab">
+    <pre>1071 = 462 x 2 + 147
+ 462 = 147 x 3 +  21
+ 147 =  21 x 7 +   0
+→ gcd = 21</pre>
+    <b>지도 포인트</b> — 학생에게 <b>세 줄의 숫자가 어떻게 이동하는지</b>를 화살표로 그리게 한다. 나누는 수 → 다음 줄의 나뉘는 수, 나머지 → 다음 줄의 나누는 수. 이 이동을 손으로 그려 보면 <code>a = b; b = t;</code> 두 줄이 그림과 똑같다는 것을 알게 된다. <b>주문이 아니라 절차</b>로 만드는 것이 목적이다.
+  </div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab">
+    <code>count_divisors</code>에서 <code>c++</code>를 <code>s += i</code>로 바꾼 것. 반환형은 반드시 <b><code>long long</code></b>.<br>
+    검증 — 1→1, 6→12, 12→28, 28→56, 496→992.<br>
+    <b>지도 포인트</b> — N이 10<sup>12</sup>이면 약수의 합은 <b>N 자신보다 크다</b>(최소한 N + 1). 개수는 <code>int</code>로 충분한데 합은 아니라는 점에서 4장의 "집계마다 자료형이 다르다"가 그대로 적용된다.
+  </div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab">
+    측정 — O(N) <b>3.5612초</b> / O(√N) <b>0.0001초</b> → 약 <b>31,500배</b>.<br>
+    <b>지도 포인트</b> — 3만 배라는 숫자를 직접 보게 하는 것이 전부다. 2장에서 "알고리즘을 바꾸면 100배, 상수를 줄이면 4배"라고 했는데, 여기서는 <b>3만 배</b>다. 루프 범위를 줄이는 것은 상수 최적화가 아니라 <b>복잡도를 O(N)에서 O(√N)으로 바꾼 것</b>이다.
+  </div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab">
+    각 n에 대해 <code>sum_divisors(n) - n == n</code>을 검사한다. 1,000 이하 → <b>6, 28, 496</b>.<br>
+    복잡도 — N × √N = 10<sup>4</sup> × 100 = 10<sup>6</sup>으로 여유롭다.<br>
+    <b>지도 포인트</b> — "자기 자신을 제외한"을 빠뜨리면 아무것도 출력되지 않는다(약수의 합이 자기 자신인 수는 1뿐이고, 1의 진약수 합은 0이다). <b>문제 문장의 "제외"를 코드로 옮겼는지</b>가 채점 포인트다. 1장의 "문제를 끝까지 읽는다"가 여기서 쓰인다.
+  </div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab">
+    예제 3의 접기. 초기값은 <b><code>a[0]</code></b>.<br>
+    검증 — 12, 18, 24 → gcd <b>6</b>, lcm <b>72</b>.<br>
+    <b>지도 포인트</b> — lcm의 초기값을 <b>0으로 두면 항상 0</b>이 나온다(4장의 "곱의 초기값은 1" 과 같은 종류의 오류). gcd는 0으로 둬도 <code>gcd(0, x) = x</code>라 우연히 맞는데, <b>우연히 맞는 것과 근거가 있는 것은 다르다</b>는 점을 짚는다.
+  </div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">
+    체를 B까지 만든 뒤 A부터 B까지 훑어 <code>!comp[i]</code>인 것을 출력. 검증 — 20~30 → <b>23, 29</b>.<br>
+    <b>지도 포인트</b> — <b>A가 1인 경우</b>가 경계다. <code>comp[1] = 1</code>을 설정하지 않으면 1이 소수로 출력된다. 체를 쓸 때도 <b>0과 1을 먼저 지우는 두 줄</b>을 빠뜨리지 않는지 확인한다. 오류 3번이 체 버전으로 나타난 것이다.
+  </div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab">
+    복잡도 — gcd 한 번이 O(log N)이고 N번 부르므로 <b>O(N log N)</b> = 10<sup>5</sup> × 17 ≈ 1.7 × 10<sup>6</sup>. 여유롭게 통과한다.<br>
+    검증 — n=12 → <b>4</b>(1, 5, 7, 11). n=7 → 6, n=10 → 4, n=11 → 10.<br>
+    <b>지도 포인트</b> — 소수 p에 대해서는 답이 <b>p−1</b>이라는 규칙이 보인다(7→6, 11→10). 학생이 표를 보고 규칙을 발견하게 한 뒤, 소인수분해로 더 빠르게 구하는 방법(오일러 피 함수)이 있다는 것만 알려 준다. <b>지금은 O(N log N)으로 충분</b>하다는 판단이 더 중요하다.
+  </div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab">
+    <code>sqrt()</code>는 <code>double</code>을 반환하므로 10<sup>18</sup> 근처에서 <b>오차가 생긴다</b>(3장의 실수 문제).<br>
+    <b>보정법</b> — <code>long long r = (long long)sqrt((double)n);</code> 로 구한 뒤 <code>r-2</code>부터 <code>r+2</code>까지 훑으며 <code>k*k == n</code>인 <code>k</code>가 있는지 확인한다.<br>
+    <pre>long long r = (long long)sqrt((double)n);
+for (long long k = (r &gt; 2 ? r - 2 : 0); k &lt;= r + 2; k++)
+    if (k * k == n) return 1;
+return 0;</pre>
+    <b>지도 포인트</b> — <b>실수로 어림한 뒤 정수로 확인</b>하는 패턴이다. 실수를 아예 안 쓸 수는 없지만, <b>실수의 결과를 믿지 않고 정수로 검산</b>하면 안전하다. <code>k*k</code>가 10<sup>18</sup>을 넘을 수 있으므로 <code>r+2</code>까지만 보는 것도 중요하다.
+  </div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab">
+    <table>
+      <thead><tr><th>방식</th><th>반복 횟수</th><th>시간</th></tr></thead>
+      <tbody>
+        <tr><td>나머지판 <code>a % b</code></td><td><b>1회</b></td><td>0.00000초</td></tr>
+        <tr><td>뺄셈판 <code>a - b</code></td><td><b>999,999,999회</b></td><td>0.51028초</td></tr>
+      </tbody>
+    </table>
+    <b>지도 포인트</b> — <b>나머지는 뺄셈을 몰아서 한 것</b>이라는 설명을 여기서 한다. <code>10^9 % 1</code>은 "1을 10억 번 빼는 일"을 한 번에 끝낸 것이다. 2장에서 "나머지 연산은 덧셈보다 4배 비싸다"고 했지만, <b>4배를 내고 10억 배를 산다</b>는 것이 이 문항의 교훈이다.
+  </div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">
+    <code>a = 4000000000</code>, <code>b = 6000000000</code>, <code>gcd = 2000000000</code>.<br>
+    <code>a*b/g</code> → <code>a*b</code>가 <b>5553255926290448384</b>(넘침) → 결과도 쓰레기.<br>
+    <code>a/g*b</code> → <code>2 * 6000000000</code> = <b>12000000000</b> (정답).<br>
+    <code>LLONG_MAX</code> = 9223372036854775807. 실제 <code>a*b</code>는 2.4 × 10<sup>19</sup>로 <b>2.6배 초과</b>다.<br>
+    <b>지도 포인트</b> — 검산을 시킨다 — <b>lcm × gcd = a × b</b> 여야 한다. 12000000000 × 2000000000 = 2.4 × 10<sup>19</sup>이고 a × b도 2.4 × 10<sup>19</sup>로 일치한다. <b>수학적 관계로 답을 검산하는 습관</b>을 만든다.
+  </div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    <b>복잡도</b> — 각 수마다 √n 루프면 N√N = 10<sup>6</sup> × 10<sup>3</sup> = 10<sup>9</sup>로 위험하다.<br>
+    <b>성질</b> — 약수 개수가 홀수인 수는 <b>제곱수뿐</b>이다. 따라서 답은 <b>⌊√N⌋</b>. N = 100이면 <b>10</b>.<br>
+    <b>증명</b> — 약수 <code>i</code>마다 짝꿍 <code>n/i</code>가 있으므로 약수는 쌍으로 묶인다. 짝이 없는 경우는 <code>i == n/i</code>, 즉 <code>i² == n</code>일 때뿐이고 이것은 n이 제곱수라는 뜻이다. 제곱수가 아니면 모든 약수가 쌍을 이루므로 개수가 짝수다.<br>
+    <b>지도 포인트</b> — 5.1절의 표에서 이미 보인 성질을 <b>스스로 증명하게</b> 하는 문항이다. 그리고 <b>O(10<sup>9</sup>)가 O(1)이 되었다</b>는 점 — 수학적 성질 하나가 알고리즘을 완전히 없앴다. 이것이 수론 문제의 본질이다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    <code>l = 1;</code>로 시작해 <code>l = l / gcd(l, i) * i;</code>를 i = 1..N에 반복한다.<br>
+    N = 40까지의 값을 출력해 보면 <b>N = 43에서 처음 <code>long long</code>을 넘는다</b>(실제로는 N ≤ 40 제약 안에서는 안전하다). N = 40일 때 lcm(1..40) ≈ 5.34 × 10<sup>15</sup>다.<br>
+    <b>지도 포인트</b> — 초기값이 <b>1</b>이라는 점(4장: 곱의 초기값). 그리고 "넘치는 지점을 직접 찾아보라"는 2장 12번 문항과 같은 실험 구조다. <b>제약의 40이라는 숫자가 어디서 나왔는지</b>를 학생이 역산하게 만드는 것이 목적이다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    <b>발상</b> — "각 수의 약수를 찾는다"를 뒤집어 <b>"각 수가 누구의 약수인지"</b>를 센다.
+    <pre>for (int i = 1; i &lt;= N; i++)
+    for (int j = i; j &lt;= N; j += i)
+        d[j]++;          /* i는 j의 약수다 */</pre>
+    <b>복잡도</b> — 안쪽 루프가 N/1 + N/2 + N/3 + … + N/N = N × (조화수) ≈ <b>N ln N</b>. N = 10<sup>6</sup>이면 약 1.4 × 10<sup>7</sup>로 여유롭다.<br>
+    N = 10<sup>6</sup>에서 가장 약수가 많은 수는 <b>720,720</b>이고 약수가 <b>240개</b>다.<br>
+    <b>지도 포인트</b> — 체와 완전히 같은 구조다. 체가 "배수를 지운다"였다면 여기는 "배수의 개수를 올린다". <b>관점을 뒤집으면 복잡도가 바뀐다</b>는 것이 이 문항의 핵심이고, 7장 카운팅 배열과 PART 3의 여러 기법으로 이어진다.
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    <b>⑴ 질의별 복잡도</b>
+    <table>
+      <thead><tr><th>질의</th><th>즉석 계산</th><th>Q = 10<sup>5</sup>일 때 전체</th></tr></thead>
+      <tbody>
+        <tr><td>1 (소수)</td><td>O(√x) = 1,000</td><td>10<sup>8</sup> — <strong>위험</strong></td></tr>
+        <tr><td>2 (약수 개수)</td><td>O(√x) = 1,000</td><td>10<sup>8</sup> — <strong>위험</strong></td></tr>
+        <tr><td>3 (gcd·lcm)</td><td>O(log x) ≈ 20</td><td>2 × 10<sup>6</sup> — 여유</td></tr>
+      </tbody>
+    </table>
+    <b>⑵ 미리 계산할 것</b> — 1번과 2번은 <b>x ≤ 10<sup>6</sup></b>이므로 미리 표로 만들어 둔다. 체로 소수 표를, 19번의 방법으로 약수 개수 표를 만들면 전처리 O(N log N) ≈ 1.4 × 10<sup>7</sup>, 질의마다 O(1)이다. 3번은 호제법이 이미 빠르므로 즉석 계산한다.<br>
+    <b>메모리</b> — <code>char comp[10<sup>6</sup>+1]</code> 1MB + <code>int d[10<sup>6</sup>+1]</code> 4MB = 5MB. 256MB 안이고, <b>둘 다 전역</b>에 둔다(2장).<br>
+    <b>⑶ 반례 목록</b> — <code>1 1</code>(1은 소수가 아니다) / <code>1 2</code>(유일한 짝수 소수) / <code>2 1</code>(약수 1개) / <code>2 36</code>(제곱수) / <code>3 1 1</code>(gcd=lcm=1) / <code>3 1000000 1000000</code>(같은 수) / x = 10<sup>6</sup>(최댓값).<br>
+    <b>⑷ 전체 복잡도</b> — 전처리 1.4 × 10<sup>7</sup> + 질의 10<sup>5</sup> × O(1 또는 log) ≈ <b>1.6 × 10<sup>7</sup></b>. 통과.<br>
+    <b>지도 포인트</b> — 이 문제의 핵심은 <b>"질의마다 계산"에서 "미리 표를 만들고 찾아보기"로 바꾸는 것</b>이다. 2장 도입의 누적합과 <b>정확히 같은 발상</b>이다 — 질문이 많으면 답을 미리 준비해 둔다. 그리고 세 질의의 복잡도가 다르므로 <b>전부 미리 계산할 필요는 없다</b>는 판단(3번은 즉석)도 짚어 준다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li>약수·소수 루프는 <strong><code>i * i &lt;= n</code></strong>까지만 돈다</li>
+    <li><code>i * i</code>가 나오는 자리의 <code>i</code>는 <strong><code>long long</code></strong>으로 선언한다</li>
+    <li>약수를 짝으로 셀 때 <strong><code>if (i != n / i)</code></strong>를 넣는다</li>
+    <li>소수 판정은 <strong><code>if (n &lt; 2) return 0;</code></strong>으로 시작한다</li>
+    <li>범위 전체의 소수가 필요하면 <strong>체</strong>로 바꾼다 (111배)</li>
+    <li>소인수분해는 <strong><code>while</code></strong>로 나누고 <strong><code>if (n &gt; 1)</code></strong>로 끝낸다</li>
+    <li>최대공약수는 <strong><code>b ? gcd(b, a % b) : a</code></strong> 한 줄</li>
+    <li>최소공배수는 <strong><code>a / gcd(a, b) * b</code></strong> — 나누기 먼저</li>
+    <li>반례 여섯 개 — <strong>0, 1, 2, 제곱수, 소수, 최댓값</strong></li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 06장 진법 변환과 자릿수 처리</span>
+    이 장에서 <code>%</code>와 <code>/</code>로 수를 분해했다. 다음 장은 그 분해를 <strong>자릿수</strong>로 밀고 나간다. 10으로 나누고 남기는 두 줄이 <strong>모든 진법</strong>에 그대로 통한다는 것, 자릿수의 합·역순 수·회문수를 반복문 하나로 처리하는 법, 그리고 10진수가 아닌 수를 읽고 쓰는 방법을 다룬다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 2 · 05장 · 2026-10-13 · 전 코드 gcc 13.3.0 검증</span>
+</footer>
+</div></body></html>

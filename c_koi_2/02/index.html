@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PART 2 · 02장 제약 조건과 시간복잡도 감각 — 중등 정보올림피아드 C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Nanum+Myeongjo:wght@700;800&display=swap">
+<style>
+:root{
+  --paper:#fbfaf6;
+  --ink:#16293f;
+  --ink-soft:#43566d;
+  --ink-faint:#7a8aa0;
+  --accent:#9a5f1a;
+  --accent-soft:#f7ecdb;
+  --rule:#d9d5ca;
+  --rule-soft:#e8e4da;
+  --code-bg:#f2efe7;
+  --warn:#9a5b16;
+  --warn-soft:#fbf1e2;
+  --err:#a33a2e;
+  --err-soft:#fbeceb;
+  --font-display:"Nanum Myeongjo","NanumMyeongjo","Noto Serif KR",Batang,Georgia,serif;
+  --font-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"D2Coding","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-weight:300;font-size:10.6pt;line-height:1.72}
+.sheet{max-width:176mm;margin:0 auto;padding:14mm 8mm 20mm}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0 0 .62em}
+code,pre,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-size:.92em;background:var(--code-bg);padding:.08em .32em;border-radius:3px}
+pre code{background:none;padding:0;font-size:inherit}
+
+.chapterhead{border-bottom:2.5px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.crumbs{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.crumbs .part{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.crumbs .byline{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+.chapterhead .no{font-family:var(--font-mono);font-size:26pt;font-weight:600;color:var(--accent);line-height:1}
+.titlerow{display:flex;align-items:baseline;gap:14px;margin-top:6px}
+h1{font-size:19pt;letter-spacing:-.01em}
+.lede{color:var(--ink-soft);font-size:10pt;margin-top:8px;max-width:62ch}
+
+.goalbox{border:1px solid var(--rule);background:#fff;border-left:4px solid var(--accent);padding:12px 16px;margin:16px 0 22px;break-inside:avoid}
+.goalbox h4{font-family:var(--font-body);font-weight:600;font-size:9.5pt;letter-spacing:.02em;color:var(--accent);margin-bottom:6px}
+.goalbox ul{margin:0;padding-left:17px}
+.goalbox li{margin-bottom:2px;font-size:9.8pt;color:var(--ink-soft)}
+.goalbox li::marker{color:var(--accent)}
+.plan{display:flex;gap:0;border:1px solid var(--rule);margin:0 0 24px;break-inside:avoid}
+.plan div{flex:1;padding:8px 12px;border-left:1px solid var(--rule-soft);font-size:9.3pt;color:var(--ink-soft)}
+.plan div:first-child{border-left:none}
+.plan b{display:block;font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;color:var(--accent);font-weight:600}
+
+section{margin-bottom:26px}
+.sec-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:3px}
+h2{font-size:14pt;padding-bottom:5px;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+h3{font-size:11.5pt;margin:18px 0 8px;color:var(--ink)}
+h3 .tag{font-family:var(--font-mono);font-size:8.5pt;color:var(--accent);margin-right:7px;font-weight:600}
+h4{font-family:var(--font-body);font-weight:600;font-size:10.2pt;margin:14px 0 5px}
+
+figure{margin:10px 0 14px;break-inside:avoid}
+figcaption{font-family:var(--font-mono);font-size:8.3pt;letter-spacing:.04em;padding:4px 10px;background:var(--ink);color:#f4f1e8;border-radius:4px 4px 0 0;display:flex;justify-content:space-between}
+figcaption .fn{color:#e8b670}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--rule);border-top:none;border-radius:0 0 4px 4px;padding:10px 12px;font-size:9.1pt;line-height:1.62;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+pre.term{background:#1d2b38;color:#e6ecf2;border-color:#1d2b38}
+pre.term .c{color:#7fd1c3}
+pre.term .o{color:#b9c6d4}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 14px;break-inside:avoid}
+.io>div{border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.io .lbl{font-family:var(--font-mono);font-size:8pt;letter-spacing:.1em;background:var(--rule-soft);padding:3px 10px;color:var(--ink-soft)}
+.io pre{border:none;background:#fff;border-radius:0;font-size:9.2pt;padding:8px 10px}
+
+.note{border:1px solid var(--rule);background:#fff;border-left:3px solid var(--accent);padding:10px 14px;margin:12px 0;font-size:9.7pt;color:var(--ink-soft);break-inside:avoid}
+.note b{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.note .h{display:block;font-weight:600;font-size:9pt;color:var(--accent);margin-bottom:3px;letter-spacing:.02em}
+.note.warn .h{color:var(--warn)}
+
+table{border-collapse:collapse;width:100%;font-size:9.5pt;margin:10px 0 14px;break-inside:avoid}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:8.8pt;letter-spacing:.02em;color:var(--ink)}
+td{color:var(--ink-soft)}
+td strong,th strong{color:var(--ink)}
+td code{font-size:.9em}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:9pt}
+
+.errcard{border:1px solid var(--rule);border-radius:4px;margin:0 0 14px;break-inside:avoid;background:#fff}
+.errcard .top{display:flex;gap:10px;align-items:baseline;padding:7px 12px;background:var(--err-soft);border-bottom:1px solid var(--rule)}
+.errcard .top .n{font-family:var(--font-mono);font-size:8.5pt;font-weight:600;color:var(--err)}
+.errcard .top .t{font-weight:600;font-size:10pt}
+.errcard .body{padding:10px 12px}
+.errcard .body p{margin:0 0 6px;font-size:9.7pt;color:var(--ink-soft)}
+.errcard .body p:last-child{margin-bottom:0}
+.errcard pre{font-size:8.6pt;margin:6px 0}
+.errcard .fix{border-left:3px solid var(--accent);background:var(--accent-soft);padding:6px 10px;font-size:9.6pt;margin-top:8px}
+.errcard .fix b{color:var(--accent)}
+
+.pset{margin-top:6px}
+.pgroup{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.12em;color:#fff;background:var(--ink);display:inline-block;padding:2px 10px;border-radius:3px;margin:16px 0 8px}
+.prob{border-bottom:1px solid var(--rule-soft);padding:9px 0 10px;break-inside:avoid;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.prob .pn{font-family:var(--font-mono);font-size:9.4pt;font-weight:600;color:var(--accent)}
+.prob .pb p{margin:0 0 4px;font-size:9.9pt}
+.prob .pb .spec{font-size:9pt;color:var(--ink-faint)}
+.prob .pb .sample{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.prob .pb .sample div{border:1px solid var(--rule);border-radius:3px;padding:4px 8px;background:#fff}
+.prob .pb .sample span{display:block;font-family:var(--font-mono);font-size:7.6pt;letter-spacing:.1em;color:var(--ink-faint)}
+.prob .pb .sample pre{border:none;background:none;padding:2px 0 0;font-size:9pt}
+
+.answers{border-top:3px double var(--ink);padding-top:14px}
+.ans{break-inside:avoid;margin-bottom:12px;display:grid;grid-template-columns:26px 1fr;gap:10px}
+.ans .an{font-family:var(--font-mono);font-size:9.3pt;font-weight:600;color:var(--accent)}
+.ans .ab{font-size:9.6pt;color:var(--ink-soft)}
+.ans .ab b{color:var(--ink)}
+.ans pre{font-size:8.7pt;margin:5px 0}
+
+.check{list-style:none;padding:0;margin:8px 0 0}
+.check li{position:relative;padding-left:25px;font-size:9.8pt;color:var(--ink-soft);margin-bottom:6px;break-inside:avoid}
+.check li::before{content:"";position:absolute;left:0;top:4.5px;width:11px;height:11px;border:1.4px solid var(--accent);border-radius:2px}
+
+footer.colophon{border-top:1px solid var(--rule);margin-top:26px;padding-top:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer.colophon .name{font-family:var(--font-mono);font-size:8.6pt;color:var(--accent);letter-spacing:.03em}
+footer.colophon .meta{font-family:var(--font-mono);font-size:8pt;color:var(--ink-faint)}
+
+.pagebreak{break-before:page}
+.wrapup{break-inside:avoid}
+
+@media screen and (max-width:640px){
+  .sheet{padding:18px 16px 40px}
+  .io,.prob .pb .sample{grid-template-columns:1fr}
+  .plan{flex-direction:column}
+  .plan div{border-left:none;border-top:1px solid var(--rule-soft)}
+  .plan div:first-child{border-top:none}
+}
+@page{size:A4}
+@media print{
+  body{background:#fff}
+  .sheet{max-width:none;padding:0}
+  h2,h3,h4{break-after:avoid}
+  figure,table,.note,.errcard,.prob,.ans,.goalbox{break-inside:avoid}
+}
+</style></head><body><div class="sheet"><header class="chapterhead">
+  <div class="crumbs">
+    <span class="part">PART 2 · 브론즈급 해결 스킬 — 02 / 12</span>
+    <span class="byline">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  </div>
+  <div class="titlerow">
+    <span class="no">02</span>
+    <h1>제약 조건과 시간복잡도 감각</h1>
+  </div>
+  <p class="lede">1장에서 "제약을 보고 자료형과 복잡도를 먼저 정한다"고 했다. 이 장은 그 <strong>판단의 근거</strong>를 만든다. 외워서 되는 일이 아니다. <strong>직접 측정해서 몸에 붙이는</strong> 일이다. 이 장의 모든 숫자는 실제로 재서 적은 것이다.</p>
+</header>
+
+<div class="goalbox">
+  <h4>학습 목표</h4>
+  <ul>
+    <li>1초에 수행 가능한 연산 횟수를 <strong>측정해서</strong> 말할 수 있다</li>
+    <li>루프 구조를 보고 복잡도를 O 표기로 셀 수 있다</li>
+    <li>N의 범위만 보고 <strong>허용되는 알고리즘</strong>을 고를 수 있다</li>
+    <li>제약에서 최악의 값을 계산해 <code>int</code>와 <code>long long</code>을 결정할 수 있다</li>
+    <li>같은 문제를 O(N²)와 O(N)으로 작성해 시간 차이를 직접 측정할 수 있다</li>
+    <li>메모리 제한과 스택 한계를 구분하고 배열 선언 위치를 정할 수 있다</li>
+  </ul>
+</div>
+
+<div class="plan">
+  <div><b>1차시</b>도입 측정 · 1초의 크기 · 복잡도 세는 법</div>
+  <div><b>2차시</b>N별 허용 표 · 자료형 결정 · 메모리 · 표준 코드</div>
+  <div><b>3차시</b>단계 예제 · 흔한 오류 6종 · 연습 문제</div>
+</div>
+
+<section>
+  <span class="sec-no">01 — 도입 문제</span>
+  <h2>같은 답, 100배 다른 시간</h2>
+
+  <div class="io">
+    <div><div class="lbl">문제</div><pre>길이 N인 수열과 Q개의 질문이 주어진다.
+각 질문은 두 수 L, R이며
+A[L] + A[L+1] + ... + A[R] 을 출력한다.
+
+제약
+1 ≤ N, Q ≤ 100,000
+1 ≤ A[i] ≤ 1,000,000,000
+시간 제한 1초</pre></div>
+    <div><div class="lbl">가장 먼저 떠오르는 풀이</div><pre>질문이 올 때마다
+L부터 R까지 더해서 출력한다.
+
+for (i = L; i &lt;= R; i++)
+    s += a[i];
+
+맞는 답이 나온다.</pre></div>
+  </div>
+
+  <p>맞는 답이 나온다는 것은 사실이다. 그런데 <strong>맞는 답이 제시간에 나오는가</strong>는 다른 질문이다. 두 가지 풀이를 모두 작성해 같은 입력으로 돌려 보았다.</p>
+
+  <div class="io">
+    <div><div class="lbl">무작위 L, R로 질문 10만 개</div><pre>$ time ./naive  &lt; big.txt
+real    1.534s
+
+$ time ./prefix &lt; big.txt
+real    0.051s</pre></div>
+    <div><div class="lbl">모든 질문이 L=1, R=N 일 때</div><pre>$ time ./naive  &lt; worst.txt
+real    4.428s      ← 시간 초과
+
+$ time ./prefix &lt; worst.txt
+real    0.041s</pre></div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">여기서 두 가지를 동시에 배운다</span>
+    <b>①</b> 같은 문제에 같은 답을 내는 두 코드의 시간이 <b>100배</b> 차이 난다.<br>
+    <b>②</b> 무작위 입력으로는 1.5초, <b>최악의 입력</b>으로는 4.4초다. 내가 만든 입력으로 돌려 보고 "빠르네"라고 판단하면 안 된다. <b>최악의 입력을 일부러 만들어야</b> 한다.
+  </div>
+
+  <p>느린 쪽의 연산 횟수를 세어 보자. 질문 하나마다 최대 N번 더하므로 <strong>Q × N = 10<sup>5</sup> × 10<sup>5</sup> = 10<sup>10</sup></strong>번이다. 빠른 쪽은 미리 한 번 훑어 두고 질문마다 뺄셈 한 번이므로 <strong>N + Q = 2 × 10<sup>5</sup></strong>번이다. 5만 배 차이의 연산을 100배의 시간 차이로 막아 준 것은 컴파일러의 최적화이고, 그래도 <strong>4.4초는 4.4초다</strong>.</p>
+
+  <div class="note">
+    <span class="h">이 장이 답할 질문</span>
+    <b>①</b> 1초 동안 몇 번을 돌 수 있는가?<br>
+    <b>②</b> 내 코드가 몇 번 도는지 어떻게 세는가?<br>
+    <b>③</b> N의 범위를 보고 어떤 방법이 허용되는지 어떻게 아는가?
+  </div>
+</section>
+
+<section>
+  <span class="sec-no">02 — 개념 정리</span>
+  <h2>개념 정리</h2>
+
+  <h3><span class="tag">2.1</span>1초는 얼마나 큰가</h3>
+  <p>가장 단순한 반복문을 횟수를 늘려 가며 돌려 측정했다. 측정 환경은 Intel Xeon 2.10GHz, gcc 13.3.0이다.</p>
+  <table>
+    <thead><tr><th style="width:26%">반복 횟수</th><th style="width:26%"><code>-O2</code> (채점 기본)</th><th style="width:26%"><code>-O0</code> (최적화 없음)</th><th>판정</th></tr></thead>
+    <tbody>
+      <tr><td>10<sup>6</sup> (백만)</td><td>0.001초</td><td>0.001초</td><td>눈 깜짝할 사이</td></tr>
+      <tr><td>10<sup>7</sup> (천만)</td><td>0.004초</td><td>0.013초</td><td>여유</td></tr>
+      <tr><td>10<sup>8</sup> (1억)</td><td>0.040초</td><td>0.144초</td><td>여유</td></tr>
+      <tr><td>10<sup>9</sup> (10억)</td><td>0.508초</td><td>1.318초</td><td><strong>아슬아슬</strong></td></tr>
+      <tr><td>10<sup>10</sup> (100억)</td><td>약 5초</td><td>약 13초</td><td><strong>시간 초과</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <span class="h">왜 "1억 번에 1초"라고 가르치는가</span>
+    위 표만 보면 10억 번도 0.5초다. 그런데 교재와 강의는 대부분 <b>"1초에 1억 번"</b>을 기준으로 말한다. 열 배나 보수적인 이유는 두 가지다.<br>
+    <b>①</b> 위의 루프 몸통은 덧셈 하나뿐이다. 실제 문제의 몸통은 배열 접근·비교·나눗셈·함수 호출이 섞여 훨씬 무겁다.<br>
+    <b>②</b> 채점 서버는 내 컴퓨터보다 느릴 수 있고, 다른 제출과 자원을 나눠 쓴다.<br>
+    그래서 <b>"1억 번이면 안전, 10억 번이면 위험"</b>으로 기억한다. 측정값이 아니라 <b>안전 기준</b>이다.
+  </div>
+
+  <h3><span class="tag">2.2</span>연산마다 비용이 다르다</h3>
+  <p>같은 "1억 번"이라도 무엇을 1억 번 하는지에 따라 시간이 달라진다. 1억 회씩 측정한 결과다.</p>
+  <table>
+    <thead><tr><th style="width:36%">1억 회 수행한 작업</th><th style="width:18%">시간</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td>정수 덧셈만</td><td>0.038초</td><td>기준</td></tr>
+      <tr><td>배열 읽기 + 덧셈</td><td>0.075초</td><td>약 2배</td></tr>
+      <tr><td>배열 읽기 + 비교(<code>if</code>)</td><td>0.070초</td><td>약 2배</td></tr>
+      <tr><td>함수 호출</td><td>0.120초</td><td>약 3배</td></tr>
+      <tr><td>나머지 연산(<code>%</code>)</td><td>0.148초</td><td><strong>약 4배</strong></td></tr>
+    </tbody>
+  </table>
+  <p>나눗셈과 나머지가 가장 비싸다. 루프 안쪽에서 <code>%</code>를 반복하고 있다면 그것만 빼도 눈에 띄게 빨라지는 경우가 있다. 다만 <strong>이 차이는 2~4배이고, 알고리즘을 바꾸면 100배다</strong>. 순서는 항상 <strong>알고리즘 먼저, 상수 나중</strong>이다.</p>
+
+  <h3><span class="tag">2.3</span>연산 횟수 세는 법</h3>
+  <p>O 표기는 어려운 이론이 아니다. <strong>N이 커질 때 횟수가 몇 배로 늘어나는가</strong>를 적는 약속이다. 세는 규칙은 세 줄이면 끝난다.</p>
+  <table>
+    <thead><tr><th style="width:30%">코드 모양</th><th style="width:22%">횟수</th><th>표기</th></tr></thead>
+    <tbody>
+      <tr><td>루프 하나</td><td>N</td><td>O(N)</td></tr>
+      <tr><td>루프 안에 루프</td><td>N × N</td><td>O(N²)</td></tr>
+      <tr><td>루프를 나란히 두 개</td><td>N + N = 2N</td><td>O(N) — <strong>상수는 버린다</strong></td></tr>
+      <tr><td>절반씩 줄어드는 반복</td><td>log₂N</td><td>O(log N)</td></tr>
+      <tr><td>정렬</td><td>N log₂N</td><td>O(N log N)</td></tr>
+      <tr><td>각 원소를 고르거나 말거나</td><td>2<sup>N</sup></td><td>O(2<sup>N</sup>)</td></tr>
+      <tr><td>N개를 줄 세우는 모든 방법</td><td>N!</td><td>O(N!)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="io">
+    <div><div class="lbl">세어 보기 ①</div><pre>for (i = 0; i &lt; n; i++)
+    for (j = 0; j &lt; n; j++)
+        s += a[i] * a[j];
+
+→ n × n = O(N²)</pre></div>
+    <div><div class="lbl">세어 보기 ②</div><pre>for (i = 0; i &lt; n; i++)
+    for (j = i+1; j &lt; n; j++)
+        if (a[i] &lt; a[j]) c++;
+
+→ n(n-1)/2 ≈ N²/2
+→ 상수 1/2은 버리고 O(N²)</pre></div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">상수를 버리지만 무시하지는 않는다</span>
+    위 ②는 ①의 <b>절반</b>이다. O 표기로는 둘 다 O(N²)이지만, 실제 시간은 두 배 차이다. <b>O 표기는 "통과 가능성"을 판단하는 도구</b>이고, 아슬아슬할 때는 상수까지 세야 한다.
+  </div>
+
+  <h3><span class="tag">2.4</span>N을 보고 알고리즘을 고르는 표</h3>
+  <p>이 표가 이 장의 핵심이다. 각 복잡도의 실제 실행 시간을 측정하고, 거기에 안전 여유를 둔 <strong>실전 기준</strong>을 함께 적었다.</p>
+  <table>
+    <thead><tr><th style="width:17%">제약의 N</th><th style="width:16%">허용 복잡도</th><th style="width:24%">대표 방법</th><th>측정값 (1초 제한 기준)</th></tr></thead>
+    <tbody>
+      <tr><td>N ≤ <strong>10</strong></td><td>O(N!)</td><td>모든 순열 시도</td><td>N=10 → 0.083초 / N=11 → 1.08초 / N=12 → <strong>12.9초</strong></td></tr>
+      <tr><td>N ≤ <strong>20</strong></td><td>O(2<sup>N</sup>)</td><td>부분집합 전체 탐색</td><td>N=24 → 0.026초 / N=26 → 0.122초 / N=28 → 0.378초</td></tr>
+      <tr><td>N ≤ <strong>500</strong></td><td>O(N³)</td><td>삼중 루프</td><td>500³ = 1.25 × 10<sup>8</sup></td></tr>
+      <tr><td>N ≤ <strong>5,000</strong></td><td>O(N²)</td><td>이중 루프, 모든 쌍</td><td>N=5,000 → 0.037초 / N=10,000 → 0.179초 / N=20,000 → 0.658초</td></tr>
+      <tr><td>N ≤ <strong>500,000</strong></td><td>O(N log N)</td><td>정렬 후 처리</td><td>정렬 10<sup>5</sup> → 0.017초 / 10<sup>6</sup> → 0.181초</td></tr>
+      <tr><td>N ≤ <strong>10,000,000</strong></td><td>O(N)</td><td>한 번 훑기, 누적합</td><td>10<sup>7</sup> → 0.016초 / 10<sup>8</sup> → 0.146초</td></tr>
+      <tr><td>N ≥ <strong>10<sup>9</sup></strong></td><td>O(log N), O(1)</td><td>수학 공식, 이분 탐색</td><td>N을 다 훑는 것 자체가 불가능</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <span class="h">측정값이 기준보다 넉넉한 이유</span>
+    예를 들어 O(N²)의 측정값은 N=20,000에서도 0.658초다. 그런데 실전 기준은 <b>N ≤ 5,000</b>으로 잡았다. 루프 몸통이 비교 한 번이기 때문에 빠른 것이고, 실제 문제의 몸통은 더 무겁기 때문이다.<br>
+    <b>표를 외울 때는 왼쪽 두 칸만 외운다.</b> 오른쪽은 "왜 그런지"의 근거다.
+  </div>
+
+  <div class="note warn">
+    <span class="h">거꾸로 읽는 것이 진짜 사용법</span>
+    문제에 <code>N ≤ 1,000</code>이라고 적혀 있으면 "O(N²)까지 허용한다"는 <b>출제자의 신호</b>다. <code>N ≤ 100,000</code>이면 "O(N²)로는 안 되니 다른 방법을 찾아라"는 신호다.<br>
+    <b>제약 조건은 힌트다.</b> 문제를 받으면 N의 범위부터 보고 알고리즘의 후보를 좁힌다.
+  </div>
+
+  <h3><span class="tag">2.5</span>제약에서 자료형을 결정한다</h3>
+  <p>복잡도와 함께 반드시 계산하는 것이 <strong>결과의 최댓값</strong>이다. 1장의 체크리스트 5번이다.</p>
+  <div class="io">
+    <div><div class="lbl">도입 문제의 최악값 계산</div><pre>A[i] ≤ 10^9 이고 N ≤ 10^5 이므로
+구간 합의 최댓값은
+  10^5 × 10^9 = 10^14
+
+int 의 한계 = 2,147,483,647
+            ≈ 2.1 × 10^9
+
+10^14 &gt; 2.1 × 10^9  →  long long</pre></div>
+    <div><div class="lbl">실제로 넘쳐 보면</div><pre>int s = 0;
+for (i = 0; i &lt; 100000; i++)
+    s += 1000000000;
+printf("%d\n", s);
+→ 276447232
+
+long long t = 0;  (같은 반복)
+→ 100000000000000</pre></div>
+  </div>
+  <p>도입 문제의 실제 최대 구간 합을 측정했더니 <strong>50,027,818,288,216</strong>(약 5 × 10<sup>13</sup>)이었다. <code>int</code>였다면 전부 틀렸을 것이고, <strong>컴파일러는 한마디도 하지 않는다</strong>.</p>
+  <table>
+    <thead><tr><th style="width:24%">자료형</th><th style="width:16%">크기</th><th>안전한 범위</th></tr></thead>
+    <tbody>
+      <tr><td><code>int</code></td><td>4바이트</td><td>약 ±2.1 × 10<sup>9</sup> — <strong>10자리부터 위험</strong></td></tr>
+      <tr><td><code>long long</code></td><td>8바이트</td><td>약 ±9.2 × 10<sup>18</sup> — 19자리까지</td></tr>
+      <tr><td><code>double</code></td><td>8바이트</td><td>정수는 약 9 × 10<sup>15</sup>까지만 정확(2장 참조)</td></tr>
+    </tbody>
+  </table>
+  <div class="note warn">
+    <span class="h">판단 기준 한 줄</span>
+    <b>"답이 10자리를 넘을 수 있는가?"</b> 조금이라도 넘을 가능성이 있으면 <code>long long</code>을 쓴다. 느려지지 않는다. 위 측정에서 <code>long long</code> 누적과 <code>int</code> 누적의 시간 차이는 없었다.
+  </div>
+
+  <h3><span class="tag">2.6</span>메모리 제한과 스택</h3>
+  <p>시간과 함께 적혀 있는 것이 메모리 제한이다. 보통 256MB다. <code>int</code> 하나가 4바이트이므로,</p>
+  <div class="io">
+    <div><div class="lbl">얼마나 들어가나</div><pre>256MB / 4바이트 = 67,108,864개
+
+int a[2000][2000]  → 15.3 MB   ○
+int a[10000][10000] →  381 MB   ×
+int a[10000000]    →  38.1 MB   ○</pre></div>
+    <div><div class="lbl">같은 배열, 선언 위치만 바꾸면</div><pre>/* 전역 */
+static int big[2000][2000];
+→ 정상 동작
+
+/* main 안의 지역 변수 */
+int big[2000][2000];
+→ Segmentation fault (종료 139)</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">메모리 제한과 스택 한계는 다른 것이다</span>
+    메모리 제한 256MB를 넘지 않았는데도 터진다. <b>지역 변수는 스택</b>에 잡히고 스택은 보통 <b>8MB</b>뿐이기 때문이다(<code>ulimit -s</code>로 확인하면 8192 KB).<br>
+    <b>규칙</b> — 큰 배열은 <b>함수 밖(전역)에 선언</b>한다. 덤으로 전역 배열은 0으로 자동 초기화된다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">03 — 표준 코드</span>
+  <h2>표준 코드: 느린 판과 빠른 판</h2>
+  <p>도입 문제의 두 풀이를 나란히 둔다. <strong>입력·출력 부분은 완전히 같고 계산만 다르다</strong>는 점을 눈으로 확인한다.</p>
+
+  <div class="code">
+    <div class="codehead"><span>naive.c</span><span>O(N + Q·N) — 질문마다 다시 더한다</span></div>
+<pre class="c"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> a[<span class="nm">100001</span>];              <span class="cm">/* 전역: 스택이 아니라 안전하다 */</span>
+
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+    <span class="kw">int</span> n, q;
+    <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d %d"</span>, &amp;n, &amp;q) != <span class="nm">2</span>) <span class="kw">return</span> <span class="nm">1</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">1</span>; i &lt;= n; i++)
+        <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d"</span>, &amp;a[i]) != <span class="nm">1</span>) <span class="kw">return</span> <span class="nm">1</span>;
+
+    <span class="kw">for</span> (<span class="kw">int</span> k = <span class="nm">0</span>; k &lt; q; k++) {
+        <span class="kw">int</span> l, r;
+        <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d %d"</span>, &amp;l, &amp;r) != <span class="nm">2</span>) <span class="kw">return</span> <span class="nm">1</span>;
+        <span class="kw">long</span> <span class="kw">long</span> s = <span class="nm">0</span>;      <span class="cm">/* 질문마다 0으로 (1장 오류 2) */</span>
+        <span class="kw">for</span> (<span class="kw">int</span> i = l; i &lt;= r; i++)
+            s += a[i];           <span class="cm">/* ← 여기가 최대 N번 */</span>
+        <span class="fn">printf</span>(<span class="st">"%lld\n"</span>, s);
+    }
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+  </div>
+
+  <div class="code">
+    <div class="codehead"><span>prefix.c</span><span>O(N + Q) — 미리 한 번만 더해 둔다</span></div>
+<pre class="c"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">long</span> <span class="kw">long</span> p[<span class="nm">100001</span>];        <span class="cm">/* p[i] = A[1..i]의 합 */</span>
+
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+    <span class="kw">int</span> n, q;
+    <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d %d"</span>, &amp;n, &amp;q) != <span class="nm">2</span>) <span class="kw">return</span> <span class="nm">1</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="nm">1</span>; i &lt;= n; i++) {
+        <span class="kw">int</span> x;
+        <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d"</span>, &amp;x) != <span class="nm">1</span>) <span class="kw">return</span> <span class="nm">1</span>;
+        p[i] = p[i - <span class="nm">1</span>] + x;  <span class="cm">/* 읽으면서 바로 누적 */</span>
+    }
+
+    <span class="kw">for</span> (<span class="kw">int</span> k = <span class="nm">0</span>; k &lt; q; k++) {
+        <span class="kw">int</span> l, r;
+        <span class="kw">if</span> (<span class="fn">scanf</span>(<span class="st">"%d %d"</span>, &amp;l, &amp;r) != <span class="nm">2</span>) <span class="kw">return</span> <span class="nm">1</span>;
+        <span class="fn">printf</span>(<span class="st">"%lld\n"</span>, p[r] - p[l - <span class="nm">1</span>]);   <span class="cm">/* 뺄셈 한 번 */</span>
+    }
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+  </div>
+
+  <div class="note">
+    <span class="h"><code>p[l-1]</code>을 위해 1번부터 쓴다</span>
+    배열을 <b>1번 칸부터</b> 쓰면 <code>l = 1</code>일 때 <code>p[0]</code>을 읽게 되고, 전역 배열이므로 그 값은 0이다. 0번부터 썼다면 <code>l == 0</code>인지 매번 <code>if</code>로 검사해야 한다. <b>인덱스를 1부터 쓰는 습관</b>이 경계 처리를 지운다.
+  </div>
+
+  <h3><span class="tag">3.1</span>시간을 직접 재는 뼈대</h3>
+  <p>터미널의 <code>time</code> 명령이 가장 간단하지만, 코드 안에서 특정 구간만 재고 싶을 때는 <code>&lt;time.h&gt;</code>의 <code>clock()</code>을 쓴다. 이 장의 모든 측정이 이 뼈대로 이루어졌다.</p>
+  <div class="code">
+    <div class="codehead"><span>측정 뼈대</span><span>이 장의 모든 표를 만든 코드</span></div>
+<pre class="c"><span class="pp">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+<span class="pp">#include</span> <span class="st">&lt;time.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+    clock_t st = <span class="fn">clock</span>();           <span class="cm">/* 시작 시각 */</span>
+
+    <span class="kw">volatile</span> <span class="kw">long</span> <span class="kw">long</span> s = <span class="nm">0</span>;    <span class="cm">/* volatile: 최적화로 지워지는 것을 막는다 */</span>
+    <span class="kw">for</span> (<span class="kw">long</span> <span class="kw">long</span> i = <span class="nm">0</span>; i &lt; <span class="nm">100000000</span>; i++)
+        s += i;
+
+    <span class="kw">double</span> sec = (<span class="kw">double</span>)(<span class="fn">clock</span>() - st) / CLOCKS_PER_SEC;
+    <span class="fn">fprintf</span>(stderr, <span class="st">"%.3f초\n"</span>, sec);   <span class="cm">/* 측정값은 stderr로 (1장) */</span>
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</pre>
+  </div>
+  <div class="note warn">
+    <span class="h"><code>volatile</code>을 빼면 0.000초가 나온다</span>
+    <code>s</code>를 쓰지 않으면 <code>-O2</code> 컴파일러는 루프 전체를 <b>통째로 지운다</b>. 결과가 아무 데도 쓰이지 않기 때문이다. 측정 코드를 쓸 때는 <code>volatile</code>을 붙이거나 마지막에 값을 출력해서 <b>지워지지 않게</b> 한다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">04 — 단계 예제</span>
+  <h2>단계 예제</h2>
+
+  <h3><span class="tag">예제 1</span>제약만 보고 알고리즘 말하기</h3>
+  <p>코드를 쓰지 말고 <strong>표만 보고</strong> 판단한다. 이것이 이 장의 핵심 훈련이다.</p>
+  <table>
+    <thead><tr><th style="width:30%">제약</th><th style="width:22%">허용 복잡도</th><th>판단</th></tr></thead>
+    <tbody>
+      <tr><td>N ≤ 1,000</td><td>O(N²) 가능</td><td>이중 루프로 모든 쌍을 봐도 된다</td></tr>
+      <tr><td>N ≤ 200,000</td><td>O(N log N)까지</td><td>이중 루프는 불가. 정렬이나 한 번 훑기</td></tr>
+      <tr><td>N ≤ 20</td><td>O(2<sup>N</sup>) 가능</td><td>부분집합을 모두 만들어도 된다 — <strong>완전탐색 신호</strong></td></tr>
+      <tr><td>N ≤ 8</td><td>O(N!) 가능</td><td>순서를 모두 바꿔 봐도 된다 — <strong>순열 신호</strong></td></tr>
+      <tr><td>N ≤ 10<sup>18</sup></td><td>O(log N) 이하</td><td>반복문 자체가 불가능. 공식이나 이분 탐색</td></tr>
+    </tbody>
+  </table>
+
+  <h3><span class="tag">예제 2</span>이중 루프를 한 줄로 줄이기</h3>
+  <p>"수열에서 두 수를 골라 합이 K가 되는 쌍이 있는가?" N ≤ 100,000이라면 O(N²)는 10<sup>10</sup>이라 불가능하다.</p>
+  <div class="io">
+    <div><div class="lbl">O(N²) — 불가</div><pre>for (i = 0; i &lt; n; i++)
+    for (j = i+1; j &lt; n; j++)
+        if (a[i] + a[j] == k) found = 1;
+
+10^10회 → 시간 초과</pre></div>
+    <div><div class="lbl">O(N) — 체크 배열</div><pre>/* 값이 0..1,000,000 범위라면 */
+for (i = 0; i &lt; n; i++) {
+    int need = k - a[i];
+    if (0 &lt;= need &amp;&amp; need &lt;= 1000000
+        &amp;&amp; seen[need]) found = 1;
+    seen[a[i]] = 1;
+}
+2 × 10^5회 → 통과</pre></div>
+  </div>
+  <p>"이미 본 값"을 배열에 표시해 두면 안쪽 루프가 사라진다. 이 기법은 <strong>7장 배열 카운팅과 체크 배열</strong>에서 본격적으로 다룬다. 지금은 <strong>O(N²)를 O(N)으로 바꾸는 방법이 존재한다</strong>는 것만 확인한다.</p>
+
+  <h3><span class="tag">예제 3</span>복잡도 세기 연습</h3>
+  <div class="io">
+    <div><div class="lbl">코드 ㉮</div><pre>for (i = 0; i &lt; n; i++)
+    for (j = 0; j &lt; m; j++)
+        s += g[i][j];</pre></div>
+    <div><div class="lbl">코드 ㉯</div><pre>for (i = 1; i &lt;= n; i *= 2)
+    for (j = 0; j &lt; n; j++)
+        s += j;</pre></div>
+  </div>
+  <p>㉮는 <strong>O(N·M)</strong>이다. N²이 아니다. 두 변수가 다르면 곱해서 적는다. ㉯의 바깥 루프는 1, 2, 4, 8…로 커지므로 <strong>log₂N</strong>번 돌고, 안쪽이 N번이므로 <strong>O(N log N)</strong>이다. N = 10<sup>5</sup>이면 log₂(10<sup>5</sup>) ≈ 16.6이므로 약 166만 번이다.</p>
+
+  <h3><span class="tag">예제 4</span>최악의 입력을 직접 만든다</h3>
+  <p>도입 문제에서 무작위 입력은 1.5초, 최악의 입력은 4.4초였다. 그 차이를 만든 것은 <strong>단 한 줄</strong>이다.</p>
+  <div class="io">
+    <div><div class="lbl">무작위 질문 (평균 길이 N/3)</div><pre>for _ in range(q):
+    l = random(1, n); r = random(1, n)
+    if l &gt; r: l, r = r, l
+    print(l, r)</pre></div>
+    <div><div class="lbl">최악 질문 (항상 길이 N)</div><pre>for _ in range(q):
+    print(1, n)       ← 이 한 줄</pre></div>
+  </div>
+  <div class="note warn">
+    <span class="h">최악 입력의 공식</span>
+    <b>①</b> 모든 값을 <b>제약의 최댓값</b>으로 (오버플로 확인)<br>
+    <b>②</b> N과 Q를 <b>제약의 최댓값</b>으로 (시간 확인)<br>
+    <b>③</b> 루프가 <b>가장 많이 도는 모양</b>으로 (위의 <code>1 n</code>)<br>
+    세 가지를 동시에 만족하는 입력을 만들어 돌려 본다. 그러고도 통과하면 제출한다.
+  </div>
+
+  <h3><span class="tag">예제 5</span>입출력은 느리지 않다</h3>
+  <p>"시간 초과가 났다 → 입출력이 느린가?"라는 의심을 자주 한다. 측정해 보면 그렇지 않다.</p>
+  <table>
+    <thead><tr><th style="width:42%">작업</th><th style="width:18%">시간</th><th>판정</th></tr></thead>
+    <tbody>
+      <tr><td><code>scanf</code>로 정수 100만 개 읽기</td><td>0.050초</td><td>문제없음</td></tr>
+      <tr><td><code>printf</code>로 100만 줄 출력</td><td>0.047초</td><td>문제없음</td></tr>
+      <tr><td><code>printf</code>마다 <code>fflush</code> 호출</td><td>0.231초</td><td><strong>5배 느림 — 하지 말 것</strong></td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <span class="h">결론</span>
+    C의 <code>scanf</code>/<code>printf</code>는 브론즈 구간에서 병목이 아니다. <b>시간 초과가 났다면 알고리즘이 문제다.</b> 단, 출력할 때마다 <code>fflush(stdout)</code>를 부르는 습관이 있다면 그것은 지운다. 디버깅이 끝났는데 남겨 둔 <code>fflush</code>가 흔한 범인이다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">05 — 흔한 오류</span>
+  <h2>흔한 오류 여섯 가지</h2>
+
+  <div class="errs">
+    <div class="err"><span class="en">1</span><div class="eb">
+      <b>내 입력으로만 테스트하고 "빠르다"고 판단한다</b><br>
+      도입 문제에서 무작위 입력 1.5초 / 최악 입력 4.4초였다. 직접 만든 작은 입력은 거의 항상 최악이 아니다.<br>
+      <span class="fix">대책</span> 예제 4의 <b>최악 입력 공식 세 가지</b>를 적용한 파일을 만들어 <code>time</code>으로 잰다.
+    </div></div>
+
+    <div class="err"><span class="en">2</span><div class="eb">
+      <b>N이 작은 쪽만 보고 안심한다</b><br>
+      "T ≤ 100이고 N ≤ 10,000이니까 둘 다 작네"가 아니다. <b>T × N = 10<sup>6</sup></b>이고, 각 케이스가 O(N²)면 100 × 10<sup>8</sup> = <b>10<sup>10</sup></b>이다.<br>
+      <span class="fix">대책</span> 제약이 여러 개면 <b>곱한 값</b>을 계산한다. 1장 체크리스트 6번이 이것이다.
+    </div></div>
+
+    <div class="err"><span class="en">3</span><div class="eb">
+      <b>합을 <code>int</code>로 받는다</b><br>
+      값이 10<sup>9</sup>, 개수가 10<sup>5</sup>면 합은 10<sup>14</sup>다. <code>int</code>는 2.1 × 10<sup>9</sup>에서 끊긴다. 측정에서 <code>276447232</code>라는 <b>그럴듯한 숫자</b>가 나왔다.<br>
+      <span class="fix">대책</span> 더하거나 곱하는 변수는 <b>일단 <code>long long</code></b>으로 쓴다. 속도 손해는 측정상 없었다.
+    </div></div>
+
+    <div class="err"><span class="en">4</span><div class="eb">
+      <b><code>long long</code>을 <code>%d</code>로 출력한다</b><br>
+      변수는 제대로 선언했는데 서식이 <code>%d</code>면 하위 32비트만 찍히거나 쓰레기가 나온다. 컴파일 경고는 <code>-Wall</code>을 켜야 보인다.<br>
+      <span class="fix">대책</span> <code>long long</code>은 <b>읽기 <code>%lld</code>, 쓰기 <code>%lld</code></b>로 짝을 맞춘다(3장).
+    </div></div>
+
+    <div class="err"><span class="en">5</span><div class="eb">
+      <b>큰 배열을 함수 안에 선언한다</b><br>
+      <code>int big[2000][2000];</code>을 <code>main</code> 안에 두면 15.3MB가 스택에 올라가고, 스택은 8MB다. 결과는 컴파일 성공 후 <b>Segmentation fault</b>(종료 코드 139)다.<br>
+      <span class="fix">대책</span> 큰 배열은 <b>함수 바깥</b>에 선언한다. 0 초기화도 따라온다.
+    </div></div>
+
+    <div class="err"><span class="en">6</span><div class="eb">
+      <b>상수 줄이기로 복잡도 문제를 해결하려 한다</b><br>
+      10<sup>10</sup>번 도는 코드에서 <code>%</code>를 빼면 4배 빨라져 2.5 × 10<sup>9</sup>번어치가 된다. 여전히 시간 초과다.<br>
+      <span class="fix">대책</span> 순서는 <b>복잡도 먼저, 상수 나중</b>이다. O(N²)가 O(N)이 되면 100배지만, 상수 최적화는 최대 4배다.
+    </div></div>
+  </div>
+
+  <div class="note warn">
+    <span class="h">이 장의 가장 중요한 교훈</span>
+    오류 1·2·3은 <b>모두 제출하기 전에 종이에서 잡을 수 있다</b>. 제약을 읽고, 곱하고, 자릿수를 세는 것뿐이다. 코드를 다 쓰고 제출해서 "시간 초과"를 받고 나서야 복잡도를 세는 것이 가장 느린 길이다.
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">06 — 연습 문제</span>
+  <h2>연습 문제 20문항</h2>
+  <p>01~08번은 <strong>코드를 쓰지 않는다</strong>. 제약을 보고 판단만 적는다. 09번부터 코드를 쓴다.</p>
+
+  <div class="pset">
+  <span class="pgroup">기본 8문항 — 판단만 적기</span>
+
+  <div class="prob"><span class="pn">01</span><div class="pb">
+    <p>다음 각 제약에서 <b>허용되는 최대 복잡도</b>를 적어라. 시간 제한은 모두 1초다.<br>
+    ⑴ N ≤ 100 &nbsp;&nbsp; ⑵ N ≤ 2,000 &nbsp;&nbsp; ⑶ N ≤ 300,000 &nbsp;&nbsp; ⑷ N ≤ 5,000,000 &nbsp;&nbsp; ⑸ N ≤ 10<sup>12</sup></p>
+  </div></div>
+
+  <div class="prob"><span class="pn">02</span><div class="pb">
+    <p>다음 코드들의 복잡도를 O 표기로 적어라. N은 <code>n</code>, M은 <code>m</code>이다.</p>
+    <div class="sample"><div><span>CODE</span><pre>㉮ for(i=0;i&lt;n;i++) s+=a[i];
+   for(j=0;j&lt;n;j++) t+=a[j];
+
+㉯ for(i=0;i&lt;n;i++)
+       for(j=0;j&lt;m;j++) s++;
+
+㉰ for(i=n;i&gt;=1;i/=2) s++;
+
+㉱ for(i=0;i&lt;n;i++)
+       for(j=0;j&lt;i;j++)
+           for(k=0;k&lt;j;k++) s++;</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">03</span><div class="pb">
+    <p>각 상황에서 결과가 <code>int</code>에 담기는지 판정하고, 넘친다면 최댓값을 10의 거듭제곱으로 적어라.<br>
+    ⑴ 1 ≤ A, B ≤ 10<sup>4</sup>일 때 A × B &nbsp;&nbsp; ⑵ 1 ≤ A, B ≤ 10<sup>5</sup>일 때 A × B<br>
+    ⑶ N ≤ 10<sup>6</sup>, 각 값 ≤ 10<sup>3</sup>일 때 전체 합 &nbsp;&nbsp; ⑷ N ≤ 10<sup>5</sup>일 때 1 + 2 + … + N</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">04</span><div class="pb">
+    <p>메모리 제한 256MB에서 다음 배열 선언이 가능한지 판정하라. 가능하지 않다면 몇 MB인지 적어라.<br>
+    ⑴ <code>int a[50000000];</code> &nbsp;&nbsp; ⑵ <code>long long a[40000000];</code><br>
+    ⑶ <code>int a[5000][5000];</code> &nbsp;&nbsp; ⑷ <code>char a[1000][1000][1000];</code></p>
+  </div></div>
+
+  <div class="prob"><span class="pn">05</span><div class="pb">
+    <p>N ≤ 10<sup>5</sup>, 값 ≤ 10<sup>9</sup>인 수열의 <b>최악 입력 파일</b>을 만드는 절차를 세 줄로 적어라. 예제 4의 공식을 쓴다.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">06</span><div class="pb">
+    <p>다음 문제의 제약을 보고 <b>출제자가 의도한 알고리즘</b>을 추측하고 근거를 적어라.<br>
+    ⑴ "N개의 물건 중 일부를 고른다. 1 ≤ N ≤ 20"<br>
+    ⑵ "N개 도시를 모두 한 번씩 방문하는 순서를 정한다. 1 ≤ N ≤ 10"<br>
+    ⑶ "N개의 수를 정렬된 상태로 다룬다. 1 ≤ N ≤ 1,000,000"</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">07</span><div class="pb">
+    <p>T개의 테스트케이스가 있고 각 케이스의 N이 다음과 같다. <b>전체 연산 횟수</b>를 계산하고 1초 안에 가능한지 판정하라.<br>
+    ⑴ T ≤ 100, N ≤ 1,000, 각 케이스 O(N²)<br>
+    ⑵ T ≤ 10, N ≤ 100,000, 각 케이스 O(N log N)<br>
+    ⑶ T ≤ 10<sup>5</sup>, N ≤ 100, 각 케이스 O(N²)</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">08</span><div class="pb">
+    <p>측정 뼈대에서 <code>volatile</code>을 빼고 <code>-O2</code>로 컴파일하면 0.000초가 나오는 이유를 설명하라. <code>volatile</code> 대신 쓸 수 있는 다른 방법도 하나 적어라.</p>
+  </div></div>
+
+  <span class="pgroup">응용 8문항 — 코드를 쓴다</span>
+
+  <div class="prob"><span class="pn">09</span><div class="pb">
+    <p><b>측정 뼈대 작성</b> — 1억 회 반복 루프의 시간을 재서 <code>stderr</code>에 <code>%.3f초</code> 형식으로 출력하는 프로그램을 작성하라. <code>-O0</code>과 <code>-O2</code>로 각각 컴파일해 두 값을 비교하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">10</span><div class="pb">
+    <p><b>누적합</b> — 본문의 <code>prefix.c</code>를 보지 않고 직접 작성하라. N, Q ≤ 10<sup>5</sup>, 값 ≤ 10<sup>9</sup>.</p>
+    <div class="sample"><div><span>INPUT</span><pre>5 3
+1 2 3 4 5
+1 5
+2 4
+3 3</pre></div><div><span>OUTPUT</span><pre>15
+9
+3</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">11</span><div class="pb">
+    <p><b>두 판본 비교 측정</b> — 10번의 누적합판과 매번 더하는 판을 모두 작성하고, N = Q = 100,000이며 모든 질문이 <code>1 N</code>인 입력으로 두 실행 시간을 측정해 표로 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">12</span><div class="pb">
+    <p><b>오버플로 지점 찾기</b> — 1부터 N까지의 합을 <code>int</code>로 계산하면서 N을 1씩 늘려, 음수가 되는 <b>첫 N</b>을 출력하라. 결과를 N(N+1)/2 = 2<sup>31</sup> 로 검산하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">13</span><div class="pb">
+    <p><b>복잡도 체감</b> — N = 1,000 / 5,000 / 10,000 / 20,000에 대해 <code>for i: for j&gt;i: if (a[i]&lt;a[j]) c++;</code> 의 시간을 측정하고, <b>N이 2배가 될 때 시간이 몇 배</b>가 되는지 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">14</span><div class="pb">
+    <p><b>부분집합 개수</b> — N개 원소의 모든 부분집합을 재귀로 만들어 개수를 세는 프로그램을 작성하라. N = 20, 24, 26에 대해 시간을 측정하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3</pre></div><div><span>OUTPUT</span><pre>8</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">15</span><div class="pb">
+    <p><b>순열 개수</b> — N개를 줄 세우는 모든 방법의 수를 재귀로 세는 프로그램을 작성하라. N = 8, 10, 11에 대해 시간을 측정하고, N = 12의 시간을 <b>예측한 뒤</b> 실제로 재서 비교하라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">16</span><div class="pb">
+    <p><b>스택 터뜨리기</b> — <code>int big[2000][2000];</code>을 ⑴ <code>main</code> 안에, ⑵ 함수 밖에 선언하고 모든 칸에 값을 넣는 프로그램을 각각 작성해 실행 결과와 <b>종료 코드</b>(<code>echo $?</code>)를 적어라.</p>
+  </div></div>
+
+  <span class="pgroup">심화 4문항</span>
+
+  <div class="prob"><span class="pn">17</span><div class="pb">
+    <p><b>연산 비용 측정</b> — 1억 회 루프 안에서 ⑴ 덧셈만 ⑵ 배열 읽기 ⑶ 나머지 연산 ⑷ 함수 호출을 각각 수행해 시간을 재고, 본문 2.2절 표와 비교하라. 값이 다르다면 이유를 두 가지 이상 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">18</span><div class="pb">
+    <p><b>2차원 누적합</b> — N × N 격자와 Q개의 직사각형 질문(r1, c1, r2, c2)이 주어진다. N ≤ 1,000, Q ≤ 10<sup>5</sup>. 질문마다 직사각형 안의 합을 출력하라. 먼저 복잡도를 계산해 단순 방법이 불가능함을 보이고, 2차원 누적합으로 작성하라.</p>
+    <div class="sample"><div><span>INPUT</span><pre>3 2
+1 2 3
+4 5 6
+7 8 9
+1 1 2 2
+2 2 3 3</pre></div><div><span>OUTPUT</span><pre>12
+28</pre></div></div>
+  </div></div>
+
+  <div class="prob"><span class="pn">19</span><div class="pb">
+    <p><b>제약 역추적</b> — 어떤 문제의 정답 코드가 O(N log N)이고 N ≤ 10<sup>6</sup>이다. 출제자가 <b>O(N²) 풀이를 떨어뜨리기 위해</b> 정한 제약이라고 할 때, ⑴ O(N²)의 연산 횟수 ⑵ 만약 N ≤ 3,000이었다면 어떻게 되었을지 ⑶ 출제자가 N을 10<sup>6</sup>으로 정한 이유를 각각 적어라.</p>
+  </div></div>
+
+  <div class="prob"><span class="pn">20</span><div class="pb">
+    <p><b>종합</b> — 아래 문제를 받았다. 코드를 쓰기 전에 <b>1장 체크리스트 일곱 줄 + 이 장의 복잡도·자료형·메모리 판단</b>을 모두 적어라. 그다음 코드를 작성하라.</p>
+    <div class="sample"><div><span>PROBLEM</span><pre>길이 N인 수열이 주어진다.
+연속한 K개의 합 중 최댓값을 출력하라.
+
+제약
+1 ≤ K ≤ N ≤ 1,000,000
+1 ≤ A[i] ≤ 1,000,000,000
+시간 1초 / 메모리 256MB</pre></div><div><span>SAMPLE</span><pre>입력
+5 2
+1 5 3 2 4
+
+출력
+8</pre></div></div>
+  </div></div>
+  </div>
+</section>
+
+<section class="pagebreak">
+  <span class="sec-no">07 — 확인 평가</span>
+  <h2>정답과 해설</h2>
+
+  <div class="ans"><span class="an">01</span><div class="ab">
+    ⑴ <b>O(N³)</b> — 100³ = 10<sup>6</sup>. O(N!)이나 O(2<sup>N</sup>)은 100에서는 불가능하다.<br>
+    ⑵ <b>O(N²)</b> — 2,000² = 4 × 10<sup>6</sup>.<br>
+    ⑶ <b>O(N log N)</b> — 3 × 10<sup>5</sup> × 18 ≈ 5.4 × 10<sup>6</sup>. O(N²)이면 9 × 10<sup>10</sup>으로 불가.<br>
+    ⑷ <b>O(N)</b> — 5 × 10<sup>6</sup>. O(N log N)도 1.1 × 10<sup>8</sup>로 가능하지만 아슬아슬하다.<br>
+    ⑸ <b>O(log N) 또는 O(1)</b> — 10<sup>12</sup>를 한 번 훑는 것조차 불가능하다. 공식이나 이분 탐색.<br>
+    <b>지도 포인트</b> — ⑷에서 "O(N)인가 O(N log N)인가"처럼 <b>경계에 걸리는 경우</b>가 실전에서 가장 많다. 이럴 때는 상수까지 본다.
+  </div></div>
+
+  <div class="ans"><span class="an">02</span><div class="ab">
+    ㉮ <b>O(N)</b> — 루프 두 개를 <b>나란히</b> 둔 것이므로 N + N = 2N. 상수 2는 버린다.<br>
+    ㉯ <b>O(N·M)</b> — 변수가 다르면 곱해서 적는다. N²이 아니다.<br>
+    ㉰ <b>O(log N)</b> — <code>i</code>가 절반씩 줄어든다. N = 10<sup>6</sup>이면 약 20번.<br>
+    ㉱ <b>O(N³)</b> — 정확히는 N(N-1)(N-2)/6 ≈ N³/6이지만 상수를 버린다.<br>
+    <b>지도 포인트</b> — ㉮와 ㉯를 헷갈리는 학생이 많다. 판별법은 <b>"안에 있는가, 나란한가"</b> 한 가지다. 중첩이면 곱하고, 나란하면 더한다.
+  </div></div>
+
+  <div class="ans"><span class="an">03</span><div class="ab">
+    ⑴ <b>가능</b> — 10<sup>4</sup> × 10<sup>4</sup> = 10<sup>8</sup>. int 한계 2.1 × 10<sup>9</sup>보다 작다.<br>
+    ⑵ <b>불가, 10<sup>10</sup></b> — int 한계의 약 5배. <code>long long</code> 필요.<br>
+    ⑶ <b>불가, 10<sup>9</sup></b> — 정확히는 10<sup>6</sup> × 10<sup>3</sup> = 10<sup>9</sup>. 한계 2.1 × 10<sup>9</sup>보다 작으므로 <b>아슬아슬하게 가능</b>하다. 그러나 여유가 2배뿐이라 <code>long long</code>을 권한다.<br>
+    ⑷ <b>불가, 약 5 × 10<sup>9</sup></b> — N(N+1)/2 = 10<sup>5</sup> × 10<sup>5</sup>/2 = 5 × 10<sup>9</sup>.<br>
+    <b>지도 포인트</b> — ⑶이 핵심이다. <b>"가능하지만 여유가 없다"</b>는 상태를 알아보는 것이 중요하다. 2배 여유면 제약이 조금만 달라져도 터진다. 2장에서 다룬 오버플로가 여기서 다시 나온다.
+  </div></div>
+
+  <div class="ans"><span class="an">04</span><div class="ab">
+    ⑴ <b>가능 — 190.7MB</b> (5 × 10<sup>7</sup> × 4바이트). 256MB 안이지만 여유가 적다.<br>
+    ⑵ <b>불가 — 305.2MB</b> (4 × 10<sup>7</sup> × 8바이트).<br>
+    ⑶ <b>가능 — 95.4MB</b> (5,000 × 5,000 × 4바이트 = 10<sup>8</sup>바이트).<br>
+    ⑷ <b>불가 — 953.7MB</b> (10<sup>9</sup>개 × 1바이트).<br>
+    <b>지도 포인트</b> — 1MB = 1,048,576바이트다. 암산할 때는 <b>"100만 바이트 ≈ 1MB"</b>로 근사하고, 경계에 걸리면 정확히 계산한다. 그리고 ⑴·⑶처럼 <b>통과하지만 여유가 없는</b> 경우를 구분하게 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">05</span><div class="ab">
+    ① 첫 줄에 N = 100,000 (제약의 최댓값).<br>
+    ② 모든 값을 10<sup>9</sup> (제약의 최댓값) — 합이 10<sup>14</sup>가 되어 오버플로를 잡는다.<br>
+    ③ 질문이 있다면 모두 <code>1 N</code> (루프가 가장 많이 도는 모양).<br>
+    <b>지도 포인트</b> — 학생들은 "큰 입력"까지는 만들지만 ②와 ③을 빠뜨린다. <b>크기·값·모양 세 가지가 모두 최악</b>이어야 한다. Python 세 줄이면 만들어지므로 손으로 만들지 않게 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">06</span><div class="ab">
+    ⑴ <b>부분집합 완전탐색</b> — N ≤ 20은 2<sup>20</sup> ≈ 10<sup>6</sup>. "N ≤ 20"은 거의 언제나 2<sup>N</sup> 신호다.<br>
+    ⑵ <b>순열 완전탐색</b> — N ≤ 10은 10! ≈ 3.6 × 10<sup>6</sup>. "방문 순서"는 순열의 전형적 표현이다.<br>
+    ⑶ <b>정렬</b> — 10<sup>6</sup>은 O(N²) 불가, O(N log N) 가능. 측정값은 0.181초였다.<br>
+    <b>지도 포인트</b> — 이 문항이 이 장 전체의 목적이다. <b>제약은 힌트다.</b> N ≤ 20을 보면 "완전탐색을 해도 된다는 허락"으로 읽는 훈련을 반복시킨다. 10장 완전탐색 입문에서 이 신호를 다시 쓴다.
+  </div></div>
+
+  <div class="ans"><span class="an">07</span><div class="ab">
+    ⑴ 100 × 1,000² = <b>10<sup>8</sup></b> → 가능하나 아슬아슬.<br>
+    ⑵ 10 × (10<sup>5</sup> × 17) ≈ <b>1.7 × 10<sup>7</sup></b> → 여유롭게 가능.<br>
+    ⑶ 10<sup>5</sup> × 100² = <b>10<sup>9</sup></b> → 위험. 케이스마다 O(N²)를 O(N)으로 줄여야 한다.<br>
+    <b>지도 포인트</b> — ⑶이 오류 2의 전형이다. T도 100이고 N도 100이면 작아 보이지만, T가 10<sup>5</sup>이면 이야기가 완전히 다르다. <b>항상 곱한다.</b>
+  </div></div>
+
+  <div class="ans"><span class="an">08</span><div class="ab">
+    <code>s</code>의 값이 <b>어디에도 쓰이지 않으므로</b> 컴파일러는 루프 전체를 제거해도 프로그램의 동작이 같다고 판단한다. <code>-O2</code>는 이런 <b>죽은 코드 제거</b>를 수행한다.<br>
+    <b>다른 방법</b> — 루프가 끝난 뒤 <code>printf("%lld\n", s);</code>로 값을 실제로 출력한다. 쓰이는 값이 되면 지울 수 없다.<br>
+    <b>지도 포인트</b> — 이것은 1장에서 다룬 "<code>-O2</code>가 코드를 바꾼다"의 연장이다. 측정 코드를 쓸 때는 <b>내가 재려는 것이 실제로 실행되는지</b>부터 확인한다. 0.000초가 나오면 거의 항상 지워진 것이다.
+  </div></div>
+
+  <div class="ans"><span class="an">09</span><div class="ab">
+    본문 3.1절 뼈대 그대로. 측정 결과는 <code>-O0</code>이 <code>-O2</code>보다 <b>3~4배</b> 느리다(본문 2.1절 표: 1억 회에서 0.144초 대 0.040초).<br>
+    <b>지도 포인트</b> — 채점 서버는 보통 <code>-O2</code>로 컴파일한다. 내 컴퓨터에서 <code>-O0</code>으로 재고 "느리다"고 판단하면 과하게 비관하게 된다. <b>측정은 <code>-O2</code>로</b> 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">10</span><div class="ab">
+    본문 <code>prefix.c</code>와 동일. 채점 포인트 네 가지 —<br>
+    ① <code>p</code>를 <b><code>long long</code></b>으로 선언했는가 (10<sup>14</sup>)<br>
+    ② 배열을 <b>1번부터</b> 썼는가 (<code>p[l-1]</code>의 경계)<br>
+    ③ <code>p</code>를 <b>전역</b>에 두었는가<br>
+    ④ 출력 서식이 <code>%lld</code>인가<br>
+    <b>지도 포인트</b> — 누적합은 "읽으면서 바로 더한다"가 핵심이다. 원본 배열을 따로 저장할 필요가 없다. 메모리와 코드가 동시에 줄어든다.
+  </div></div>
+
+  <div class="ans"><span class="an">11</span><div class="ab">
+    측정값 — 느린 판 <b>4.428초</b>, 누적합 판 <b>0.041초</b>. 약 <b>108배</b>.<br>
+    무작위 질문일 때는 1.534초 대 0.051초로 약 30배였다. <b>최악 입력일수록 차이가 커진다.</b><br>
+    <b>지도 포인트</b> — 숫자를 직접 보게 하는 것이 이 문항의 전부다. "O(N²)는 느리다"는 말보다 <b>4.428 / 0.041</b>이라는 두 숫자가 오래 남는다. 측정 결과를 공책에 표로 적게 한다.
+  </div></div>
+
+  <div class="ans"><span class="an">12</span><div class="ab">
+    <b>첫 N = 65,536</b>. 검산 — N(N+1)/2 가 2<sup>31</sup> = 2,147,483,648을 처음 넘는 지점이다. N = 65,535면 2,147,450,880으로 <code>INT_MAX</code>(2,147,483,647) 이하이고, N = 65,536이면 2,147,516,416으로 넘는다.<br>
+    <b>지도 포인트</b> — 2장에서 한 실험과 같은 문제다. 여기서는 <b>제약을 보고 미리 예측한 뒤</b> 실험으로 확인하는 순서를 지키게 한다. 예측 없이 돌리면 실험이 아니라 구경이다.
+  </div></div>
+
+  <div class="ans"><span class="an">13</span><div class="ab">
+    측정값 — N=1,000 → 0.001초 / 5,000 → 0.037초 / 10,000 → 0.179초 / 20,000 → 0.658초.<br>
+    N이 2배가 될 때 시간은 <b>약 4배</b>가 된다(0.179 → 0.658은 3.7배). O(N²)의 정의 그대로다.<br>
+    <b>지도 포인트</b> — "N이 2배면 시간은 4배"를 <b>측정으로 확인</b>하는 것이 목적이다. 같은 방법으로 O(N)이면 2배, O(N³)이면 8배가 된다. 이 비율을 보면 <b>내 코드의 복잡도를 역으로 알아낼 수 있다.</b>
+  </div></div>
+
+  <div class="ans"><span class="an">14</span><div class="ab">
+    각 원소에 대해 "넣는다 / 안 넣는다" 두 갈래로 재귀하면 잎이 2<sup>N</sup>개다.<br>
+    측정값 — N=20 → 0.002초 / N=24 → 0.026초 / N=26 → 0.122초 / N=28 → 0.378초.<br>
+    N이 1 늘 때마다 시간이 <b>2배</b>가 된다.<br>
+    <b>지도 포인트</b> — 지수 복잡도의 무서움은 "N을 1만 늘려도 2배"라는 데 있다. N ≤ 20이 안전 기준인 이유, 그리고 N = 40이면 10<sup>12</sup>라서 손도 못 대는 이유를 여기서 체감시킨다.
+  </div></div>
+
+  <div class="ans"><span class="an">15</span><div class="ab">
+    측정값 — N=8 → 0.001초(40,320가지) / N=10 → 0.083초(3,628,800) / N=11 → 1.083초(39,916,800) / N=12 → <b>12.910초</b>(479,001,600).<br>
+    <b>예측</b> — N=11이 1.083초였으므로 N=12는 12배인 약 13초. 실측 12.910초로 거의 정확하다.<br>
+    <b>지도 포인트</b> — N!은 N이 1 늘 때 <b>N배</b>가 된다. 2<sup>N</sup>이 2배씩 느는 것과 비교하면 훨씬 가파르다. 참고로 N=13은 약 168초, N=14는 약 40분이다. <b>"N ≤ 10이면 순열"</b>이라는 기준이 왜 그렇게 작은지가 설명된다.
+  </div></div>
+
+  <div class="ans"><span class="an">16</span><div class="ab">
+    ⑴ <b>Segmentation fault, 종료 코드 139</b> — 15.3MB를 8MB 스택에 올리려 했다.<br>
+    ⑵ <b>정상 동작, 종료 코드 0</b>.<br>
+    두 코드의 차이는 <code>int big[2000][2000];</code> 줄의 <b>위치 하나</b>다.<br>
+    <b>지도 포인트</b> — 139 = 128 + 11이고 11은 SIGSEGV다. 종료 코드를 보면 "틀렸습니다"가 아니라 "런타임 에러"의 원인을 짐작할 수 있다. <code>ulimit -s</code>로 스택 크기를 직접 확인하게 한다(보통 8192 KB).
+  </div></div>
+
+  <div class="ans"><span class="an">17</span><div class="ab">
+    본문 2.2절 — 덧셈 0.038 / 배열 읽기 0.075 / 나머지 0.148 / 함수 호출 0.120초.<br>
+    <b>값이 다른 이유</b> — ① CPU 모델과 클럭이 다르다 ② 컴파일러 버전과 최적화 옵션이 다르다 ③ 다른 프로그램이 같이 돌고 있다 ④ 캐시에 올라와 있는지에 따라 배열 접근 속도가 달라진다.<br>
+    <b>지도 포인트</b> — <b>절대값이 아니라 비율</b>을 보게 한다. 어느 컴퓨터에서 재도 "나머지 연산이 덧셈보다 3~4배 비싸다"는 관계는 유지된다. 그리고 이 차이가 알고리즘 차이(100배)보다 작다는 것을 다시 짚는다.
+  </div></div>
+
+  <div class="ans"><span class="an">18</span><div class="ab">
+    <b>복잡도</b> — 단순 방법은 질문마다 최대 N² = 10<sup>6</sup>칸을 훑으므로 Q × N² = 10<sup>5</sup> × 10<sup>6</sup> = <b>10<sup>11</sup></b>. 불가능하다.<br>
+    <b>2차원 누적합</b> — <code>P[i][j] = g[i][j] + P[i-1][j] + P[i][j-1] - P[i-1][j-1]</code>로 만든 뒤,<br>
+    질문은 <code>P[r2][c2] - P[r1-1][c2] - P[r2][c1-1] + P[r1-1][c1-1]</code> 한 줄이다. 전체 O(N² + Q) = 1.1 × 10<sup>6</sup>.<br>
+    <b>메모리</b> — <code>long long P[1001][1001]</code>은 약 8MB이므로 <b>반드시 전역</b>에 둔다.<br>
+    <b>지도 포인트</b> — 겹치는 부분을 두 번 빼고 한 번 더하는 <b>포함-배제</b>가 핵심이다. 3 × 3 격자에 직접 그려 가며 네 항을 손으로 확인시킨다. 9장 2차원 격자에서 이 식을 다시 쓴다.
+  </div></div>
+
+  <div class="ans"><span class="an">19</span><div class="ab">
+    ⑴ (10<sup>6</sup>)² = <b>10<sup>12</sup></b> — 1초에 10<sup>8</sup>~10<sup>9</sup>이므로 <b>1,000초 이상</b>이다. 확실히 떨어진다.<br>
+    ⑵ 3,000² = 9 × 10<sup>6</sup>으로 <b>O(N²)도 통과</b>한다. 출제 의도가 무너진다.<br>
+    ⑶ O(N log N)은 10<sup>6</sup> × 20 = 2 × 10<sup>7</sup>로 <b>여유롭게 통과</b>하고 O(N²)는 <b>확실히 탈락</b>하는 지점이기 때문이다. 두 조건을 동시에 만족하는 N을 고른 것이다.<br>
+    <b>지도 포인트</b> — 출제자의 입장에서 제약을 보게 하는 문항이다. 이 관점이 생기면 <b>제약을 읽는 순간 의도가 보인다</b>. 12장 브론즈 실전 모의에서 이 시각을 다시 쓴다.
+  </div></div>
+
+  <div class="ans"><span class="an">20</span><div class="ab">
+    <b>체크리스트(1장)</b><br>
+    1. 입력 유형 — ② N개 (첫 줄에 N, K / 다음 줄에 N개)<br>
+    2. 한 케이스 — N, K와 N개의 정수. 케이스는 하나<br>
+    3. 출력 — 한 줄, 정수 하나<br>
+    4. 범위 — N ≤ 10<sup>6</sup>, 값 ≤ 10<sup>9</sup>, K ≤ N<br>
+    5. 최악의 값 — K개의 합이 최대 10<sup>6</sup> × 10<sup>9</sup> = <b>10<sup>15</sup></b> → <code>long long</code><br>
+    6. 복잡도 — N ≤ 10<sup>6</sup>이므로 <b>O(N) 또는 O(N log N)</b>. 모든 시작점마다 K개를 더하면 N × K = 10<sup>12</sup>로 <b>불가</b><br>
+    7. 경계 입력 — K = 1 / K = N / N = 1 / 모든 값이 10<sup>9</sup>이고 N = K = 10<sup>6</sup><br><br>
+    <b>메모리</b> — <code>int a[1000001]</code>은 4MB. 누적합을 쓰면 <code>long long p[1000001]</code>로 8MB. 둘 다 256MB 안이지만 <b>전역</b>에 선언한다(8MB는 스택 한계와 같아 위험하다).<br>
+    <b>코드</b> — 누적합으로 <code>p[i] - p[i-K]</code>를 i = K..N에서 최대로 취하거나, 슬라이딩 윈도로 <code>s += a[i] - a[i-K]</code>를 굴린다. 둘 다 O(N)이다.<br>
+    <b>지도 포인트</b> — 6번이 핵심이다. "연속한 K개"라는 말에 이끌려 이중 루프를 쓰면 10<sup>12</sup>다. <b>제약을 먼저 보면 이중 루프를 아예 시도하지 않는다.</b> 그리고 5번에서 10<sup>15</sup>를 계산해 두지 않으면 <code>int</code>로 쓰고 틀린다. 이 장의 모든 내용이 한 문제에 들어 있다.
+  </div></div>
+</section>
+
+<section class="wrapup">
+  <span class="sec-no">08 — 마무리</span>
+  <h2>이 장을 마치기 전 점검</h2>
+  <ul class="check">
+    <li>"1초에 1억 번"을 <strong>안전 기준</strong>으로 기억한다 (측정값은 더 넉넉하다)</li>
+    <li>루프가 <strong>중첩이면 곱하고 나란하면 더한다</strong></li>
+    <li>제약이 여러 개면 <strong>곱한 값</strong>을 계산한다 (T × N)</li>
+    <li>N의 범위를 보고 허용 복잡도를 말할 수 있다 (10 / 20 / 500 / 5,000 / 500,000 / 10<sup>7</sup>)</li>
+    <li>답의 최댓값이 <strong>10자리를 넘으면</strong> <code>long long</code>을 쓴다</li>
+    <li>큰 배열은 <strong>함수 바깥</strong>에 선언한다 (스택은 8MB)</li>
+    <li><strong>최악의 입력</strong>을 직접 만들어 <code>time</code>으로 잰다</li>
+    <li>시간 초과는 <strong>입출력이 아니라 알고리즘</strong>의 문제다</li>
+  </ul>
+  <div class="note" style="margin-top:14px">
+    <span class="h">다음 장 예고 — 03장 조건 분기형 문제</span>
+    1장에서 문제를 읽는 절차를, 2장에서 방법을 고르는 기준을 만들었다. 3장부터는 <strong>실제 문제 유형</strong>으로 들어간다. 첫 유형은 조건 분기다. 등급 판정, 윤년, 삼각형 종류처럼 <strong>경우를 빠짐없이 나누는</strong> 문제에서, 조건의 순서를 어떻게 잡아야 중복과 누락이 사라지는지를 다룬다.
+  </div>
+</section>
+
+<footer class="colophon">
+  <span class="name">세영코딩연구소  저자 : 컴퓨터공학박사 KIM</span>
+  <span class="meta">중등 정보올림피아드 C · PART 2 · 02장 · 2026-10-13 · 전 코드 gcc 13.3.0 검증 · 측정 Intel Xeon 2.10GHz</span>
+</footer>
+</div></body></html>
