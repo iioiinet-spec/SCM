@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>비와 비율 — 그림으로 세우는 비례식</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --ivory:#FDF8EE; --ivory-2:#F7EFDD;
+  --ink:#4A3B2A; --ink-soft:#7A6A55; --line:#E6D9BE; --white:#fff;
+  --accent:#FF8A3D; --accent-soft:#FFE6D2;
+  --good:#3BB273; --good-soft:#DFF3E7;
+  --bad:#E4572E; --bad-soft:#FBE3DB;
+  --blue:#4D96FF; --blue-soft:#DFEBFF;
+  --violet:#9B72CF; --violet-soft:#EDE4F8;
+  --teal:#2EC4B6; --pink:#F26CA7;
+  --shadow:0 4px 0 rgba(0,0,0,.08), 0 10px 24px rgba(120,95,60,.12);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--ivory);
+  background-image:radial-gradient(circle at 12% 8%, #fff6e3 0 18%, transparent 19%),
+                   radial-gradient(circle at 88% 4%, #ffeede 0 14%, transparent 15%);
+  color:var(--ink);
+  font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-size:17px; line-height:1.65; -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:1020px;margin:0 auto;padding:0 16px 64px}
+.hero{text-align:center;padding:32px 16px 18px}
+.hero h1{font-size:clamp(26px,5.4vw,46px);margin:0 0 6px;letter-spacing:-1px;color:#3C2F20;text-shadow:2px 3px 0 #FFD9A8}
+.hero p{margin:0;color:var(--ink-soft);font-size:clamp(14px,2.6vw,18px)}
+.brand{display:inline-block;margin-top:12px;padding:6px 16px;border-radius:999px;background:var(--white);
+  border:2px dashed var(--line);font-size:13px;color:var(--ink-soft);font-family:'Gaegu',sans-serif;font-weight:700}
+
+.tabs{position:sticky;top:0;z-index:30;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;
+  padding:10px;margin:0 0 18px;background:rgba(253,248,238,.93);backdrop-filter:blur(6px);border-bottom:2px solid var(--line)}
+.tab{border:2px solid var(--line);background:var(--white);color:var(--ink);font-family:inherit;font-size:15px;
+  padding:8px 14px;border-radius:999px;cursor:pointer;transition:.15s}
+.tab:hover{transform:translateY(-2px)}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 3px 0 #d96c25}
+
+.panel{display:none;animation:fadein .25s ease}
+.panel.on{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.card{background:var(--white);border:2px solid var(--line);border-radius:var(--radius);padding:20px;
+  margin:0 0 20px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 4px;font-size:23px}
+.card h2 .emoji{margin-right:6px}
+.sub{color:var(--ink-soft);font-size:15px;margin:0 0 14px;font-family:'Gaegu',sans-serif;font-weight:700;line-height:1.55}
+
+.stage{background:var(--ivory);border:2px solid var(--line);border-radius:14px;padding:6px;margin:12px 0}
+svg.draw{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0 2px;align-items:center}
+.btn{border:2px solid var(--line);background:var(--white);color:var(--ink);font-family:inherit;font-size:15px;
+  padding:9px 16px;border-radius:999px;cursor:pointer;transition:.15s}
+.btn:hover{transform:translateY(-2px);border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 3px 0 #d96c25}
+.btn.blue{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 3px 0 #2f72d8}
+.btn.green{background:var(--good);border-color:var(--good);color:#fff;box-shadow:0 3px 0 #2d8c59}
+.btn.small{font-size:14px;padding:6px 12px}
+.btn.on{background:var(--violet);border-color:var(--violet);color:#fff}
+
+.readout{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:10px}
+.pill{border:2px solid var(--line);background:var(--ivory);border-radius:999px;padding:7px 16px;font-size:16px}
+.pill b{font-size:22px;color:var(--accent)}
+.pill.ok{background:var(--good-soft);border-color:var(--good)}
+.pill.ok b{color:var(--good)}
+.pill.blue{background:var(--blue-soft);border-color:var(--blue)}
+.pill.blue b{color:#2F72D8}
+
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:12px 0 4px}
+.sl{border:2px solid var(--line);border-radius:14px;padding:10px 14px;background:var(--ivory)}
+.sl label{display:flex;justify-content:space-between;font-size:15px;margin-bottom:4px}
+.sl label b{color:var(--accent);font-size:19px}
+.sl input[type=range]{width:100%;accent-color:var(--accent)}
+
+.note{border-radius:14px;padding:12px 16px;margin-top:12px;font-family:'Gaegu',sans-serif;font-weight:700;
+  font-size:16px;line-height:1.55}
+.note.tip{background:var(--blue-soft);border:2px solid var(--blue);color:#1F4F9B}
+.note.warn{background:var(--bad-soft);border:2px solid var(--bad);color:#8E2E13}
+.note.ok{background:var(--good-soft);border:2px solid var(--good);color:#1E6B45}
+.note.vio{background:var(--violet-soft);border:2px solid var(--violet);color:#5B3A8E}
+
+.defs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:14px}
+.def{border:2px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--ivory)}
+.def h3{margin:0 0 4px;font-size:17px}
+.def p{margin:0;font-family:'Gaegu',sans-serif;font-weight:700;font-size:15px;color:var(--ink-soft);line-height:1.5}
+
+/* 비례식 판 */
+.eqbox{background:var(--ivory);border:2px dashed var(--accent);border-radius:14px;padding:14px;margin-top:12px;text-align:center}
+.eqline{font-size:clamp(19px,4.2vw,27px);letter-spacing:1px;margin:4px 0}
+.eqline .hl{color:var(--accent)}
+.eqline .hl2{color:var(--blue)}
+.eqline .ans{color:var(--good);font-size:1.18em}
+.eqstep{font-family:'Gaegu',sans-serif;font-weight:700;font-size:16px;color:var(--ink-soft);margin-top:6px}
+
+/* 관계표 */
+table.rel{border-collapse:collapse;margin:10px auto 0;font-size:17px}
+table.rel th,table.rel td{border:2px solid var(--line);padding:8px 16px;text-align:center;min-width:72px}
+table.rel th{background:var(--ivory-2);font-weight:400;color:var(--ink-soft)}
+table.rel td.now{background:var(--accent-soft);color:var(--accent)}
+table.rel td.tgt{background:var(--good-soft);color:var(--good)}
+
+.scen{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:6px}
+.scen button{border:2px solid var(--line);background:var(--white);border-radius:999px;padding:7px 14px;
+  font-family:inherit;font-size:15px;cursor:pointer}
+.scen button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:440px;margin:12px auto 0}
+.choice{font-family:inherit;font-size:21px;padding:13px 6px;border-radius:14px;border:3px solid var(--line);
+  background:var(--white);cursor:pointer;transition:.12s}
+.choice:hover{transform:translateY(-3px);border-color:var(--accent)}
+.choice.right{background:var(--good);border-color:var(--good);color:#fff}
+.choice.wrong{background:var(--bad);border-color:var(--bad);color:#fff}
+.feedback{min-height:30px;font-size:17px;margin-top:12px;text-align:center;font-family:'Gaegu',sans-serif;font-weight:700}
+.quiz-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.bar{height:12px;background:var(--ivory-2);border-radius:999px;overflow:hidden;flex:1;min-width:150px;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--good);width:0;transition:.3s}
+.result{text-align:center;padding:12px}
+.result .score{font-size:52px;color:var(--accent)}
+
+.opt-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0}
+.opt{display:flex;gap:10px;align-items:flex-start;border:2px solid var(--line);border-radius:14px;padding:12px 14px;
+  background:var(--ivory);cursor:pointer}
+.opt input{width:20px;height:20px;margin-top:3px;accent-color:var(--accent)}
+.opt b{display:block;font-size:16px}
+.opt span{font-family:'Gaegu',sans-serif;font-weight:700;font-size:14px;color:var(--ink-soft)}
+
+.mob-tip{display:none;text-align:center;background:var(--accent-soft);border:2px dashed var(--accent);
+  border-radius:14px;padding:10px 14px;margin:0 0 16px;color:#8A5A2B}
+@media (pointer:coarse){.mob-tip{display:block}}
+footer.foot{text-align:center;color:var(--ink-soft);font-size:14px;padding:10px 0 30px;font-family:'Gaegu',sans-serif;font-weight:700}
+
+/* 인쇄 */
+#printArea{display:none}
+.page{page-break-after:always;break-after:page}
+.page:last-child{page-break-after:auto;break-after:auto}
+.p-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #333;padding-bottom:6px;margin-bottom:12px}
+.p-head h2{margin:0;font-size:24px}
+.p-head .meta{font-size:12px;color:#555;font-family:'Gaegu',sans-serif;font-weight:700;text-align:right;line-height:1.4}
+.p-grid{display:grid;gap:10px}
+.p-item{border:2px solid #333;border-radius:10px;padding:8px 10px;break-inside:avoid}
+.p-item .no{font-size:14px;font-family:'Gaegu',sans-serif;font-weight:700}
+.p-item svg{width:100%;height:auto;display:block}
+.blank{display:inline-block;min-width:58px;border-bottom:2px solid #333;text-align:center}
+table.pt{border-collapse:collapse;width:100%;font-size:14px;margin-top:4px}
+table.pt th,table.pt td{border:1.5px solid #333;padding:5px 4px;text-align:center;height:30px}
+table.pt th{background:#eee;font-weight:400}
+.p-list{font-size:14.5px;line-height:2.0;font-family:'Gaegu',sans-serif;font-weight:700}
+.p-foot{margin-top:10px;border-top:1.5px solid #bbb;padding-top:5px;font-size:11px;color:#666;display:flex;
+  justify-content:space-between;font-family:'Gaegu',sans-serif;font-weight:700}
+@page{size:A4 portrait;margin:11mm}
+@media print{
+  body{background:#fff!important;background-image:none!important;font-size:12pt}
+  .no-print{display:none!important}
+  #printArea{display:block!important}
+  .wrap{max-width:none;padding:0}
+  .p-grid{min-height:218mm;align-content:space-between}
+}
+@media (max-width:640px){
+  .choices{grid-template-columns:1fr}
+  .card{padding:14px}
+  table.rel th,table.rel td{padding:6px 9px;min-width:54px;font-size:15px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap no-print">
+  <header class="hero">
+    <h1>⚖️ 비와 비율</h1>
+    <p>그림으로 상황을 읽고, 스스로 비례식을 세워요</p>
+    <div class="brand">세영코딩연구소 &nbsp;저자 : 컴퓨터공학박사 KIM</div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-p="ratio">① 비와 비율</button>
+    <button class="tab" data-p="dnl">② 비례식 세우기</button>
+    <button class="tab" data-p="conc">③ 농도</button>
+    <button class="tab" data-p="speed">④ 속력</button>
+    <button class="tab" data-p="work">⑤ 일의 양</button>
+    <button class="tab" data-p="print">⑥ 인쇄하기</button>
+  </nav>
+
+  <p class="sub mob-tip">📱 막대와 눈금을 손가락으로 <b>끌어서</b> 움직여 보세요.</p>
+
+  <!-- ① 비와 비율 -->
+  <section class="panel on" id="p-ratio">
+    <div class="card">
+      <h2><span class="emoji">🍎</span>비는 "몇 대 몇", 비율은 "몇 배"</h2>
+      <p class="sub">사과와 귤의 개수를 바꿔 보세요. 비가 어떻게 비율과 백분율로 바뀌는지 한눈에 보여요.</p>
+      <div class="sliders">
+        <div class="sl"><label>🍎 사과 (비교하는 양) <b id="rA">4</b></label>
+          <input type="range" id="slA" min="1" max="12" value="4"></div>
+        <div class="sl"><label>🍊 귤 (기준량) <b id="rB">6</b></label>
+          <input type="range" id="slB" min="1" max="12" value="6"></div>
+      </div>
+      <div class="stage"><svg class="draw" id="svgRatio" viewBox="0 0 660 230"></svg></div>
+      <div class="readout">
+        <span class="pill">비 <b id="pRatio">4 : 6</b></span>
+        <span class="pill blue">간단한 비 <b id="pSimple">2 : 3</b></span>
+        <span class="pill">비율 <b id="pRate">2/3</b></span>
+        <span class="pill ok">백분율 <b id="pPct">66.7%</b></span>
+      </div>
+      <div class="note vio" id="ratioNote"></div>
+      <div class="defs">
+        <div class="def"><h3>비 ( : )</h3><p>두 수를 견주어 나타낸 것. <b>4 : 6</b>은 "4 대 6"이라고 읽어요.
+          앞이 <b>비교하는 양</b>, 뒤가 <b>기준량</b>이에요.</p></div>
+        <div class="def"><h3>비율</h3><p>비교하는 양을 기준량으로 나눈 값.
+          <b>비율 = 비교하는 양 ÷ 기준량</b>. 기준량을 1로 봤을 때 몇인지를 말해요.</p></div>
+        <div class="def"><h3>백분율 (%)</h3><p>기준량을 <b>100</b>으로 봤을 때의 비율이에요.
+          비율에 100을 곱하면 백분율이 돼요.</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🔗</span>같은 비는 묶음을 늘린 것</h2>
+      <p class="sub">2 : 3 을 한 묶음으로 보고 묶음 수를 늘려 보세요. 모양은 커져도 <b>비율은 그대로</b>예요.</p>
+      <div class="toolbar">
+        <button class="btn small" id="eqMinus">− 묶음 줄이기</button>
+        <span class="pill">묶음 <b id="eqK">3</b>개</span>
+        <button class="btn small" id="eqPlus">+ 묶음 늘리기</button>
+      </div>
+      <div class="stage"><svg class="draw" id="svgEq" viewBox="0 0 660 200"></svg></div>
+      <div class="eqbox">
+        <div class="eqline" id="eqChain">2 : 3 = 4 : 6 = 6 : 9</div>
+        <div class="eqstep">모두 비율이 <b id="eqVal">2/3</b> 로 같아요!</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ② 비례식 세우기 -->
+  <section class="panel" id="p-dnl">
+    <div class="card">
+      <h2><span class="emoji">📊</span>이중수직선으로 비례식 세우기</h2>
+      <p class="sub">위아래 두 줄이 <b>함께</b> 늘어나요. 초록 눈금을 끌어 구하고 싶은 값에 맞추면
+        비례식이 저절로 세워져요.</p>
+      <div class="scen" id="scenPick"></div>
+      <div class="stage"><svg class="draw" id="svgDNL" viewBox="0 0 680 312"></svg></div>
+      <div class="toolbar">
+        <button class="btn blue" id="btnUnit">1️⃣ 1일 때의 양 보기</button>
+        <button class="btn" id="btnBack">↩️ 기준으로 돌아가기</button>
+      </div>
+      <table class="rel" id="relTable"></table>
+      <div class="eqbox">
+        <div class="eqline" id="dnlEq"></div>
+        <div class="eqstep" id="dnlStep1"></div>
+        <div class="eqstep" id="dnlStep2"></div>
+      </div>
+      <div class="note tip">
+        💡 비례식에서 바깥쪽 두 수를 <b>외항</b>, 안쪽 두 수를 <b>내항</b>이라고 해요.
+        <b>외항의 곱 = 내항의 곱</b>이라는 성질로 모르는 수를 구할 수 있어요.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🧠</span>상황 읽기 연습</h2>
+      <p class="sub">문제를 읽고 <b>무엇이 기준량인지</b> 먼저 찾아보세요. 6문제예요.</p>
+      <div class="toolbar"><button class="btn primary" id="btnPropStart">🚀 연습 시작</button></div>
+      <div id="propArea" style="display:none">
+        <div class="quiz-top">
+          <span id="pCount">1 / 6</span>
+          <div class="bar"><i id="pBar"></i></div>
+          <span id="pScore">⭐ 0</span>
+        </div>
+        <div class="note vio" id="pStory"></div>
+        <div class="choices" id="pChoices"></div>
+        <div class="feedback" id="pFeed"></div>
+      </div>
+      <div id="propResult" style="display:none" class="result"></div>
+    </div>
+  </section>
+
+  <!-- ③ 농도 -->
+  <section class="panel" id="p-conc">
+    <div class="card">
+      <h2><span class="emoji">🧂</span>농도 = 소금 ÷ 소금물 × 100</h2>
+      <p class="sub">버튼을 눌러 소금과 물을 바꿔 보세요. <b>소금물 = 소금 + 물</b> 이라는 걸 잊지 마세요!</p>
+      <div class="stage"><svg class="draw" id="svgConc" viewBox="0 0 660 280"></svg></div>
+      <div class="readout">
+        <span class="pill">소금 <b id="cSalt">20</b>g</span>
+        <span class="pill blue">물 <b id="cWater">80</b>g</span>
+        <span class="pill">소금물 <b id="cTotal">100</b>g</span>
+        <span class="pill ok">농도 <b id="cPct">20%</b></span>
+      </div>
+      <div class="toolbar">
+        <button class="btn" data-act="salt+">🧂 소금 +10g</button>
+        <button class="btn" data-act="salt-">소금 −10g</button>
+        <button class="btn blue" data-act="water+">💧 물 +50g</button>
+        <button class="btn blue" data-act="water-">물 −50g</button>
+        <button class="btn" data-act="evap">🔥 물 50g 증발</button>
+        <button class="btn" data-act="reset">↩️ 처음으로</button>
+      </div>
+      <div class="note" id="concNote"></div>
+      <div class="eqbox">
+        <div class="eqline" id="concEq"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🫗</span>두 소금물을 섞으면?</h2>
+      <p class="sub">섞을 때는 <b>소금끼리, 소금물끼리</b> 더해요. 농도끼리 더하는 게 아니에요!</p>
+      <div class="sliders">
+        <div class="sl"><label>가 소금물 양 <b id="mxA1">200</b>g</label>
+          <input type="range" id="slMA1" min="50" max="400" step="50" value="200"></div>
+        <div class="sl"><label>가 농도 <b id="mxA2">10</b>%</label>
+          <input type="range" id="slMA2" min="0" max="30" step="5" value="10"></div>
+        <div class="sl"><label>나 소금물 양 <b id="mxB1">300</b>g</label>
+          <input type="range" id="slMB1" min="50" max="400" step="50" value="300"></div>
+        <div class="sl"><label>나 농도 <b id="mxB2">20</b>%</label>
+          <input type="range" id="slMB2" min="0" max="30" step="5" value="20"></div>
+      </div>
+      <div class="stage"><svg class="draw" id="svgMix" viewBox="0 0 660 252"></svg></div>
+      <div class="eqbox">
+        <div class="eqline" id="mixEq"></div>
+        <div class="eqstep" id="mixStep"></div>
+      </div>
+      <div class="note warn">
+        ⚠️ 10%와 20%를 섞으면 15%가 아니에요! 양이 많은 쪽으로 <b>치우쳐요</b>.
+        위 슬라이더로 양을 바꿔 가며 확인해 보세요.
+      </div>
+    </div>
+  </section>
+
+  <!-- ④ 속력 -->
+  <section class="panel" id="p-speed">
+    <div class="card">
+      <h2><span class="emoji">🏃</span>속력 = 거리 ÷ 시간</h2>
+      <p class="sub">둘 중 누가 빠를까요? 거리와 시간을 정하고 <b>출발</b>을 눌러 직접 비교해 보세요.</p>
+      <div class="sliders">
+        <div class="sl"><label>🐰 토끼 거리 <b id="s1d">120</b>m</label>
+          <input type="range" id="slS1D" min="20" max="300" step="10" value="120"></div>
+        <div class="sl"><label>🐰 토끼 시간 <b id="s1t">8</b>초</label>
+          <input type="range" id="slS1T" min="2" max="30" step="1" value="8"></div>
+        <div class="sl"><label>🐢 거북이 거리 <b id="s2d">60</b>m</label>
+          <input type="range" id="slS2D" min="20" max="300" step="10" value="60"></div>
+        <div class="sl"><label>🐢 거북이 시간 <b id="s2t">6</b>초</label>
+          <input type="range" id="slS2T" min="2" max="30" step="1" value="6"></div>
+      </div>
+      <div class="stage"><svg class="draw" id="svgRace" viewBox="0 0 660 240"></svg></div>
+      <div class="readout">
+        <span class="pill">🐰 <b id="s1v">15</b> m/초</span>
+        <span class="pill blue">🐢 <b id="s2v">10</b> m/초</span>
+        <span class="pill ok" id="sWin">🐰 토끼가 더 빨라요</span>
+      </div>
+      <div class="toolbar">
+        <button class="btn primary" id="btnRace">▶️ 출발!</button>
+        <button class="btn" id="btnRaceReset">↩️ 다시</button>
+      </div>
+      <div class="eqbox">
+        <div class="eqline" id="speedEq"></div>
+        <div class="eqstep">거리가 달라도 <b>1초에 간 거리</b>로 바꾸면 공평하게 비교할 수 있어요.</div>
+      </div>
+      <div class="defs">
+        <div class="def"><h3>속력</h3><p><b>속력 = 거리 ÷ 시간</b>. 단위 시간(1초·1분·1시간) 동안 간 거리예요.</p></div>
+        <div class="def"><h3>거리</h3><p><b>거리 = 속력 × 시간</b>. 빠를수록, 오래 갈수록 멀리 가요.</p></div>
+        <div class="def"><h3>시간</h3><p><b>시간 = 거리 ÷ 속력</b>. 같은 거리라면 빠를수록 시간이 적게 걸려요.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑤ 일의 양 -->
+  <section class="panel" id="p-work">
+    <div class="card">
+      <h2><span class="emoji">🧱</span>전체 일을 1로 보기</h2>
+      <p class="sub">혼자 며칠 걸리는지를 고르면, <b>하루에 하는 일의 양</b>이 분수로 보여요.
+        둘이 함께 하면 며칠 걸릴까요?</p>
+      <div class="sliders">
+        <div class="sl"><label>👩 민서 혼자 <b id="wA">6</b>일</label>
+          <input type="range" id="slWA" min="2" max="20" step="1" value="6"></div>
+        <div class="sl"><label>👦 준호 혼자 <b id="wB">12</b>일</label>
+          <input type="range" id="slWB" min="2" max="20" step="1" value="12"></div>
+      </div>
+      <div class="readout">
+        <span class="pill">민서 하루 <b id="wRa">1/6</b></span>
+        <span class="pill blue">준호 하루 <b id="wRb">1/12</b></span>
+        <span class="pill ok">함께 하루 <b id="wRt">1/4</b></span>
+        <span class="pill">함께 <b id="wDays">4</b>일</span>
+      </div>
+      <div class="stage"><svg class="draw" id="svgWork" viewBox="0 0 660 300"></svg></div>
+      <div class="eqbox">
+        <div class="eqline" id="workEq"></div>
+        <div class="eqstep" id="workStep"></div>
+      </div>
+      <div class="note tip">
+        💡 "6일 + 12일 = 18일"이 아니에요! 함께 하면 <b>혼자보다 빨라야</b> 하니까
+        반드시 <b>하루에 하는 일의 양</b>을 더해야 해요.
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑥ 인쇄 -->
+  <section class="panel" id="p-print">
+    <div class="card">
+      <h2><span class="emoji">🖨️</span>인쇄해서 연습하기</h2>
+      <p class="sub">필요한 학습지만 골라 인쇄하세요. A4 세로 한 장씩 나옵니다.</p>
+      <div class="opt-list" id="optList"></div>
+      <div class="toolbar">
+        <button class="btn" id="btnShuffle">🔀 문제 새로 뽑기</button>
+        <button class="btn primary" id="btnPrint">🖨️ 인쇄하기 (Ctrl+P)</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">세영코딩연구소 &nbsp;저자 : 컴퓨터공학박사 KIM</footer>
+</div>
+
+<div id="printArea"></div>
+
+<script>
+(function(){
+  "use strict";
+  var NS = 'http://www.w3.org/2000/svg';
+  function S(tag, a){
+    var e = document.createElementNS(NS, tag);
+    if(a) for(var k in a){ if(a[k] !== null && a[k] !== undefined) e.setAttribute(k, a[k]); }
+    return e;
+  }
+  function T(tag, cls, text){
+    var e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  function txt(x, y, s, o){
+    o = o || {};
+    var t = S('text', {x:x, y:y, 'text-anchor':o.anchor || 'middle',
+      'dominant-baseline':o.base || 'middle', 'font-size':o.size || 14,
+      fill:o.fill || '#4A3B2A', 'font-family':o.family || "'Jua',sans-serif"});
+    t.style.pointerEvents = 'none';
+    t.textContent = s;
+    return t;
+  }
+  function clear(el){ while(el.firstChild) el.removeChild(el.firstChild); }
+  function toLocal(svgEl, ev){
+    var p = svgEl.createSVGPoint();
+    p.x = ev.clientX; p.y = ev.clientY;
+    var m = svgEl.getScreenCTM();
+    if(!m) return {x:0, y:0};
+    return p.matrixTransform(m.inverse());
+  }
+  function drag(handle, svgEl, onMove){
+    handle.style.cursor = 'grab';
+    handle.addEventListener('pointerdown', function(ev){
+      ev.preventDefault(); ev.stopPropagation();
+      var move = function(e2){ if(e2.cancelable) e2.preventDefault(); onMove(toLocal(svgEl, e2)); };
+      var up = function(){
+        window.removeEventListener('pointermove', move);
+        window.removeEventListener('pointerup', up);
+        window.removeEventListener('pointercancel', up);
+      };
+      window.addEventListener('pointermove', move, {passive:false});
+      window.addEventListener('pointerup', up);
+      window.addEventListener('pointercancel', up);
+      onMove(toLocal(svgEl, ev));
+    });
+  }
+  function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while(b){ var t = a % b; a = b; b = t; } return a || 1; }
+  function fracStr(n, d){
+    var g = gcd(n, d); n /= g; d /= g;
+    return d === 1 ? String(n) : n + '/' + d;
+  }
+  function round(v, p){ var m = Math.pow(10, p || 0); return Math.round(v * m) / m; }
+  // 소수 끝의 불필요한 0 없이 보기 좋게
+  function num(v){
+    var r = Math.round(v * 100) / 100;
+    return (Math.abs(r - Math.round(r)) < 1e-9) ? String(Math.round(r)) : String(r);
+  }
+
+  /* 탭 */
+  var tabs = document.querySelectorAll('.tab');
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(x){ x.classList.remove('on'); });
+      t.classList.add('on');
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('on'); });
+      document.getElementById('p-' + t.dataset.p).classList.add('on');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+
+  /* ============ ① 비와 비율 ============ */
+  var R1 = {a:4, b:6};
+  var svgRatio = document.getElementById('svgRatio');
+  function drawRatio(){
+    clear(svgRatio);
+    var a = R1.a, b = R1.b, maxv = 12;
+    var x0 = 92, w = 500, unit = w / maxv;
+    [[a, '#FF8A3D', '🍎 사과', 56], [b, '#4D96FF', '🍊 귤', 146]].forEach(function(it){
+      var n = it[0], col = it[1], lab = it[2], y = it[3];
+      svgRatio.appendChild(txt(x0 - 12, y + 22, lab, {anchor:'end', size:16}));
+      for(var i = 0; i < n; i++){
+        svgRatio.appendChild(S('rect', {x:x0 + i * unit + 3, y:y, width:unit - 6, height:44, rx:7,
+          fill:col, opacity:.9}));
+      }
+      svgRatio.appendChild(S('rect', {x:x0, y:y, width:n * unit, height:44, rx:8,
+        fill:'none', stroke:col, 'stroke-width':2.5}));
+      svgRatio.appendChild(txt(x0 + n * unit + 24, y + 22, n + '개', {size:16, fill:col}));
+    });
+    // 비교 화살표
+    svgRatio.appendChild(txt(330, 216, '칸 하나가 같은 크기예요 — 길이를 견주어 보세요',
+      {size:14, fill:'#7A6A55', family:"'Gaegu',sans-serif"}));
+  }
+  function updRatio(){
+    var a = R1.a, b = R1.b, g = gcd(a, b);
+    document.getElementById('rA').textContent = a;
+    document.getElementById('rB').textContent = b;
+    document.getElementById('pRatio').textContent = a + ' : ' + b;
+    document.getElementById('pSimple').textContent = (a / g) + ' : ' + (b / g);
+    document.getElementById('pRate').textContent = fracStr(a, b);
+    document.getElementById('pPct').textContent = num(a / b * 100) + '%';
+    var n = document.getElementById('ratioNote');
+    n.innerHTML = '귤 <b>' + b + '개</b>를 기준(1)으로 볼 때 사과는 <b>' + fracStr(a, b) + '</b>만큼이에요. ' +
+      '즉 사과는 귤의 <b>' + num(a / b * 100) + '%</b>랍니다. ' +
+      (a === b ? '두 양이 같으면 비율은 1(=100%)이에요.' :
+       a < b ? '비교하는 양이 기준량보다 작으면 비율은 1보다 작아요.' :
+               '비교하는 양이 기준량보다 크면 비율은 1보다 커요.');
+    drawRatio();
+  }
+  document.getElementById('slA').addEventListener('input', function(e){ R1.a = +e.target.value; updRatio(); });
+  document.getElementById('slB').addEventListener('input', function(e){ R1.b = +e.target.value; updRatio(); });
+  updRatio();
+
+  /* 같은 비 */
+  var EQk = 3;
+  var svgEq = document.getElementById('svgEq');
+  function drawEq(){
+    clear(svgEq);
+    // 묶음이 늘어도 그림 안에 들어오도록 칸 너비를 맞춥니다
+    var k = EQk, gap = 10, x0 = 70, avail = 520;
+    var cw = Math.max(12, Math.min(30, (avail / k - gap) / 5));
+    for(var g2 = 0; g2 < k; g2++){
+      var gx = x0 + g2 * (5 * cw + gap);
+      svgEq.appendChild(S('rect', {x:gx - 5, y:36, width:5 * cw + 2, height:116, rx:10,
+        fill:'none', stroke:'#E6D9BE', 'stroke-width':2, 'stroke-dasharray':'6 5'}));
+      for(var i = 0; i < 2; i++)
+        svgEq.appendChild(S('rect', {x:gx + i * cw + 2, y:48, width:cw - 5, height:38, rx:6, fill:'#FF8A3D'}));
+      for(var j = 0; j < 3; j++)
+        svgEq.appendChild(S('rect', {x:gx + j * cw + 2, y:102, width:cw - 5, height:38, rx:6, fill:'#4D96FF'}));
+    }
+    svgEq.appendChild(txt(36, 67, '🍎', {size:19}));
+    svgEq.appendChild(txt(36, 121, '🍊', {size:19}));
+    svgEq.appendChild(txt(330, 178, (2 * k) + ' : ' + (3 * k) + '  —  묶음이 ' + k + '개',
+      {size:17, fill:'#9B72CF'}));
+  }
+  function updEq(){
+    document.getElementById('eqK').textContent = EQk;
+    var parts = [];
+    for(var i = 1; i <= EQk; i++) parts.push((2 * i) + ' : ' + (3 * i));
+    document.getElementById('eqChain').textContent = parts.join(' = ');
+    document.getElementById('eqVal').textContent = '2/3';
+    drawEq();
+  }
+  document.getElementById('eqPlus').addEventListener('click', function(){ EQk = Math.min(5, EQk + 1); updEq(); });
+  document.getElementById('eqMinus').addEventListener('click', function(){ EQk = Math.max(1, EQk - 1); updEq(); });
+  updEq();
+
+  /* ============ ② 이중수직선 ============ */
+  var SCEN = [
+    {name:'🍎 사과 가격', topLab:'사과(개)', botLab:'가격(원)', a:3, b:1200, maxTop:12, step:1, botUnit:'원'},
+    {name:'⛽ 자동차 기름', topLab:'기름(L)', botLab:'거리(km)', a:4, b:52, maxTop:16, step:1, botUnit:'km'},
+    {name:'🥤 주스 만들기', topLab:'원액(mL)', botLab:'물(mL)', a:2, b:5, maxTop:14, step:1, botUnit:'mL'},
+    {name:'📖 책 읽기', topLab:'시간(분)', botLab:'쪽수(쪽)', a:15, b:12, maxTop:75, step:5, botUnit:'쪽'}
+  ];
+  var SI = 0, DN = {target:7};
+  var svgDNL = document.getElementById('svgDNL');
+
+  (function(){
+    var box = document.getElementById('scenPick');
+    SCEN.forEach(function(s, i){
+      var b = T('button', i === 0 ? 'on' : '', s.name);
+      b.addEventListener('click', function(){
+        SI = i;
+        document.querySelectorAll('#scenPick button').forEach(function(x, j){
+          x.classList.toggle('on', j === i);
+        });
+        DN.target = SCEN[i].a * 2;
+        drawDNL(); updDNL();
+      });
+      box.appendChild(b);
+    });
+  })();
+
+  function dnlGeom(){
+    var s = SCEN[SI];
+    var x0 = 72, x1 = 628, maxT = s.maxTop;
+    return {s:s, x0:x0, x1:x1, maxT:maxT,
+      xOf: function(v){ return x0 + (x1 - x0) * (v / maxT); },
+      vOf: function(x){ return (x - x0) / (x1 - x0) * maxT; }};
+  }
+  function drawDNL(){
+    clear(svgDNL);
+    var G = dnlGeom(), s = G.s;
+    var yT = 78, yB = 238;                 // 두 수직선 사이를 넓게 벌려 ×k 화살표 자리를 만듭니다
+    // 축
+    [[yT, s.topLab, '#FF8A3D'], [yB, s.botLab, '#4D96FF']].forEach(function(it){
+      svgDNL.appendChild(S('line', {x1:G.x0 - 18, y1:it[0], x2:G.x1 + 16, y2:it[0],
+        stroke:it[2], 'stroke-width':3}));
+      svgDNL.appendChild(S('polygon', {points:(G.x1 + 16) + ',' + (it[0] - 6) + ' ' +
+        (G.x1 + 30) + ',' + it[0] + ' ' + (G.x1 + 16) + ',' + (it[0] + 6), fill:it[2]}));
+      svgDNL.appendChild(txt(G.x0 - 24, it[0] - 24, it[1], {anchor:'start', size:14, fill:it[2]}));
+    });
+    // 눈금 — 선 바깥쪽으로 그어 잘 보이게 하고, 몇 칸마다 숫자를 적습니다
+    var tick = s.step;
+    var nT = Math.round(G.maxT / tick);
+    var labEvery = nT > 16 ? 4 : (nT > 10 ? 2 : 1);
+    var i2 = 0;
+    for(var v = 0; v <= G.maxT + 1e-6; v += tick, i2++){
+      var x = G.xOf(v);
+      if(x > G.x1 + 1) break;
+      var big = (i2 % labEvery === 0);
+      svgDNL.appendChild(S('line', {x1:x, y1:yT - (big ? 9 : 5), x2:x, y2:yT + (big ? 9 : 5),
+        stroke: big ? '#D9A066' : '#E8CFAC', 'stroke-width': big ? 2 : 1.3}));
+      svgDNL.appendChild(S('line', {x1:x, y1:yB - (big ? 9 : 5), x2:x, y2:yB + (big ? 9 : 5),
+        stroke: big ? '#7AA8E8' : '#C3D7F2', 'stroke-width': big ? 2 : 1.3}));
+      if(big) svgDNL.appendChild(txt(x, yT - 20, num(v), {size:11, fill:'#B09570'}));
+    }
+    // 어떤 경로로 값이 들어와도 수직선 범위를 벗어나지 않게 가둡니다.
+    // 단위비율(1)은 눈금 간격이 커도 볼 수 있어야 하므로 하한은 1입니다.
+    var t = Math.max(Math.min(1, s.step), Math.min(G.maxT, DN.target));
+    DN.target = t;
+    var yv = s.b * t / s.a, xa = G.xOf(s.a), xt = G.xOf(t);
+
+    // ×k 곡선 — 두 수직선 사이 공간에 위아래로 하나씩
+    var k = t / s.a, mx = (xa + xt) / 2;
+    if(Math.abs(k - 1) > 0.02){
+      [[yT, 1], [yB, -1]].forEach(function(it){
+        var y = it[0], sg = it[1];
+        svgDNL.appendChild(S('path', {
+          d:'M ' + xa + ' ' + (y + sg * 16) + ' Q ' + mx + ' ' + (y + sg * 58) +
+            ' ' + xt + ' ' + (y + sg * 16),
+          fill:'none', stroke:'#9B72CF', 'stroke-width':2.2}));
+        var ex = xt, ey = y + sg * 16;
+        svgDNL.appendChild(S('circle', {cx:ex, cy:ey, r:3.4, fill:'#9B72CF'}));
+        svgDNL.appendChild(txt(mx, y + sg * 62, '×' + num(k), {size:15, fill:'#7B52AF'}));
+      });
+    }
+    // 기준 쌍
+    svgDNL.appendChild(S('line', {x1:xa, y1:yT - 12, x2:xa, y2:yB + 12,
+      stroke:'#FF8A3D', 'stroke-width':2, 'stroke-dasharray':'7 5', opacity:.7}));
+    svgDNL.appendChild(S('circle', {cx:xa, cy:yT, r:7, fill:'#FF8A3D'}));
+    svgDNL.appendChild(S('circle', {cx:xa, cy:yB, r:7, fill:'#FF8A3D'}));
+    svgDNL.appendChild(txt(xa, yT - 38, num(s.a), {size:17, fill:'#C2410C'}));
+    svgDNL.appendChild(txt(xa, yB + 26, num(s.b), {size:17, fill:'#C2410C'}));
+    svgDNL.appendChild(txt(xa, yB + 46, '아는 값', {size:13, fill:'#C2410C'}));
+
+    // 목표
+    svgDNL.appendChild(S('line', {x1:xt, y1:yT - 12, x2:xt, y2:yB + 12,
+      stroke:'#3BB273', 'stroke-width':2.5}));
+    svgDNL.appendChild(S('circle', {cx:xt, cy:yB, r:8, fill:'#3BB273'}));
+    svgDNL.appendChild(txt(xt, yT - 38, num(t), {size:18, fill:'#1E6B45'}));
+    svgDNL.appendChild(txt(xt, yB + 26, num(yv), {size:18, fill:'#1E6B45'}));
+    svgDNL.appendChild(txt(xt, yB + 46, '구하는 값', {size:13, fill:'#1E6B45'}));
+
+    // 드래그 손잡이 — 위쪽 수직선 위에서 끕니다
+    var h = S('circle', {cx:xt, cy:yT, r:16, fill:'#3BB273', stroke:'#fff', 'stroke-width':3});
+    h.setAttribute('id', 'dnlHandle');
+    svgDNL.appendChild(h);
+    svgDNL.appendChild(txt(xt, yT, '↔', {size:15, fill:'#fff'}));
+    drag(h, svgDNL, function(p){
+      var v = G.vOf(p.x), st = s.step;
+      v = Math.round(v / st) * st;
+      DN.target = Math.max(st, Math.min(G.maxT, v));
+      drawDNL(); updDNL();
+    });
+  }
+  function updDNL(){
+    var s = SCEN[SI], t = DN.target, y = s.b * t / s.a;
+    // 관계표
+    var tb = document.getElementById('relTable');
+    clear(tb);
+    var r1 = S ? null : null;
+    var tr1 = T('tr'), tr2 = T('tr');
+    var th1 = T('th', null, s.topLab), th2 = T('th', null, s.botLab);
+    tr1.appendChild(th1); tr2.appendChild(th2);
+    var cols = [{v:1, cls:''}, {v:s.a, cls:'now'}, {v:t, cls:'tgt'}];
+    cols.forEach(function(c){
+      var a = T('td', c.cls, num(c.v));
+      var b = T('td', c.cls, num(s.b * c.v / s.a));
+      tr1.appendChild(a); tr2.appendChild(b);
+    });
+    tb.appendChild(tr1); tb.appendChild(tr2);
+
+    var eq = document.getElementById('dnlEq');
+    eq.innerHTML = '<span class="hl">' + num(s.a) + '</span> : <span class="hl">' + num(s.b) +
+      '</span> &nbsp;=&nbsp; <span class="hl2">' + num(t) + '</span> : <span class="ans">' + num(y) + '</span>';
+    document.getElementById('dnlStep1').innerHTML =
+      '외항의 곱 = 내항의 곱 &nbsp;→&nbsp; ' + num(s.a) + ' × ☐ = ' + num(s.b) + ' × ' + num(t);
+    document.getElementById('dnlStep2').innerHTML =
+      '☐ = ' + num(s.b) + ' × ' + num(t) + ' ÷ ' + num(s.a) + ' = <b>' + num(y) + '</b> ' + s.botUnit;
+  }
+  document.getElementById('btnUnit').addEventListener('click', function(){
+    DN.target = 1;                     // 단위비율(1일 때의 양)로 이동
+    drawDNL(); updDNL();
+  });
+  document.getElementById('btnBack').addEventListener('click', function(){
+    DN.target = SCEN[SI].a; drawDNL(); updDNL();
+  });
+  DN.target = SCEN[0].a * 2;
+  drawDNL(); updDNL();
+
+  /* 상황 읽기 연습 */
+  var PROPQ = [
+    {s:'공책 4권이 3200원입니다. 공책 7권의 값은 얼마일까요?',
+     q:'기준이 되는 관계는 무엇일까요?',
+     opts:['공책 4권 = 3200원', '공책 7권 = 3200원', '공책 1권 = 3200원', '공책 4권 = 7권'],
+     ans:0, why:'문제에서 이미 알려 준 짝이 기준이에요. 4권과 3200원이 한 쌍이죠.'},
+    {s:'자동차가 3시간에 240km를 달립니다. 5시간 동안에는 몇 km를 갈까요?',
+     q:'비례식을 바르게 세운 것은?',
+     opts:['3 : 240 = 5 : ☐', '3 : 5 = 240 : ☐', '240 : 3 = 5 : ☐', '3 : 240 = ☐ : 5'],
+     ans:0, why:'같은 종류끼리 같은 자리에 와야 해요. (시간 : 거리 = 시간 : 거리)'},
+    {s:'소금 30g을 녹여 소금물 150g을 만들었습니다.',
+     q:'농도를 구하는 식은?',
+     opts:['30 ÷ 150 × 100', '30 ÷ 120 × 100', '150 ÷ 30 × 100', '30 ÷ 180 × 100'],
+     ans:0, why:'농도는 소금을 <b>소금물 전체</b>로 나눠요. 물이 아니라 소금물 150g이 기준량이에요.'},
+    {s:'지호는 200m를 25초에 달렸습니다.',
+     q:'1초에 간 거리를 구하려면?',
+     opts:['200 ÷ 25', '25 ÷ 200', '200 × 25', '200 + 25'],
+     ans:0, why:'속력은 거리 ÷ 시간이에요. 1초에 간 거리를 구하는 것이지요.'},
+    {s:'어떤 일을 혼자 하면 민서는 8일, 준호는 8일이 걸립니다.',
+     q:'둘이 함께 하면 며칠 걸릴까요?',
+     opts:['4일', '8일', '16일', '2일'],
+     ans:0, why:'하루에 1/8씩 둘이면 2/8 = 1/4. 전체 1을 하려면 4일이에요.'},
+    {s:'설탕물 400g의 농도가 15%입니다.',
+     q:'녹아 있는 설탕의 양은?',
+     opts:['400 × 0.15 = 60g', '400 ÷ 0.15', '400 × 15 = 6000g', '400 − 15 = 385g'],
+     ans:0, why:'백분율은 전체를 100으로 본 비율이에요. 전체 × 비율 = 부분이 됩니다.'}
+  ];
+  var PQ = {list:[], idx:0, score:0};
+  function startProp(){
+    PQ = {list: PROPQ.slice().sort(function(){ return Math.random() - 0.5; }), idx:0, score:0};
+    document.getElementById('propResult').style.display = 'none';
+    document.getElementById('propArea').style.display = 'block';
+    showProp();
+  }
+  function showProp(){
+    var it = PQ.list[PQ.idx];
+    document.getElementById('pCount').textContent = (PQ.idx + 1) + ' / 6';
+    document.getElementById('pScore').textContent = '⭐ ' + PQ.score;
+    document.getElementById('pBar').style.width = (PQ.idx / 6 * 100) + '%';
+    document.getElementById('pFeed').textContent = '';
+    document.getElementById('pStory').innerHTML = '📄 ' + it.s + '<br><b>' + it.q + '</b>';
+    var box = document.getElementById('pChoices');
+    clear(box);
+    var order = it.opts.map(function(o, i){ return {o:o, i:i}; });
+    order.sort(function(){ return Math.random() - 0.5; });
+    order.forEach(function(e){
+      var b = T('button', 'choice', e.o);
+      b.addEventListener('click', function(){ ansProp(b, e.i, it); });
+      box.appendChild(b);
+    });
+  }
+  function ansProp(btn, i, it){
+    var all = document.querySelectorAll('#pChoices .choice');
+    all.forEach(function(x){ x.disabled = true; });
+    var fb = document.getElementById('pFeed');
+    if(i === it.ans){ btn.classList.add('right'); PQ.score++; fb.innerHTML = '🎉 정답! ' + it.why; }
+    else{
+      btn.classList.add('wrong');
+      all.forEach(function(x){ if(x.textContent === it.opts[it.ans]) x.classList.add('right'); });
+      fb.innerHTML = '💡 ' + it.why;
+    }
+    document.getElementById('pScore').textContent = '⭐ ' + PQ.score;
+    setTimeout(function(){
+      PQ.idx++;
+      if(PQ.idx >= PQ.list.length) finProp(); else showProp();
+    }, 2300);
+  }
+  function finProp(){
+    document.getElementById('propArea').style.display = 'none';
+    var r = document.getElementById('propResult');
+    r.style.display = 'block'; clear(r);
+    r.appendChild(T('div', 'score', PQ.score + ' / 6'));
+    r.appendChild(T('div', null, PQ.score >= 5 ? '🏆 상황 분석을 잘해요!' :
+      PQ.score >= 3 ? '👏 조금만 더!' : '💪 기준량을 먼저 찾는 연습을 해요!'));
+    var tb = T('div', 'toolbar');
+    var again = T('button', 'btn primary', '🔁 다시 하기');
+    again.addEventListener('click', startProp);
+    tb.appendChild(again); r.appendChild(tb);
+  }
+  document.getElementById('btnPropStart').addEventListener('click', startProp);
+
+  /* ============ ③ 농도 ============ */
+  var C = {salt:20, water:80};
+  var svgConc = document.getElementById('svgConc');
+  function drawConc(){
+    clear(svgConc);
+    var s = C.salt, w = C.water, tot = s + w;
+    var pct = tot > 0 ? s / tot * 100 : 0;
+    // 비커
+    var bx = 70, by = 36, bw = 190, bh = 206;
+    svgConc.appendChild(S('path', {d:'M ' + bx + ' ' + by + ' L ' + bx + ' ' + (by + bh) +
+      ' L ' + (bx + bw) + ' ' + (by + bh) + ' L ' + (bx + bw) + ' ' + by,
+      fill:'none', stroke:'#8FA4BF', 'stroke-width':4, 'stroke-linejoin':'round'}));
+    var maxAmt = 400;
+    var lh = Math.max(10, Math.min(bh - 8, bh * tot / maxAmt));
+    var ly = by + bh - lh;
+    // 농도가 높을수록 진하게
+    var alpha = 0.18 + Math.min(0.62, pct / 40 * 0.62);
+    svgConc.appendChild(S('rect', {x:bx + 3, y:ly, width:bw - 6, height:lh,
+      fill:'rgba(77,150,255,' + alpha.toFixed(3) + ')'}));
+    svgConc.appendChild(S('rect', {x:bx + 3, y:ly, width:bw - 6, height:6, fill:'rgba(77,150,255,.75)'}));
+    // 소금 알갱이 — 고르게 흩어지도록 고정 난수표를 씁니다
+    var dots = Math.min(70, Math.round(pct * 1.8));
+    for(var i = 0; i < dots; i++){
+      var h1 = Math.sin(i * 12.9898) * 43758.5453;
+      var h2 = Math.sin(i * 78.233) * 43758.5453;
+      var fx = h1 - Math.floor(h1), fy = h2 - Math.floor(h2);
+      var rx = bx + 12 + fx * (bw - 24);
+      var ry = ly + 12 + fy * Math.max(10, lh - 24);
+      svgConc.appendChild(S('circle', {cx:rx, cy:ry, r:2.6, fill:'#fff', opacity:.9}));
+    }
+    svgConc.appendChild(txt(bx + bw / 2, by + bh + 22, '소금물 ' + tot + 'g', {size:15, fill:'#5A7391'}));
+
+    // 비율 띠
+    var sx = 310, sw = 300, sy = 70, sh = 54;
+    var saltW = tot > 0 ? sw * s / tot : 0;
+    svgConc.appendChild(S('rect', {x:sx, y:sy, width:saltW, height:sh, fill:'#FF8A3D'}));
+    svgConc.appendChild(S('rect', {x:sx + saltW, y:sy, width:sw - saltW, height:sh, fill:'#9DC6FF'}));
+    svgConc.appendChild(S('rect', {x:sx, y:sy, width:sw, height:sh, fill:'none',
+      stroke:'#4A3B2A', 'stroke-width':2.5, rx:4}));
+    if(saltW > 42) svgConc.appendChild(txt(sx + saltW / 2, sy + sh / 2, '소금', {size:14, fill:'#fff'}));
+    svgConc.appendChild(txt(sx + saltW + (sw - saltW) / 2, sy + sh / 2, '물', {size:14, fill:'#2F5B9B'}));
+    svgConc.appendChild(txt(sx + sw / 2, sy - 16, '소금물 전체를 100으로 보면', {size:14, fill:'#7A6A55'}));
+    // 농도 표시
+    svgConc.appendChild(txt(sx + sw / 2, sy + sh + 34, '농도 = ' + num(pct) + '%',
+      {size:25, fill:'#3BB273'}));
+    // 눈금 0 / 100
+    svgConc.appendChild(txt(sx, sy + sh + 60, '0', {size:12, fill:'#9A8A75'}));
+    svgConc.appendChild(txt(sx + sw, sy + sh + 60, '100', {size:12, fill:'#9A8A75'}));
+    svgConc.appendChild(S('line', {x1:sx, y1:sy + sh + 48, x2:sx + sw, y2:sy + sh + 48,
+      stroke:'#D9C9AC', 'stroke-width':2}));
+    var mx = sx + saltW;
+    svgConc.appendChild(S('line', {x1:mx, y1:sy + sh + 42, x2:mx, y2:sy + sh + 54,
+      stroke:'#3BB273', 'stroke-width':3}));
+    svgConc.appendChild(txt(mx, sy + sh + 72, num(pct), {size:14, fill:'#1E6B45'}));
+  }
+  function updConc(prevPct){
+    var s = C.salt, w = C.water, tot = s + w, pct = tot > 0 ? s / tot * 100 : 0;
+    document.getElementById('cSalt').textContent = s;
+    document.getElementById('cWater').textContent = w;
+    document.getElementById('cTotal').textContent = tot;
+    document.getElementById('cPct').textContent = num(pct) + '%';
+    document.getElementById('concEq').innerHTML =
+      '농도 = <span class="hl">' + s + '</span> ÷ <span class="hl2">' + tot +
+      '</span> × 100 = <span class="ans">' + num(pct) + '%</span>';
+    var n = document.getElementById('concNote');
+    n.className = 'note ' + (C._last === 'water+' || C._last === 'water-' ? 'tip' :
+                             C._last === 'evap' ? 'warn' : 'ok');
+    if(C._last === 'water+') n.innerHTML = '💧 물만 넣었어요. <b>소금은 그대로 ' + s + 'g</b>인데 소금물이 늘어서 농도가 <b>내려갔어요</b>.';
+    else if(C._last === 'water-') n.innerHTML = '물을 덜어 냈어요. 소금은 그대로인데 소금물이 줄어서 농도가 <b>올라갔어요</b>.';
+    else if(C._last === 'evap') n.innerHTML = '🔥 물이 증발해도 <b>소금은 날아가지 않아요!</b> 소금 ' + s + 'g은 그대로, 소금물만 줄어 농도가 <b>올라갑니다</b>.';
+    else if(C._last === 'salt+') n.innerHTML = '🧂 소금을 넣으면 소금도 늘고 소금물도 늘어요. 그래서 농도가 <b>올라갑니다</b>.';
+    else if(C._last === 'salt-') n.innerHTML = '소금을 덜어 내면 농도가 <b>내려가요</b>.';
+    else n.innerHTML = '소금 ' + s + 'g이 소금물 ' + tot + 'g 속에 녹아 있어요. 전체를 100으로 보면 <b>' + num(pct) + '</b>만큼이 소금이에요.';
+    drawConc();
+  }
+  document.querySelectorAll('[data-act]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var a = b.dataset.act;
+      C._last = a;
+      if(a === 'salt+') C.salt += 10;
+      else if(a === 'salt-') C.salt = Math.max(0, C.salt - 10);
+      else if(a === 'water+') C.water += 50;
+      else if(a === 'water-') C.water = Math.max(0, C.water - 50);
+      else if(a === 'evap') C.water = Math.max(0, C.water - 50);
+      else { C.salt = 20; C.water = 80; C._last = null; }
+      if(C.salt + C.water > 400){
+        if(a === 'salt+') C.salt -= 10;
+        if(a === 'water+') C.water -= 50;
+      }
+      updConc();
+    });
+  });
+  updConc();
+
+  /* 섞기 */
+  var MX = {a1:200, a2:10, b1:300, b2:20};
+  var svgMix = document.getElementById('svgMix');
+  function mixCalc(){
+    var sa = MX.a1 * MX.a2 / 100, sb = MX.b1 * MX.b2 / 100;
+    var tot = MX.a1 + MX.b1, salt = sa + sb;
+    return {sa:sa, sb:sb, tot:tot, salt:salt, pct: tot > 0 ? salt / tot * 100 : 0};
+  }
+  function drawMix(){
+    clear(svgMix);
+    var m = mixCalc();
+    var defs = [
+      {x:50, w:150, amt:MX.a1, pct:MX.a2, lab:'가', col:'#FF8A3D'},
+      {x:255, w:150, amt:MX.b1, pct:MX.b2, lab:'나', col:'#4D96FF'},
+      {x:470, w:150, amt:m.tot, pct:m.pct, lab:'섞은 것', col:'#3BB273'}
+    ];
+    defs.forEach(function(d){
+      var by = 40, bh = 128;
+      var h = Math.max(12, Math.min(bh, bh * d.amt / 800));
+      var y = by + bh - h;
+      svgMix.appendChild(S('path', {d:'M ' + d.x + ' ' + by + ' L ' + d.x + ' ' + (by + bh) +
+        ' L ' + (d.x + d.w) + ' ' + (by + bh) + ' L ' + (d.x + d.w) + ' ' + by,
+        fill:'none', stroke:'#8FA4BF', 'stroke-width':3}));
+      var al = 0.16 + Math.min(0.64, d.pct / 30 * 0.64);
+      svgMix.appendChild(S('rect', {x:d.x + 3, y:y, width:d.w - 6, height:h,
+        fill:'rgba(77,150,255,' + al.toFixed(3) + ')'}));
+      svgMix.appendChild(txt(d.x + d.w / 2, by - 16, d.lab, {size:17, fill:d.col}));
+      svgMix.appendChild(txt(d.x + d.w / 2, by + bh + 20, num(d.amt) + 'g', {size:15, fill:'#5A7391'}));
+      svgMix.appendChild(txt(d.x + d.w / 2, by + bh + 42, num(d.pct) + '%', {size:19, fill:d.col}));
+      svgMix.appendChild(txt(d.x + d.w / 2, by + bh + 64,
+        '소금 ' + num(d.amt * d.pct / 100) + 'g', {size:13, fill:'#7A6A55'}));
+    });
+    svgMix.appendChild(txt(222, 104, '+', {size:28, fill:'#7A6A55'}));
+    svgMix.appendChild(txt(437, 104, '=', {size:28, fill:'#7A6A55'}));
+  }
+  function updMix(){
+    var m = mixCalc();
+    document.getElementById('mxA1').textContent = MX.a1;
+    document.getElementById('mxA2').textContent = MX.a2;
+    document.getElementById('mxB1').textContent = MX.b1;
+    document.getElementById('mxB2').textContent = MX.b2;
+    document.getElementById('mixEq').innerHTML =
+      '섞은 농도 = (<span class="hl">' + num(m.sa) + '</span> + <span class="hl2">' + num(m.sb) +
+      '</span>) ÷ ' + num(m.tot) + ' × 100 = <span class="ans">' + num(m.pct) + '%</span>';
+    document.getElementById('mixStep').innerHTML =
+      '소금끼리 더하면 ' + num(m.salt) + 'g, 소금물끼리 더하면 ' + num(m.tot) + 'g 이에요.';
+    drawMix();
+  }
+  [['slMA1', 'a1'], ['slMA2', 'a2'], ['slMB1', 'b1'], ['slMB2', 'b2']].forEach(function(p){
+    document.getElementById(p[0]).addEventListener('input', function(e){
+      MX[p[1]] = +e.target.value; updMix();
+    });
+  });
+  updMix();
+
+  /* ============ ④ 속력 ============ */
+  var SP = {d1:120, t1:8, d2:60, t2:6, running:false, t:0, raf:null};
+  var svgRace = document.getElementById('svgRace');
+  function drawRace(prog){
+    clear(svgRace);
+    var x0 = 70, x1 = 600;
+    [[90, '🐰', '#FF8A3D', SP.d1, SP.t1], [170, '🐢', '#4D96FF', SP.d2, SP.t2]].forEach(function(it, i){
+      var y = it[0];
+      svgRace.appendChild(S('line', {x1:x0, y1:y, x2:x1, y2:y, stroke:'#E0D2B4', 'stroke-width':10,
+        'stroke-linecap':'round'}));
+      svgRace.appendChild(S('line', {x1:x1, y1:y - 18, x2:x1, y2:y + 18, stroke:'#4A3B2A', 'stroke-width':3}));
+      var v = it[3] / it[4];
+      var vmax = Math.max(SP.d1 / SP.t1, SP.d2 / SP.t2);
+      var p = prog === undefined ? 0 : Math.min(1, prog * (v / vmax));
+      var cx = x0 + (x1 - x0) * p;
+      svgRace.appendChild(S('circle', {cx:cx, cy:y, r:16, fill:it[2], opacity:.22}));
+      svgRace.appendChild(txt(cx, y, it[1], {size:24}));
+      svgRace.appendChild(txt(x0 - 14, y, it[3] + 'm', {anchor:'end', size:14, fill:it[2]}));
+      svgRace.appendChild(txt(x1, y - 24, num(v) + ' m/초', {anchor:'end', size:13, fill:it[2]}));
+    });
+    svgRace.appendChild(txt(70, 42, '출발', {size:14, fill:'#7A6A55', anchor:'start'}));
+    svgRace.appendChild(txt(600, 42, '결승', {size:14, fill:'#7A6A55'}));
+    // 1초에 간 거리 비교 막대
+    var by = 210;
+    svgRace.appendChild(txt(70, by, '1초에 간 거리', {anchor:'start', size:14, fill:'#7A6A55'}));
+    var v1 = SP.d1 / SP.t1, v2 = SP.d2 / SP.t2, vm = Math.max(v1, v2, 1);
+    [[v1, '#FF8A3D', 0], [v2, '#4D96FF', 1]].forEach(function(it){
+      svgRace.appendChild(S('rect', {x:200, y:by - 12 + it[2] * 16, width:Math.max(3, 300 * it[0] / vm),
+        height:12, rx:6, fill:it[1]}));
+    });
+  }
+  function updSpeed(){
+    var v1 = SP.d1 / SP.t1, v2 = SP.d2 / SP.t2;
+    document.getElementById('s1d').textContent = SP.d1;
+    document.getElementById('s1t').textContent = SP.t1;
+    document.getElementById('s2d').textContent = SP.d2;
+    document.getElementById('s2t').textContent = SP.t2;
+    document.getElementById('s1v').textContent = num(v1);
+    document.getElementById('s2v').textContent = num(v2);
+    var w = document.getElementById('sWin');
+    w.textContent = Math.abs(v1 - v2) < 1e-9 ? '🤝 똑같이 빨라요' :
+      (v1 > v2 ? '🐰 토끼가 더 빨라요' : '🐢 거북이가 더 빨라요');
+    document.getElementById('speedEq').innerHTML =
+      '🐰 ' + SP.d1 + ' ÷ ' + SP.t1 + ' = <span class="hl">' + num(v1) + '</span> m/초 &nbsp;&nbsp;|&nbsp;&nbsp; ' +
+      '🐢 ' + SP.d2 + ' ÷ ' + SP.t2 + ' = <span class="hl2">' + num(v2) + '</span> m/초';
+    if(!SP.running) drawRace(0);
+  }
+  [['slS1D', 'd1'], ['slS1T', 't1'], ['slS2D', 'd2'], ['slS2T', 't2']].forEach(function(p){
+    document.getElementById(p[0]).addEventListener('input', function(e){
+      SP[p[1]] = +e.target.value; stopRace(); updSpeed();
+    });
+  });
+  function stopRace(){
+    SP.running = false;
+    if(SP.raf){ cancelAnimationFrame(SP.raf); SP.raf = null; }
+  }
+  document.getElementById('btnRace').addEventListener('click', function(){
+    stopRace();
+    SP.running = true;
+    var start = performance.now(), dur = 2600;
+    var step = function(now){
+      var p = Math.min(1, (now - start) / dur);
+      drawRace(p);
+      if(p < 1 && SP.running) SP.raf = requestAnimationFrame(step);
+      else { SP.running = false; SP.raf = null; }
+    };
+    SP.raf = requestAnimationFrame(step);
+  });
+  document.getElementById('btnRaceReset').addEventListener('click', function(){
+    stopRace(); drawRace(0);
+  });
+  updSpeed();
+
+  /* ============ ⑤ 일의 양 ============ */
+  var W = {a:6, b:12};
+  var svgWork = document.getElementById('svgWork');
+  function workCalc(){
+    var a = W.a, b = W.b;
+    // 하루 합 = 1/a + 1/b = (a+b)/(ab) → 걸리는 날 = ab/(a+b)
+    var n = a + b, d = a * b;
+    var g = gcd(n, d);
+    return {a:a, b:b, sumN:n / g, sumD:d / g, days: d / n};
+  }
+  function drawWork(){
+    clear(svgWork);
+    var c = workCalc();
+    var x0 = 70, w = 500, y0 = 42;
+    svgWork.appendChild(txt(x0, y0 - 14, '전체 일 = 1', {anchor:'start', size:14, fill:'#7A6A55'}));
+    // 전체 일 틀
+    svgWork.appendChild(S('rect', {x:x0, y:y0, width:w, height:32, rx:8,
+      fill:'#F2E8D4', stroke:'#C9B48C', 'stroke-width':2}));
+    // 날짜별 누적 — 날수가 많아도 그림 안에 들어오도록 줄 높이를 맞춥니다
+    var days = Math.ceil(c.days - 1e-9);
+    var yy = y0 + 62, legendY = 268, avail = legendY - yy - 12;
+    var rowH = Math.max(11, Math.min(30, avail / days));
+    svgWork.appendChild(txt(x0 - 12, yy + rowH / 2, '하루씩', {anchor:'end', size:13, fill:'#7A6A55'}));
+    var acc = 0;
+    for(var i = 0; i < days; i++){
+      var remain = Math.max(0, 1 - acc);
+      var pa = Math.min(1 / c.a, remain);
+      var pb = Math.min(1 / c.b, Math.max(0, remain - pa));
+      var yrow = yy + i * rowH, barH = Math.max(7, rowH - 6);
+      svgWork.appendChild(S('rect', {x:x0, y:yrow, width:w, height:barH, rx:4,
+        fill:'#F7EFDD', stroke:'#E6D9BE', 'stroke-width':1.3}));
+      svgWork.appendChild(S('rect', {x:x0 + w * acc, y:yrow, width:w * pa, height:barH, rx:3, fill:'#FF8A3D'}));
+      svgWork.appendChild(S('rect', {x:x0 + w * (acc + pa), y:yrow, width:w * pb, height:barH, rx:3, fill:'#4D96FF'}));
+      acc += pa + pb;
+      var done = acc >= 0.9999;
+      svgWork.appendChild(txt(x0 + w + 14, yrow + barH / 2, (i + 1) + '일째',
+        {anchor:'start', size: rowH < 16 ? 10 : 12, fill: done ? '#1E6B45' : '#9A8A75'}));
+      if(done){
+        svgWork.appendChild(S('rect', {x:x0 - 3, y:yrow - 3, width:w + 6, height:barH + 6, rx:6,
+          fill:'none', stroke:'#3BB273', 'stroke-width':3}));
+        break;
+      }
+    }
+    // 범례
+    svgWork.appendChild(S('rect', {x:x0, y:legendY, width:14, height:14, rx:4, fill:'#FF8A3D'}));
+    svgWork.appendChild(txt(x0 + 22, legendY + 7, '민서 (하루 ' + fracStr(1, c.a) + ')', {anchor:'start', size:13}));
+    svgWork.appendChild(S('rect', {x:x0 + 200, y:legendY, width:14, height:14, rx:4, fill:'#4D96FF'}));
+    svgWork.appendChild(txt(x0 + 222, legendY + 7, '준호 (하루 ' + fracStr(1, c.b) + ')', {anchor:'start', size:13}));
+  }
+  function updWork(){
+    var c = workCalc();
+    document.getElementById('wA').textContent = c.a;
+    document.getElementById('wB').textContent = c.b;
+    document.getElementById('wRa').textContent = fracStr(1, c.a);
+    document.getElementById('wRb').textContent = fracStr(1, c.b);
+    document.getElementById('wRt').textContent = fracStr(c.sumN, c.sumD);
+    var exact = fracStr(c.a * c.b, c.a + c.b);          // 걸리는 날을 분수로 정확히
+    var whole = (exact.indexOf('/') === -1);
+    document.getElementById('wDays').textContent = whole ? exact : exact + ' (≈' + num(c.days) + ')';
+    document.getElementById('workEq').innerHTML =
+      '<span class="hl">' + fracStr(1, c.a) + '</span> + <span class="hl2">' + fracStr(1, c.b) +
+      '</span> = <span class="ans">' + fracStr(c.sumN, c.sumD) + '</span>';
+    document.getElementById('workStep').innerHTML =
+      '하루에 ' + fracStr(c.sumN, c.sumD) + ' 씩 하니까, 전체 1을 끝내려면 1 ÷ ' +
+      fracStr(c.sumN, c.sumD) + ' = <b>' + exact + '일</b> 걸려요.' +
+      (whole ? '' : ' 약 ' + num(c.days) + '일이니까, ' + Math.ceil(c.days) +
+        '일째에 끝나요. (마지막 날은 조금만 하면 돼요.)');
+    drawWork();
+  }
+  document.getElementById('slWA').addEventListener('input', function(e){ W.a = +e.target.value; updWork(); });
+  document.getElementById('slWB').addEventListener('input', function(e){ W.b = +e.target.value; updWork(); });
+  updWork();
+
+  /* ============ ⑥ 인쇄 ============ */
+  var OPTS = [
+    {id:'basic', label:'비·비율·백분율 표', desc:'비를 비율과 백분율로 바꾸는 연습', on:true},
+    {id:'prop',  label:'비례식 세우기', desc:'이중수직선 빈칸을 채우고 비례식 풀기', on:true},
+    {id:'apply', label:'응용 문장제', desc:'농도·속력·일의 양 문제', on:true},
+    {id:'answer', label:'정답지', desc:'위 학습지의 정답 모음', on:true}
+  ];
+  var optState = {}, PB = {basic:[], prop:[], apply:[]};
+  (function(){
+    var box = document.getElementById('optList');
+    OPTS.forEach(function(o){
+      optState[o.id] = o.on;
+      var lab = T('label', 'opt');
+      var inp = document.createElement('input');
+      inp.type = 'checkbox'; inp.checked = o.on;
+      inp.addEventListener('change', function(){ optState[o.id] = inp.checked; buildPrint(); });
+      lab.appendChild(inp);
+      var tx = T('div');
+      tx.appendChild(T('b', null, o.label));
+      tx.appendChild(T('span', null, o.desc));
+      lab.appendChild(tx);
+      box.appendChild(lab);
+    });
+  })();
+
+  function pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+  function makeProbs(){
+    // 1) 비 → 비율 → 백분율 (깔끔한 값만)
+    var pairs = [[1,2],[1,4],[3,4],[1,5],[2,5],[3,5],[4,5],[1,10],[3,10],[7,10],[9,10],
+                 [1,20],[3,20],[11,20],[1,25],[6,25],[13,25],[1,50],[21,50],[9,100],[37,100]];
+    PB.basic = [];
+    var used = {};
+    while(PB.basic.length < 8){
+      var p = pick(pairs), key = p.join(',');
+      if(used[key]) continue;
+      used[key] = 1;
+      var k = pick([1,2,3,4,5]);
+      PB.basic.push({a:p[0] * k, b:p[1] * k, rn:p[0], rd:p[1], pct: p[0] / p[1] * 100});
+    }
+    // 2) 비례식 (정수 답)
+    PB.prop = [];
+    var scen = [
+      {t:'공책', u1:'권', u2:'원', per: pick([700,800,900,1200])},
+      {t:'사탕', u1:'개', u2:'원', per: pick([150,250,300])},
+      {t:'자동차', u1:'시간', u2:'km', per: pick([60,70,80,90])},
+      {t:'물', u1:'분', u2:'L', per: pick([4,5,6,8])},
+      {t:'색종이', u1:'묶음', u2:'장', per: pick([25,30,40])}
+    ];
+    for(var i = 0; i < 5; i++){
+      var s = scen[i % scen.length];
+      var a = pick([2,3,4,5,6]), c = a + pick([2,3,4,5,6]);
+      PB.prop.push({t:s.t, u1:s.u1, u2:s.u2, a:a, b:a * s.per, c:c, d:c * s.per});
+    }
+    // 3) 응용
+    PB.apply = [];
+    // 농도 2
+    for(var j = 0; j < 2; j++){
+      var tot = pick([200,300,400,500]), pc = pick([5,10,15,20,25]);
+      PB.apply.push({k:'농도', q:'소금물 ' + tot + 'g의 농도가 ' + pc + '%입니다. 녹아 있는 소금은 몇 g일까요?',
+        a: num(tot * pc / 100) + 'g', how: tot + ' × ' + pc + ' ÷ 100'});
+    }
+    var sa = pick([20,30,40,50]), wa = pick([80,120,160,200]);
+    PB.apply.push({k:'농도', q:'소금 ' + sa + 'g을 물 ' + wa + 'g에 녹였습니다. 농도는 몇 %일까요?',
+      a: num(sa / (sa + wa) * 100) + '%', how: sa + ' ÷ ' + (sa + wa) + ' × 100'});
+    // 속력 2
+    var sv = pick([4,5,6,8]), st = pick([3,4,5,6]);
+    PB.apply.push({k:'속력', q:'자동차가 ' + (sv * st * 10) + 'km를 ' + st + '시간에 갔습니다. 속력은?',
+      a: (sv * 10) + ' km/시', how: (sv * st * 10) + ' ÷ ' + st});
+    var sv2 = pick([40,50,60,70]), st2 = pick([2,3,4]);
+    PB.apply.push({k:'속력', q:'시속 ' + sv2 + 'km로 ' + st2 + '시간 동안 간 거리는?',
+      a: (sv2 * st2) + ' km', how: sv2 + ' × ' + st2});
+    // 일의 양 2
+    var wpairs = [[6,12,4],[4,12,3],[3,6,2],[10,15,6],[12,24,8],[5,20,4],[20,30,12],[9,18,6],[8,8,4],[6,3,2]];
+    for(var m = 0; m < 2; m++){
+      var wp = wpairs[Math.floor(Math.random() * wpairs.length)];
+      PB.apply.push({k:'일의 양',
+        q:'어떤 일을 혼자 하면 가는 ' + wp[0] + '일, 나는 ' + wp[1] + '일 걸립니다. 둘이 함께 하면 며칠?',
+        a: wp[2] + '일', how: '1/' + wp[0] + ' + 1/' + wp[1] + ' = ' + fracStr(wp[0] + wp[1], wp[0] * wp[1])});
+    }
+  }
+
+  function pHead(title, withName){
+    var h = T('div', 'p-head');
+    h.appendChild(T('h2', null, title));
+    var m = T('div', 'meta');
+    if(withName !== false) m.appendChild(T('div', null, '이름 : ____________   날짜 : ____ / ____'));
+    m.appendChild(T('div', null, '세영코딩연구소  저자 : 컴퓨터공학박사 KIM'));
+    h.appendChild(m);
+    return h;
+  }
+  function pFoot(s){
+    var f = T('div', 'p-foot');
+    f.appendChild(T('span', null, s));
+    f.appendChild(T('span', null, '세영코딩연구소  저자 : 컴퓨터공학박사 KIM'));
+    return f;
+  }
+  function dnlPrint(p){
+    var s = S('svg', {viewBox:'0 0 320 120'});
+    var x0 = 40, x1 = 280, yT = 38, yB = 86;
+    var xa = x0 + (x1 - x0) * 0.34, xc = x0 + (x1 - x0) * 0.78;
+    [[yT, '#111'], [yB, '#111']].forEach(function(it){
+      s.appendChild(S('line', {x1:x0, y1:it[0], x2:x1, y2:it[0], stroke:it[1], 'stroke-width':1.8}));
+      s.appendChild(S('polygon', {points:x1 + ',' + (it[0] - 4) + ' ' + (x1 + 9) + ',' + it[0] +
+        ' ' + x1 + ',' + (it[0] + 4), fill:'#111'}));
+    });
+    s.appendChild(txt(x0 - 6, yT, '0', {size:9, fill:'#111', anchor:'end'}));
+    s.appendChild(txt(x0 - 6, yB, '0', {size:9, fill:'#111', anchor:'end'}));
+    [[xa, p.a, p.b, false], [xc, p.c, null, true]].forEach(function(it){
+      s.appendChild(S('line', {x1:it[0], y1:yT - 8, x2:it[0], y2:yB + 8,
+        stroke:'#111', 'stroke-width':1.2, 'stroke-dasharray':'4 3'}));
+      s.appendChild(S('circle', {cx:it[0], cy:yT, r:2.6, fill:'#111'}));
+      s.appendChild(S('circle', {cx:it[0], cy:yB, r:2.6, fill:'#111'}));
+      s.appendChild(txt(it[0], yT - 15, String(it[1]), {size:11, fill:'#111'}));
+      s.appendChild(txt(it[0], yB + 17, it[3] ? '?' : String(it[2]), {size:11, fill:'#111'}));
+    });
+    s.appendChild(txt(x0 + 4, yT - 22, p.u1, {size:9, fill:'#555', anchor:'start'}));
+    s.appendChild(txt(x0 + 4, yB + 30, p.u2, {size:9, fill:'#555', anchor:'start'}));
+    return s;
+  }
+
+  function buildPrint(){
+    var area = document.getElementById('printArea');
+    clear(area);
+
+    if(optState.basic){
+      var pg = T('div', 'page');
+      pg.appendChild(pHead('비 · 비율 · 백분율'));
+      var tbl = T('table', 'pt');
+      var hr = T('tr');
+      ['비', '간단한 비', '비율 (분수)', '백분율 (%)'].forEach(function(h){ hr.appendChild(T('th', null, h)); });
+      tbl.appendChild(hr);
+      PB.basic.forEach(function(q){
+        var tr = T('tr');
+        tr.appendChild(T('td', null, q.a + ' : ' + q.b));
+        tr.appendChild(T('td', null, ''));
+        tr.appendChild(T('td', null, ''));
+        tr.appendChild(T('td', null, ''));
+        tbl.appendChild(tr);
+      });
+      pg.appendChild(tbl);
+      var lst = T('div', 'p-list');
+      lst.style.marginTop = '10px';
+      lst.appendChild(T('div', null, '※ 아래 빈칸을 채우세요.'));
+      [['0.25 = ', '%'], ['3/5 = ', '%'], ['45% = ', ' (분수)'], ['0.7 = ', ' (분수)']].forEach(function(p2, i){
+        var row = T('div');
+        row.appendChild(document.createTextNode((i + 1) + ') ' + p2[0]));
+        row.appendChild(T('span', 'blank', ' '));
+        row.appendChild(document.createTextNode(p2[1]));
+        lst.appendChild(row);
+      });
+      pg.appendChild(lst);
+      pg.appendChild(pFoot('비율 = 비교하는 양 ÷ 기준량, 백분율 = 비율 × 100'));
+      area.appendChild(pg);
+    }
+
+    if(optState.prop){
+      var pg2 = T('div', 'page');
+      pg2.appendChild(pHead('비례식 세우고 풀기'));
+      var g2 = T('div', 'p-grid');
+      g2.style.gridTemplateColumns = 'repeat(2,1fr)';
+      PB.prop.forEach(function(p, i){
+        var it = T('div', 'p-item');
+        it.appendChild(T('div', 'no', (i + 1) + '. ' + p.t + ' ' + p.a + p.u1 + '이 ' + p.b + p.u2 +
+          '입니다. ' + p.c + p.u1 + '이면?'));
+        it.appendChild(dnlPrint(p));
+        var row = T('div', 'no');
+        row.appendChild(document.createTextNode('비례식 : '));
+        row.appendChild(T('span', 'blank', ' '));
+        row.appendChild(document.createTextNode('   답 : '));
+        row.appendChild(T('span', 'blank', ' '));
+        it.appendChild(row);
+        g2.appendChild(it);
+      });
+      pg2.appendChild(g2);
+      pg2.appendChild(pFoot('외항의 곱 = 내항의 곱'));
+      area.appendChild(pg2);
+    }
+
+    if(optState.apply){
+      var pg3 = T('div', 'page');
+      pg3.appendChild(pHead('응용 — 농도 · 속력 · 일의 양'));
+      var g3 = T('div', 'p-grid');
+      g3.style.gridTemplateColumns = '1fr';
+      PB.apply.forEach(function(p, i){
+        var it = T('div', 'p-item');
+        it.appendChild(T('div', 'no', '[' + p.k + '] ' + (i + 1) + '. ' + p.q));
+        var row = T('div', 'no');
+        row.style.marginTop = '14px';
+        row.appendChild(document.createTextNode('식 : '));
+        row.appendChild(T('span', 'blank', ' '));
+        row.appendChild(document.createTextNode('      답 : '));
+        row.appendChild(T('span', 'blank', ' '));
+        it.appendChild(row);
+        g3.appendChild(it);
+      });
+      pg3.appendChild(g3);
+      pg3.appendChild(pFoot('농도=소금÷소금물×100  ·  속력=거리÷시간  ·  일의 양은 하루 치를 더해요'));
+      area.appendChild(pg3);
+    }
+
+    if(optState.answer){
+      var pg4 = T('div', 'page');
+      pg4.appendChild(pHead('정답지', false));
+      var l = T('div', 'p-list');
+      l.appendChild(T('div', null, '■ 비 · 비율 · 백분율'));
+      PB.basic.forEach(function(q, i){
+        l.appendChild(T('div', null, (i + 1) + ') ' + q.a + ':' + q.b + ' → ' + q.rn + ':' + q.rd +
+          ' → ' + fracStr(q.rn, q.rd) + ' → ' + num(q.pct) + '%'));
+      });
+      l.appendChild(T('div', null, '빈칸 : 1) 25%  2) 60%  3) 9/20  4) 7/10'));
+      l.appendChild(T('div', null, '■ 비례식'));
+      PB.prop.forEach(function(p, i){
+        l.appendChild(T('div', null, (i + 1) + ') ' + p.a + ' : ' + p.b + ' = ' + p.c + ' : ' + p.d +
+          '  →  답 ' + p.d + p.u2));
+      });
+      l.appendChild(T('div', null, '■ 응용'));
+      PB.apply.forEach(function(p, i){
+        l.appendChild(T('div', null, (i + 1) + ') ' + p.how + ' = ' + p.a));
+      });
+      pg4.appendChild(l);
+      pg4.appendChild(pFoot('틀린 문제는 무엇이 기준량인지 다시 찾아보세요.'));
+      area.appendChild(pg4);
+    }
+
+    if(!area.children.length){
+      var pg5 = T('div', 'page');
+      pg5.appendChild(pHead('비와 비율 학습지'));
+      pg5.appendChild(T('p', null, '인쇄할 항목을 하나 이상 선택해 주세요.'));
+      area.appendChild(pg5);
+    }
+  }
+  document.getElementById('btnShuffle').addEventListener('click', function(){ makeProbs(); buildPrint(); });
+  document.getElementById('btnPrint').addEventListener('click', function(){ window.print(); });
+  makeProbs(); buildPrint();
+
+  /* 검증용 */
+  window.__br = {
+    ratio: function(a, b){ R1.a = a; R1.b = b; updRatio();
+      return {simple: document.getElementById('pSimple').textContent,
+              rate: document.getElementById('pRate').textContent,
+              pct: document.getElementById('pPct').textContent}; },
+    dnl: function(i, t){ SI = i; DN.target = t; drawDNL(); updDNL();
+      return {a:SCEN[i].a, b:SCEN[i].b, target:t, eq:document.getElementById('dnlEq').textContent,
+              table: Array.prototype.map.call(document.querySelectorAll('#relTable tr'),
+                function(tr){ return Array.prototype.map.call(tr.children, function(c){ return c.textContent; }); })}; },
+    conc: function(s, w){ C.salt = s; C.water = w; C._last = null; updConc();
+      return {pct: document.getElementById('cPct').textContent,
+              total: document.getElementById('cTotal').textContent}; },
+    mix: function(a1, a2, b1, b2){ MX = {a1:a1, a2:a2, b1:b1, b2:b2}; updMix();
+      return {pct: mixCalc().pct, salt: mixCalc().salt, tot: mixCalc().tot}; },
+    speed: function(d1, t1, d2, t2){ SP.d1 = d1; SP.t1 = t1; SP.d2 = d2; SP.t2 = t2; updSpeed();
+      return {v1: document.getElementById('s1v').textContent,
+              v2: document.getElementById('s2v').textContent,
+              win: document.getElementById('sWin').textContent}; },
+    work: function(a, b){ W.a = a; W.b = b; updWork();
+      return {ra: document.getElementById('wRa').textContent,
+              rb: document.getElementById('wRb').textContent,
+              rt: document.getElementById('wRt').textContent,
+              days: document.getElementById('wDays').textContent}; },
+    probs: function(){ return PB; },
+    fracStr: fracStr, num: num
+  };
+})();
+</script>
+</body>
+</html>
