@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>선분 모델 — 그림으로 푸는 배분과 비교</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --ivory:#FDF8EE; --ivory-2:#F7EFDD;
+  --ink:#4A3B2A; --ink-soft:#7A6A55; --line:#E6D9BE; --white:#fff;
+  --accent:#FF8A3D; --accent-soft:#FFE6D2;
+  --good:#3BB273; --good-soft:#DFF3E7;
+  --bad:#E4572E; --bad-soft:#FBE3DB;
+  --blue:#4D96FF; --blue-soft:#DFEBFF;
+  --violet:#9B72CF; --violet-soft:#EDE4F8;
+  --shadow:0 4px 0 rgba(0,0,0,.08), 0 10px 24px rgba(120,95,60,.12);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--ivory);
+  background-image:radial-gradient(circle at 12% 8%, #fff6e3 0 18%, transparent 19%),
+                   radial-gradient(circle at 88% 4%, #ffeede 0 14%, transparent 15%);
+  color:var(--ink);
+  font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-size:17px; line-height:1.65; -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:1020px;margin:0 auto;padding:0 16px 64px}
+.hero{text-align:center;padding:30px 16px 16px}
+.hero h1{font-size:clamp(23px,4.8vw,40px);margin:0 0 6px;letter-spacing:-1px;color:#3C2F20;text-shadow:2px 3px 0 #FFD9A8}
+.hero p{margin:0;color:var(--ink-soft);font-size:clamp(14px,2.6vw,18px)}
+.brand{display:inline-block;margin-top:12px;padding:6px 16px;border-radius:999px;background:var(--white);
+  border:2px dashed var(--line);font-size:13px;color:var(--ink-soft);font-family:'Gaegu',sans-serif;font-weight:700}
+
+.tabs{position:sticky;top:0;z-index:30;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;
+  padding:10px;margin:0 0 18px;background:rgba(253,248,238,.93);backdrop-filter:blur(6px);border-bottom:2px solid var(--line)}
+.tab{border:2px solid var(--line);background:var(--white);color:var(--ink);font-family:inherit;font-size:14.5px;
+  padding:8px 13px;border-radius:999px;cursor:pointer;transition:.15s}
+.tab:hover{transform:translateY(-2px)}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 3px 0 #d96c25}
+
+.panel{display:none;animation:fadein .25s ease}
+.panel.on{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.card{background:var(--white);border:2px solid var(--line);border-radius:var(--radius);padding:20px;
+  margin:0 0 20px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 4px;font-size:22px}
+.card h2 .emoji{margin-right:6px}
+.sub{color:var(--ink-soft);font-size:15px;margin:0 0 14px;font-family:'Gaegu',sans-serif;font-weight:700;line-height:1.55}
+
+.stage{background:var(--ivory);border:2px solid var(--line);border-radius:14px;padding:8px;margin:12px 0}
+svg.draw{display:block;width:100%;height:auto}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0 2px;align-items:center}
+.btn{border:2px solid var(--line);background:var(--white);color:var(--ink);font-family:inherit;font-size:15px;
+  padding:9px 16px;border-radius:999px;cursor:pointer;transition:.15s}
+.btn:hover{transform:translateY(-2px);border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 3px 0 #d96c25}
+.btn.blue{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 3px 0 #2f72d8}
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:999px;overflow:hidden;background:#fff}
+.seg button{border:none;background:none;font-family:inherit;font-size:14.5px;padding:8px 14px;cursor:pointer;color:var(--ink)}
+.seg button.on{background:var(--violet);color:#fff}
+
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0 4px}
+.sl{border:2px solid var(--line);border-radius:14px;padding:9px 13px;background:var(--ivory)}
+.sl label{display:flex;justify-content:space-between;font-size:14.5px;margin-bottom:3px}
+.sl label b{font-size:18px;color:var(--accent)}
+.sl input[type=range]{width:100%;accent-color:var(--accent)}
+.sl.b label b{color:#2F72D8} .sl.b input{accent-color:#4D96FF}
+
+.readout{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:10px}
+.pill{border:2px solid var(--line);background:var(--ivory);border-radius:999px;padding:6px 15px;font-size:16px}
+.pill b{font-size:20px;color:var(--accent)}
+.pill.b{background:var(--blue-soft);border-color:var(--blue)} .pill.b b{color:#2F72D8}
+.pill.g{background:var(--good-soft);border-color:var(--good)} .pill.g b{color:var(--good)}
+
+.eqbox{background:var(--ivory);border:2px dashed var(--accent);border-radius:14px;padding:14px;margin-top:12px}
+.eqline{font-size:clamp(17px,3.8vw,25px);text-align:center;margin:5px 0;line-height:1.5}
+.eqstep{font-family:'Gaegu',sans-serif;font-weight:700;font-size:16px;color:var(--ink-soft);
+  text-align:center;margin-top:6px;line-height:1.7}
+.o-col{color:var(--accent)} .b-col{color:#2F72D8} .g-col{color:var(--good)} .v-col{color:var(--violet)}
+
+.note{border-radius:14px;padding:12px 16px;margin-top:12px;font-family:'Gaegu',sans-serif;font-weight:700;
+  font-size:16px;line-height:1.6}
+.note.tip{background:var(--blue-soft);border:2px solid var(--blue);color:#1F4F9B}
+.note.warn{background:var(--bad-soft);border:2px solid var(--bad);color:#8E2E13}
+.note.ok{background:var(--good-soft);border:2px solid var(--good);color:#1E6B45}
+.note.vio{background:var(--violet-soft);border:2px solid var(--violet);color:#5B3A8E}
+
+.story{background:var(--ivory);border:2px solid var(--line);border-radius:14px;padding:15px;
+  font-size:17px;line-height:1.75}
+.steps{display:grid;gap:9px;margin-top:10px}
+.stepb{border:2px solid var(--line);border-radius:14px;padding:10px 14px;background:var(--ivory);opacity:.4;transition:.3s}
+.stepb.on{opacity:1;background:var(--good-soft);border-color:var(--good)}
+.stepb b{display:block;font-size:15.5px}
+.stepb span{font-family:'Gaegu',sans-serif;font-weight:700;font-size:14.5px;color:var(--ink-soft)}
+
+.defs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:14px}
+.def{border:2px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--ivory)}
+.def h3{margin:0 0 4px;font-size:17px}
+.def p{margin:0;font-family:'Gaegu',sans-serif;font-weight:700;font-size:15px;color:var(--ink-soft);line-height:1.5}
+
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:430px;margin:12px auto 0}
+.choice{font-family:inherit;font-size:20px;padding:13px 6px;border-radius:14px;border:3px solid var(--line);
+  background:#fff;cursor:pointer;transition:.12s}
+.choice:hover{transform:translateY(-3px);border-color:var(--accent)}
+.choice.right{background:var(--good);border-color:var(--good);color:#fff}
+.choice.wrong{background:var(--bad);border-color:var(--bad);color:#fff}
+.feedback{min-height:28px;font-size:16px;margin-top:12px;text-align:center;font-family:'Gaegu',sans-serif;font-weight:700}
+.quiz-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.bar{height:12px;background:var(--ivory-2);border-radius:999px;overflow:hidden;flex:1;min-width:140px;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--good);width:0;transition:.3s}
+.result{text-align:center;padding:12px}
+.result .score{font-size:50px;color:var(--accent)}
+
+.opt-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0}
+.opt{display:flex;gap:10px;align-items:flex-start;border:2px solid var(--line);border-radius:14px;padding:12px 14px;
+  background:var(--ivory);cursor:pointer}
+.opt input{width:20px;height:20px;margin-top:3px;accent-color:var(--accent)}
+.opt b{display:block;font-size:16px}
+.opt span{font-family:'Gaegu',sans-serif;font-weight:700;font-size:14px;color:var(--ink-soft)}
+
+.mob-tip{display:none;text-align:center;background:var(--accent-soft);border:2px dashed var(--accent);
+  border-radius:14px;padding:10px 14px;margin:0 0 16px;color:#8A5A2B}
+@media (pointer:coarse){.mob-tip{display:block}}
+footer.foot{text-align:center;color:var(--ink-soft);font-size:14px;padding:10px 0 30px;font-family:'Gaegu',sans-serif;font-weight:700}
+
+#printArea{display:none}
+.page{page-break-after:always;break-after:page}
+.page:last-child{page-break-after:auto;break-after:auto}
+.p-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #333;padding-bottom:6px;margin-bottom:12px}
+.p-head h2{margin:0;font-size:23px}
+.p-head .meta{font-size:12px;color:#555;font-family:'Gaegu',sans-serif;font-weight:700;text-align:right;line-height:1.4}
+.p-grid{display:grid;gap:10px}
+.p-item{border:2px solid #333;border-radius:10px;padding:8px 10px;break-inside:avoid}
+.p-item .no{font-size:13.5px;font-family:'Gaegu',sans-serif;font-weight:700;line-height:1.7}
+.p-item svg{width:100%;height:auto;display:block;margin-top:4px}
+.blank{display:inline-block;min-width:58px;border-bottom:2px solid #333;text-align:center}
+.p-list{font-size:14px;line-height:2.0;font-family:'Gaegu',sans-serif;font-weight:700}
+.p-foot{margin-top:10px;border-top:1.5px solid #bbb;padding-top:5px;font-size:11px;color:#666;display:flex;
+  justify-content:space-between;font-family:'Gaegu',sans-serif;font-weight:700}
+@page{size:A4 portrait;margin:11mm}
+@media print{
+  body{background:#fff!important;background-image:none!important;font-size:12pt}
+  .no-print{display:none!important}
+  #printArea{display:block!important}
+  .wrap{max-width:none;padding:0}
+  .p-grid{min-height:216mm;align-content:space-between}
+}
+@media (max-width:640px){ .card{padding:14px} .choices{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<div class="wrap no-print">
+  <header class="hero">
+    <h1>📊 선분 모델로 풀기</h1>
+    <p>싱가포르 수학의 <b>Bar Model</b> — 문제를 네모 칸 그림으로 바꿔요</p>
+    <div class="brand">세영코딩연구소 &nbsp;저자 : 컴퓨터공학박사 KIM</div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-p="intro">① 선분 모델이란?</button>
+    <button class="tab" data-p="compare">② 비교하기</button>
+    <button class="tab" data-p="share">③ 나누어 주기</button>
+    <button class="tab" data-p="sumdiff">④ 합과 차</button>
+    <button class="tab" data-p="quiz">⑤ 연습 문제</button>
+    <button class="tab" data-p="print">⑥ 인쇄하기</button>
+  </nav>
+
+  <p class="sub mob-tip">📱 슬라이더를 움직이면 막대 길이가 숫자에 맞게 바뀝니다.</p>
+
+  <!-- ① 소개 -->
+  <section class="panel on" id="p-intro">
+    <div class="card">
+      <h2><span class="emoji">🧱</span>부분을 모으면 전체</h2>
+      <p class="sub">수를 <b>길이</b>로 바꿔 그려요. 두 부분을 이어 붙이면 전체가 되고,
+        전체에서 한 부분을 덜어 내면 나머지 부분이 돼요.</p>
+      <div class="sliders">
+        <div class="sl"><label>🍎 사과 <b id="i1">7</b></label>
+          <input type="range" id="slI1" min="1" max="20" value="7"></div>
+        <div class="sl b"><label>🍐 배 <b id="i2">5</b></label>
+          <input type="range" id="slI2" min="1" max="20" value="5"></div>
+      </div>
+      <div class="stage"><svg class="draw" id="svgIntro" viewBox="0 0 660 230"></svg></div>
+      <div class="readout" id="introRead"></div>
+      <div class="eqbox">
+        <div class="eqline" id="introEq"></div>
+        <div class="eqstep">그림 하나로 <b>덧셈식</b>도 <b>뺄셈식</b>도 모두 보여요.</div>
+      </div>
+      <div class="defs">
+        <div class="def"><h3>왜 선분 모델인가요?</h3><p>글로만 읽으면 헷갈리는 관계가
+          <b>길이로 보이면</b> 한눈에 들어와요. 어떤 식을 세워야 할지 그림이 알려 줘요.</p></div>
+        <div class="def"><h3>칸 하나 = 똑같은 양</h3><p>칸을 똑같은 크기로 그리는 것이 규칙이에요.
+          그래야 길이를 비교할 수 있어요.</p></div>
+        <div class="def"><h3>물음표 자리</h3><p>모르는 것에 <b>?</b>를 표시해요.
+          그림에서 ?의 자리를 보면 더할지 뺄지 정해져요.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ② 비교 -->
+  <section class="panel" id="p-compare">
+    <div class="card">
+      <h2><span class="emoji">⚖️</span>얼마나 더 많을까? 몇 배일까?</h2>
+      <p class="sub">두 막대를 <b>왼쪽 끝을 맞춰</b> 위아래로 놓으면 차이가 바로 보여요.</p>
+      <div class="toolbar">
+        <span class="seg" id="cmpMode">
+          <button class="on" data-m="diff">차이 (얼마나 더?)</button>
+          <button data-m="times">몇 배?</button>
+        </span>
+      </div>
+      <div class="sliders" id="cmpSliders"></div>
+      <div class="stage"><svg class="draw" id="svgCmp" viewBox="0 0 660 240"></svg></div>
+      <div class="readout" id="cmpRead"></div>
+      <div class="eqbox">
+        <div class="eqline" id="cmpEq"></div>
+        <div class="eqstep" id="cmpStep"></div>
+      </div>
+      <div class="note tip" id="cmpNote"></div>
+    </div>
+  </section>
+
+  <!-- ③ 나누어 주기 -->
+  <section class="panel" id="p-share">
+    <div class="card">
+      <h2><span class="emoji">🎁</span>나누어 주기</h2>
+      <p class="sub">전체를 <b>똑같이</b> 나누거나, <b>비</b>에 맞게 나눠요.
+        칸 하나가 얼마인지 먼저 구하는 것이 열쇠예요.</p>
+      <div class="toolbar">
+        <span class="seg" id="shMode">
+          <button class="on" data-m="equal">똑같이 나누기</button>
+          <button data-m="ratio">비로 나누기</button>
+        </span>
+      </div>
+      <div class="sliders" id="shSliders"></div>
+      <div class="stage"><svg class="draw" id="svgShare" viewBox="0 0 660 250"></svg></div>
+      <div class="toolbar">
+        <button class="btn primary" id="btnSplit">✂️ 칸으로 나누기</button>
+        <button class="btn" id="btnSplitReset">↩️ 처음 그림으로</button>
+      </div>
+      <div class="readout" id="shRead"></div>
+      <div class="eqbox">
+        <div class="eqline" id="shEq"></div>
+        <div class="eqstep" id="shStep"></div>
+      </div>
+      <div class="note vio" id="shNote"></div>
+    </div>
+  </section>
+
+  <!-- ④ 합과 차 -->
+  <section class="panel" id="p-sumdiff">
+    <div class="card">
+      <h2><span class="emoji">🔑</span>합과 차를 알 때 — 선분 모델의 진짜 힘</h2>
+      <p class="sub">"둘이 합쳐 ○개, 한 쪽이 △개 더 많다"는 문제예요.
+        식만으로는 어렵지만 그림으로는 쉬워요.</p>
+      <div class="sliders">
+        <div class="sl"><label>두 사람의 합 <b id="sdS">20</b></label>
+          <input type="range" id="slSdS" min="4" max="40" step="2" value="20"></div>
+        <div class="sl b"><label>차이 <b id="sdD">4</b></label>
+          <input type="range" id="slSdD" min="0" max="20" step="2" value="4"></div>
+      </div>
+      <div class="story" id="sdStory"></div>
+      <div class="stage"><svg class="draw" id="svgSd" viewBox="0 0 660 292"></svg></div>
+      <div class="toolbar">
+        <button class="btn primary" id="btnSdStep">▶️ 한 단계씩 풀기</button>
+        <button class="btn" id="btnSdAll">전체 보기</button>
+        <button class="btn" id="btnSdReset">↩️ 처음부터</button>
+      </div>
+      <div class="steps" id="sdSteps"></div>
+      <div class="eqbox">
+        <div class="eqline" id="sdEq"></div>
+        <div class="eqstep" id="sdStep2"></div>
+      </div>
+      <div class="note warn" id="sdNote"></div>
+    </div>
+  </section>
+
+  <!-- ⑤ 연습 -->
+  <section class="panel" id="p-quiz">
+    <div class="card">
+      <h2><span class="emoji">✍️</span>선분 모델로 풀어 보기</h2>
+      <p class="sub">그림을 보고 답을 고르세요. 여러 유형이 섞여 나와요. 8문제예요.</p>
+      <div class="toolbar"><button class="btn primary" id="btnQStart">🚀 연습 시작</button></div>
+      <div id="qArea" style="display:none">
+        <div class="quiz-top">
+          <span id="qCount">1 / 8</span>
+          <div class="bar"><i id="qBar"></i></div>
+          <span id="qScore">⭐ 0</span>
+        </div>
+        <div class="story" id="qStory"></div>
+        <div class="stage"><svg class="draw" id="svgQuiz" viewBox="0 0 660 200"></svg></div>
+        <div class="choices" id="qChoices"></div>
+        <div class="feedback" id="qFeed"></div>
+      </div>
+      <div id="qResult" style="display:none" class="result"></div>
+    </div>
+  </section>
+
+  <!-- ⑥ 인쇄 -->
+  <section class="panel" id="p-print">
+    <div class="card">
+      <h2><span class="emoji">🖨️</span>인쇄해서 연습하기</h2>
+      <p class="sub">필요한 학습지만 골라 인쇄하세요. A4 세로 한 장씩 나옵니다.</p>
+      <div class="opt-list" id="optList"></div>
+      <div class="toolbar">
+        <button class="btn" id="btnShuffle">🔀 문제 새로 뽑기</button>
+        <button class="btn primary" id="btnPrint">🖨️ 인쇄하기 (Ctrl+P)</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">세영코딩연구소 &nbsp;저자 : 컴퓨터공학박사 KIM</footer>
+</div>
+
+<div id="printArea"></div>
+
+<script>
+(function(){
+  "use strict";
+  var NS = 'http://www.w3.org/2000/svg';
+  function S(tag, a){
+    var e = document.createElementNS(NS, tag);
+    if(a) for(var k in a){ if(a[k] !== null && a[k] !== undefined) e.setAttribute(k, a[k]); }
+    return e;
+  }
+  function T(tag, cls, text){
+    var e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  function txt(x, y, s, o){
+    o = o || {};
+    var t = S('text', {x:x, y:y, 'text-anchor':o.anchor || 'middle',
+      'dominant-baseline':o.base || 'middle', 'font-size':o.size || 14,
+      fill:o.fill || '#4A3B2A', 'font-family':o.family || "'Jua','Malgun Gothic',sans-serif"});
+    t.style.pointerEvents = 'none';
+    t.textContent = s;
+    return t;
+  }
+  function clear(el){ while(el.firstChild) el.removeChild(el.firstChild); }
+  function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while(b){ var t = a % b; a = b; b = t; } return a || 1; }
+
+  var C = {
+    a:'#FF8A3D', aL:'#FFE0C4', aD:'#C2410C',
+    b:'#4D96FF', bL:'#D4E5FF', bD:'#2F72D8',
+    g:'#3BB273', gL:'#D5EFE1', gD:'#1E6B45',
+    v:'#9B72CF', vL:'#EADFF7',
+    ink:'#4A3B2A', soft:'#8E7E66', line:'#C9B48C', dash:'#B5A68E'
+  };
+  var PC = {   // 인쇄용 (흑백에서도 구분되도록)
+    a:'#555', aL:'#dcdcdc', aD:'#111',
+    b:'#555', bL:'#f2f2f2', bD:'#111',
+    g:'#555', gL:'#e8e8e8', gD:'#111',
+    v:'#555', vL:'#eee',
+    ink:'#111', soft:'#555', line:'#333', dash:'#777'
+  };
+
+  /* ===== 선분 모델 그리기 도구 (화면·인쇄 공용) ===== */
+  // 칸으로 나뉜 막대
+  function bar(svg, x, y, w, h, cells, fill, stroke, opt){
+    opt = opt || {};
+    var g = S('g');
+    g.appendChild(S('rect', {x:x, y:y, width:w, height:h, fill:fill,
+      stroke:stroke, 'stroke-width':opt.sw || 2.2, rx:opt.rx === undefined ? 3 : opt.rx}));
+    if(cells > 1){
+      var cw = w / cells;
+      for(var i = 1; i < cells; i++){
+        g.appendChild(S('line', {x1:x + i * cw, y1:y, x2:x + i * cw, y2:y + h,
+          stroke:stroke, 'stroke-width':1.3, opacity:.85}));
+      }
+    }
+    if(opt.cellText && cells >= 1 && w / cells > 20){
+      var cw2 = w / cells;
+      for(var j = 0; j < cells; j++)
+        g.appendChild(txt(x + cw2 * (j + 0.5), y + h / 2, opt.cellText,
+          {size: Math.min(15, cw2 * 0.5), fill: opt.cellFill || stroke}));
+    }
+    svg.appendChild(g);
+    return g;
+  }
+  // 범위 표시 ├────┤ + 라벨
+  function span(svg, x1, x2, y, label, col, dir, size){
+    dir = dir || 1;                 // 1: 아래쪽, -1: 위쪽
+    var g = S('g');
+    g.appendChild(S('line', {x1:x1, y1:y, x2:x2, y2:y, stroke:col, 'stroke-width':1.8}));
+    [x1, x2].forEach(function(x){
+      g.appendChild(S('line', {x1:x, y1:y - 5, x2:x, y2:y + 5, stroke:col, 'stroke-width':1.8}));
+    });
+    if(label !== null && label !== undefined)
+      g.appendChild(txt((x1 + x2) / 2, y + dir * 15, label, {size:size || 15, fill:col}));
+    svg.appendChild(g);
+    return g;
+  }
+  function vguide(svg, x, y1, y2, col){
+    svg.appendChild(S('line', {x1:x, y1:y1, x2:x, y2:y2, stroke:col || C.dash,
+      'stroke-width':1.6, 'stroke-dasharray':'5 4'}));
+  }
+  function mkSVG(el){ clear(el); return el; }
+  // 수를 길이로: 최대값이 maxW 가 되도록
+  function scaler(maxVal, maxW){
+    return function(v){ return maxVal > 0 ? maxW * v / maxVal : 0; };
+  }
+
+  /* 탭 */
+  var tabs = document.querySelectorAll('.tab');
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(x){ x.classList.remove('on'); });
+      t.classList.add('on');
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('on'); });
+      document.getElementById('p-' + t.dataset.p).classList.add('on');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+  function segPick(id, cb){
+    var box = document.getElementById(id);
+    box.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click', function(){
+        box.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+        b.classList.add('on');
+        cb(b.dataset);
+      });
+    });
+  }
+
+  /* ================= ① 소개 ================= */
+  var IN = {a:7, b:5};
+  function drawIntro(){
+    var svg = mkSVG(document.getElementById('svgIntro'));
+    var a = IN.a, b = IN.b, tot = a + b;
+    var x0 = 70, maxW = 500, h = 56, y = 72;
+    var sc = scaler(Math.max(tot, 1), maxW);
+    var wa = sc(a), wb = sc(b);
+    bar(svg, x0, y, wa, h, a, C.aL, C.a, {cellText:'', rx:3});
+    bar(svg, x0 + wa, y, wb, h, b, C.bL, C.b, {rx:3});
+    svg.appendChild(txt(x0 + wa / 2, y + h / 2, String(a), {size:19, fill:C.aD}));
+    svg.appendChild(txt(x0 + wa + wb / 2, y + h / 2, String(b), {size:19, fill:C.bD}));
+    svg.appendChild(txt(x0 - 12, y + h / 2, '🍎', {anchor:'end', size:17}));
+    span(svg, x0, x0 + wa, y - 16, '사과 ' + a + '개', C.aD, -1, 14);
+    span(svg, x0 + wa, x0 + wa + wb, y - 16, '배 ' + b + '개', C.bD, -1, 14);
+    span(svg, x0, x0 + wa + wb, y + h + 18, '전체 ' + tot + '개', C.g, 1, 16);
+    svg.appendChild(txt(330, 196, '사과와 배를 이어 붙이면 전체가 돼요', {size:14, fill:C.soft}));
+    document.getElementById('i1').textContent = a;
+    document.getElementById('i2').textContent = b;
+    var read = document.getElementById('introRead');
+    clear(read);
+    function pill(cls, lab, v){
+      var s = T('span', 'pill ' + cls); s.innerHTML = lab + ' <b>' + v + '</b>'; return s;
+    }
+    read.appendChild(pill('', '사과', a));
+    read.appendChild(pill('b', '배', b));
+    read.appendChild(pill('g', '전체', tot));
+    document.getElementById('introEq').innerHTML =
+      '<span class="o-col">' + a + '</span> + <span class="b-col">' + b + '</span> = ' +
+      '<span class="g-col">' + tot + '</span> &nbsp;&nbsp;·&nbsp;&nbsp; ' +
+      '<span class="g-col">' + tot + '</span> − <span class="o-col">' + a + '</span> = ' +
+      '<span class="b-col">' + b + '</span>';
+  }
+  ['slI1', 'slI2'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', function(e){
+      if(id === 'slI1') IN.a = +e.target.value; else IN.b = +e.target.value;
+      drawIntro();
+    });
+  });
+  drawIntro();
+
+  /* ================= ② 비교 ================= */
+  var CP = {mode:'diff', a:15, b:9, base:4, times:3};
+  function buildCmpSliders(){
+    var box = document.getElementById('cmpSliders');
+    clear(box);
+    function mk(cls, lab, id, min, max, val){
+      var d = T('div', 'sl ' + cls);
+      var l = T('label');
+      l.appendChild(document.createTextNode(lab + ' '));
+      var bb = T('b', null, String(val)); bb.id = id + 'v';
+      l.appendChild(bb);
+      d.appendChild(l);
+      var inp = document.createElement('input');
+      inp.type = 'range'; inp.min = min; inp.max = max; inp.value = val; inp.id = id;
+      d.appendChild(inp);
+      box.appendChild(d);
+      return inp;
+    }
+    if(CP.mode === 'diff'){
+      mk('', '👧 민서 ', 'cpA', 1, 24, CP.a).addEventListener('input', function(e){
+        CP.a = +e.target.value; drawCmp();
+      });
+      mk('b', '👦 준호 ', 'cpB', 1, 24, CP.b).addEventListener('input', function(e){
+        CP.b = +e.target.value; drawCmp();
+      });
+    }else{
+      mk('b', '👦 준호 ', 'cpBase', 1, 9, CP.base).addEventListener('input', function(e){
+        CP.base = +e.target.value; drawCmp();
+      });
+      mk('', '민서는 준호의 ', 'cpT', 2, 6, CP.times).addEventListener('input', function(e){
+        CP.times = +e.target.value; drawCmp();
+      });
+    }
+  }
+  function drawCmp(){
+    var svg = mkSVG(document.getElementById('svgCmp'));
+    var x0 = 92, maxW = 470, h = 48;
+    var read = document.getElementById('cmpRead');
+    clear(read);
+    function pill(cls, lab, v){
+      var s = T('span', 'pill ' + cls); s.innerHTML = lab + ' <b>' + v + '</b>'; return s;
+    }
+    if(CP.mode === 'diff'){
+      var a = CP.a, b = CP.b, big = Math.max(a, b), diff = Math.abs(a - b);
+      var sc = scaler(big, maxW);
+      var y1 = 52, y2 = 130;
+      bar(svg, x0, y1, sc(a), h, 1, C.aL, C.a, {rx:3});
+      bar(svg, x0, y2, sc(b), h, 1, C.bL, C.b, {rx:3});
+      svg.appendChild(txt(x0 + sc(a) / 2, y1 + h / 2, String(a), {size:19, fill:C.aD}));
+      svg.appendChild(txt(x0 + sc(b) / 2, y2 + h / 2, String(b), {size:19, fill:C.bD}));
+      svg.appendChild(txt(x0 - 12, y1 + h / 2, '👧 민서', {anchor:'end', size:14, fill:C.aD}));
+      svg.appendChild(txt(x0 - 12, y2 + h / 2, '👦 준호', {anchor:'end', size:14, fill:C.bD}));
+      // 차이 표시
+      var sm = Math.min(a, b);
+      vguide(svg, x0 + sc(sm), y1 - 8, y2 + h + 8);
+      if(diff > 0){
+        var dy = (a > b) ? y1 : y2;
+        var dx1 = x0 + sc(sm), dx2 = x0 + sc(big);
+        svg.appendChild(S('rect', {x:dx1, y:dy, width:dx2 - dx1, height:h,
+          fill:'rgba(228,87,46,.22)', stroke:'#E4572E', 'stroke-width':2, 'stroke-dasharray':'5 3'}));
+        span(svg, dx1, dx2, y2 + h + 26, '차이 ' + diff, '#E4572E', 1, 16);
+      }else{
+        svg.appendChild(txt(330, y2 + h + 34, '두 사람이 똑같아요 (차이 0)', {size:15, fill:C.soft}));
+      }
+      read.appendChild(pill('', '민서', a));
+      read.appendChild(pill('b', '준호', b));
+      read.appendChild(pill('g', '차이', diff));
+      document.getElementById('cmpEq').innerHTML =
+        '<span class="' + (a >= b ? 'o-col' : 'b-col') + '">' + big + '</span> − ' +
+        '<span class="' + (a >= b ? 'b-col' : 'o-col') + '">' + sm + '</span> = ' +
+        '<span class="g-col">' + diff + '</span>';
+      document.getElementById('cmpStep').innerHTML = diff === 0
+        ? '길이가 같으면 두 수가 같아요.'
+        : (a > b ? '민서' : '준호') + '가 <b>' + diff + '만큼</b> 더 많아요. ' +
+          '튀어나온 부분의 길이가 바로 차이예요.';
+      document.getElementById('cmpNote').innerHTML =
+        '💡 두 막대의 <b>왼쪽 끝을 꼭 맞춰</b> 그려야 해요. 그래야 튀어나온 부분이 차이가 됩니다.';
+    }else{
+      var base = CP.base, t = CP.times, bigv = base * t;
+      var sc2 = scaler(bigv, maxW);
+      var y1b = 52, y2b = 130;
+      bar(svg, x0, y1b, sc2(bigv), h, t, C.aL, C.a, {rx:3});
+      bar(svg, x0, y2b, sc2(base), h, 1, C.bL, C.b, {rx:3});
+      // 각 칸에 base 표시
+      var cw = sc2(bigv) / t;
+      for(var i = 0; i < t; i++)
+        if(cw > 26) svg.appendChild(txt(x0 + cw * (i + 0.5), y1b + h / 2, String(base),
+          {size:Math.min(16, cw * 0.45), fill:C.aD}));
+      svg.appendChild(txt(x0 + sc2(base) / 2, y2b + h / 2, String(base), {size:18, fill:C.bD}));
+      svg.appendChild(txt(x0 - 12, y1b + h / 2, '👧 민서', {anchor:'end', size:14, fill:C.aD}));
+      svg.appendChild(txt(x0 - 12, y2b + h / 2, '👦 준호', {anchor:'end', size:14, fill:C.bD}));
+      span(svg, x0, x0 + sc2(bigv), y1b - 16, '민서 ' + bigv, C.aD, -1, 15);
+      // 준호 라벨은 막대 오른쪽에 두어 아래 설명 글과 겹치지 않게
+      svg.appendChild(txt(x0 + sc2(base) + 14, y2b + h / 2, '준호 ' + base + ' (1칸)',
+        {anchor:'start', size:15, fill:C.bD}));
+      svg.appendChild(txt(330, 222, '민서의 막대는 준호와 똑같은 칸 ' + t + '개로 되어 있어요',
+        {size:14, fill:C.soft}));
+      read.appendChild(pill('b', '준호 (1칸)', base));
+      read.appendChild(pill('', '민서 (' + t + '칸)', bigv));
+      read.appendChild(pill('g', '몇 배', t + '배'));
+      document.getElementById('cmpEq').innerHTML =
+        '<span class="b-col">' + base + '</span> × <span class="v-col">' + t + '</span> = ' +
+        '<span class="o-col">' + bigv + '</span> &nbsp;·&nbsp; ' +
+        '<span class="o-col">' + bigv + '</span> ÷ <span class="b-col">' + base + '</span> = ' +
+        '<span class="v-col">' + t + '</span>';
+      document.getElementById('cmpStep').innerHTML =
+        '민서는 준호의 <b>' + t + '배</b>예요. 두 사람의 차이는 ' + (t - 1) + '칸 = <b>' +
+        (bigv - base) + '</b> 이고요.';
+      document.getElementById('cmpNote').innerHTML =
+        '💡 "몇 배"는 <b>작은 쪽을 칸 1개</b>로 잡는 것이 핵심이에요. 그러면 큰 쪽이 몇 칸인지 세면 돼요.';
+    }
+  }
+  segPick('cmpMode', function(d){ CP.mode = d.m; buildCmpSliders(); drawCmp(); });
+  buildCmpSliders(); drawCmp();
+
+  /* ================= ③ 나누어 주기 ================= */
+  var SH = {mode:'equal', total:24, people:4, ra:3, rb:2, rtotal:25, prog:0};
+  function buildShSliders(){
+    var box = document.getElementById('shSliders');
+    clear(box);
+    function mk(cls, lab, id, min, max, val, step){
+      var d = T('div', 'sl ' + cls);
+      var l = T('label');
+      l.appendChild(document.createTextNode(lab + ' '));
+      var bb = T('b', null, String(val)); bb.id = id + 'v';
+      l.appendChild(bb); d.appendChild(l);
+      var inp = document.createElement('input');
+      inp.type = 'range'; inp.min = min; inp.max = max; inp.value = val; inp.id = id;
+      if(step) inp.step = step;
+      d.appendChild(inp); box.appendChild(d);
+      return inp;
+    }
+    if(SH.mode === 'equal'){
+      mk('', '전체 ', 'shT', 4, 48, SH.total).addEventListener('input', function(e){
+        SH.total = +e.target.value; SH.prog = 0; drawShare();
+      });
+      mk('b', '사람 수 ', 'shP', 2, 8, SH.people).addEventListener('input', function(e){
+        SH.people = +e.target.value; SH.prog = 0; drawShare();
+      });
+    }else{
+      mk('', '비 앞자리 ', 'shA', 1, 6, SH.ra).addEventListener('input', function(e){
+        SH.ra = +e.target.value; fixRatioTotal(); SH.prog = 0; drawShare();
+      });
+      mk('b', '비 뒷자리 ', 'shB', 1, 6, SH.rb).addEventListener('input', function(e){
+        SH.rb = +e.target.value; fixRatioTotal(); SH.prog = 0; drawShare();
+      });
+      var inpRT = mk('', '전체 ', 'shRT', 1, 20, SH.rtotal / (SH.ra + SH.rb));
+      inpRT.addEventListener('input', function(e){
+        SH.rtotal = (+e.target.value) * (SH.ra + SH.rb);
+        document.getElementById('shRTv').textContent = SH.rtotal;   // 칸 배수가 아니라 전체 값 표시
+        SH.prog = 0; drawShare();
+      });
+      document.getElementById('shRTv').textContent = SH.rtotal;
+    }
+  }
+  function fixRatioTotal(){
+    // 전체가 (앞+뒤)의 배수가 되도록 자동으로 맞춥니다
+    var parts = SH.ra + SH.rb;
+    var k = Math.max(1, Math.round(SH.rtotal / parts));
+    SH.rtotal = k * parts;
+    var el = document.getElementById('shRT');
+    if(el){ el.value = k; }
+    var lab = document.getElementById('shRTv');
+    if(lab) lab.textContent = SH.rtotal;
+  }
+  function drawShare(){
+    var svg = mkSVG(document.getElementById('svgShare'));
+    var x0 = 80, maxW = 500, h = 58, y = 78, p = SH.prog;
+    var read = document.getElementById('shRead');
+    clear(read);
+    function pill(cls, lab, v){
+      var s = T('span', 'pill ' + cls); s.innerHTML = lab + ' <b>' + v + '</b>'; return s;
+    }
+    if(SH.mode === 'equal'){
+      var tot = SH.total, n = SH.people, per = tot / n;
+      var cells = (p > 0) ? n : 1;
+      bar(svg, x0, y, maxW, h, cells, C.aL, C.a, {rx:4});
+      if(p > 0 && n > 1){
+        // 나누는 선이 왼쪽부터 자라나는 느낌
+        svg.appendChild(S('rect', {x:x0, y:y, width:maxW * (1 - p), height:h,
+          fill:'rgba(255,255,255,.55)'}));
+      }
+      if(p >= 1){
+        var cw = maxW / n;
+        for(var i = 0; i < n; i++)
+          svg.appendChild(txt(x0 + cw * (i + 0.5), y + h / 2,
+            (Number.isInteger(per) ? per : per.toFixed(2).replace(/\.?0+$/, '')),
+            {size:Math.min(18, cw * 0.42), fill:C.aD}));
+      }else{
+        svg.appendChild(txt(x0 + maxW / 2, y + h / 2, String(tot), {size:22, fill:C.aD}));
+      }
+      span(svg, x0, x0 + maxW, y - 16, '전체 ' + tot + '개', C.g, -1, 16);
+      if(p >= 1) span(svg, x0, x0 + maxW / n, y + h + 20, '한 사람 ' +
+        (Number.isInteger(per) ? per : per.toFixed(2).replace(/\.?0+$/, '')), C.aD, 1, 15);
+      svg.appendChild(txt(330, 222, p >= 1
+        ? n + '명이 똑같이 나누니 한 칸(한 사람)이 ' + (Number.isInteger(per) ? per : per.toFixed(2)) + '개'
+        : '✂️ 버튼을 눌러 ' + n + '칸으로 나눠 보세요', {size:15, fill: p >= 1 ? C.gD : C.soft}));
+      read.appendChild(pill('', '전체', tot));
+      read.appendChild(pill('b', '사람', n + '명'));
+      read.appendChild(pill('g', '한 사람', Number.isInteger(per) ? per : per.toFixed(2)));
+      document.getElementById('shEq').innerHTML =
+        '<span class="o-col">' + tot + '</span> ÷ <span class="b-col">' + n + '</span> = ' +
+        '<span class="g-col">' + (Number.isInteger(per) ? per : per.toFixed(2)) + '</span>';
+      document.getElementById('shStep').innerHTML = Number.isInteger(per)
+        ? '전체 막대를 똑같은 ' + n + '칸으로 나누면 한 칸이 한 사람 몫이에요.'
+        : '딱 나누어떨어지지 않아요. 전체를 ' + n + '의 배수로 바꿔 보세요.';
+      document.getElementById('shNote').innerHTML =
+        '💡 똑같이 나눌 때는 <b>칸 수 = 사람 수</b>예요. 칸 하나의 값이 곧 답입니다.';
+    }else{
+      var a = SH.ra, b2 = SH.rb, parts = a + b2, totR = SH.rtotal, unit = totR / parts;
+      var cells2 = (p > 0) ? parts : 1;
+      var wa = maxW * a / parts;
+      if(p > 0){
+        bar(svg, x0, y, wa, h, a, C.aL, C.a, {rx:4});
+        bar(svg, x0 + wa, y, maxW - wa, h, b2, C.bL, C.b, {rx:4});
+        var cw2 = maxW / parts;
+        for(var j = 0; j < parts; j++)
+          if(cw2 > 24) svg.appendChild(txt(x0 + cw2 * (j + 0.5), y + h / 2, String(unit),
+            {size:Math.min(17, cw2 * 0.44), fill: j < a ? C.aD : C.bD}));
+        svg.appendChild(S('rect', {x:x0, y:y, width:maxW * (1 - p), height:h,
+          fill:'rgba(255,255,255,.5)'}));
+        if(p >= 1){
+          span(svg, x0, x0 + wa, y + h + 20, '가 ' + (unit * a), C.aD, 1, 15);
+          span(svg, x0 + wa, x0 + maxW, y + h + 20, '나 ' + (unit * b2), C.bD, 1, 15);
+        }
+      }else{
+        bar(svg, x0, y, maxW, h, 1, C.aL, C.a, {rx:4});
+        svg.appendChild(txt(x0 + maxW / 2, y + h / 2, String(totR), {size:22, fill:C.aD}));
+      }
+      span(svg, x0, x0 + maxW, y - 16, '전체 ' + totR, C.g, -1, 16);
+      svg.appendChild(txt(330, 222, p >= 1
+        ? '칸 ' + parts + '개 → 한 칸 ' + unit + ' → 가 ' + (unit * a) + ', 나 ' + (unit * b2)
+        : '✂️ 버튼을 눌러 ' + a + ' : ' + b2 + ' 로 나눠 보세요',
+        {size:15, fill: p >= 1 ? C.gD : C.soft}));
+      read.appendChild(pill('', '전체', totR));
+      read.appendChild(pill('b', '비', a + ' : ' + b2));
+      read.appendChild(pill('g', '한 칸', unit));
+      document.getElementById('shEq').innerHTML =
+        '한 칸 = <span class="o-col">' + totR + '</span> ÷ <span class="b-col">' + parts +
+        '</span> = <span class="g-col">' + unit + '</span> &nbsp;→&nbsp; ' +
+        '가 <span class="o-col">' + (unit * a) + '</span>, 나 <span class="b-col">' + (unit * b2) + '</span>';
+      document.getElementById('shStep').innerHTML =
+        '비 ' + a + ' : ' + b2 + ' 는 칸이 <b>' + a + '개와 ' + b2 + '개</b>라는 뜻이에요. ' +
+        '모두 ' + parts + '칸이니 한 칸은 ' + totR + ' ÷ ' + parts + ' = ' + unit + '.';
+      document.getElementById('shNote').innerHTML =
+        '💡 비로 나눌 때는 <b>칸 수 = 비의 두 수를 더한 값</b>이에요. ' +
+        '전체를 칸 수로 나눠 <b>한 칸의 값</b>을 먼저 구하는 것이 열쇠입니다.';
+    }
+  }
+  var shAnim = null;
+  function runSplit(){
+    if(shAnim) cancelAnimationFrame(shAnim);
+    SH.prog = 0; drawShare();
+    var t0 = performance.now();
+    (function frame(now){
+      var p = Math.min(1, (now - t0) / 900);
+      SH.prog = p; drawShare();
+      if(p < 1) shAnim = requestAnimationFrame(frame); else shAnim = null;
+    })(performance.now());
+  }
+  segPick('shMode', function(d){
+    SH.mode = d.m; SH.prog = 0;
+    if(SH.mode === 'ratio') fixRatioTotal();
+    buildShSliders(); drawShare();
+  });
+  document.getElementById('btnSplit').addEventListener('click', runSplit);
+  document.getElementById('btnSplitReset').addEventListener('click', function(){
+    if(shAnim) cancelAnimationFrame(shAnim);
+    SH.prog = 0; drawShare();
+  });
+  buildShSliders(); drawShare();
+
+  /* ================= ④ 합과 차 ================= */
+  var SD = {sum:20, diff:4, step:0};
+  function sdVals(){
+    var big = (SD.sum + SD.diff) / 2, small = (SD.sum - SD.diff) / 2;
+    return {big:big, small:small};
+  }
+  function drawSd(){
+    var svg = mkSVG(document.getElementById('svgSd'));
+    var v = sdVals(), st = SD.step;
+    var x0 = 96, maxW = 420, h = 46, y1 = 70, y2 = 142;
+    var sc = scaler(Math.max(v.big, 1), maxW);
+    var wb = sc(v.big), ws = sc(v.small), wd = wb - ws;
+
+    var showBig = (st >= 1), showCut = (st >= 2), showHalf = (st >= 3), showAns = (st >= 4);
+    bar(svg, x0, y1, showBig ? wb : maxW * 0.62, h, 1, C.aL, C.a, {rx:3});
+    bar(svg, x0, y2, showBig ? Math.max(ws, 1.5) : maxW * 0.42, h, 1, C.bL, C.b, {rx:3});
+    svg.appendChild(txt(x0 - 12, y1 + h / 2, '👧 민서', {anchor:'end', size:14, fill:C.aD}));
+    svg.appendChild(txt(x0 - 12, y2 + h / 2, '👦 준호', {anchor:'end', size:14, fill:C.bD}));
+
+    if(st === 0){
+      svg.appendChild(txt(330, 240, '▶️ 버튼을 눌러 한 단계씩 풀어 봐요', {size:16, fill:C.soft}));
+      svg.appendChild(txt(x0 + maxW * 0.31, y1 + h / 2, '?', {size:20, fill:C.aD}));
+      svg.appendChild(txt(x0 + maxW * 0.21, y2 + h / 2, '?', {size:20, fill:C.bD}));
+      return;
+    }
+    // 합은 왼쪽 위에 (가운데 라벨과 겹치지 않게)
+    svg.appendChild(txt(16, 20, '두 사람의 합 = ' + SD.sum, {size:16, fill:C.gD, anchor:'start'}));
+    // 차이 부분
+    if(SD.diff > 0){
+      vguide(svg, x0 + ws, y1 - 8, y2 + h + 8);
+      svg.appendChild(S('rect', {x:x0 + ws, y:y1, width:wd, height:h,
+        fill: showCut ? 'rgba(228,87,46,.3)' : 'rgba(228,87,46,.16)',
+        stroke:'#E4572E', 'stroke-width':2, 'stroke-dasharray': showCut ? '0' : '5 3'}));
+      span(svg, x0 + ws, x0 + wb, y1 - 18, '차이 ' + SD.diff, '#E4572E', -1, 14);
+    }
+    if(showCut){
+      svg.appendChild(txt(330, 212, '① 차이 ' + SD.diff + '을 떼어내면 → 남은 것 ' +
+        SD.sum + ' − ' + SD.diff + ' = ' + (SD.sum - SD.diff), {size:15, fill:'#8E2E13'}));
+    }
+    if(showHalf){
+      [y1, y2].forEach(function(yy){
+        svg.appendChild(S('rect', {x:x0 - 3, y:yy - 3, width:Math.max(ws, 1.5) + 6, height:h + 6,
+          rx:5, fill:'none', stroke:C.g, 'stroke-width':3}));
+      });
+      svg.appendChild(txt(330, 240, '② 남은 ' + (SD.sum - SD.diff) + '은 똑같은 막대 2개 → ' +
+        (SD.sum - SD.diff) + ' ÷ 2 = ' + v.small, {size:15, fill:C.gD}));
+    }
+    if(showAns){
+      if(ws > 24) svg.appendChild(txt(x0 + ws / 2, y1 + h / 2, String(v.small), {size:18, fill:C.aD}));
+      if(SD.diff > 0 && wd > 30)
+        svg.appendChild(txt(x0 + ws + wd / 2, y1 + h / 2, '+' + SD.diff, {size:15, fill:'#8E2E13'}));
+      if(ws > 24) svg.appendChild(txt(x0 + ws / 2, y2 + h / 2, String(v.small), {size:18, fill:C.bD}));
+      // 사람별 답은 막대 오른쪽에 (아래 설명 글과 겹치지 않게)
+      svg.appendChild(txt(x0 + wb + 14, y1 + h / 2, '민서 ' + v.big,
+        {anchor:'start', size:16, fill:C.aD}));
+      svg.appendChild(txt(x0 + Math.max(ws, 1.5) + 14, y2 + h / 2, '준호 ' + v.small,
+        {anchor:'start', size:16, fill:C.bD}));
+      svg.appendChild(txt(330, 268, '③ 민서 = ' + v.small + ' + ' + SD.diff + ' = ' + v.big,
+        {size:15, fill:C.aD}));
+    }
+  }
+  var SD_STEPS = [
+    {b:'① 그림으로 옮기기', s:'민서가 준호보다 길게, 왼쪽 끝을 맞춰 두 막대를 그려요.'},
+    {b:'② 차이를 표시하기', s:'민서의 막대에서 튀어나온 부분이 차이예요.'},
+    {b:'③ 차이를 떼어내기', s:'합에서 차이를 빼면, 똑같은 막대 2개만 남아요.'},
+    {b:'④ 반으로 나누기', s:'남은 것을 2로 나누면 작은 쪽(준호)을 알 수 있어요.'},
+    {b:'⑤ 큰 쪽 구하기', s:'작은 쪽에 차이를 더하면 큰 쪽(민서)이 나와요.'}
+  ];
+  function updSd(){
+    var v = sdVals();
+    document.getElementById('sdS').textContent = SD.sum;
+    document.getElementById('sdD').textContent = SD.diff;
+    document.getElementById('sdStory').innerHTML =
+      '📄 민서와 준호가 가진 딱지는 모두 <b class="g-col">' + SD.sum + '장</b>입니다. ' +
+      '민서가 준호보다 <b style="color:#E4572E">' + SD.diff + '장</b> 더 많다면, ' +
+      '두 사람은 각각 몇 장을 가지고 있을까요?';
+    var box = document.getElementById('sdSteps');
+    clear(box);
+    SD_STEPS.forEach(function(s, i){
+      var d = T('div', 'stepb' + (i < SD.step ? ' on' : ''));
+      d.appendChild(T('b', null, s.b));
+      d.appendChild(T('span', null, s.s));
+      box.appendChild(d);
+    });
+    document.getElementById('sdEq').innerHTML = SD.step >= 4
+      ? '준호 = (<span class="g-col">' + SD.sum + '</span> − <span style="color:#E4572E">' +
+        SD.diff + '</span>) ÷ 2 = <span class="b-col">' + v.small + '</span> &nbsp;·&nbsp; ' +
+        '민서 = <span class="b-col">' + v.small + '</span> + <span style="color:#E4572E">' +
+        SD.diff + '</span> = <span class="o-col">' + v.big + '</span>'
+      : '단계를 진행하면 식이 완성돼요';
+    document.getElementById('sdStep2').innerHTML = SD.step >= 4
+      ? '확인 : ' + v.big + ' + ' + v.small + ' = ' + SD.sum + ' ✅ , ' +
+        v.big + ' − ' + v.small + ' = ' + SD.diff + ' ✅'
+      : '';
+    document.getElementById('sdNote').innerHTML =
+      '⚠️ 합과 차는 <b>홀짝이 같아야</b> 답이 자연수가 돼요. ' +
+      '(합 ' + SD.sum + ', 차 ' + SD.diff + ' → 둘 다 ' +
+      (SD.sum % 2 === 0 ? '짝수' : '홀수') + ') ' +
+      '그래서 슬라이더를 움직이면 자동으로 맞춰 줍니다.';
+    drawSd();
+  }
+  function fixParity(changed){
+    if(SD.diff > SD.sum) SD.diff = SD.sum;
+    if((SD.sum + SD.diff) % 2 !== 0){
+      if(changed === 'd') SD.diff = Math.max(0, SD.diff - 1);
+      else SD.sum = SD.sum + 1;
+    }
+    document.getElementById('slSdS').value = SD.sum;
+    document.getElementById('slSdD').value = SD.diff;
+    document.getElementById('slSdD').max = SD.sum;
+  }
+  document.getElementById('slSdS').addEventListener('input', function(e){
+    SD.sum = +e.target.value; fixParity('s'); updSd();
+  });
+  document.getElementById('slSdD').addEventListener('input', function(e){
+    SD.diff = +e.target.value; fixParity('d'); updSd();
+  });
+  document.getElementById('btnSdStep').addEventListener('click', function(){
+    SD.step = (SD.step >= 5) ? 1 : SD.step + 1; updSd();
+  });
+  document.getElementById('btnSdAll').addEventListener('click', function(){ SD.step = 5; updSd(); });
+  document.getElementById('btnSdReset').addEventListener('click', function(){ SD.step = 0; updSd(); });
+  updSd();
+
+  /* ================= ⑤ 연습 ================= */
+  var QZ = {list:[], idx:0, score:0};
+  var NAMES = [['민서', '준호'], ['지호', '서아'], ['하늘', '다온'], ['윤재', '소율']];
+  var ITEMS = ['딱지', '구슬', '사탕', '색연필', '스티커', '카드'];
+  function pick(a){ return a[Math.floor(Math.random() * a.length)]; }
+  function makeQ(){
+    var kind = pick(['part', 'diff', 'times', 'equal', 'ratio', 'sumdiff']);
+    var nm = pick(NAMES), it = pick(ITEMS);
+    if(kind === 'part'){
+      var a = 3 + Math.floor(Math.random() * 15), b = 3 + Math.floor(Math.random() * 15);
+      return {k:'part', a:a, b:b, ans:a + b, nm:nm, it:it,
+        s: nm[0] + '이는 ' + it + '를 ' + a + '개, ' + nm[1] + '는 ' + b +
+           '개 가지고 있습니다. 두 사람의 ' + it + '는 모두 몇 개일까요?'};
+    }
+    if(kind === 'diff'){
+      var c = 8 + Math.floor(Math.random() * 16), d = 2 + Math.floor(Math.random() * (c - 2));
+      return {k:'diff', a:c, b:d, ans:c - d, nm:nm, it:it,
+        s: nm[0] + '이는 ' + it + '를 ' + c + '개, ' + nm[1] + '는 ' + d +
+           '개 가지고 있습니다. ' + nm[0] + '이는 ' + nm[1] + '보다 몇 개 더 많을까요?'};
+    }
+    if(kind === 'times'){
+      var base = 2 + Math.floor(Math.random() * 8), t = 2 + Math.floor(Math.random() * 4);
+      return {k:'times', a:base, b:t, ans:base * t, nm:nm, it:it,
+        s: nm[1] + '는 ' + it + '를 ' + base + '개 가지고 있고, ' + nm[0] + '이는 ' +
+           nm[1] + '의 ' + t + '배를 가지고 있습니다. ' + nm[0] + '이의 ' + it + '는 몇 개일까요?'};
+    }
+    if(kind === 'equal'){
+      var n = 2 + Math.floor(Math.random() * 5), per = 3 + Math.floor(Math.random() * 10);
+      return {k:'equal', a:n * per, b:n, ans:per, nm:nm, it:it,
+        s: it + ' ' + (n * per) + '개를 ' + n + '명에게 똑같이 나누어 주려고 합니다. ' +
+           '한 사람이 몇 개씩 받을까요?'};
+    }
+    if(kind === 'ratio'){
+      var ra = 1 + Math.floor(Math.random() * 4), rb = 1 + Math.floor(Math.random() * 4);
+      var unit = 2 + Math.floor(Math.random() * 7);
+      var tot = (ra + rb) * unit;
+      return {k:'ratio', a:ra, b:rb, tot:tot, ans:ra * unit, nm:nm, it:it,
+        s: it + ' ' + tot + '개를 ' + nm[0] + '이와 ' + nm[1] + '가 ' + ra + ' : ' + rb +
+           '로 나누어 가지려고 합니다. ' + nm[0] + '이는 몇 개를 받을까요?'};
+    }
+    var small = 2 + Math.floor(Math.random() * 10), dd = 2 * (1 + Math.floor(Math.random() * 5));
+    var sum = small * 2 + dd;
+    return {k:'sumdiff', sum:sum, diff:dd, ans:small + dd, small:small, nm:nm, it:it,
+      s: nm[0] + '이와 ' + nm[1] + '가 가진 ' + it + '는 모두 ' + sum + '개입니다. ' +
+         nm[0] + '이가 ' + nm[1] + '보다 ' + dd + '개 더 많다면 ' + nm[0] + '이는 몇 개일까요?'};
+  }
+  function drawQ(q, el, col){
+    col = col || C;
+    var svg = mkSVG(el);
+    var x0 = 92, maxW = 450, h = 42, y1 = 50, y2 = 112;
+    if(q.k === 'part'){
+      var sc = scaler(q.a + q.b, maxW);
+      bar(svg, x0, y1, sc(q.a), h, 1, col.aL, col.a, {rx:3});
+      bar(svg, x0 + sc(q.a), y1, sc(q.b), h, 1, col.bL, col.b, {rx:3});
+      svg.appendChild(txt(x0 + sc(q.a) / 2, y1 + h / 2, String(q.a), {size:17, fill:col.aD}));
+      svg.appendChild(txt(x0 + sc(q.a) + sc(q.b) / 2, y1 + h / 2, String(q.b), {size:17, fill:col.bD}));
+      span(svg, x0, x0 + maxW, y1 + h + 18, '? (전체)', col.gD, 1, 15);
+      svg.appendChild(txt(x0 - 12, y1 + h / 2, q.nm[0] + '·' + q.nm[1], {anchor:'end', size:13, fill:col.soft}));
+    }else if(q.k === 'diff'){
+      var sc2 = scaler(q.a, maxW);
+      bar(svg, x0, y1, sc2(q.a), h, 1, col.aL, col.a, {rx:3});
+      bar(svg, x0, y2, sc2(q.b), h, 1, col.bL, col.b, {rx:3});
+      svg.appendChild(txt(x0 + sc2(q.a) / 2, y1 + h / 2, String(q.a), {size:17, fill:col.aD}));
+      svg.appendChild(txt(x0 + sc2(q.b) / 2, y2 + h / 2, String(q.b), {size:17, fill:col.bD}));
+      svg.appendChild(txt(x0 - 12, y1 + h / 2, q.nm[0], {anchor:'end', size:13, fill:col.aD}));
+      svg.appendChild(txt(x0 - 12, y2 + h / 2, q.nm[1], {anchor:'end', size:13, fill:col.bD}));
+      vguide(svg, x0 + sc2(q.b), y1 - 6, y2 + h + 6, col.dash);
+      span(svg, x0 + sc2(q.b), x0 + sc2(q.a), y2 + h + 18, '?', '#E4572E', 1, 16);
+    }else if(q.k === 'times'){
+      var sc3 = scaler(q.a * q.b, maxW);
+      bar(svg, x0, y1, sc3(q.a * q.b), h, q.b, col.aL, col.a, {rx:3});
+      bar(svg, x0, y2, sc3(q.a), h, 1, col.bL, col.b, {rx:3});
+      svg.appendChild(txt(x0 + sc3(q.a) / 2, y2 + h / 2, String(q.a), {size:17, fill:col.bD}));
+      svg.appendChild(txt(x0 - 12, y1 + h / 2, q.nm[0], {anchor:'end', size:13, fill:col.aD}));
+      svg.appendChild(txt(x0 - 12, y2 + h / 2, q.nm[1], {anchor:'end', size:13, fill:col.bD}));
+      span(svg, x0, x0 + sc3(q.a * q.b), y1 - 14, '? (' + q.b + '칸)', col.aD, -1, 15);
+    }else if(q.k === 'equal'){
+      bar(svg, x0, y1, maxW, h, q.b, col.aL, col.a, {rx:3});
+      span(svg, x0, x0 + maxW, y1 - 14, '전체 ' + q.a, col.gD, -1, 15);
+      span(svg, x0, x0 + maxW / q.b, y1 + h + 18, '?', '#E4572E', 1, 16);
+      svg.appendChild(txt(330, y1 + h + 48, q.b + '명에게 똑같이', {size:13, fill:col.soft}));
+    }else if(q.k === 'ratio'){
+      var parts = q.a + q.b, wa = maxW * q.a / parts;
+      bar(svg, x0, y1, wa, h, q.a, col.aL, col.a, {rx:3});
+      bar(svg, x0 + wa, y1, maxW - wa, h, q.b, col.bL, col.b, {rx:3});
+      span(svg, x0, x0 + maxW, y1 - 14, '전체 ' + q.tot, col.gD, -1, 15);
+      span(svg, x0, x0 + wa, y1 + h + 18, '? (' + q.nm[0] + ')', '#E4572E', 1, 15);
+      span(svg, x0 + wa, x0 + maxW, y1 + h + 18, q.nm[1], col.bD, 1, 14);
+      svg.appendChild(txt(330, y1 + h + 50, '비 ' + q.a + ' : ' + q.b + ' → 모두 ' + parts + '칸',
+        {size:13, fill:col.soft}));
+    }else{
+      var big = q.small + q.diff;
+      var sc4 = scaler(big, maxW);
+      bar(svg, x0, y1, sc4(big), h, 1, col.aL, col.a, {rx:3});
+      bar(svg, x0, y2, sc4(q.small), h, 1, col.bL, col.b, {rx:3});
+      svg.appendChild(S('rect', {x:x0 + sc4(q.small), y:y1, width:sc4(q.diff), height:h,
+        fill:'rgba(228,87,46,.2)', stroke:'#E4572E', 'stroke-width':1.8, 'stroke-dasharray':'4 3'}));
+      span(svg, x0 + sc4(q.small), x0 + sc4(big), y1 - 14, '차이 ' + q.diff, '#E4572E', -1, 14);
+      svg.appendChild(txt(x0 - 12, y1 + h / 2, q.nm[0], {anchor:'end', size:13, fill:col.aD}));
+      svg.appendChild(txt(x0 - 12, y2 + h / 2, q.nm[1], {anchor:'end', size:13, fill:col.bD}));
+      span(svg, x0, x0 + sc4(big), y2 + h + 18, '합 ' + q.sum + ' → ' + q.nm[0] + ' = ?', col.gD, 1, 15);
+    }
+    return svg;
+  }
+  function startQuiz(){
+    var list = [], seen = {};
+    while(list.length < 8){
+      var q = makeQ();
+      if(seen[q.k] && seen[q.k] >= 2) continue;
+      seen[q.k] = (seen[q.k] || 0) + 1;
+      list.push(q);
+    }
+    QZ = {list:list, idx:0, score:0};
+    document.getElementById('qResult').style.display = 'none';
+    document.getElementById('qArea').style.display = 'block';
+    showQuiz();
+  }
+  function showQuiz(){
+    var q = QZ.list[QZ.idx];
+    document.getElementById('qCount').textContent = (QZ.idx + 1) + ' / 8';
+    document.getElementById('qScore').textContent = '⭐ ' + QZ.score;
+    document.getElementById('qBar').style.width = (QZ.idx / 8 * 100) + '%';
+    document.getElementById('qFeed').textContent = '';
+    document.getElementById('qStory').textContent = '📄 ' + q.s;
+    drawQ(q, document.getElementById('svgQuiz'));
+    var opts = [q.ans];
+    var cand = [q.ans + 1, q.ans - 1, Math.max(1, q.ans * 2), Math.max(1, Math.round(q.ans / 2)),
+                q.ans + 3, Math.max(1, q.ans - 3)];
+    for(var i = 0; i < cand.length && opts.length < 4; i++){
+      if(cand[i] > 0 && opts.indexOf(cand[i]) === -1) opts.push(cand[i]);
+    }
+    opts.sort(function(){ return Math.random() - 0.5; });
+    var box = document.getElementById('qChoices');
+    clear(box);
+    opts.forEach(function(v){
+      var b = T('button', 'choice', String(v));
+      b.addEventListener('click', function(){ ansQuiz(b, v, q); });
+      box.appendChild(b);
+    });
+  }
+  function ansQuiz(btn, v, q){
+    var all = document.querySelectorAll('#qChoices .choice');
+    all.forEach(function(x){ x.disabled = true; });
+    var ok = (v === q.ans);
+    if(ok){ btn.classList.add('right'); QZ.score++; }
+    else{
+      btn.classList.add('wrong');
+      all.forEach(function(x){ if(+x.textContent === q.ans) x.classList.add('right'); });
+    }
+    var how = {
+      part: q.a + ' + ' + q.b + ' = ' + q.ans,
+      diff: q.a + ' − ' + q.b + ' = ' + q.ans,
+      times: q.a + ' × ' + q.b + ' = ' + q.ans,
+      equal: q.a + ' ÷ ' + q.b + ' = ' + q.ans,
+      ratio: '한 칸 = ' + q.tot + ' ÷ ' + (q.a + q.b) + ' = ' + (q.tot / (q.a + q.b)) +
+             ' → ' + q.a + '칸 = ' + q.ans,
+      sumdiff: '작은 쪽 = (' + q.sum + ' − ' + q.diff + ') ÷ 2 = ' + q.small +
+               ' → 큰 쪽 = ' + q.small + ' + ' + q.diff + ' = ' + q.ans
+    }[q.k];
+    document.getElementById('qFeed').innerHTML = (ok ? '🎉 정답! ' : '💡 ') + how;
+    document.getElementById('qScore').textContent = '⭐ ' + QZ.score;
+    setTimeout(function(){
+      QZ.idx++;
+      if(QZ.idx >= QZ.list.length) finQuiz(); else showQuiz();
+    }, 2700);
+  }
+  function finQuiz(){
+    document.getElementById('qArea').style.display = 'none';
+    var r = document.getElementById('qResult');
+    r.style.display = 'block'; clear(r);
+    r.appendChild(T('div', 'score', QZ.score + ' / 8'));
+    r.appendChild(T('div', null, QZ.score >= 7 ? '🏆 선분 모델 박사!' :
+      QZ.score >= 4 ? '👏 잘하고 있어요!' : '💪 그림을 먼저 그려 봐요!'));
+    var tb = T('div', 'toolbar');
+    var again = T('button', 'btn primary', '🔁 다시 하기');
+    again.addEventListener('click', startQuiz);
+    tb.appendChild(again); r.appendChild(tb);
+  }
+  document.getElementById('btnQStart').addEventListener('click', startQuiz);
+
+  /* ================= ⑥ 인쇄 ================= */
+  var OPTS = [
+    {id:'draw', label:'그림 보고 풀기', desc:'선분 모델이 그려진 문제 6개', on:true},
+    {id:'make', label:'직접 그려 풀기', desc:'빈 막대에 직접 그려 보는 문제 6개', on:true},
+    {id:'word', label:'문장제', desc:'유형을 섞은 문장제 10문제', on:true},
+    {id:'answer', label:'정답지', desc:'정답과 풀이', on:true}
+  ];
+  var optState = {}, PB = {draw:[], make:[], word:[]};
+  (function(){
+    var box = document.getElementById('optList');
+    OPTS.forEach(function(o){
+      optState[o.id] = o.on;
+      var lab = T('label', 'opt');
+      var inp = document.createElement('input');
+      inp.type = 'checkbox'; inp.checked = o.on;
+      inp.addEventListener('change', function(){ optState[o.id] = inp.checked; buildPrint(); });
+      lab.appendChild(inp);
+      var tx = T('div');
+      tx.appendChild(T('b', null, o.label));
+      tx.appendChild(T('span', null, o.desc));
+      lab.appendChild(tx);
+      box.appendChild(lab);
+    });
+  })();
+  function makeProbs(){
+    PB.draw = []; PB.make = []; PB.word = [];
+    while(PB.draw.length < 6) PB.draw.push(makeQ());
+    while(PB.make.length < 6) PB.make.push(makeQ());
+    while(PB.word.length < 10) PB.word.push(makeQ());
+  }
+  function howOf(q){
+    return {
+      part: q.a + ' + ' + q.b + ' = ' + q.ans,
+      diff: q.a + ' − ' + q.b + ' = ' + q.ans,
+      times: q.a + ' × ' + q.b + ' = ' + q.ans,
+      equal: q.a + ' ÷ ' + q.b + ' = ' + q.ans,
+      ratio: q.tot + ' ÷ ' + (q.a + q.b) + ' = ' + (q.tot / (q.a + q.b)) + ', ×' + q.a + ' = ' + q.ans,
+      sumdiff: '(' + q.sum + '−' + q.diff + ')÷2 = ' + q.small + ', +' + q.diff + ' = ' + q.ans
+    }[q.k];
+  }
+  function blankBars(w, h, rows){
+    var s = S('svg', {viewBox:'0 0 ' + w + ' ' + h});
+    for(var i = 0; i < rows; i++){
+      s.appendChild(S('rect', {x:10, y:8 + i * 30, width:w - 20, height:22,
+        fill:'none', stroke:'#999', 'stroke-width':1.2, 'stroke-dasharray':'5 4', rx:3}));
+    }
+    return s;
+  }
+  function pHead(title, withName){
+    var h = T('div', 'p-head');
+    h.appendChild(T('h2', null, title));
+    var m = T('div', 'meta');
+    if(withName !== false) m.appendChild(T('div', null, '이름 : ____________   날짜 : ____ / ____'));
+    m.appendChild(T('div', null, '세영코딩연구소  저자 : 컴퓨터공학박사 KIM'));
+    h.appendChild(m);
+    return h;
+  }
+  function pFoot(s){
+    var f = T('div', 'p-foot');
+    f.appendChild(T('span', null, s));
+    f.appendChild(T('span', null, '세영코딩연구소  저자 : 컴퓨터공학박사 KIM'));
+    return f;
+  }
+  function answerRow(it){
+    var row = T('div', 'no');
+    row.appendChild(document.createTextNode('식 : '));
+    row.appendChild(T('span', 'blank', ' '));
+    row.appendChild(document.createTextNode('   답 : '));
+    row.appendChild(T('span', 'blank', ' '));
+    it.appendChild(row);
+  }
+  function buildPrint(){
+    var area = document.getElementById('printArea');
+    clear(area);
+    if(optState.draw){
+      var pg = T('div', 'page');
+      pg.appendChild(pHead('선분 모델을 보고 풀기'));
+      var g = T('div', 'p-grid');
+      g.style.gridTemplateColumns = 'repeat(2,1fr)';
+      PB.draw.forEach(function(q, i){
+        var it = T('div', 'p-item');
+        it.appendChild(T('div', 'no', (i + 1) + '. ' + q.s));
+        var holder = S('svg', {viewBox:'0 0 660 200'});
+        drawQ(q, holder, PC);
+        it.appendChild(holder);
+        answerRow(it);
+        g.appendChild(it);
+      });
+      pg.appendChild(g);
+      pg.appendChild(pFoot('그림에서 ? 가 어디인지 먼저 찾아요'));
+      area.appendChild(pg);
+    }
+    if(optState.make){
+      var pg2 = T('div', 'page');
+      pg2.appendChild(pHead('선분 모델을 직접 그려 풀기'));
+      var g2 = T('div', 'p-grid');
+      g2.style.gridTemplateColumns = 'repeat(2,1fr)';
+      PB.make.forEach(function(q, i){
+        var it = T('div', 'p-item');
+        it.appendChild(T('div', 'no', (i + 1) + '. ' + q.s));
+        it.appendChild(blankBars(300, 76, 2));
+        answerRow(it);
+        g2.appendChild(it);
+      });
+      pg2.appendChild(g2);
+      pg2.appendChild(pFoot('점선 막대에 직접 칸을 나누고 ? 를 표시해 보세요'));
+      area.appendChild(pg2);
+    }
+    if(optState.word){
+      var pg3 = T('div', 'page');
+      pg3.appendChild(pHead('문장제 — 유형 섞기'));
+      var g3 = T('div', 'p-grid');
+      g3.style.gridTemplateColumns = '1fr';
+      PB.word.forEach(function(q, i){
+        var it = T('div', 'p-item');
+        it.appendChild(T('div', 'no', (i + 1) + '. ' + q.s));
+        answerRow(it);
+        g3.appendChild(it);
+      });
+      pg3.appendChild(g3);
+      pg3.appendChild(pFoot('부분-전체 / 비교 / 몇 배 / 나누기 / 합과 차'));
+      area.appendChild(pg3);
+    }
+    if(optState.answer){
+      var pg4 = T('div', 'page');
+      pg4.appendChild(pHead('정답지', false));
+      var l = T('div', 'p-list');
+      [['그림 보고 풀기', PB.draw], ['직접 그려 풀기', PB.make], ['문장제', PB.word]].forEach(function(sec){
+        l.appendChild(T('div', null, '■ ' + sec[0]));
+        sec[1].forEach(function(q, i){
+          l.appendChild(T('div', null, (i + 1) + ') ' + howOf(q)));
+        });
+      });
+      pg4.appendChild(l);
+      pg4.appendChild(pFoot('틀린 문제는 막대를 다시 그려 보세요'));
+      area.appendChild(pg4);
+    }
+    if(!area.children.length){
+      var pg5 = T('div', 'page');
+      pg5.appendChild(pHead('선분 모델 학습지'));
+      pg5.appendChild(T('p', null, '인쇄할 항목을 하나 이상 선택해 주세요.'));
+      area.appendChild(pg5);
+    }
+  }
+  document.getElementById('btnShuffle').addEventListener('click', function(){ makeProbs(); buildPrint(); });
+  document.getElementById('btnPrint').addEventListener('click', function(){ window.print(); });
+  makeProbs(); buildPrint();
+
+  /* 검증용 */
+  window.__bm = {
+    setIntro: function(a, b){ IN.a = a; IN.b = b;
+      document.getElementById('slI1').value = a; document.getElementById('slI2').value = b;
+      drawIntro(); return document.getElementById('introEq').textContent; },
+    setCmp: function(mode, a, b){ CP.mode = mode;
+      if(mode === 'diff'){ CP.a = a; CP.b = b; } else { CP.base = a; CP.times = b; }
+      buildCmpSliders(); drawCmp();
+      return {eq: document.getElementById('cmpEq').textContent,
+              read: document.getElementById('cmpRead').textContent}; },
+    setShare: function(mode, a, b, c){ SH.mode = mode; SH.prog = 1;
+      if(mode === 'equal'){ SH.total = a; SH.people = b; }
+      else { SH.ra = a; SH.rb = b; SH.rtotal = c; }
+      buildShSliders(); drawShare();
+      return {eq: document.getElementById('shEq').textContent,
+              read: document.getElementById('shRead').textContent}; },
+    setSd: function(sum, diff){ SD.sum = sum; SD.diff = diff; SD.step = 5;
+      document.getElementById('slSdD').max = sum;
+      document.getElementById('slSdS').value = sum; document.getElementById('slSdD').value = diff;
+      updSd();
+      return {vals: sdVals(), eq: document.getElementById('sdEq').textContent,
+              step: document.getElementById('sdStep2').textContent}; },
+    sdState: function(){ return {sum:SD.sum, diff:SD.diff, step:SD.step}; },
+    makeQ: makeQ, howOf: howOf, probs: function(){ return PB; },
+    // 막대의 실제 픽셀 길이를 돌려줘 비례가 맞는지 검사
+    rects: function(id){
+      return Array.prototype.map.call(
+        document.querySelectorAll('#' + id + ' rect'),
+        function(r){ return {x:+r.getAttribute('x'), w:+r.getAttribute('width'),
+                             y:+r.getAttribute('y'), h:+r.getAttribute('height')}; });
+    },
+    drawQInto: function(q, id){ drawQ(q, document.getElementById(id)); return true; }
+  };
+})();
+</script>
+</body>
+</html>
