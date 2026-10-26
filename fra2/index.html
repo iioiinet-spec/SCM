@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>물병에서 잔으로 — 분수의 나눗셈</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --ivory:#FDF8EE; --ivory-2:#F7EFDD;
+  --ink:#4A3B2A; --ink-soft:#7A6A55; --line:#E6D9BE; --white:#fff;
+  --accent:#FF8A3D; --accent-soft:#FFE6D2;
+  --good:#3BB273; --good-soft:#DFF3E7;
+  --bad:#E4572E; --bad-soft:#FBE3DB;
+  --blue:#4D96FF; --blue-soft:#DFEBFF;
+  --violet:#9B72CF; --violet-soft:#EDE4F8;
+  --shadow:0 4px 0 rgba(0,0,0,.08), 0 10px 24px rgba(120,95,60,.12);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--ivory);
+  background-image:radial-gradient(circle at 12% 8%, #fff6e3 0 18%, transparent 19%),
+                   radial-gradient(circle at 88% 4%, #ffeede 0 14%, transparent 15%);
+  color:var(--ink);
+  font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-size:17px; line-height:1.65; -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:1020px;margin:0 auto;padding:0 16px 64px}
+.hero{text-align:center;padding:30px 16px 16px}
+.hero h1{font-size:clamp(24px,5vw,42px);margin:0 0 6px;letter-spacing:-1px;color:#3C2F20;text-shadow:2px 3px 0 #FFD9A8}
+.hero p{margin:0;color:var(--ink-soft);font-size:clamp(14px,2.6vw,18px)}
+.brand{display:inline-block;margin-top:12px;padding:6px 16px;border-radius:999px;background:var(--white);
+  border:2px dashed var(--line);font-size:13px;color:var(--ink-soft);font-family:'Gaegu',sans-serif;font-weight:700}
+
+.tabs{position:sticky;top:0;z-index:30;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;
+  padding:10px;margin:0 0 18px;background:rgba(253,248,238,.93);backdrop-filter:blur(6px);border-bottom:2px solid var(--line)}
+.tab{border:2px solid var(--line);background:var(--white);color:var(--ink);font-family:inherit;font-size:15px;
+  padding:8px 14px;border-radius:999px;cursor:pointer;transition:.15s}
+.tab:hover{transform:translateY(-2px)}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 3px 0 #d96c25}
+
+.panel{display:none;animation:fadein .25s ease}
+.panel.on{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.card{background:var(--white);border:2px solid var(--line);border-radius:var(--radius);padding:20px;
+  margin:0 0 20px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 4px;font-size:22px}
+.card h2 .emoji{margin-right:6px}
+.sub{color:var(--ink-soft);font-size:15px;margin:0 0 14px;font-family:'Gaegu',sans-serif;font-weight:700;line-height:1.55}
+
+.stage{background:linear-gradient(#F3FAFF,#FDF8EE);border:2px solid var(--line);border-radius:14px;
+  padding:6px;margin:12px 0}
+canvas.draw{display:block;width:100%;height:auto;touch-action:none}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0 2px;align-items:center}
+.btn{border:2px solid var(--line);background:var(--white);color:var(--ink);font-family:inherit;font-size:15px;
+  padding:9px 16px;border-radius:999px;cursor:pointer;transition:.15s}
+.btn:hover{transform:translateY(-2px);border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 3px 0 #d96c25}
+.btn.blue{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 3px 0 #2f72d8}
+.btn:disabled{opacity:.5;cursor:default;transform:none}
+
+.ex{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:8px}
+.ex button{border:2px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;
+  font-family:inherit;font-size:14.5px;cursor:pointer}
+.ex button.on{background:var(--violet);border-color:var(--violet);color:#fff}
+
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0 4px}
+.sl{border:2px solid var(--line);border-radius:14px;padding:9px 13px;background:var(--ivory)}
+.sl label{display:flex;justify-content:space-between;font-size:14.5px;margin-bottom:3px}
+.sl label b{font-size:18px;color:var(--accent)}
+.sl .row{display:flex;align-items:center;gap:8px}
+.sl .row span{font-size:12.5px;color:var(--ink-soft);font-family:'Gaegu',sans-serif;font-weight:700;
+  min-width:30px;text-align:right}
+.sl input[type=range]{width:100%;accent-color:var(--accent)}
+
+.readout{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:10px}
+.pill{border:2px solid var(--line);background:var(--ivory);border-radius:999px;padding:6px 15px;font-size:16px}
+.pill b{font-size:20px;color:var(--accent)}
+.pill.b{background:var(--blue-soft);border-color:var(--blue)} .pill.b b{color:#2F72D8}
+.pill.g{background:var(--good-soft);border-color:var(--good)} .pill.g b{color:var(--good)}
+
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;
+  margin:0 3px;line-height:1.08;position:relative;top:-1px}
+.fr .n{font-size:.78em;padding:0 4px}
+.fr .d{font-size:.78em;padding:0 4px;border-top:2.5px solid currentColor}
+.eqline{font-size:clamp(18px,4.2vw,28px);text-align:center;margin:6px 0;line-height:1.5}
+.eqbox{background:var(--ivory);border:2px dashed var(--accent);border-radius:14px;padding:14px;margin-top:12px}
+.eqstep{font-family:'Gaegu',sans-serif;font-weight:700;font-size:16px;color:var(--ink-soft);
+  text-align:center;margin-top:6px;line-height:1.7}
+.o-col{color:var(--accent)} .b-col{color:#2F72D8} .g-col{color:var(--good)} .v-col{color:var(--violet)}
+
+.note{border-radius:14px;padding:12px 16px;margin-top:12px;font-family:'Gaegu',sans-serif;font-weight:700;
+  font-size:16px;line-height:1.6}
+.note.tip{background:var(--blue-soft);border:2px solid var(--blue);color:#1F4F9B}
+.note.warn{background:var(--bad-soft);border:2px solid var(--bad);color:#8E2E13}
+.note.ok{background:var(--good-soft);border:2px solid var(--good);color:#1E6B45}
+.note.vio{background:var(--violet-soft);border:2px solid var(--violet);color:#5B3A8E}
+
+.ways{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:10px}
+.way{border:3px solid var(--line);border-radius:16px;padding:14px 16px;background:var(--ivory)}
+.way.on{border-color:var(--good);background:var(--good-soft)}
+.way h3{margin:0 0 4px;font-size:17px}
+.way .f{font-size:clamp(16px,3.4vw,21px);margin:6px 0}
+.way p{margin:4px 0 0;font-family:'Gaegu',sans-serif;font-weight:700;font-size:14.5px;color:var(--ink-soft)}
+.way .tag{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12.5px;color:#fff;margin-left:4px}
+.way.on .tag{background:var(--good)}
+.way:not(.on) .tag{background:#B5A68E}
+
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:430px;margin:12px auto 0}
+.choice{font-family:inherit;font-size:20px;padding:13px 6px;border-radius:14px;border:3px solid var(--line);
+  background:#fff;cursor:pointer;transition:.12s}
+.choice:hover{transform:translateY(-3px);border-color:var(--accent)}
+.choice.right{background:var(--good);border-color:var(--good);color:#fff}
+.choice.wrong{background:var(--bad);border-color:var(--bad);color:#fff}
+.feedback{min-height:28px;font-size:16px;margin-top:12px;text-align:center;font-family:'Gaegu',sans-serif;font-weight:700}
+.quiz-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.bar{height:12px;background:var(--ivory-2);border-radius:999px;overflow:hidden;flex:1;min-width:140px;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--good);width:0;transition:.3s}
+.result{text-align:center;padding:12px}
+.result .score{font-size:50px;color:var(--accent)}
+.story{background:var(--ivory);border:2px solid var(--line);border-radius:14px;padding:16px;
+  font-size:17px;line-height:1.75;min-height:70px}
+
+.opt-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0}
+.opt{display:flex;gap:10px;align-items:flex-start;border:2px solid var(--line);border-radius:14px;padding:12px 14px;
+  background:var(--ivory);cursor:pointer}
+.opt input{width:20px;height:20px;margin-top:3px;accent-color:var(--accent)}
+.opt b{display:block;font-size:16px}
+.opt span{font-family:'Gaegu',sans-serif;font-weight:700;font-size:14px;color:var(--ink-soft)}
+
+.mob-tip{display:none;text-align:center;background:var(--accent-soft);border:2px dashed var(--accent);
+  border-radius:14px;padding:10px 14px;margin:0 0 16px;color:#8A5A2B}
+@media (pointer:coarse){.mob-tip{display:block}}
+footer.foot{text-align:center;color:var(--ink-soft);font-size:14px;padding:10px 0 30px;font-family:'Gaegu',sans-serif;font-weight:700}
+
+#printArea{display:none}
+.page{page-break-after:always;break-after:page}
+.page:last-child{page-break-after:auto;break-after:auto}
+.p-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #333;padding-bottom:6px;margin-bottom:12px}
+.p-head h2{margin:0;font-size:23px}
+.p-head .meta{font-size:12px;color:#555;font-family:'Gaegu',sans-serif;font-weight:700;text-align:right;line-height:1.4}
+.p-grid{display:grid;gap:10px}
+.p-item{border:2px solid #333;border-radius:10px;padding:8px 10px;break-inside:avoid}
+.p-item .no{font-size:13.5px;font-family:'Gaegu',sans-serif;font-weight:700;line-height:1.7}
+.p-item svg{width:100%;height:auto;display:block;margin-top:4px}
+.blank{display:inline-block;min-width:58px;border-bottom:2px solid #333;text-align:center}
+.p-list{font-size:14px;line-height:2.0;font-family:'Gaegu',sans-serif;font-weight:700}
+.p-foot{margin-top:10px;border-top:1.5px solid #bbb;padding-top:5px;font-size:11px;color:#666;display:flex;
+  justify-content:space-between;font-family:'Gaegu',sans-serif;font-weight:700}
+@page{size:A4 portrait;margin:11mm}
+@media print{
+  body{background:#fff!important;background-image:none!important;font-size:12pt}
+  .no-print{display:none!important}
+  #printArea{display:block!important}
+  .wrap{max-width:none;padding:0}
+  .p-grid{min-height:216mm;align-content:space-between}
+}
+@media (max-width:640px){ .card{padding:14px} .choices{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<div class="wrap no-print">
+  <header class="hero">
+    <h1>💧 물병에서 잔으로</h1>
+    <p>똑같이 나누어 담으며 배우는 <b>분수 ÷ 자연수</b></p>
+    <div class="brand">세영코딩연구소 &nbsp;저자 : 컴퓨터공학박사 KIM</div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-p="pour">① 물 따르기</button>
+    <button class="tab" data-p="why">② 왜 그럴까?</button>
+    <button class="tab" data-p="quiz">③ 연습 문제</button>
+    <button class="tab" data-p="print">④ 인쇄하기</button>
+  </nav>
+
+  <p class="sub mob-tip">📱 예제를 고르거나 슬라이더를 움직인 뒤 <b>따르기</b>를 눌러 보세요.</p>
+
+  <!-- ① 물 따르기 -->
+  <section class="panel on" id="p-pour">
+    <div class="card">
+      <h2><span class="emoji">🫗</span>물병의 물을 잔에 똑같이 나누기</h2>
+      <p class="sub">예제를 고르고 <b>따르기</b>를 누르면 물이 한 잔씩 채워져요.
+        모두 따르고 나면 <b>한 잔에 얼마씩</b> 들어갔는지 알 수 있어요.</p>
+      <div class="ex" id="exPick"></div>
+      <div class="sliders">
+        <div class="sl"><label>물병의 물 <b id="wAmt">3/4</b> L</label>
+          <div class="row"><span>분자</span><input type="range" id="slWn" min="1" max="9" value="3"></div>
+          <div class="row"><span>분모</span><input type="range" id="slWd" min="1" max="9" value="4"></div></div>
+        <div class="sl"><label>잔의 개수 <b id="wCup">4</b> 개</label>
+          <div class="row"><span>잔</span><input type="range" id="slCup" min="2" max="6" value="4"></div></div>
+      </div>
+      <div class="stage"><canvas class="draw" id="cvPour"></canvas></div>
+      <div class="toolbar">
+        <button class="btn primary" id="btnPour">🫗 따르기</button>
+        <button class="btn" id="btnFill">↩️ 물병 다시 채우기</button>
+        <button class="btn blue" id="btnStep">👣 한 잔씩</button>
+      </div>
+      <div class="readout" id="pourRead"></div>
+      <div class="eqbox">
+        <div class="eqline" id="pourEq"></div>
+        <div class="eqstep" id="pourStep"></div>
+      </div>
+      <div class="note ok" id="pourCheck"></div>
+    </div>
+  </section>
+
+  <!-- ② 왜 그럴까 -->
+  <section class="panel" id="p-why">
+    <div class="card">
+      <h2><span class="emoji">🔍</span>한 잔에 왜 그만큼일까?</h2>
+      <p class="sub">물병의 물을 네모 그림으로 바꿔 보면 답이 보여요.
+        <b>조각을 더 잘게 쪼개서</b> 잔마다 똑같이 나눠 주는 거예요.</p>
+      <div class="stage"><canvas class="draw" id="cvGrid"></canvas></div>
+      <div class="toolbar">
+        <button class="btn primary" id="btnSplitGrid">✂️ 쪼개서 나눠 주기</button>
+        <button class="btn" id="btnResetGrid">↩️ 처음 그림으로</button>
+      </div>
+      <div class="eqbox">
+        <div class="eqline" id="whyEq"></div>
+        <div class="eqstep" id="whyStep"></div>
+      </div>
+      <div class="ways" id="whyWays"></div>
+      <div class="note vio">
+        💡 두 방법은 결국 같아요. 어느 쪽이든
+        <b>÷ ■ 는 × <span class="fr"><span class="n">1</span><span class="d">■</span></span></b> 와 같은 뜻이거든요.
+        "똑같이 ■묶음으로 나눈다"는 것은 "<span class="fr"><span class="n">1</span><span class="d">■</span></span>만큼만 갖는다"는 뜻이니까요.
+      </div>
+    </div>
+  </section>
+
+  <!-- ③ 연습 -->
+  <section class="panel" id="p-quiz">
+    <div class="card">
+      <h2><span class="emoji">✍️</span>직접 풀어 봐요</h2>
+      <p class="sub">물병과 잔 이야기로 8문제를 풀어 봐요.</p>
+      <div class="toolbar"><button class="btn primary" id="btnQStart">🚀 연습 시작</button></div>
+      <div id="qArea" style="display:none">
+        <div class="quiz-top">
+          <span id="qCount">1 / 8</span>
+          <div class="bar"><i id="qBar"></i></div>
+          <span id="qScore">⭐ 0</span>
+        </div>
+        <div class="story" id="qStory"></div>
+        <div class="stage"><canvas class="draw" id="cvQuiz"></canvas></div>
+        <div class="choices" id="qChoices"></div>
+        <div class="feedback" id="qFeed"></div>
+      </div>
+      <div id="qResult" style="display:none" class="result"></div>
+    </div>
+  </section>
+
+  <!-- ④ 인쇄 -->
+  <section class="panel" id="p-print">
+    <div class="card">
+      <h2><span class="emoji">🖨️</span>인쇄해서 연습하기</h2>
+      <p class="sub">필요한 학습지만 골라 인쇄하세요. A4 세로 한 장씩 나옵니다.</p>
+      <div class="opt-list" id="optList"></div>
+      <div class="toolbar">
+        <button class="btn" id="btnShuffle">🔀 문제 새로 뽑기</button>
+        <button class="btn primary" id="btnPrint">🖨️ 인쇄하기 (Ctrl+P)</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">세영코딩연구소 &nbsp;저자 : 컴퓨터공학박사 KIM</footer>
+</div>
+
+<div id="printArea"></div>
+
+<script>
+(function(){
+  "use strict";
+  var NS = 'http://www.w3.org/2000/svg';
+  function S(tag, a){
+    var e = document.createElementNS(NS, tag);
+    if(a) for(var k in a){ if(a[k] !== null && a[k] !== undefined) e.setAttribute(k, a[k]); }
+    return e;
+  }
+  function T(tag, cls, text){
+    var e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  function clear(el){ while(el.firstChild) el.removeChild(el.firstChild); }
+  function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while(b){ var t = a % b; a = b; b = t; } return a || 1; }
+  function F(n, d){
+    if(d < 0){ n = -n; d = -d; }
+    if(n === 0) return {n:0, d:1};
+    var g = gcd(n, d);
+    return {n: n / g, d: d / g};
+  }
+  function fVal(x){ return x.n / x.d; }
+  function fPlain(x){ return x.d === 1 ? String(x.n) : x.n + '/' + x.d; }
+  function fHTML(x, cls){
+    if(x.d === 1) return '<span class="' + (cls || '') + '">' + x.n + '</span>';
+    return '<span class="fr ' + (cls || '') + '"><span class="n">' + x.n +
+           '</span><span class="d">' + x.d + '</span></span>';
+  }
+
+  var COL = {
+    water:'#4FB3F6', waterD:'#2F8FD8', waterL:'#A9DCFB',
+    glass:'#9FB7CC', ink:'#4A3B2A', soft:'#8E7E66', line:'#C9B48C',
+    cups:['#FF8A3D', '#4D96FF', '#3BB273', '#9B72CF', '#F26CA7', '#F2B705']
+  };
+  function setupCanvas(cv, W, H){
+    var sc = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(W * sc); cv.height = Math.round(H * sc);
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(sc, 0, 0, sc, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    return ctx;
+  }
+  function cText(ctx, s, x, y, size, col, align, weight){
+    ctx.save();
+    ctx.font = (weight ? weight + ' ' : '') + (size || 14) + "px 'Jua','Malgun Gothic',sans-serif";
+    ctx.fillStyle = col || COL.ink;
+    ctx.textAlign = align || 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(s, x, y);
+    ctx.restore();
+  }
+  function roundRect(ctx, x, y, w, h, r){
+    r = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  // 물결 있는 수면
+  function waterFill(ctx, x, y, w, h, level, phase, col, colD){
+    if(level <= 0) return;
+    var hh = h * level, top = y + h - hh;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x, y + h);
+    ctx.lineTo(x, top);
+    for(var i = 0; i <= w; i += 4){
+      ctx.lineTo(x + i, top + Math.sin(i / 16 + phase) * Math.min(2.5, hh / 8));
+    }
+    ctx.lineTo(x + w, y + h);
+    ctx.closePath();
+    var gr = ctx.createLinearGradient(0, top, 0, y + h);
+    gr.addColorStop(0, col); gr.addColorStop(1, colD);
+    ctx.fillStyle = gr; ctx.fill();
+    ctx.restore();
+  }
+
+  var anims = {};
+  function animate(key, dur, step, done){
+    if(anims[key]) cancelAnimationFrame(anims[key]);
+    var t0 = performance.now();
+    function frame(now){
+      var p = Math.min(1, (now - t0) / dur);
+      step(p);
+      if(p < 1) anims[key] = requestAnimationFrame(frame);
+      else { anims[key] = null; if(done) done(); }
+    }
+    anims[key] = requestAnimationFrame(frame);
+  }
+  function stopAnim(key){ if(anims[key]){ cancelAnimationFrame(anims[key]); anims[key] = null; } }
+
+  /* 탭 */
+  var tabs = document.querySelectorAll('.tab');
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(x){ x.classList.remove('on'); });
+      t.classList.add('on');
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('on'); });
+      document.getElementById('p-' + t.dataset.p).classList.add('on');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+
+  /* ================= 상태 ================= */
+  // 물병 용량 1 L, 잔 용량 1/2 L (물 ≤ 1 L, 잔 ≥ 2개 이므로 한 잔은 최대 1/2 L)
+  var ST = {w:{n:3, d:4}, cups:4, poured:0, phase:0, tilt:0, streamTo:-1, streamP:0};
+  var CUP_CAP = 0.5;
+
+  var EXAMPLES = [
+    {name:'🥤 3/4 L을 4잔에', n:3, d:4, c:4},
+    {name:'🍶 2/3 L을 2잔에', n:2, d:3, c:2},
+    {name:'🧃 1/2 L을 3잔에', n:1, d:2, c:3},
+    {name:'🫖 5/6 L을 5잔에', n:5, d:6, c:5},
+    {name:'💧 1 L을 4잔에', n:1, d:1, c:4},
+    {name:'🥛 6/7 L을 3잔에', n:6, d:7, c:3}
+  ];
+  function share(){ return F(ST.w.n, ST.w.d * ST.cups); }
+
+  (function(){
+    var box = document.getElementById('exPick');
+    EXAMPLES.forEach(function(e, i){
+      var b = T('button', i === 0 ? 'on' : '', e.name);
+      b.addEventListener('click', function(){
+        document.querySelectorAll('#exPick button').forEach(function(x, j){
+          x.classList.toggle('on', j === i);
+        });
+        ST.w = {n:e.n, d:e.d}; ST.cups = e.c; ST.poured = 0;
+        document.getElementById('slWn').value = e.n;
+        document.getElementById('slWd').value = e.d;
+        document.getElementById('slCup').value = e.c;
+        stopAnim('pour'); stopAnim('grid');
+        GRID.prog = 0;
+        drawPour(); updPour(); drawGrid(); updWhy();
+      });
+      box.appendChild(b);
+    });
+  })();
+
+  /* ================= ① 물 따르기 ================= */
+  var cvP = document.getElementById('cvPour');
+  function drawBottle(ctx, cx, topY, level, tilt){
+    var bw = 76, bh = 150, nw = 26, nh = 30;
+    ctx.save();
+    ctx.translate(cx, topY + nh + bh);         // 병 아래쪽을 회전축으로
+    ctx.rotate(tilt);
+    ctx.translate(-cx, -(topY + nh + bh));
+    var bx = cx - bw / 2, by = topY + nh;
+    // 목·뚜껑
+    ctx.fillStyle = '#E8F4FC'; ctx.strokeStyle = COL.glass; ctx.lineWidth = 2.5;
+    roundRect(ctx, cx - nw / 2, topY + 6, nw, nh + 8, 6); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#7FA8C9';
+    roundRect(ctx, cx - nw / 2 - 3, topY - 2, nw + 6, 10, 3); ctx.fill();
+    // 몸통 — 뒤에 그린 물줄기가 비쳐 보이지 않도록 불투명하게
+    ctx.fillStyle = '#EEF7FD';
+    roundRect(ctx, bx, by, bw, bh, 12); ctx.fill();
+    // 물
+    ctx.save();
+    roundRect(ctx, bx + 2, by + 2, bw - 4, bh - 4, 10); ctx.clip();
+    waterFill(ctx, bx + 2, by + 2, bw - 4, bh - 4, level, ST.phase, COL.waterL, COL.water);
+    ctx.restore();
+    // 눈금 (분모 d 등분)
+    ctx.strokeStyle = 'rgba(74,59,42,.45)'; ctx.lineWidth = 1.2;
+    var dd = Math.min(ST.w.d, 8);
+    for(var i = 1; i < dd; i++){
+      var yy = by + bh - bh * (i / dd);
+      ctx.beginPath(); ctx.moveTo(bx + bw - 16, yy); ctx.lineTo(bx + bw - 2, yy); ctx.stroke();
+    }
+    ctx.strokeStyle = COL.glass; ctx.lineWidth = 2.8;
+    roundRect(ctx, bx, by, bw, bh, 12); ctx.stroke();
+    ctx.restore();
+  }
+  function drawGlass(ctx, cx, bottomY, w, h, level, col){
+    var tw = w, bwid = w * 0.78;
+    var x1 = cx - tw / 2, x2 = cx + tw / 2;
+    var b1 = cx - bwid / 2, b2 = cx + bwid / 2;
+    ctx.save();
+    // 유리 몸통
+    ctx.beginPath();
+    ctx.moveTo(x1, bottomY - h); ctx.lineTo(b1, bottomY);
+    ctx.lineTo(b2, bottomY); ctx.lineTo(x2, bottomY - h);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(236,246,252,.8)'; ctx.fill();
+    // 물
+    if(level > 0){
+      ctx.save(); ctx.clip();
+      var wh = h * level, top = bottomY - wh;
+      ctx.beginPath();
+      ctx.moveTo(x1 - 6, bottomY); ctx.lineTo(x1 - 6, top);
+      for(var i = -6; i <= tw + 6; i += 4)
+        ctx.lineTo(x1 + i, top + Math.sin(i / 12 + ST.phase) * Math.min(2, wh / 7));
+      ctx.lineTo(x2 + 6, bottomY); ctx.closePath();
+      var gr = ctx.createLinearGradient(0, top, 0, bottomY);
+      gr.addColorStop(0, COL.waterL); gr.addColorStop(1, col || COL.water);
+      ctx.fillStyle = gr; ctx.fill();
+      ctx.restore();
+    }
+    ctx.strokeStyle = COL.glass; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(x1, bottomY - h); ctx.lineTo(b1, bottomY);
+    ctx.lineTo(b2, bottomY); ctx.lineTo(x2, bottomY - h);
+    ctx.stroke();
+    // 잔 눈금 (1/4 L, 1/2 L)
+    ctx.strokeStyle = 'rgba(74,59,42,.3)'; ctx.lineWidth = 1;
+    [0.5].forEach(function(f){
+      var yy = bottomY - h * f;
+      var t = (b1 + (x1 - b1) * f);
+      ctx.beginPath(); ctx.moveTo(t + 3, yy); ctx.lineTo(t + 11, yy); ctx.stroke();
+    });
+    ctx.restore();
+  }
+  function cupGeom(){
+    var n = ST.cups, W = 660;
+    var gw = Math.min(78, (W - 120) / n - 12);
+    var gap = (W - 110 - gw * n) / Math.max(1, n - 1);
+    var x0 = 55 + gw / 2;
+    return {gw:gw, gap:gap, x0:x0, gh:98, bottom:352,
+      cx: function(i){ return x0 + i * (gw + gap); }};
+  }
+  function drawPour(){
+    var W = 660, H = 400, ctx = setupCanvas(cvP, W, H);
+    var G = cupGeom();
+    var total = fVal(ST.w), sh = fVal(share());
+    var left = Math.max(0, total - sh * ST.poured);
+    // 책상
+    ctx.fillStyle = '#EADFC7';
+    ctx.fillRect(0, G.bottom + 2, W, 8);
+    // 물병 위치 — 기울였을 때 주둥이가 잔 한가운데 오도록 몸통을 왼쪽에 둡니다
+    var NECK = 30, BODY = 150, LEN = NECK + BODY;   // 회전축(병 바닥)에서 주둥이까지
+    var bTop = 40, bx = 92;
+    if(ST.streamTo >= 0){
+      bTop = 34;
+      // 주둥이를 잔보다 살짝 왼쪽에 두어 물줄기가 병에서 벗어나 떨어지게 합니다
+      bx = G.cx(ST.streamTo) - 20 - LEN * Math.sin(ST.tilt);
+      bx = Math.max(54, Math.min(600, bx));
+    }
+    // 회전 후 주둥이 좌표
+    var pivotY = bTop + LEN;
+    var mouthX = bx + LEN * Math.sin(ST.tilt);
+    var mouthY = pivotY - LEN * Math.cos(ST.tilt);
+    // 물줄기 (병보다 먼저 그려 몸통에 가려지게)
+    if(ST.streamTo >= 0 && ST.streamP > 0){
+      var tx = G.cx(ST.streamTo), ty = G.bottom - G.gh + 8;
+      ctx.save();
+      ctx.strokeStyle = 'rgba(79,179,246,.9)'; ctx.lineWidth = 8; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(mouthX, mouthY);
+      ctx.quadraticCurveTo(mouthX + 6, mouthY + (ty - mouthY) * 0.55, tx, ty);
+      ctx.stroke();
+      ctx.restore();
+    }
+    drawBottle(ctx, bx, bTop, left / 1, ST.tilt);
+    // 남은 양은 위쪽 상태줄에 (잔과 겹치지 않게)
+    cText(ctx, '물병에 남은 물 ' +
+      fPlain(F(Math.round(left * ST.w.d * ST.cups), ST.w.d * ST.cups)) + ' L',
+      16, 20, 15, COL.waterD, 'left');
+    // 잔들
+    for(var i = 0; i < ST.cups; i++){
+      var filled = (i < Math.floor(ST.poured)) ? 1 :
+                   (i === Math.floor(ST.poured) ? (ST.poured - Math.floor(ST.poured)) : 0);
+      var lv = Math.min(1, sh * filled / CUP_CAP);
+      drawGlass(ctx, G.cx(i), G.bottom, G.gw, G.gh, lv, COL.cups[i % 6]);
+      cText(ctx, (i + 1) + '번', G.cx(i), G.bottom + 20, 13, COL.soft);
+      if(filled >= 1)
+        cText(ctx, fPlain(share()) + ' L', G.cx(i), G.bottom - G.gh - 14, 14, COL.cups[i % 6]);
+    }
+    cText(ctx, '잔 하나 가득 = 1/2 L', W - 16, 20, 13, COL.soft, 'right');
+  }
+  function updPour(){
+    var sh = share(), total = ST.w;
+    document.getElementById('wAmt').textContent = fPlain(total);
+    document.getElementById('wCup').textContent = ST.cups;
+    var read = document.getElementById('pourRead');
+    clear(read);
+    function pill(cls, lab, html){
+      var s = T('span', 'pill ' + cls); s.innerHTML = lab + ' <b>' + html + '</b>'; return s;
+    }
+    read.appendChild(pill('b', '물병의 물', fPlain(total) + ' L'));
+    read.appendChild(pill('', '잔', ST.cups + '개'));
+    read.appendChild(pill('g', '한 잔에', fPlain(sh) + ' L'));
+    document.getElementById('pourEq').innerHTML =
+      fHTML(total, 'b-col') + ' ÷ ' + '<span class="o-col">' + ST.cups + '</span>' +
+      ' = ' + fHTML(sh, 'g-col') + ' (L)';
+    document.getElementById('pourStep').innerHTML =
+      '물 ' + fPlain(total) + ' L를 ' + ST.cups + '잔에 똑같이 나누면 한 잔에 ' +
+      fPlain(sh) + ' L씩 들어가요.';
+    var chk = document.getElementById('pourCheck');
+    var sumN = sh.n * ST.cups, sumD = sh.d;
+    var sum = F(sumN, sumD);
+    chk.innerHTML = '✅ 확인 : ' + fHTML(sh, 'g-col') + ' × ' + ST.cups + ' = ' +
+      fHTML(sum, 'b-col') + ' L — 잔에 담긴 물을 모두 더하면 <b>처음 물병의 양과 같아요.</b>';
+  }
+  function runPour(stepMode){
+    stopAnim('pour');
+    var n = ST.cups;
+    ST.poured = 0;
+    var perCup = 900;
+    var startFrom = stepMode ? Math.floor(ST.poured) : 0;
+    var targetCups = stepMode ? 1 : n;
+    var from = stepMode ? ST._stepAt || 0 : 0;
+    if(stepMode && from >= n){ from = 0; }
+    ST.poured = from;
+    animate('pour', perCup * targetCups, function(p){
+      ST.phase += 0.25;
+      var cur = from + p * targetCups;
+      ST.poured = Math.min(n, cur);
+      var idx = Math.min(n - 1, Math.floor(cur));
+      ST.streamTo = (cur < from + targetCups - 0.02) ? idx : -1;
+      ST.streamP = 1;
+      ST.tilt = (ST.streamTo >= 0) ? 0.44 : 0;     // 오른쪽으로 기울여 잔 위에 주둥이가 오도록
+      drawPour();
+    }, function(){
+      ST.streamTo = -1; ST.tilt = 0; ST.poured = Math.min(n, from + targetCups);
+      ST._stepAt = ST.poured;
+      drawPour(); updPour();
+    });
+  }
+  document.getElementById('btnPour').addEventListener('click', function(){
+    ST._stepAt = 0; runPour(false);
+  });
+  document.getElementById('btnStep').addEventListener('click', function(){
+    if(ST._stepAt === undefined || ST._stepAt >= ST.cups) ST._stepAt = 0;
+    runPour(true);
+  });
+  document.getElementById('btnFill').addEventListener('click', function(){
+    stopAnim('pour'); ST.poured = 0; ST._stepAt = 0; ST.streamTo = -1; ST.tilt = 0;
+    drawPour(); updPour();
+  });
+  ['slWn', 'slWd', 'slCup'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', function(e){
+      var v = +e.target.value;
+      if(id === 'slWn') ST.w.n = v; else if(id === 'slWd') ST.w.d = v; else ST.cups = v;
+      // 물은 1 L를 넘지 않게 (분자 ≤ 분모)
+      if(ST.w.n > ST.w.d){
+        if(id === 'slWn'){ ST.w.d = ST.w.n; document.getElementById('slWd').value = ST.w.d; }
+        else { ST.w.n = ST.w.d; document.getElementById('slWn').value = ST.w.n; }
+      }
+      stopAnim('pour'); stopAnim('grid');
+      ST.poured = 0; ST._stepAt = 0; ST.streamTo = -1; ST.tilt = 0; GRID.prog = 0;
+      drawPour(); updPour(); drawGrid(); updWhy();
+    });
+  });
+
+  /* ================= ② 격자 모델 ================= */
+  var GRID = {prog:0};
+  var cvG = document.getElementById('cvGrid');
+  function drawGrid(){
+    var W = 660, H = 300, ctx = setupCanvas(cvG, W, H);
+    var a = ST.w.n, d = ST.w.d, n = ST.cups, p = GRID.prog;
+    var gx = 70, gy = 54, gw = 520, gh = 150;
+    var cw = gw / d;
+    // 전체 1 L 틀
+    ctx.strokeStyle = COL.ink; ctx.lineWidth = 2.5;
+    ctx.strokeRect(gx, gy, gw, gh);
+    cText(ctx, '물병 전체 = 1 L 를 ' + d + '칸으로 나눈 그림', W / 2, gy - 22, 15, COL.soft);
+    // 칸 채우기
+    for(var c = 0; c < d; c++){
+      var x = gx + c * cw;
+      if(c < a){
+        if(p <= 0){
+          ctx.fillStyle = COL.waterL;
+          ctx.fillRect(x, gy, cw, gh);
+        }else{
+          // 세로로 n등분해서 잔 색으로
+          var rh = gh / n;
+          for(var r = 0; r < n; r++){
+            ctx.fillStyle = COL.cups[r % 6];
+            ctx.globalAlpha = 0.25 + 0.75 * p;
+            ctx.fillRect(x, gy + r * rh, cw, rh);
+            ctx.globalAlpha = 1;
+          }
+        }
+      }
+      ctx.strokeStyle = COL.line; ctx.lineWidth = 1.6;
+      ctx.strokeRect(x, gy, cw, gh);
+    }
+    // 쪼개는 가로선 (왼쪽부터 자라남)
+    if(p > 0 && n > 1){
+      ctx.strokeStyle = 'rgba(74,59,42,.55)'; ctx.lineWidth = 1.2;
+      for(var j = 1; j < n; j++){
+        var yy = gy + gh * (j / n);
+        ctx.beginPath(); ctx.moveTo(gx, yy); ctx.lineTo(gx + gw * p, yy); ctx.stroke();
+      }
+    }
+    ctx.strokeStyle = COL.ink; ctx.lineWidth = 2.5;
+    ctx.strokeRect(gx, gy, gw, gh);
+    cText(ctx, p > 0 ? '한 칸 = 1/' + (d * n) + ' L' : '한 칸 = 1/' + d + ' L',
+      W / 2, gy + gh + 22, 15, COL.waterD);
+    // 잔별 범례
+    if(p > 0.6){
+      var lw = Math.min(96, 560 / n);
+      var sx = W / 2 - (n * lw) / 2;
+      for(var k = 0; k < n; k++){
+        ctx.fillStyle = COL.cups[k % 6];
+        roundRect(ctx, sx + k * lw + 6, gy + gh + 42, 14, 14, 4); ctx.fill();
+        cText(ctx, (k + 1) + '번 ' + a + '칸', sx + k * lw + 26, gy + gh + 49, 12, COL.soft, 'left');
+      }
+      cText(ctx, '각 잔은 ' + a + '칸씩 → ' + a + '/' + (d * n) + ' L',
+        W / 2, gy + gh + 78, 16, COL.ink);
+    }
+  }
+  function updWhy(){
+    var a = ST.w.n, d = ST.w.d, n = ST.cups;
+    var sh = share();
+    document.getElementById('whyEq').innerHTML =
+      fHTML(ST.w, 'b-col') + ' ÷ ' + '<span class="o-col">' + n + '</span> = ' +
+      fHTML({n:a, d:d * n}, 'g-col') +
+      (sh.d !== d * n || sh.n !== a ? ' = ' + fHTML(sh, 'g-col') : '');
+    document.getElementById('whyStep').innerHTML =
+      '1/' + d + ' 짜리 조각을 다시 ' + n + '로 쪼개면 1/' + (d * n) +
+      ' 짜리 조각이 돼요. 그 조각을 잔마다 <b>' + a + '칸씩</b> 나눠 가져요.';
+    // 두 가지 방법
+    var box = document.getElementById('whyWays');
+    clear(box);
+    var divisible = (a % n === 0);
+    var w1 = T('div', 'way' + (divisible ? ' on' : ''));
+    w1.innerHTML = '<h3>방법 ① 분자를 나누기<span class="tag">' +
+      (divisible ? '지금 가능' : '지금은 안 돼요') + '</span></h3>' +
+      '<div class="f">' + fHTML(ST.w, 'b-col') + ' ÷ ' + n + ' = ' +
+      (divisible ? fHTML(F(a / n, d), 'g-col') : '<span style="color:#B5A68E">?</span>') + '</div>' +
+      '<p>' + (divisible
+        ? '조각 수 ' + a + '개를 ' + n + '묶음으로 똑같이 나눌 수 있어요 → ' + (a / n) + '개씩. 조각 크기는 그대로!'
+        : '조각 수 ' + a + '개를 ' + n + '묶음으로 똑같이 못 나눠요 (' + a + '÷' + n + '이 딱 떨어지지 않음). 그래서 방법 ②를 써요.') +
+      '</p>';
+    var w2 = T('div', 'way on');
+    w2.innerHTML = '<h3>방법 ② 조각을 더 쪼개기<span class="tag">언제나 가능</span></h3>' +
+      '<div class="f">' + fHTML(ST.w, 'b-col') + ' ÷ ' + n + ' = ' +
+      fHTML({n:a, d:d * n}, 'g-col') +
+      ((sh.n !== a || sh.d !== d * n) ? ' = ' + fHTML(sh, 'g-col') : '') + '</div>' +
+      '<p>분모에 ' + n + '을 곱해 조각을 ' + n + '배 잘게 만들면 언제나 똑같이 나눌 수 있어요. ' +
+      '이것이 <b>× 1/' + n + '</b> 과 같아요.</p>';
+    box.appendChild(w1); box.appendChild(w2);
+  }
+  document.getElementById('btnSplitGrid').addEventListener('click', function(){
+    stopAnim('grid'); GRID.prog = 0; drawGrid();
+    animate('grid', 1100, function(p){ GRID.prog = p; drawGrid(); });
+  });
+  document.getElementById('btnResetGrid').addEventListener('click', function(){
+    stopAnim('grid'); GRID.prog = 0; drawGrid();
+  });
+
+  /* ================= ③ 연습 ================= */
+  var cvQ = document.getElementById('cvQuiz');
+  var QZ = {list:[], idx:0, score:0};
+  var NAMES = ['주스', '우유', '보리차', '물', '식혜', '매실차'];
+  var VESSEL = ['물병', '주전자', '물통', '병'];
+  function makeQuiz(){
+    var out = [], used = {};
+    var pool = [[3,4,4],[2,3,2],[1,2,3],[5,6,5],[1,1,4],[6,7,3],[3,5,2],[4,5,4],
+                [2,5,3],[7,8,7],[3,8,2],[5,9,5],[1,3,2],[4,7,2],[5,8,5],[2,9,3]];
+    pool = pool.slice().sort(function(){ return Math.random() - 0.5; });
+    for(var i = 0; i < pool.length && out.length < 8; i++){
+      var k = pool[i].join(',');
+      if(used[k]) continue;
+      used[k] = 1;
+      var a = pool[i][0], d = pool[i][1], n = pool[i][2];
+      out.push({a:a, d:d, n:n, ans:F(a, d * n),
+        drink: NAMES[Math.floor(Math.random() * NAMES.length)],
+        ves: VESSEL[Math.floor(Math.random() * VESSEL.length)]});
+    }
+    return out;
+  }
+  function drawQuizPic(q){
+    var W = 660, H = 180, ctx = setupCanvas(cvQ, W, H);
+    // 왼쪽: 물병 네모 모델, 오른쪽: 잔 n개
+    var gx = 48, gy = 42, gw = 230, gh = 86, cw = gw / q.d;
+    for(var c = 0; c < q.d; c++){
+      ctx.fillStyle = c < q.a ? COL.waterL : '#fff';
+      ctx.fillRect(gx + c * cw, gy, cw, gh);
+      ctx.strokeStyle = COL.line; ctx.lineWidth = 1.4;
+      ctx.strokeRect(gx + c * cw, gy, cw, gh);
+    }
+    ctx.strokeStyle = COL.ink; ctx.lineWidth = 2.4;
+    ctx.strokeRect(gx, gy, gw, gh);
+    cText(ctx, q.ves + ' ' + q.a + '/' + q.d + ' L', gx + gw / 2, gy - 18, 15, COL.waterD);
+    cText(ctx, '→', 310, gy + gh / 2, 26, COL.soft);
+    var n = q.n, gwid = Math.min(58, 300 / n - 8), gap = (300 - gwid * n) / Math.max(1, n - 1);
+    for(var i = 0; i < n; i++){
+      var cx = 348 + gwid / 2 + i * (gwid + gap);
+      drawGlass(ctx, cx, gy + gh + 22, gwid, 64, 0, COL.cups[i % 6]);
+      cText(ctx, '?', cx, gy + gh - 12, 17, COL.soft);
+    }
+    cText(ctx, '잔 ' + n + '개에 똑같이', 498, gy - 18, 15, COL.soft);
+  }
+  function startQuiz(){
+    QZ = {list: makeQuiz(), idx:0, score:0};
+    document.getElementById('qResult').style.display = 'none';
+    document.getElementById('qArea').style.display = 'block';
+    showQuiz();
+  }
+  function showQuiz(){
+    var q = QZ.list[QZ.idx];
+    document.getElementById('qCount').textContent = (QZ.idx + 1) + ' / 8';
+    document.getElementById('qScore').textContent = '⭐ ' + QZ.score;
+    document.getElementById('qBar').style.width = (QZ.idx / 8 * 100) + '%';
+    document.getElementById('qFeed').textContent = '';
+    document.getElementById('qStory').innerHTML =
+      '🥤 ' + q.ves + '에 ' + q.drink + '가 ' + fHTML({n:q.a, d:q.d}, 'b-col') +
+      ' L 있습니다. 이것을 <b>' + q.n + '개</b>의 잔에 똑같이 나누어 담으면 ' +
+      '한 잔에 몇 L씩 담길까요?';
+    drawQuizPic(q);
+    // 선택지: 정답, 분모만 곱함(약분 안 함)은 정답과 같을 수 있으니 전형적 오답을 만든다
+    var opts = [q.ans];
+    var wrongs = [
+      F(q.a * q.n, q.d),        // 곱해 버린 오답
+      F(q.a, q.d + q.n),        // 분모에 더한 오답
+      F(q.a + q.n, q.d),        // 분자에 더한 오답
+      F(q.d, q.a * q.n)         // 뒤집은 오답
+    ];
+    for(var i = 0; i < wrongs.length && opts.length < 4; i++){
+      var w = wrongs[i];
+      if(w.n <= 0) continue;
+      if(!opts.some(function(o){ return o.n === w.n && o.d === w.d; })) opts.push(w);
+    }
+    while(opts.length < 4) opts.push(F(q.a + opts.length, q.d * q.n));
+    opts = opts.sort(function(){ return Math.random() - 0.5; });
+    var box = document.getElementById('qChoices');
+    clear(box);
+    opts.forEach(function(o){
+      var b = T('button', 'choice');
+      b.innerHTML = fHTML(o) + ' L';
+      b.dataset.v = o.n + '/' + o.d;
+      b.addEventListener('click', function(){ ansQuiz(b, o, q); });
+      box.appendChild(b);
+    });
+  }
+  function ansQuiz(btn, o, q){
+    var all = document.querySelectorAll('#qChoices .choice');
+    all.forEach(function(x){ x.disabled = true; });
+    var ok = (o.n === q.ans.n && o.d === q.ans.d);
+    if(ok){ btn.classList.add('right'); QZ.score++; }
+    else{
+      btn.classList.add('wrong');
+      all.forEach(function(x){ if(x.dataset.v === q.ans.n + '/' + q.ans.d) x.classList.add('right'); });
+    }
+    document.getElementById('qFeed').innerHTML =
+      (ok ? '🎉 정답! ' : '💡 ') + q.a + '/' + q.d + ' ÷ ' + q.n + ' = ' +
+      q.a + '/(' + q.d + '×' + q.n + ') = ' + fPlain(F(q.a, q.d * q.n)) +
+      ' L — 조각을 ' + q.n + '배 잘게 쪼개면 돼요.';
+    document.getElementById('qScore').textContent = '⭐ ' + QZ.score;
+    setTimeout(function(){
+      QZ.idx++;
+      if(QZ.idx >= QZ.list.length) finQuiz(); else showQuiz();
+    }, 2600);
+  }
+  function finQuiz(){
+    document.getElementById('qArea').style.display = 'none';
+    var r = document.getElementById('qResult');
+    r.style.display = 'block'; clear(r);
+    r.appendChild(T('div', 'score', QZ.score + ' / 8'));
+    r.appendChild(T('div', null, QZ.score >= 7 ? '🏆 완벽해요!' :
+      QZ.score >= 4 ? '👏 잘하고 있어요!' : '💪 그림으로 다시 확인해 봐요!'));
+    var tb = T('div', 'toolbar');
+    var again = T('button', 'btn primary', '🔁 다시 하기');
+    again.addEventListener('click', startQuiz);
+    tb.appendChild(again); r.appendChild(tb);
+  }
+  document.getElementById('btnQStart').addEventListener('click', startQuiz);
+
+  /* ================= ④ 인쇄 ================= */
+  var OPTS = [
+    {id:'pic', label:'그림 문제', desc:'물병 그림을 보고 한 잔의 양 구하기 6문제', on:true},
+    {id:'word', label:'문장제', desc:'물병과 잔 이야기 10문제', on:true},
+    {id:'answer', label:'정답지', desc:'위 학습지의 정답과 풀이', on:true}
+  ];
+  var optState = {}, PB = {pic:[], word:[]};
+  (function(){
+    var box = document.getElementById('optList');
+    OPTS.forEach(function(o){
+      optState[o.id] = o.on;
+      var lab = T('label', 'opt');
+      var inp = document.createElement('input');
+      inp.type = 'checkbox'; inp.checked = o.on;
+      inp.addEventListener('change', function(){ optState[o.id] = inp.checked; buildPrint(); });
+      lab.appendChild(inp);
+      var tx = T('div');
+      tx.appendChild(T('b', null, o.label));
+      tx.appendChild(T('span', null, o.desc));
+      lab.appendChild(tx);
+      box.appendChild(lab);
+    });
+  })();
+  function pick(a){ return a[Math.floor(Math.random() * a.length)]; }
+  function makeProbs(){
+    var mk = function(){
+      var d = pick([2,3,4,5,6,7,8,9]);
+      var a = 1 + Math.floor(Math.random() * d);
+      var n = 2 + Math.floor(Math.random() * 5);
+      return {a:a, d:d, n:n, ans:F(a, d * n),
+        drink: pick(NAMES), ves: pick(VESSEL)};
+    };
+    PB.pic = []; PB.word = [];
+    while(PB.pic.length < 6){ var p = mk(); if(p.d <= 6 && p.n <= 5) PB.pic.push(p); }
+    while(PB.word.length < 10) PB.word.push(mk());
+  }
+  function picSVG(q, w, h){
+    var s = S('svg', {viewBox:'0 0 ' + w + ' ' + h});
+    var gx = 6, gy = 16, gw = w * 0.42, gh = h - 34, cw = gw / q.d;
+    for(var c = 0; c < q.d; c++){
+      s.appendChild(S('rect', {x:gx + c * cw, y:gy, width:cw, height:gh,
+        fill: c < q.a ? '#ccc' : '#fff', stroke:'#333', 'stroke-width':1}));
+    }
+    s.appendChild(S('rect', {x:gx, y:gy, width:gw, height:gh, fill:'none', stroke:'#111', 'stroke-width':1.8}));
+    var t = S('text', {x:gx + gw / 2, y:gy - 5, 'text-anchor':'middle', 'font-size':9, fill:'#111'});
+    t.textContent = q.a + '/' + q.d + ' L';
+    s.appendChild(t);
+    var ar = S('text', {x:gx + gw + 14, y:gy + gh / 2, 'text-anchor':'middle', 'font-size':13, fill:'#111'});
+    ar.textContent = '→'; s.appendChild(ar);
+    var n = q.n, x0 = gx + gw + 28, avail = w - x0 - 6;
+    var gwid = Math.min(26, avail / n - 4), gap = (avail - gwid * n) / Math.max(1, n - 1);
+    for(var i = 0; i < n; i++){
+      var cx = x0 + gwid / 2 + i * (gwid + gap);
+      s.appendChild(S('polygon', {
+        points: [cx - gwid / 2, gy + 6, cx - gwid * 0.38, gy + gh,
+                 cx + gwid * 0.38, gy + gh, cx + gwid / 2, gy + 6].join(' '),
+        fill:'#fff', stroke:'#111', 'stroke-width':1.2}));
+    }
+    var t2 = S('text', {x:x0 + avail / 2, y:gy - 5, 'text-anchor':'middle', 'font-size':9, fill:'#111'});
+    t2.textContent = '잔 ' + n + '개';
+    s.appendChild(t2);
+    return s;
+  }
+  function pHead(title, withName){
+    var h = T('div', 'p-head');
+    h.appendChild(T('h2', null, title));
+    var m = T('div', 'meta');
+    if(withName !== false) m.appendChild(T('div', null, '이름 : ____________   날짜 : ____ / ____'));
+    m.appendChild(T('div', null, '세영코딩연구소  저자 : 컴퓨터공학박사 KIM'));
+    h.appendChild(m);
+    return h;
+  }
+  function pFoot(s){
+    var f = T('div', 'p-foot');
+    f.appendChild(T('span', null, s));
+    f.appendChild(T('span', null, '세영코딩연구소  저자 : 컴퓨터공학박사 KIM'));
+    return f;
+  }
+  function buildPrint(){
+    var area = document.getElementById('printArea');
+    clear(area);
+    if(optState.pic){
+      var pg = T('div', 'page');
+      pg.appendChild(pHead('그림을 보고 한 잔의 양 구하기'));
+      var g = T('div', 'p-grid');
+      g.style.gridTemplateColumns = 'repeat(2,1fr)';
+      PB.pic.forEach(function(q, i){
+        var it = T('div', 'p-item');
+        it.appendChild(T('div', 'no', (i + 1) + '. ' + q.a + '/' + q.d + ' L를 ' + q.n +
+          '잔에 똑같이 나누면?'));
+        it.appendChild(picSVG(q, 250, 86));
+        var row = T('div', 'no');
+        row.appendChild(document.createTextNode('식 : '));
+        row.appendChild(T('span', 'blank', ' '));
+        row.appendChild(document.createTextNode(' 답 : '));
+        row.appendChild(T('span', 'blank', ' '));
+        row.appendChild(document.createTextNode(' L'));
+        it.appendChild(row);
+        g.appendChild(it);
+      });
+      pg.appendChild(g);
+      pg.appendChild(pFoot('조각을 더 잘게 쪼개면 똑같이 나눌 수 있어요'));
+      area.appendChild(pg);
+    }
+    if(optState.word){
+      var pg2 = T('div', 'page');
+      pg2.appendChild(pHead('물병과 잔 — 문장제'));
+      var g2 = T('div', 'p-grid');
+      g2.style.gridTemplateColumns = '1fr';
+      PB.word.forEach(function(q, i){
+        var it = T('div', 'p-item');
+        it.appendChild(T('div', 'no', (i + 1) + '. ' + q.ves + '에 ' + q.drink + '가 ' +
+          q.a + '/' + q.d + ' L 있습니다. 이것을 ' + q.n +
+          '개의 잔에 똑같이 나누어 담으면 한 잔에 몇 L씩 담길까요?'));
+        var row = T('div', 'no');
+        row.appendChild(document.createTextNode('식 : '));
+        row.appendChild(T('span', 'blank', ' '));
+        row.appendChild(document.createTextNode('      답 : '));
+        row.appendChild(T('span', 'blank', ' '));
+        row.appendChild(document.createTextNode(' L'));
+        it.appendChild(row);
+        g2.appendChild(it);
+      });
+      pg2.appendChild(g2);
+      pg2.appendChild(pFoot('분수 ÷ 자연수 = 분모에 그 수를 곱하기 (= × 1/그 수)'));
+      area.appendChild(pg2);
+    }
+    if(optState.answer){
+      var pg3 = T('div', 'page');
+      pg3.appendChild(pHead('정답지', false));
+      var l = T('div', 'p-list');
+      l.appendChild(T('div', null, '■ 그림 문제'));
+      PB.pic.forEach(function(q, i){
+        l.appendChild(T('div', null, (i + 1) + ') ' + q.a + '/' + q.d + ' ÷ ' + q.n + ' = ' +
+          q.a + '/' + (q.d * q.n) + ' = ' + fPlain(q.ans) + ' L'));
+      });
+      l.appendChild(T('div', null, '■ 문장제'));
+      PB.word.forEach(function(q, i){
+        l.appendChild(T('div', null, (i + 1) + ') ' + q.a + '/' + q.d + ' ÷ ' + q.n + ' = ' +
+          fPlain(q.ans) + ' L'));
+      });
+      pg3.appendChild(l);
+      pg3.appendChild(pFoot('잔에 담긴 양을 모두 더하면 처음 양이 되는지 확인해 보세요'));
+      area.appendChild(pg3);
+    }
+    if(!area.children.length){
+      var pg4 = T('div', 'page');
+      pg4.appendChild(pHead('물병에서 잔으로 학습지'));
+      pg4.appendChild(T('p', null, '인쇄할 항목을 하나 이상 선택해 주세요.'));
+      area.appendChild(pg4);
+    }
+  }
+  document.getElementById('btnShuffle').addEventListener('click', function(){ makeProbs(); buildPrint(); });
+  document.getElementById('btnPrint').addEventListener('click', function(){ window.print(); });
+
+  /* 초기화 */
+  drawPour(); updPour(); drawGrid(); updWhy(); makeProbs(); buildPrint();
+
+  /* 검증용 */
+  window.__wp = {
+    F:F, fPlain:fPlain, share:share, EXAMPLES:EXAMPLES,
+    set: function(n, d, c){
+      ST.w = {n:n, d:d}; ST.cups = c; ST.poured = 0; ST._stepAt = 0; GRID.prog = 1;
+      document.getElementById('slWn').value = n;
+      document.getElementById('slWd').value = d;
+      document.getElementById('slCup').value = c;
+      drawPour(); updPour(); drawGrid(); updWhy();
+      return {share: share(), eq: document.getElementById('pourEq').textContent,
+              check: document.getElementById('pourCheck').textContent,
+              why: document.getElementById('whyEq').textContent,
+              ways: document.getElementById('whyWays').textContent};
+    },
+    pourTo: function(k){ ST.poured = k; ST.streamTo = -1; ST.tilt = 0; drawPour(); return ST.poured; },
+    state: function(){ return {w:ST.w, cups:ST.cups, poured:ST.poured, cap:CUP_CAP}; },
+    probs: function(){ return PB; },
+    quiz: function(){ return makeQuiz(); },
+    ink: function(id){
+      var cv = document.getElementById(id), ctx = cv.getContext('2d');
+      var d = ctx.getImageData(0, 0, cv.width, cv.height).data, n = 0;
+      for(var i = 3; i < d.length; i += 4) if(d[i] > 10) n++;
+      return n;
+    }
+  };
+})();
+</script>
+</body>
+</html>
