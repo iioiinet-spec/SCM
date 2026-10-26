@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공약수와 공배수 — 언제 무엇을 쓸까</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --ivory:#FDF8EE; --ivory-2:#F7EFDD;
+  --ink:#4A3B2A; --ink-soft:#7A6A55; --line:#E6D9BE; --white:#fff;
+  --accent:#FF8A3D; --accent-soft:#FFE6D2;
+  --good:#3BB273; --good-soft:#DFF3E7;
+  --bad:#E4572E; --bad-soft:#FBE3DB;
+  --blue:#4D96FF; --blue-soft:#DFEBFF;
+  --violet:#9B72CF; --violet-soft:#EDE4F8;
+  --teal:#2EC4B6; --pink:#F26CA7;
+  --gcd:#E4572E; --gcd-soft:#FBE3DB;
+  --lcm:#2F72D8; --lcm-soft:#DCE9FC;
+  --shadow:0 4px 0 rgba(0,0,0,.08), 0 10px 24px rgba(120,95,60,.12);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--ivory);
+  background-image:radial-gradient(circle at 12% 8%, #fff6e3 0 18%, transparent 19%),
+                   radial-gradient(circle at 88% 4%, #ffeede 0 14%, transparent 15%);
+  color:var(--ink);
+  font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-size:17px; line-height:1.65; -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:1020px;margin:0 auto;padding:0 16px 64px}
+.hero{text-align:center;padding:32px 16px 18px}
+.hero h1{font-size:clamp(25px,5.2vw,44px);margin:0 0 6px;letter-spacing:-1px;color:#3C2F20;text-shadow:2px 3px 0 #FFD9A8}
+.hero p{margin:0;color:var(--ink-soft);font-size:clamp(14px,2.6vw,18px)}
+.brand{display:inline-block;margin-top:12px;padding:6px 16px;border-radius:999px;background:var(--white);
+  border:2px dashed var(--line);font-size:13px;color:var(--ink-soft);font-family:'Gaegu',sans-serif;font-weight:700}
+
+.tabs{position:sticky;top:0;z-index:30;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;
+  padding:10px;margin:0 0 18px;background:rgba(253,248,238,.93);backdrop-filter:blur(6px);border-bottom:2px solid var(--line)}
+.tab{border:2px solid var(--line);background:var(--white);color:var(--ink);font-family:inherit;font-size:15px;
+  padding:8px 14px;border-radius:999px;cursor:pointer;transition:.15s}
+.tab:hover{transform:translateY(-2px)}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 3px 0 #d96c25}
+
+.panel{display:none;animation:fadein .25s ease}
+.panel.on{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.card{background:var(--white);border:2px solid var(--line);border-radius:var(--radius);padding:20px;
+  margin:0 0 20px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 4px;font-size:22px}
+.card h2 .emoji{margin-right:6px}
+.sub{color:var(--ink-soft);font-size:15px;margin:0 0 14px;font-family:'Gaegu',sans-serif;font-weight:700;line-height:1.55}
+
+.stage{background:var(--ivory);border:2px solid var(--line);border-radius:14px;padding:6px;margin:12px 0}
+svg.draw{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0 2px;align-items:center}
+.btn{border:2px solid var(--line);background:var(--white);color:var(--ink);font-family:inherit;font-size:15px;
+  padding:9px 16px;border-radius:999px;cursor:pointer;transition:.15s}
+.btn:hover{transform:translateY(-2px);border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 3px 0 #d96c25}
+.btn.small{font-size:14px;padding:6px 12px}
+
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:12px 0 4px}
+.sl{border:2px solid var(--line);border-radius:14px;padding:10px 14px;background:var(--ivory)}
+.sl label{display:flex;justify-content:space-between;font-size:15px;margin-bottom:4px}
+.sl label b{color:var(--accent);font-size:19px}
+.sl input[type=range]{width:100%;accent-color:var(--accent)}
+
+.readout{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:10px}
+.pill{border:2px solid var(--line);background:var(--ivory);border-radius:999px;padding:7px 16px;font-size:16px}
+.pill b{font-size:21px;color:var(--accent)}
+.pill.g{background:var(--gcd-soft);border-color:var(--gcd)} .pill.g b{color:var(--gcd)}
+.pill.l{background:var(--lcm-soft);border-color:var(--lcm)} .pill.l b{color:var(--lcm)}
+
+.note{border-radius:14px;padding:12px 16px;margin-top:12px;font-family:'Gaegu',sans-serif;font-weight:700;
+  font-size:16px;line-height:1.55}
+.note.tip{background:var(--blue-soft);border:2px solid var(--blue);color:#1F4F9B}
+.note.warn{background:var(--bad-soft);border:2px solid var(--bad);color:#8E2E13}
+.note.ok{background:var(--good-soft);border:2px solid var(--good);color:#1E6B45}
+.note.vio{background:var(--violet-soft);border:2px solid var(--violet);color:#5B3A8E}
+
+/* 판별 핵심 2열 */
+.twocol{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:8px}
+.side{border-radius:16px;padding:16px;border:3px solid}
+.side.g{border-color:var(--gcd);background:var(--gcd-soft)}
+.side.l{border-color:var(--lcm);background:var(--lcm-soft)}
+.side h3{margin:0 0 2px;font-size:20px}
+.side.g h3{color:var(--gcd)} .side.l h3{color:var(--lcm)}
+.side .lead{font-family:'Gaegu',sans-serif;font-weight:700;font-size:17px;margin:0 0 10px;color:#5A4A33}
+.side ul{margin:6px 0 0;padding-left:20px;font-family:'Gaegu',sans-serif;font-weight:700;font-size:15.5px;line-height:1.75}
+.side .kw{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.side .kw span{background:#fff;border:2px solid currentColor;border-radius:999px;padding:3px 10px;font-size:13.5px}
+.side.g .kw span{color:var(--gcd)} .side.l .kw span{color:var(--lcm)}
+
+mark{background:var(--accent-soft);color:#C2410C;border-radius:5px;padding:1px 4px;font-weight:inherit}
+
+/* 퀴즈 */
+.story{background:var(--ivory);border:2px solid var(--line);border-radius:14px;padding:16px;
+  font-size:17.5px;line-height:1.75;min-height:84px}
+.pick2{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:560px;margin:14px auto 0}
+.pick2 button{font-family:inherit;font-size:18px;padding:16px 8px;border-radius:14px;border:3px solid var(--line);
+  background:#fff;cursor:pointer;transition:.12s;line-height:1.3}
+.pick2 button small{display:block;font-size:13px;color:var(--ink-soft);font-family:'Gaegu',sans-serif;font-weight:700}
+.pick2 button:hover{transform:translateY(-3px)}
+.pick2 button.gsel{border-color:var(--gcd)}
+.pick2 button.lsel{border-color:var(--lcm)}
+.pick2 button.right{background:var(--good);border-color:var(--good);color:#fff}
+.pick2 button.right small{color:rgba(255,255,255,.88)}
+.pick2 button.wrong{background:var(--bad);border-color:var(--bad);color:#fff}
+.pick2 button.wrong small{color:rgba(255,255,255,.88)}
+.feedback{min-height:28px;font-size:16px;margin-top:12px;text-align:center;font-family:'Gaegu',sans-serif;font-weight:700}
+.quiz-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.bar{height:12px;background:var(--ivory-2);border-radius:999px;overflow:hidden;flex:1;min-width:140px;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--good);width:0;transition:.3s}
+.result{text-align:center;padding:12px}
+.result .score{font-size:52px;color:var(--accent)}
+
+/* 패턴 도감 */
+.patpick{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:8px}
+.patpick button{border:2px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;
+  font-family:inherit;font-size:14.5px;cursor:pointer}
+.patpick button.on{color:#fff}
+.patpick button.on.g{background:var(--gcd);border-color:var(--gcd)}
+.patpick button.on.l{background:var(--lcm);border-color:var(--lcm)}
+.badge{display:inline-block;border-radius:999px;padding:3px 12px;font-size:14px;color:#fff;margin-left:6px}
+.badge.g{background:var(--gcd)} .badge.l{background:var(--lcm)}
+
+/* 단계 풀이 */
+.steps{display:grid;gap:10px;margin-top:10px}
+.stepbox{border:2px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--ivory)}
+.stepbox.done{background:var(--good-soft);border-color:var(--good)}
+.stepbox b{display:block;font-size:16px;margin-bottom:6px}
+.stepbox .opts{display:flex;gap:8px;flex-wrap:wrap}
+.stepbox .opts button{border:2px solid var(--line);background:#fff;border-radius:10px;padding:7px 13px;
+  font-family:inherit;font-size:15px;cursor:pointer}
+.stepbox .opts button.right{background:var(--good);border-color:var(--good);color:#fff}
+.stepbox .opts button.wrong{background:var(--bad);border-color:var(--bad);color:#fff}
+.stepbox .res{font-family:'Gaegu',sans-serif;font-weight:700;color:var(--ink-soft);font-size:15px;margin-top:6px}
+
+/* 심화 */
+.advpick{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:10px}
+.advpick button{border:2px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;
+  font-family:inherit;font-size:14.5px;cursor:pointer}
+.advpick button.on{background:var(--violet);border-color:var(--violet);color:#fff}
+.formula{background:var(--ivory);border:2px dashed var(--accent);border-radius:14px;padding:14px;
+  text-align:center;font-size:clamp(17px,3.6vw,23px);margin-top:10px;line-height:1.8}
+.formula .hl{color:var(--gcd)} .formula .hl2{color:var(--lcm)} .formula .ans{color:var(--good)}
+.worked{font-family:'Gaegu',sans-serif;font-weight:700;font-size:16px;color:var(--ink-soft);
+  line-height:1.9;margin-top:8px}
+.worked .ln{display:block}
+
+table.ft{border-collapse:collapse;margin:10px auto 0;font-size:16px}
+table.ft th,table.ft td{border:2px solid var(--line);padding:6px 12px;text-align:center;min-width:46px}
+table.ft th{background:var(--ivory-2);font-weight:400;color:var(--ink-soft)}
+table.ft td.com{background:var(--good-soft);color:var(--good)}
+
+.opt-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0}
+.opt{display:flex;gap:10px;align-items:flex-start;border:2px solid var(--line);border-radius:14px;padding:12px 14px;
+  background:var(--ivory);cursor:pointer}
+.opt input{width:20px;height:20px;margin-top:3px;accent-color:var(--accent)}
+.opt b{display:block;font-size:16px}
+.opt span{font-family:'Gaegu',sans-serif;font-weight:700;font-size:14px;color:var(--ink-soft)}
+
+.mob-tip{display:none;text-align:center;background:var(--accent-soft);border:2px dashed var(--accent);
+  border-radius:14px;padding:10px 14px;margin:0 0 16px;color:#8A5A2B}
+@media (pointer:coarse){.mob-tip{display:block}}
+footer.foot{text-align:center;color:var(--ink-soft);font-size:14px;padding:10px 0 30px;font-family:'Gaegu',sans-serif;font-weight:700}
+
+/* 인쇄 */
+#printArea{display:none}
+.page{page-break-after:always;break-after:page}
+.page:last-child{page-break-after:auto;break-after:auto}
+.p-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #333;padding-bottom:6px;margin-bottom:12px}
+.p-head h2{margin:0;font-size:23px}
+.p-head .meta{font-size:12px;color:#555;font-family:'Gaegu',sans-serif;font-weight:700;text-align:right;line-height:1.4}
+.p-grid{display:grid;gap:9px}
+.p-item{border:2px solid #333;border-radius:10px;padding:8px 10px;break-inside:avoid;font-size:14px}
+.p-item .no{font-size:14px;font-family:'Gaegu',sans-serif;font-weight:700;line-height:1.6}
+.blank{display:inline-block;min-width:60px;border-bottom:2px solid #333;text-align:center}
+.pickbox{display:inline-block;border:1.5px solid #333;border-radius:6px;padding:1px 9px;margin-left:5px;font-size:13px}
+.p-list{font-size:14px;line-height:1.95;font-family:'Gaegu',sans-serif;font-weight:700}
+.p-foot{margin-top:10px;border-top:1.5px solid #bbb;padding-top:5px;font-size:11px;color:#666;display:flex;
+  justify-content:space-between;font-family:'Gaegu',sans-serif;font-weight:700}
+@page{size:A4 portrait;margin:11mm}
+@media print{
+  body{background:#fff!important;background-image:none!important;font-size:12pt}
+  .no-print{display:none!important}
+  #printArea{display:block!important}
+  .wrap{max-width:none;padding:0}
+  .p-grid{min-height:218mm;align-content:space-between}
+}
+@media (max-width:640px){
+  .pick2{grid-template-columns:1fr}
+  .card{padding:14px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap no-print">
+  <header class="hero">
+    <h1>공약수와 공배수</h1>
+    <p>문장제를 읽고 <b>언제 최대공약수를, 언제 최소공배수를</b> 쓰는지 가려내요</p>
+    <div class="brand">세영코딩연구소 &nbsp;저자 : 컴퓨터공학박사 KIM</div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-p="judge">① 언제 쓸까?</button>
+    <button class="tab" data-p="pattern">② 패턴 도감</button>
+    <button class="tab" data-p="solve">③ 구하고 풀기</button>
+    <button class="tab" data-p="adv">④ 심화 (중등)</button>
+    <button class="tab" data-p="print">⑤ 인쇄하기</button>
+  </nav>
+
+  <p class="sub mob-tip">📱 슬라이더와 버튼을 눌러 그림을 바꿔 보세요.</p>
+
+  <!-- ① 언제 쓸까 -->
+  <section class="panel on" id="p-judge">
+    <div class="card">
+      <h2><span class="emoji">⚖️</span>딱 하나만 기억하세요</h2>
+      <p class="sub">구하려는 답이 <b>주어진 수보다 작아지면 최대공약수</b>,
+        <b>커지면 최소공배수</b>예요. 나머지는 모두 여기서 갈라집니다.</p>
+      <div class="stage"><svg class="draw" id="svgAxis" viewBox="0 0 660 204"></svg></div>
+      <div class="twocol">
+        <div class="side g">
+          <h3>최대공약수 (GCD)</h3>
+          <p class="lead">큰 것을 <b>쪼개서 나눠 줄 때</b> → 답이 작아져요</p>
+          <ul>
+            <li>여러 물건을 <b>남김없이 똑같이</b> 나누어 주기</li>
+            <li>직사각형을 <b>가장 큰 정사각형</b>으로 자르기</li>
+            <li>일정한 <b>간격</b>으로 말뚝·나무 세우기</li>
+            <li>가장 큰 상자·그릇에 나누어 담기</li>
+          </ul>
+          <div class="kw" id="kwG"></div>
+        </div>
+        <div class="side l">
+          <h3>최소공배수 (LCM)</h3>
+          <p class="lead">작은 것을 <b>여러 번 반복해 모을 때</b> → 답이 커져요</p>
+          <ul>
+            <li>서로 다른 주기가 <b>다시 동시에</b> 만나는 때</li>
+            <li>직사각형 타일로 <b>가장 작은 정사각형</b> 만들기</li>
+            <li>톱니바퀴가 <b>처음 자리로</b> 돌아올 때</li>
+            <li>두 수로 모두 <b>나누어떨어지는</b> 가장 작은 수</li>
+          </ul>
+          <div class="kw" id="kwL"></div>
+        </div>
+      </div>
+      <div class="note warn">
+        ⚠️ <b>"가장 큰"이라는 말만 보고 최대공약수라고 하면 안 돼요!</b>
+        "가장 작은 정사각형을 만들려면"은 최소공배수입니다.
+        말이 아니라 <b>답이 커지는지 작아지는지</b>로 판단하세요.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🎯</span>판별 훈련 — 둘 중 무엇?</h2>
+      <p class="sub">문장을 읽고 어느 쪽인지 고르세요. 신호어에 색이 칠해집니다. 10문제예요.</p>
+      <div class="toolbar"><button class="btn primary" id="btnJStart">🚀 훈련 시작</button></div>
+      <div id="jArea" style="display:none">
+        <div class="quiz-top">
+          <span id="jCount">1 / 10</span>
+          <div class="bar"><i id="jBar"></i></div>
+          <span id="jScore">⭐ 0</span>
+        </div>
+        <div class="story" id="jStory"></div>
+        <div class="pick2" id="jPick"></div>
+        <div class="feedback" id="jFeed"></div>
+      </div>
+      <div id="jResult" style="display:none" class="result"></div>
+    </div>
+  </section>
+
+  <!-- ② 패턴 도감 -->
+  <section class="panel" id="p-pattern">
+    <div class="card">
+      <h2><span class="emoji">📚</span>문장제 6가지 패턴</h2>
+      <p class="sub">패턴을 고르고 숫자를 바꿔 보세요. 왜 그 답이 나오는지 그림으로 보여요.</p>
+      <div class="patpick" id="patPick"></div>
+      <div id="patHead"></div>
+      <div class="sliders" id="patSliders"></div>
+      <div class="stage"><svg class="draw" id="svgPat" viewBox="0 0 660 330"></svg></div>
+      <div class="readout" id="patRead"></div>
+      <div class="formula" id="patFormula"></div>
+      <div class="note" id="patNote"></div>
+    </div>
+  </section>
+
+  <!-- ③ 구하고 풀기 -->
+  <section class="panel" id="p-solve">
+    <div class="card">
+      <h2><span class="emoji">🧩</span>소인수분해로 한눈에</h2>
+      <p class="sub">두 수를 고르면 소인수를 <b>공통인 것</b>과 <b>혼자만 가진 것</b>으로 갈라 보여줘요.
+        가운데가 최대공약수, 전체가 최소공배수예요.</p>
+      <div class="sliders">
+        <div class="sl"><label>첫째 수 <b id="vnA">24</b></label>
+          <input type="range" id="slVA" min="2" max="100" value="24"></div>
+        <div class="sl"><label>둘째 수 <b id="vnB">36</b></label>
+          <input type="range" id="slVB" min="2" max="100" value="36"></div>
+      </div>
+      <div class="stage"><svg class="draw" id="svgVenn" viewBox="0 0 660 290"></svg></div>
+      <div class="readout" id="vennRead"></div>
+      <div class="formula" id="vennFormula"></div>
+      <div class="note tip" id="vennNote"></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">🪜</span>단계별로 풀어 보기</h2>
+      <p class="sub">문장제를 <b>네 단계</b>로 쪼개서 풀어요. 한 단계씩 골라 보세요.</p>
+      <div class="story" id="sStory"></div>
+      <div class="steps" id="sSteps"></div>
+      <div class="toolbar"><button class="btn primary" id="btnNextSolve">🎲 다른 문제</button></div>
+    </div>
+  </section>
+
+  <!-- ④ 심화 -->
+  <section class="panel" id="p-adv">
+    <div class="card">
+      <h2><span class="emoji">🎓</span>중학교 심화 유형</h2>
+      <p class="sub">초등 패턴에서 한 걸음 더 나아간 유형이에요. 유형을 고르면 원리와 예제가 나와요.</p>
+      <div class="advpick" id="advPick"></div>
+      <div id="advBody"></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">✍️</span>심화 연습</h2>
+      <p class="sub">유형을 섞어서 8문제 풀어 봐요.</p>
+      <div class="toolbar"><button class="btn primary" id="btnAStart">🚀 연습 시작</button></div>
+      <div id="aArea" style="display:none">
+        <div class="quiz-top">
+          <span id="aCount">1 / 8</span>
+          <div class="bar"><i id="aBar"></i></div>
+          <span id="aScore">⭐ 0</span>
+        </div>
+        <div class="story" id="aStory"></div>
+        <div class="pick2" id="aPick" style="grid-template-columns:repeat(2,1fr)"></div>
+        <div class="feedback" id="aFeed"></div>
+      </div>
+      <div id="aResult" style="display:none" class="result"></div>
+    </div>
+  </section>
+
+  <!-- ⑤ 인쇄 -->
+  <section class="panel" id="p-print">
+    <div class="card">
+      <h2><span class="emoji">🖨️</span>인쇄해서 연습하기</h2>
+      <p class="sub">필요한 학습지만 골라 인쇄하세요. A4 세로 한 장씩 나옵니다.</p>
+      <div class="opt-list" id="optList"></div>
+      <div class="toolbar">
+        <button class="btn" id="btnShuffle">🔀 문제 새로 뽑기</button>
+        <button class="btn primary" id="btnPrint">🖨️ 인쇄하기 (Ctrl+P)</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">세영코딩연구소 &nbsp;저자 : 컴퓨터공학박사 KIM</footer>
+</div>
+
+<div id="printArea"></div>
+
+<script>
+(function(){
+  "use strict";
+  var NS = 'http://www.w3.org/2000/svg';
+  function S(tag, a){
+    var e = document.createElementNS(NS, tag);
+    if(a) for(var k in a){ if(a[k] !== null && a[k] !== undefined) e.setAttribute(k, a[k]); }
+    return e;
+  }
+  function T(tag, cls, text){
+    var e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  function txt(x, y, s, o){
+    o = o || {};
+    var t = S('text', {x:x, y:y, 'text-anchor':o.anchor || 'middle',
+      'dominant-baseline':o.base || 'middle', 'font-size':o.size || 14,
+      fill:o.fill || '#4A3B2A', 'font-family':o.family || "'Jua',sans-serif"});
+    t.style.pointerEvents = 'none';
+    t.textContent = s;
+    return t;
+  }
+  function clear(el){ while(el.firstChild) el.removeChild(el.firstChild); }
+  function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while(b){ var t = a % b; a = b; b = t; } return a || 1; }
+  function lcm(a, b){ return a / gcd(a, b) * b; }
+  function gcd3(a, b, c){ return gcd(gcd(a, b), c); }
+  function lcm3(a, b, c){ return lcm(lcm(a, b), c); }
+  function factorize(n){
+    var f = [], d = 2;
+    while(d * d <= n){ while(n % d === 0){ f.push(d); n /= d; } d++; }
+    if(n > 1) f.push(n);
+    return f;
+  }
+  function factorMap(n){
+    var m = {}, f = factorize(n);
+    f.forEach(function(p){ m[p] = (m[p] || 0) + 1; });
+    return m;
+  }
+  function facStr(n){
+    var m = factorMap(n), ks = Object.keys(m).map(Number).sort(function(a, b){ return a - b; });
+    if(ks.length === 0) return String(n);
+    return ks.map(function(p){ return m[p] > 1 ? p + '^' + m[p] : String(p); }).join(' × ');
+  }
+  function highlight(s, keys){
+    var out = s;
+    (keys || []).forEach(function(k){ out = out.split(k).join('\u0001' + k + '\u0002'); });
+    return out.split('\u0001').map(function(part){
+      var i = part.indexOf('\u0002');
+      if(i === -1) return part;
+      return '<mark>' + part.slice(0, i) + '</mark>' + part.slice(i + 1);
+    }).join('');
+  }
+  function shuffle(a){ a = a.slice(); for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  /* 탭 */
+  var tabs = document.querySelectorAll('.tab');
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(x){ x.classList.remove('on'); });
+      t.classList.add('on');
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('on'); });
+      document.getElementById('p-' + t.dataset.p).classList.add('on');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+
+  /* ========== 신호어 ========== */
+  var KW_G = ['똑같이 나누어', '남김없이', '최대한 많은', '가장 큰 정사각형', '일정한 간격', '가장 큰 조각', '될 수 있는 대로 크게'];
+  var KW_L = ['동시에', '처음으로 다시', '가장 작은 정사각형', '되풀이', '몇 바퀴', '나누어떨어지는 가장 작은'];
+  (function(){
+    var g = document.getElementById('kwG'), l = document.getElementById('kwL');
+    KW_G.forEach(function(k){ g.appendChild(T('span', null, k)); });
+    KW_L.forEach(function(k){ l.appendChild(T('span', null, k)); });
+  })();
+
+  /* ========== 판별 수직선 그림 ========== */
+  var AX = {a:12, b:18};
+  function drawAxis(){
+    var svg = document.getElementById('svgAxis');
+    clear(svg);
+    var a = AX.a, b = AX.b, G = gcd(a, b), L = lcm(a, b);
+    var x0 = 60, x1 = 600, maxv = L * 1.12;
+    var X = function(v){ return x0 + (x1 - x0) * (v / maxv); };
+    var y = 112;
+    svg.appendChild(S('line', {x1:x0, y1:y, x2:x1 + 20, y2:y, stroke:'#C9B48C', 'stroke-width':3}));
+    svg.appendChild(S('polygon', {points:(x1 + 20) + ',' + (y - 6) + ' ' + (x1 + 34) + ',' + y +
+      ' ' + (x1 + 20) + ',' + (y + 6), fill:'#C9B48C'}));
+    svg.appendChild(txt(x0 - 14, y, '0', {size:13, fill:'#9A8A75'}));
+    // 주어진 두 수
+    [[a, '#7A6A55'], [b, '#7A6A55']].forEach(function(it){
+      var x = X(it[0]);
+      svg.appendChild(S('line', {x1:x, y1:y - 13, x2:x, y2:y + 13, stroke:it[1], 'stroke-width':2.5}));
+      svg.appendChild(S('circle', {cx:x, cy:y, r:6, fill:it[1]}));
+      svg.appendChild(txt(x, y + 30, String(it[0]), {size:16, fill:it[1]}));
+    });
+    svg.appendChild(txt((X(a) + X(b)) / 2, y + 52, '주어진 두 수', {size:13, fill:'#9A8A75'}));
+    // GCD
+    var xg = X(G);
+    svg.appendChild(S('circle', {cx:xg, cy:y, r:9, fill:'#E4572E'}));
+    svg.appendChild(txt(xg, y - 30, String(G), {size:19, fill:'#E4572E'}));
+    svg.appendChild(txt(xg, y - 52, '최대공약수', {size:13, fill:'#E4572E'}));
+    svg.appendChild(S('path', {d:'M ' + (X(Math.min(a, b)) - 6) + ' ' + (y - 22) + ' Q ' +
+      ((xg + X(Math.min(a, b))) / 2) + ' ' + (y - 48) + ' ' + (xg + 10) + ' ' + (y - 16),
+      fill:'none', stroke:'#E4572E', 'stroke-width':2, 'stroke-dasharray':'6 4'}));
+    // LCM
+    var xl = X(L);
+    svg.appendChild(S('circle', {cx:xl, cy:y, r:9, fill:'#2F72D8'}));
+    svg.appendChild(txt(xl, y - 30, String(L), {size:19, fill:'#2F72D8'}));
+    svg.appendChild(txt(xl, y - 52, '최소공배수', {size:13, fill:'#2F72D8'}));
+    svg.appendChild(S('path', {d:'M ' + (X(Math.max(a, b)) + 6) + ' ' + (y - 22) + ' Q ' +
+      ((xl + X(Math.max(a, b))) / 2) + ' ' + (y - 48) + ' ' + (xl - 10) + ' ' + (y - 16),
+      fill:'none', stroke:'#2F72D8', 'stroke-width':2, 'stroke-dasharray':'6 4'}));
+    // 화살표 설명
+    svg.appendChild(txt(x0 + 46, y + 76, '← 작아지면 최대공약수', {anchor:'start', size:14, fill:'#E4572E'}));
+    svg.appendChild(txt(x1 + 10, y + 76, '커지면 최소공배수 →', {anchor:'end', size:14, fill:'#2F72D8'}));
+  }
+  drawAxis();
+
+  /* ========== 문제 은행 (초등 판별) ========== */
+  var JQ = [
+    {t:'g', s:'사탕 24개와 초콜릿 36개를 최대한 많은 학생에게 남김없이 똑같이 나누어 주려고 합니다. 몇 명에게 나누어 줄 수 있나요?',
+     k:['최대한 많은', '남김없이', '똑같이 나누어'], n:[24, 36],
+     why:'24개와 36개를 <b>쪼개서</b> 나눠 주니 사람 수는 24보다 작아요. 두 수를 모두 나누어떨어지게 하는 가장 큰 수 → 최대공약수 12명.'},
+    {t:'l', s:'버스는 12분마다, 지하철은 18분마다 출발합니다. 오전 9시에 동시에 출발했다면 다음에 처음으로 다시 동시에 출발하는 때는 언제인가요?',
+     k:['동시에', '처음으로 다시'], n:[12, 18],
+     why:'12분과 18분을 <b>여러 번 반복</b>해서 겹치는 때를 찾으니 답은 12·18보다 커요 → 최소공배수 36분 뒤.'},
+    {t:'g', s:'가로 48cm, 세로 36cm인 종이를 남는 부분 없이 똑같은 정사각형으로 자르려고 합니다. 가장 큰 정사각형의 한 변은 몇 cm인가요?',
+     k:['남는 부분 없이', '가장 큰 정사각형'], n:[48, 36],
+     why:'큰 종이를 <b>잘라서</b> 작은 정사각형을 만드니 한 변은 36보다 작아요 → 최대공약수 12cm.'},
+    {t:'l', s:'가로 12cm, 세로 8cm인 직사각형 타일을 빈틈없이 늘어놓아 정사각형을 만들려고 합니다. 가장 작은 정사각형의 한 변은 몇 cm인가요?',
+     k:['빈틈없이 늘어놓아', '가장 작은 정사각형'], n:[12, 8],
+     why:'작은 타일을 <b>여러 장 모아</b> 큰 정사각형을 만드니 답은 12보다 커요 → 최소공배수 24cm. "가장 작은"이라는 말에 속으면 안 돼요!'},
+    {t:'g', s:'연필 30자루와 지우개 45개를 될 수 있는 대로 많은 친구에게 똑같이 나누어 주려고 합니다. 몇 명까지 가능한가요?',
+     k:['될 수 있는 대로 많은', '똑같이 나누어'], n:[30, 45],
+     why:'나눠 주는 사람 수는 물건 수보다 작아요 → 최대공약수 15명.'},
+    {t:'l', s:'톱니가 각각 8개, 12개인 두 톱니바퀴가 맞물려 돌고 있습니다. 두 톱니바퀴가 처음 맞물렸던 자리로 다시 돌아오려면 톱니가 몇 개 지나가야 하나요?',
+     k:['처음', '다시 돌아오'], n:[8, 12],
+     why:'톱니를 <b>계속 세어 나가며</b> 둘이 같아지는 때를 찾으니 답이 커져요 → 최소공배수 24개.'},
+    {t:'g', s:'가로 60m, 세로 45m인 직사각형 땅의 둘레에 일정한 간격으로 나무를 심으려고 합니다. 간격을 최대한 넓게 하려면 몇 m 간격으로 심어야 하나요?',
+     k:['일정한 간격', '최대한 넓게'], n:[60, 45],
+     why:'간격은 변의 길이를 <b>똑같이 쪼갠</b> 값이라 60·45보다 작아요 → 최대공약수 15m.'},
+    {t:'l', s:'어떤 수를 6으로 나누어도 9로 나누어도 나누어떨어집니다. 이런 수 중 가장 작은 수는 무엇인가요?',
+     k:['나누어떨어', '가장 작은 수'], n:[6, 9],
+     why:'6의 배수이면서 9의 배수인 수를 찾으니 6·9보다 크거나 같아요 → 최소공배수 18.'},
+    {t:'g', s:'사과 56개와 귤 84개를 여러 바구니에 똑같이 나누어 담으려고 합니다. 바구니를 가장 많이 쓰려면 몇 개가 필요한가요?',
+     k:['똑같이 나누어 담', '가장 많이'], n:[56, 84],
+     why:'바구니 수는 과일을 <b>쪼개 담는</b> 수라 작아요 → 최대공약수 28개.'},
+    {t:'l', s:'가로 4cm, 세로 6cm, 높이 10cm인 벽돌을 쌓아 가장 작은 정육면체를 만들려고 합니다. 정육면체의 한 모서리는 몇 cm인가요?',
+     k:['쌓아', '가장 작은 정육면체'], n:[4, 6, 10],
+     why:'벽돌을 <b>여러 개 쌓아</b> 큰 정육면체를 만드니 답이 커져요 → 세 수의 최소공배수 60cm.'},
+    {t:'g', s:'길이가 72cm와 108cm인 끈 두 개를 남김없이 똑같은 길이로 자르려고 합니다. 가장 길게 자르면 한 도막은 몇 cm인가요?',
+     k:['남김없이', '똑같은 길이', '가장 길게'], n:[72, 108],
+     why:'끈을 <b>잘라서</b> 도막을 만드니 도막은 72보다 짧아요 → 최대공약수 36cm.'},
+    {t:'l', s:'민서는 4일마다, 준호는 6일마다 도서관에 갑니다. 오늘 둘이 함께 갔다면 다음에 처음으로 다시 함께 가는 날은 며칠 뒤인가요?',
+     k:['마다', '처음으로 다시', '함께'], n:[4, 6],
+     why:'4일 주기와 6일 주기를 <b>반복</b>해 겹치는 날을 찾아요 → 최소공배수 12일 뒤.'},
+    {t:'g', s:'빨간 구슬 90개와 파란 구슬 126개를 여러 주머니에 남김없이 똑같이 나누어 담으려 합니다. 한 주머니에 빨간 구슬이 가장 적게 들어가려면 주머니는 몇 개인가요?',
+     k:['남김없이', '똑같이 나누어 담'], n:[90, 126],
+     why:'주머니를 가장 많이 쓰면 한 주머니에 든 구슬이 가장 적어져요. 나누는 수를 구하니 → 최대공약수 18개.'},
+    {t:'l', s:'빨간 등은 15초마다, 파란 등은 20초마다 깜박입니다. 방금 동시에 깜박였다면 다음에 동시에 깜박이는 것은 몇 초 뒤인가요?',
+     k:['마다', '동시에'], n:[15, 20],
+     why:'두 주기가 겹치는 때를 찾으니 커져요 → 최소공배수 60초 뒤.'},
+    {t:'g', s:'색종이 42장과 스티커 70장을 최대한 많은 모둠에 남김없이 똑같이 나누어 주려고 합니다. 모둠은 몇 개인가요?',
+     k:['최대한 많은', '남김없이', '똑같이 나누어'], n:[42, 70],
+     why:'모둠 수는 나누는 수라 작아요 → 최대공약수 14개.'},
+    {t:'l', s:'어떤 역에서 기차는 25분마다, 버스는 30분마다 출발합니다. 둘이 동시에 출발한 뒤 다시 동시에 출발할 때까지 몇 분이 걸리나요?',
+     k:['마다', '동시에', '다시'], n:[25, 30],
+     why:'두 출발 주기가 다시 겹치는 때 → 최소공배수 150분.'}
+  ];
+
+  function ansOf(q){
+    return q.n.length === 3
+      ? (q.t === 'g' ? gcd3(q.n[0], q.n[1], q.n[2]) : lcm3(q.n[0], q.n[1], q.n[2]))
+      : (q.t === 'g' ? gcd(q.n[0], q.n[1]) : lcm(q.n[0], q.n[1]));
+  }
+
+  var JQS = {list:[], idx:0, score:0};
+  function startJ(){
+    JQS = {list: shuffle(JQ).slice(0, 10), idx:0, score:0};
+    document.getElementById('jResult').style.display = 'none';
+    document.getElementById('jArea').style.display = 'block';
+    showJ();
+  }
+  function showJ(){
+    var q = JQS.list[JQS.idx];
+    document.getElementById('jCount').textContent = (JQS.idx + 1) + ' / 10';
+    document.getElementById('jScore').textContent = '⭐ ' + JQS.score;
+    document.getElementById('jBar').style.width = (JQS.idx / 10 * 100) + '%';
+    document.getElementById('jFeed').textContent = '';
+    document.getElementById('jStory').textContent = '📄 ' + q.s;
+    var box = document.getElementById('jPick');
+    clear(box);
+    [['g', '최대공약수', '쪼개서 나눠요 · 답이 작아져요'],
+     ['l', '최소공배수', '모아서 반복해요 · 답이 커져요']].forEach(function(o){
+      var b = T('button', o[0] === 'g' ? 'gsel' : 'lsel');
+      b.appendChild(document.createTextNode(o[1]));
+      b.appendChild(T('small', null, o[2]));
+      b.dataset.t = o[0];
+      b.addEventListener('click', function(){ ansJ(b, o[0], q); });
+      box.appendChild(b);
+    });
+  }
+  function ansJ(btn, t, q){
+    var all = document.querySelectorAll('#jPick button');
+    all.forEach(function(x){ x.disabled = true; });
+    var ok = (t === q.t);
+    if(ok){ btn.classList.add('right'); JQS.score++; }
+    else{
+      btn.classList.add('wrong');
+      all.forEach(function(x){ if(x.dataset.t === q.t) x.classList.add('right'); });
+    }
+    document.getElementById('jStory').innerHTML = '📄 ' + highlight(q.s, q.k);
+    document.getElementById('jFeed').innerHTML =
+      (ok ? '🎉 정답! ' : '💡 ') + q.why + ' <b>답 = ' + ansOf(q) + '</b>';
+    document.getElementById('jScore').textContent = '⭐ ' + JQS.score;
+    AX.a = q.n[0]; AX.b = q.n[1]; drawAxis();
+    setTimeout(function(){
+      JQS.idx++;
+      if(JQS.idx >= JQS.list.length) finJ(); else showJ();
+    }, 3400);
+  }
+  function finJ(){
+    document.getElementById('jArea').style.display = 'none';
+    var r = document.getElementById('jResult');
+    r.style.display = 'block'; clear(r);
+    r.appendChild(T('div', 'score', JQS.score + ' / 10'));
+    r.appendChild(T('div', null, JQS.score >= 9 ? '🏆 판별의 달인!' :
+      JQS.score >= 6 ? '👏 잘하고 있어요!' : '💪 "작아지나 커지나"를 먼저 생각해요!'));
+    var tb = T('div', 'toolbar');
+    var again = T('button', 'btn primary', '🔁 다시 하기');
+    again.addEventListener('click', startJ);
+    tb.appendChild(again); r.appendChild(tb);
+  }
+  document.getElementById('btnJStart').addEventListener('click', startJ);
+
+  /* ========== ② 패턴 도감 ========== */
+  var PAT = [
+    {id:'share', t:'g', name:'🍬 나누어 주기', a:24, b:36, la:'사탕', lb:'초콜릿',
+     mn:4, mx:60,
+     title:'사탕 <b>A</b>개와 초콜릿 <b>B</b>개를 최대한 많은 학생에게 남김없이 똑같이 나누어 주기',
+     note:'학생 수는 두 수를 모두 나누어떨어지게 하는 가장 큰 수예요. 한 사람이 받는 양은 A÷G, B÷G!'},
+    {id:'cut', t:'g', name:'✂️ 정사각형으로 자르기', a:48, b:36, la:'가로', lb:'세로',
+     mn:4, mx:60,
+     title:'가로 <b>A</b>cm, 세로 <b>B</b>cm 종이를 남는 부분 없이 가장 큰 정사각형으로 자르기',
+     note:'한 변은 가로·세로를 모두 똑같이 쪼갤 수 있는 가장 큰 길이예요.'},
+    {id:'tree', t:'g', name:'🌳 일정 간격으로 심기', a:60, b:45, la:'가로', lb:'세로',
+     mn:6, mx:72,
+     title:'가로 <b>A</b>m, 세로 <b>B</b>m 땅의 둘레에 일정한 간격으로 나무 심기 (네 모퉁이에 반드시 심음)',
+     note:'간격은 가로와 세로를 모두 똑같이 나눌 수 있어야 해요. 나무 수 = 둘레 ÷ 간격.'},
+    {id:'tile', t:'l', name:'🧱 타일로 정사각형 만들기', a:12, b:8, la:'가로', lb:'세로',
+     mn:2, mx:16,
+     title:'가로 <b>A</b>cm, 세로 <b>B</b>cm 타일을 빈틈없이 붙여 가장 작은 정사각형 만들기',
+     note:'한 변은 A의 배수이면서 B의 배수여야 해요. 타일 수 = (L÷A) × (L÷B).'},
+    {id:'meet', t:'l', name:'🚌 다시 동시에 만나기', a:12, b:18, la:'버스 간격', lb:'지하철 간격',
+     mn:2, mx:30,
+     title:'버스는 <b>A</b>분마다, 지하철은 <b>B</b>분마다 출발. 다시 동시에 출발하는 때는?',
+     note:'A의 배수이면서 B의 배수인 가장 작은 수를 찾는 거예요.'},
+    {id:'gear', t:'l', name:'⚙️ 톱니바퀴', a:8, b:12, la:'가 톱니 수', lb:'나 톱니 수',
+     mn:4, mx:24,
+     title:'톱니가 <b>A</b>개, <b>B</b>개인 두 톱니바퀴가 처음 자리로 돌아오려면?',
+     note:'맞물려 지나간 톱니 수가 둘 다의 배수가 되어야 해요. 회전수 = L ÷ 각자의 톱니 수.'}
+  ];
+  var PI = 0, PV = {a:24, b:36}, GEART = 0;
+  var svgPat = document.getElementById('svgPat');
+
+  (function(){
+    var box = document.getElementById('patPick');
+    PAT.forEach(function(p, i){
+      var b = T('button', (i === 0 ? 'on ' : '') + p.t);
+      b.textContent = p.name;
+      b.addEventListener('click', function(){
+        PI = i; PV = {a:PAT[i].a, b:PAT[i].b}; GEART = 0;
+        document.querySelectorAll('#patPick button').forEach(function(x, j){
+          x.classList.toggle('on', j === i);
+        });
+        buildPatSliders(); drawPat();
+      });
+      box.appendChild(b);
+    });
+  })();
+
+  function buildPatSliders(){
+    var p = PAT[PI], box = document.getElementById('patSliders');
+    clear(box);
+    [['a', p.la], ['b', p.lb]].forEach(function(it){
+      var d = T('div', 'sl');
+      var lab = T('label');
+      lab.appendChild(document.createTextNode(it[1] + ' '));
+      var bb = T('b', null, String(PV[it[0]]));
+      bb.id = 'pv' + it[0];
+      lab.appendChild(bb);
+      d.appendChild(lab);
+      var inp = document.createElement('input');
+      inp.type = 'range'; inp.min = p.mn; inp.max = p.mx; inp.value = PV[it[0]];
+      inp.id = 'slP' + it[0];
+      inp.addEventListener('input', function(e){
+        PV[it[0]] = +e.target.value; GEART = 0; drawPat();
+      });
+      d.appendChild(inp);
+      box.appendChild(d);
+    });
+    if(p.id === 'gear'){
+      var d2 = T('div', 'sl');
+      var lab2 = T('label');
+      lab2.appendChild(document.createTextNode('지나간 톱니 '));
+      var b2 = T('b', null, '0');
+      b2.id = 'pvT';
+      lab2.appendChild(b2);
+      d2.appendChild(lab2);
+      var inp2 = document.createElement('input');
+      inp2.type = 'range'; inp2.min = 0; inp2.max = lcm(PV.a, PV.b); inp2.value = 0;
+      inp2.id = 'slPt';
+      inp2.addEventListener('input', function(e){ GEART = +e.target.value; drawPat(); });
+      d2.appendChild(inp2);
+      box.appendChild(d2);
+    }
+  }
+
+  function drawPat(){
+    var p = PAT[PI], a = PV.a, b = PV.b;
+    var G = gcd(a, b), L = lcm(a, b);
+    clear(svgPat);
+    document.getElementById('patHead').innerHTML =
+      '<div class="note ' + (p.t === 'g' ? 'warn' : 'tip') + '">' +
+      p.title.replace('<b>A</b>', '<b>' + a + '</b>').replace('<b>B</b>', '<b>' + b + '</b>') +
+      '<span class="badge ' + p.t + '">' + (p.t === 'g' ? '최대공약수' : '최소공배수') + '</span></div>';
+    var pva = document.getElementById('pva'), pvb = document.getElementById('pvb');
+    if(pva) pva.textContent = a;
+    if(pvb) pvb.textContent = b;
+
+    var read = document.getElementById('patRead'), form = document.getElementById('patFormula'),
+        note = document.getElementById('patNote');
+    clear(read);
+    function pill(cls, label, val){
+      var s = T('span', 'pill ' + cls);
+      s.appendChild(document.createTextNode(label + ' '));
+      s.appendChild(T('b', null, String(val)));
+      return s;
+    }
+
+    if(p.id === 'share'){
+      // 학생 G명에게 a/G, b/G개씩
+      var per1 = a / G, per2 = b / G;
+      var cols = Math.min(G, 12), rows = Math.ceil(G / cols);
+      var cw = 620 / cols, chh = Math.min(96, 240 / rows);
+      for(var i = 0; i < G; i++){
+        var cx = 24 + (i % cols) * cw + cw / 2, cy = 56 + Math.floor(i / cols) * chh;
+        svgPat.appendChild(txt(cx, cy, '🧒', {size:Math.min(26, cw * 0.6)}));
+        var dotR = Math.max(2.2, Math.min(4.2, cw / 14));
+        for(var j = 0; j < Math.min(per1, 10); j++)
+          svgPat.appendChild(S('circle', {cx:cx - cw * 0.26 + (j % 5) * dotR * 2.4,
+            cy:cy + 20 + Math.floor(j / 5) * dotR * 2.4, r:dotR, fill:'#FF8A3D'}));
+        for(var k2 = 0; k2 < Math.min(per2, 10); k2++)
+          svgPat.appendChild(S('circle', {cx:cx + cw * 0.08 + (k2 % 5) * dotR * 2.4,
+            cy:cy + 20 + Math.floor(k2 / 5) * dotR * 2.4, r:dotR, fill:'#7B4B2A'}));
+      }
+      svgPat.appendChild(txt(330, 300, '학생 ' + G + '명 · 한 명당 사탕 ' + per1 + '개, 초콜릿 ' + per2 + '개',
+        {size:16, fill:'#4A3B2A'}));
+      read.appendChild(pill('g', '학생 수 (최대공약수)', G));
+      read.appendChild(pill('', '사탕', per1 + '개씩'));
+      read.appendChild(pill('', '초콜릿', per2 + '개씩'));
+      form.innerHTML = '최대공약수(<span class="hl">' + a + '</span>, <span class="hl">' + b +
+        '</span>) = <span class="ans">' + G + '</span>명';
+    }
+    else if(p.id === 'cut'){
+      var nx = a / G, ny = b / G;
+      var sc = Math.min(560 / a, 196 / b);     // 아래 설명 글과 겹치지 않도록 높이를 제한
+      var ox = 330 - a * sc / 2, oy = 40;
+      svgPat.appendChild(S('rect', {x:ox, y:oy, width:a * sc, height:b * sc,
+        fill:'#FFE6D2', stroke:'#E4572E', 'stroke-width':2.5}));
+      for(var ix = 0; ix <= nx; ix++)
+        svgPat.appendChild(S('line', {x1:ox + ix * G * sc, y1:oy, x2:ox + ix * G * sc, y2:oy + b * sc,
+          stroke:'#E4572E', 'stroke-width':1.2, opacity:.75}));
+      for(var iy = 0; iy <= ny; iy++)
+        svgPat.appendChild(S('line', {x1:ox, y1:oy + iy * G * sc, x2:ox + a * sc, y2:oy + iy * G * sc,
+          stroke:'#E4572E', 'stroke-width':1.2, opacity:.75}));
+      svgPat.appendChild(txt(ox + a * sc / 2, oy + b * sc + 24, '가로 ' + a + 'cm', {size:14, fill:'#7A6A55'}));
+      svgPat.appendChild(txt(Math.max(52, ox - 12), oy + b * sc / 2, '세로 ' + b,
+        {anchor:'end', size:14, fill:'#7A6A55'}));
+      svgPat.appendChild(txt(330, 300, '한 변 ' + G + 'cm 정사각형 ' + (nx * ny) + '개 (' + nx + ' × ' + ny + ')',
+        {size:16, fill:'#4A3B2A'}));
+      read.appendChild(pill('g', '한 변 (최대공약수)', G + 'cm'));
+      read.appendChild(pill('', '정사각형 개수', (nx * ny) + '개'));
+      form.innerHTML = '최대공약수(<span class="hl">' + a + '</span>, <span class="hl">' + b +
+        '</span>) = <span class="ans">' + G + '</span>cm &nbsp;→&nbsp; (' + a + '÷' + G + ') × (' +
+        b + '÷' + G + ') = ' + (nx * ny) + '개';
+    }
+    else if(p.id === 'tree'){
+      var per = 2 * (a + b) / G;
+      var sc2 = Math.min(500 / a, 190 / b);
+      var ox2 = 330 - a * sc2 / 2, oy2 = 52;
+      svgPat.appendChild(S('rect', {x:ox2, y:oy2, width:a * sc2, height:b * sc2,
+        fill:'#DFF3E7', stroke:'#3BB273', 'stroke-width':2.5}));
+      var pts = [];
+      for(var t1 = 0; t1 < a; t1 += G) pts.push([ox2 + t1 * sc2, oy2]);
+      for(var t2 = 0; t2 < b; t2 += G) pts.push([ox2 + a * sc2, oy2 + t2 * sc2]);
+      for(var t3 = a; t3 > 0; t3 -= G) pts.push([ox2 + t3 * sc2, oy2 + b * sc2]);
+      for(var t4 = b; t4 > 0; t4 -= G) pts.push([ox2, oy2 + t4 * sc2]);
+      pts.forEach(function(q2){
+        svgPat.appendChild(S('circle', {cx:q2[0], cy:q2[1], r:4.5, fill:'#2F7D32'}));
+      });
+      svgPat.appendChild(txt(ox2 + a * sc2 / 2, oy2 + b * sc2 + 26, '가로 ' + a + 'm', {size:14, fill:'#7A6A55'}));
+      svgPat.appendChild(txt(Math.max(52, ox2 - 12), oy2 + b * sc2 / 2, '세로 ' + b,
+        {anchor:'end', size:14, fill:'#7A6A55'}));
+      svgPat.appendChild(txt(330, 300, '간격 ' + G + 'm · 나무 ' + per + '그루 (둘레 ' + (2 * (a + b)) + 'm)',
+        {size:16, fill:'#4A3B2A'}));
+      read.appendChild(pill('g', '간격 (최대공약수)', G + 'm'));
+      read.appendChild(pill('', '나무 수', per + '그루'));
+      form.innerHTML = '둘레 ' + (2 * (a + b)) + 'm ÷ 간격 <span class="hl">' + G +
+        '</span>m = <span class="ans">' + per + '</span>그루';
+    }
+    else if(p.id === 'tile'){
+      var cx2 = L / a, cy2 = L / b;
+      var sc3 = Math.min(240 / L, 240 / L);
+      var ox3 = 330 - L * sc3 / 2, oy3 = 36;
+      svgPat.appendChild(S('rect', {x:ox3, y:oy3, width:L * sc3, height:L * sc3,
+        fill:'#DCE9FC', stroke:'#2F72D8', 'stroke-width':3}));
+      for(var r1 = 0; r1 < cy2; r1++) for(var c1 = 0; c1 < cx2; c1++){
+        svgPat.appendChild(S('rect', {x:ox3 + c1 * a * sc3 + 0.7, y:oy3 + r1 * b * sc3 + 0.7,
+          width:a * sc3 - 1.4, height:b * sc3 - 1.4, fill:((r1 + c1) % 2 ? '#9DC6FF' : '#CCE0FF'),
+          stroke:'#2F72D8', 'stroke-width':0.8}));
+      }
+      svgPat.appendChild(txt(330, oy3 + L * sc3 + 24, '한 변 ' + L + 'cm · 타일 ' + (cx2 * cy2) + '장 (' +
+        cx2 + ' × ' + cy2 + ')', {size:16, fill:'#4A3B2A'}));
+      svgPat.appendChild(txt(330, oy3 + L * sc3 + 48, '타일 하나 = ' + a + ' × ' + b + 'cm',
+        {size:13, fill:'#7A6A55'}));
+      read.appendChild(pill('l', '한 변 (최소공배수)', L + 'cm'));
+      read.appendChild(pill('', '타일 수', (cx2 * cy2) + '장'));
+      form.innerHTML = '최소공배수(<span class="hl2">' + a + '</span>, <span class="hl2">' + b +
+        '</span>) = <span class="ans">' + L + '</span>cm &nbsp;→&nbsp; (' + L + '÷' + a + ') × (' +
+        L + '÷' + b + ') = ' + (cx2 * cy2) + '장';
+    }
+    else if(p.id === 'meet'){
+      var x0 = 54, x1 = 606, maxv = L * 1.08;
+      var X2 = function(v){ return x0 + (x1 - x0) * (v / maxv); };
+      [[96, a, '#FF8A3D', '버스 ' + a + '분'], [186, b, '#4D96FF', '지하철 ' + b + '분']].forEach(function(it){
+        var y2 = it[0];
+        svgPat.appendChild(S('line', {x1:x0, y1:y2, x2:x1 + 16, y2:y2, stroke:'#D9C9AC', 'stroke-width':2.5}));
+        svgPat.appendChild(txt(x0 - 10, y2 - 24, it[3], {anchor:'start', size:14, fill:it[2]}));
+        for(var v = 0; v <= maxv; v += it[1]){
+          var x = X2(v);
+          if(x > x1 + 2) break;
+          var isL = (v > 0 && v % L === 0);
+          svgPat.appendChild(S('circle', {cx:x, cy:y2, r:isL ? 9 : 5.5, fill:isL ? '#2F72D8' : it[2]}));
+          if(v > 0 && (v % it[1] === 0) && (maxv / it[1] <= 14))
+            svgPat.appendChild(txt(x, y2 + 20, String(v), {size:11, fill:'#9A8A75'}));
+        }
+      });
+      var xl2 = X2(L);
+      svgPat.appendChild(S('line', {x1:xl2, y1:70, x2:xl2, y2:212, stroke:'#2F72D8',
+        'stroke-width':2.5, 'stroke-dasharray':'7 5'}));
+      svgPat.appendChild(txt(xl2, 244, L + '분 뒤 다시 동시에!', {size:17, fill:'#2F72D8'}));
+      svgPat.appendChild(txt(X2(0), 244, '출발', {size:13, fill:'#9A8A75'}));
+      svgPat.appendChild(txt(330, 296, '겹치는 점이 바로 공배수예요', {size:14, fill:'#7A6A55'}));
+      read.appendChild(pill('l', '다시 동시에 (최소공배수)', L + '분 뒤'));
+      form.innerHTML = '최소공배수(<span class="hl2">' + a + '</span>, <span class="hl2">' + b +
+        '</span>) = <span class="ans">' + L + '</span>분';
+    }
+    else if(p.id === 'gear'){
+      var tcur = Math.min(GEART, L);
+      var rotA = tcur / a * 360, rotB = -tcur / b * 360;
+      var sl = document.getElementById('slPt');
+      if(sl){ sl.max = L; if(+sl.value > L) sl.value = L; }
+      var pvT = document.getElementById('pvT');
+      if(pvT) pvT.textContent = tcur + ' / ' + L;
+      // 톱니 수에 비례한 반지름으로, 두 바퀴가 서로 닿게(맞물리게) 배치합니다
+      var kk = Math.min(250 / (a + b), 82 / Math.max(a, b));
+      var maxR = kk * Math.max(a, b);          // 두 바퀴의 라벨을 같은 높이에 맞추기 위해
+      var ra = kk * a, rb = kk * b, span = ra + kk * (a + b) + rb;
+      var cxL = 330 - span / 2 + ra, cxR = cxL + kk * (a + b);
+      [[cxL, ra, a, rotA, '#FF8A3D', '가'], [cxR, rb, b, rotB, '#4D96FF', '나']].forEach(function(it){
+        var cx3 = it[0], cy3 = 148, n = it[2], rr = it[1];
+        var g2 = S('g', {transform:'rotate(' + it[3] + ' ' + cx3 + ' ' + cy3 + ')'});
+        for(var i2 = 0; i2 < n; i2++){
+          var ang = i2 / n * 2 * Math.PI;
+          var tx2 = cx3 + Math.cos(ang) * (rr + 9), ty2 = cy3 + Math.sin(ang) * (rr + 9);
+          g2.appendChild(S('rect', {x:tx2 - 4.5, y:ty2 - 4.5, width:9, height:9, rx:2,
+            fill: i2 === 0 ? '#E4572E' : it[4],
+            transform:'rotate(' + (ang * 180 / Math.PI) + ' ' + tx2 + ' ' + ty2 + ')'}));
+        }
+        g2.appendChild(S('circle', {cx:cx3, cy:cy3, r:rr, fill:'#fff', stroke:it[4], 'stroke-width':3}));
+        g2.appendChild(S('line', {x1:cx3, y1:cy3, x2:cx3 + rr, y2:cy3, stroke:'#E4572E', 'stroke-width':3}));
+        svgPat.appendChild(g2);
+        svgPat.appendChild(txt(cx3, cy3, it[5], {size:20, fill:it[4]}));
+        svgPat.appendChild(txt(cx3, cy3 + maxR + 28, '톱니 ' + n + '개', {size:14, fill:it[4]}));
+        svgPat.appendChild(txt(cx3, cy3 + maxR + 48, (tcur / n).toFixed(2).replace(/\.?0+$/, '') + '바퀴',
+          {size:13, fill:'#7A6A55'}));
+      });
+      svgPat.appendChild(txt(330, 34, '빨간 톱니가 다시 만나면 처음 자리!', {size:15, fill:'#7A6A55'}));
+      svgPat.appendChild(txt(330, 312, tcur === L
+        ? '✅ 톱니 ' + L + '개가 지나가 둘 다 처음 자리로 돌아왔어요'
+        : '지나간 톱니 ' + tcur + '개 — 슬라이더를 ' + L + '까지 옮겨 보세요',
+        {size:16, fill: tcur === L ? '#1E6B45' : '#7A6A55'}));
+      read.appendChild(pill('l', '처음 자리 (최소공배수)', L + '개'));
+      read.appendChild(pill('', '가 회전수', (L / a) + '바퀴'));
+      read.appendChild(pill('', '나 회전수', (L / b) + '바퀴'));
+      form.innerHTML = '최소공배수(<span class="hl2">' + a + '</span>, <span class="hl2">' + b +
+        '</span>) = <span class="ans">' + L + '</span> &nbsp;→&nbsp; ' + L + '÷' + a + ' = ' + (L / a) +
+        '바퀴, ' + L + '÷' + b + ' = ' + (L / b) + '바퀴';
+    }
+    note.className = 'note ' + (p.t === 'g' ? 'warn' : 'tip');
+    note.innerHTML = '💡 ' + p.note;
+  }
+  buildPatSliders(); drawPat();
+
+  /* ========== ③ 벤다이어그램 ========== */
+  var V = {a:24, b:36};
+  var svgVenn = document.getElementById('svgVenn');
+  function drawVenn(){
+    clear(svgVenn);
+    var a = V.a, b = V.b, G = gcd(a, b), L = lcm(a, b);
+    var ma = factorMap(a), mb = factorMap(b);
+    var primes = Object.keys(ma).concat(Object.keys(mb)).map(Number)
+      .filter(function(v, i, s){ return s.indexOf(v) === i; }).sort(function(x, y){ return x - y; });
+    var onlyA = [], common = [], onlyB = [];
+    primes.forEach(function(p){
+      var ea = ma[p] || 0, eb = mb[p] || 0, mn = Math.min(ea, eb);
+      for(var i = 0; i < mn; i++) common.push(p);
+      for(var j = 0; j < ea - mn; j++) onlyA.push(p);
+      for(var k = 0; k < eb - mn; k++) onlyB.push(p);
+    });
+    // 두 원
+    var cyv = 136, r = 104, cxA = 258, cxB = 402;
+    svgVenn.appendChild(S('circle', {cx:cxA, cy:cyv, r:r, fill:'rgba(228,87,46,.13)',
+      stroke:'#E4572E', 'stroke-width':2.5}));
+    svgVenn.appendChild(S('circle', {cx:cxB, cy:cyv, r:r, fill:'rgba(47,114,216,.13)',
+      stroke:'#2F72D8', 'stroke-width':2.5}));
+    svgVenn.appendChild(txt(cxA - 78, cyv - r - 14, a + ' 의 소인수', {size:15, fill:'#E4572E'}));
+    svgVenn.appendChild(txt(cxB + 78, cyv - r - 14, b + ' 의 소인수', {size:15, fill:'#2F72D8'}));
+    function place(arr, cx, col){
+      if(arr.length === 0){
+        svgVenn.appendChild(txt(cx, cyv, '없음', {size:14, fill:'#B5A68E'}));
+        return;
+      }
+      var per = Math.min(2, arr.length);
+      arr.forEach(function(p, i){
+        var col2 = i % per, row = Math.floor(i / per);
+        var totRows = Math.ceil(arr.length / per);
+        var x = cx + (col2 - (per - 1) / 2) * 40;
+        var y = cyv + (row - (totRows - 1) / 2) * 38;
+        svgVenn.appendChild(S('circle', {cx:x, cy:y, r:16, fill:col, opacity:.92}));
+        svgVenn.appendChild(txt(x, y, String(p), {size:15, fill:'#fff'}));
+      });
+    }
+    place(onlyA, cxA - 56, '#E4572E');
+    place(common, (cxA + cxB) / 2, '#3BB273');
+    place(onlyB, cxB + 56, '#2F72D8');
+    svgVenn.appendChild(txt((cxA + cxB) / 2, cyv + r + 20, '공통 = 최대공약수 ' + G,
+      {size:15, fill:'#1E6B45'}));
+    svgVenn.appendChild(txt(330, 272, '원 전체(공통은 한 번만) = 최소공배수 ' + L,
+      {size:15, fill:'#2F72D8'}));
+    // 표시
+    var read = document.getElementById('vennRead');
+    clear(read);
+    function pill2(cls, label, val){
+      var s = T('span', 'pill ' + cls);
+      s.appendChild(document.createTextNode(label + ' '));
+      s.appendChild(T('b', null, String(val)));
+      return s;
+    }
+    read.appendChild(pill2('g', '최대공약수', G));
+    read.appendChild(pill2('l', '최소공배수', L));
+    read.appendChild(pill2('', 'G × L', G * L));
+    read.appendChild(pill2('', 'a × b', a * b));
+    document.getElementById('vennFormula').innerHTML =
+      a + ' = ' + facStr(a) + ' &nbsp;&nbsp; ' + b + ' = ' + facStr(b) + '<br>' +
+      '최대공약수 = <span class="hl">' + (common.length ? common.join(' × ') + ' = ' + G : G) + '</span>' +
+      ' &nbsp;·&nbsp; 최소공배수 = <span class="hl2">' + L + '</span>';
+    document.getElementById('vennNote').innerHTML =
+      (G === 1
+        ? '두 수의 공통 소인수가 없어요. 이런 두 수를 <b>서로소</b>라 하고, 최소공배수는 두 수의 곱이 됩니다.'
+        : '공통 소인수를 모두 곱하면 최대공약수, 공통은 한 번만 쓰고 나머지를 모두 곱하면 최소공배수예요.') +
+      ' 그래서 언제나 <b>(최대공약수) × (최소공배수) = (두 수의 곱)</b> 이 성립해요.';
+  }
+  document.getElementById('slVA').addEventListener('input', function(e){
+    V.a = +e.target.value; document.getElementById('vnA').textContent = V.a; drawVenn();
+  });
+  document.getElementById('slVB').addEventListener('input', function(e){
+    V.b = +e.target.value; document.getElementById('vnB').textContent = V.b; drawVenn();
+  });
+  drawVenn();
+
+  /* ========== ③ 단계별 풀이 ========== */
+  var SOLVE = [
+    {s:'사탕 36개와 젤리 60개를 최대한 많은 친구에게 남김없이 똑같이 나누어 주려고 합니다. 몇 명에게 줄 수 있나요?',
+     k:['최대한 많은', '남김없이', '똑같이 나누어'], t:'g', n:[36, 60], unit:'명',
+     q1:'무엇을 구하나요?', o1:['나누어 줄 사람 수', '한 사람이 받는 사탕 수', '사탕과 젤리의 합'], a1:0,
+     q2:'답은 36·60보다 …', o2:['작아져요 (쪼갠다)', '커져요 (모은다)'], a2:0},
+    {s:'가로 15cm, 세로 9cm인 직사각형 카드를 빈틈없이 붙여서 가장 작은 정사각형을 만들려고 합니다. 한 변은 몇 cm인가요?',
+     k:['빈틈없이 붙여서', '가장 작은 정사각형'], t:'l', n:[15, 9], unit:'cm',
+     q1:'무엇을 구하나요?', o1:['정사각형 한 변의 길이', '카드 한 장의 넓이', '카드의 둘레'], a1:0,
+     q2:'답은 15·9보다 …', o2:['작아져요 (쪼갠다)', '커져요 (모은다)'], a2:1},
+    {s:'놀이공원 기차는 20분마다, 보트는 25분마다 출발합니다. 동시에 출발한 뒤 다시 동시에 출발하는 것은 몇 분 뒤인가요?',
+     k:['마다', '동시에', '다시'], t:'l', n:[20, 25], unit:'분 뒤',
+     q1:'무엇을 구하나요?', o1:['다시 겹치는 시각', '한 번 운행 시간', '두 주기의 차'], a1:0,
+     q2:'답은 20·25보다 …', o2:['작아져요 (쪼갠다)', '커져요 (모은다)'], a2:1},
+    {s:'길이 84cm와 126cm인 리본을 남김없이 똑같은 길이로 가장 길게 자르려고 합니다. 한 도막은 몇 cm인가요?',
+     k:['남김없이', '똑같은 길이', '가장 길게'], t:'g', n:[84, 126], unit:'cm',
+     q1:'무엇을 구하나요?', o1:['한 도막의 길이', '도막의 개수', '두 리본의 합'], a1:0,
+     q2:'답은 84·126보다 …', o2:['작아져요 (쪼갠다)', '커져요 (모은다)'], a2:0}
+  ];
+  var SVi = 0;
+  function buildSolve(){
+    var p = SOLVE[SVi];
+    var G = gcd(p.n[0], p.n[1]), L = lcm(p.n[0], p.n[1]);
+    var ansv = (p.t === 'g' ? G : L);
+    document.getElementById('sStory').innerHTML = '📄 ' + highlight(p.s, p.k);
+    var box = document.getElementById('sSteps');
+    clear(box);
+    var state = {s1:false, s2:false, s3:false};
+    function mk(label, q, opts, correct, onOK){
+      var d = T('div', 'stepbox');
+      d.appendChild(T('b', null, label + ' ' + q));
+      var o = T('div', 'opts');
+      opts.forEach(function(txt2, i){
+        var bt = T('button', null, txt2);
+        bt.addEventListener('click', function(){
+          if(d.classList.contains('done')) return;
+          if(i === correct){
+            bt.classList.add('right'); d.classList.add('done');
+            onOK(d);
+          }else{
+            bt.classList.add('wrong');
+            setTimeout(function(){ bt.classList.remove('wrong'); }, 800);
+          }
+        });
+        o.appendChild(bt);
+      });
+      d.appendChild(o);
+      box.appendChild(d);
+      return d;
+    }
+    mk('1단계', p.q1, p.o1, p.a1, function(d){
+      d.appendChild(T('div', 'res', '좋아요! 구하는 것을 정했어요.'));
+      state.s1 = true;
+    });
+    mk('2단계', p.q2, p.o2, p.a2, function(d){
+      d.appendChild(T('div', 'res', p.a2 === 0
+        ? '작아지니까 최대공약수예요!' : '커지니까 최소공배수예요!'));
+      state.s2 = true;
+    });
+    mk('3단계', '그래서 무엇을 구할까요?', ['최대공약수', '최소공배수'], p.t === 'g' ? 0 : 1, function(d){
+      d.appendChild(T('div', 'res',
+        p.n[0] + ' = ' + facStr(p.n[0]) + ' , ' + p.n[1] + ' = ' + facStr(p.n[1])));
+      state.s3 = true;
+    });
+    var opts4 = shuffle([ansv, (p.t === 'g' ? L : G), p.n[0] + p.n[1]]);
+    mk('4단계', '답은 얼마인가요?', opts4.map(function(v){ return v + p.unit; }),
+      opts4.indexOf(ansv), function(d){
+        d.appendChild(T('div', 'res', '🎉 정답! ' +
+          (p.t === 'g' ? '최대공약수' : '최소공배수') + '(' + p.n[0] + ', ' + p.n[1] + ') = ' +
+          ansv + p.unit));
+      });
+  }
+  document.getElementById('btnNextSolve').addEventListener('click', function(){
+    SVi = (SVi + 1) % SOLVE.length; buildSolve();
+  });
+  buildSolve();
+
+  /* ========== ④ 심화 ========== */
+  var ADV = [
+    {name:'나머지가 있는 나눗셈 (최대공약수)',
+     body:function(){
+       var a = 76, ra = 4, b = 59, rb = 3;
+       return {
+         rule:'어떤 수로 나누었을 때 <b>나머지가 남는</b> 문제는, 나머지를 <b>빼서</b> 나누어떨어지게 만든 뒤 최대공약수를 구해요.',
+         ex:'76을 어떤 수로 나누면 4가 남고, 59를 나누면 3이 남습니다. 이런 수 중 가장 큰 수는?',
+         work:['나머지를 빼서 나누어떨어지는 수로 바꿔요.',
+               '76 − 4 = 72,  59 − 3 = 56',
+               '72와 56을 모두 나누어떨어지게 하는 가장 큰 수 → 최대공약수(72, 56) = 8',
+               '확인: 나누는 수는 나머지보다 커야 해요. 8 > 4, 8 > 3 ✅'],
+         ans:'8'};
+     }},
+    {name:'부족한 경우 (최대공약수)',
+     body:function(){
+       return {
+         rule:'"<b>2가 부족하다</b>"는 말은 2를 <b>더하면</b> 나누어떨어진다는 뜻이에요.',
+         ex:'어떤 수로 34를 나누면 2가 부족하고, 52를 나누면 2가 부족합니다. 어떤 수 중 가장 큰 수는?',
+         work:['부족한 만큼 더해서 나누어떨어지게 만들어요.',
+               '34 + 2 = 36,  52 + 2 = 54',
+               '최대공약수(36, 54) = 18',
+               '확인: 18 > 2 ✅'],
+         ans:'18'};
+     }},
+    {name:'나머지가 같은 수 (최소공배수)',
+     body:function(){
+       return {
+         rule:'"어떤 수로 나누어도 <b>똑같이 r이 남는</b> 가장 작은 수"는 <b>최소공배수 + r</b> 이에요.',
+         ex:'4로 나누어도 6으로 나누어도 1이 남는 수 중에서 가장 작은 두 자리 수는?',
+         work:['1을 빼면 4로도 6으로도 나누어떨어져요 → 공배수',
+               '최소공배수(4, 6) = 12',
+               '조건에 맞는 수 = 12 × □ + 1 → 1, 13, 25, 37, …',
+               '이 중 가장 작은 두 자리 수는 13'],
+         ans:'13'};
+     }},
+    {name:'세 수의 최대공약수·최소공배수',
+     body:function(){
+       return {
+         rule:'세 수도 똑같아요. 공통 소인수를 모두 곱하면 최대공약수, 전체를 덮으면 최소공배수예요.',
+         ex:'벽돌 한 장이 가로 12cm, 세로 18cm, 높이 24cm입니다. 이 벽돌을 쌓아 가장 작은 정육면체를 만들 때 한 모서리와 벽돌 수는?',
+         work:['정육면체는 "모아서 크게" → 최소공배수',
+               '최소공배수(12, 18, 24) = 72cm',
+               '가로 72÷12 = 6장, 세로 72÷18 = 4장, 높이 72÷24 = 3장',
+               '벽돌 수 = 6 × 4 × 3 = 72장'],
+         ans:'한 모서리 72cm, 벽돌 72장'};
+     }},
+    {name:'톱니바퀴 회전수',
+     body:function(){
+       return {
+         rule:'맞물려 지나간 톱니 수는 두 바퀴가 같아요. 처음 자리로 오려면 그 수가 <b>두 톱니 수의 공배수</b>여야 해요.',
+         ex:'톱니가 18개인 바퀴 가와 24개인 바퀴 나가 맞물려 돕니다. 처음 맞물린 자리로 다시 오려면 각각 몇 바퀴 도나요?',
+         work:['지나간 톱니 수 = 최소공배수(18, 24) = 72',
+               '가: 72 ÷ 18 = 4바퀴',
+               '나: 72 ÷ 24 = 3바퀴',
+               '톱니 수가 적은 쪽이 더 많이 돌아요'],
+         ans:'가 4바퀴, 나 3바퀴'};
+     }},
+    {name:'G × L = a × b 성질',
+     body:function(){
+       return {
+         rule:'두 수의 <b>최대공약수 × 최소공배수 = 두 수의 곱</b> 이에요. 하나를 모르면 이 식으로 구해요.',
+         ex:'두 자연수의 곱이 360이고 최대공약수가 6입니다. 최소공배수는?',
+         work:['최대공약수 × 최소공배수 = 두 수의 곱',
+               '6 × 최소공배수 = 360',
+               '최소공배수 = 360 ÷ 6 = 60',
+               '두 수까지 찾으려면 : 최대공약수가 6이므로 두 수를 6a, 6b (a·b는 서로소)로 두면 36ab = 360 → ab = 10 → (a,b) = (1,10) 또는 (2,5)',
+               '따라서 두 수는 (6, 60) 또는 (12, 30) — 둘 다 곱이 360, 최대공약수 6, 최소공배수 60이에요'],
+         ans:'60'};
+     }}
+  ];
+  var AI = 0;
+  (function(){
+    var box = document.getElementById('advPick');
+    ADV.forEach(function(d, i){
+      var b = T('button', i === 0 ? 'on' : '', (i + 1) + '. ' + d.name);
+      b.addEventListener('click', function(){
+        AI = i;
+        document.querySelectorAll('#advPick button').forEach(function(x, j){
+          x.classList.toggle('on', j === i);
+        });
+        drawAdv();
+      });
+      box.appendChild(b);
+    });
+  })();
+  function drawAdv(){
+    var d = ADV[AI].body();
+    var box = document.getElementById('advBody');
+    clear(box);
+    var n1 = T('div', 'note vio');
+    n1.innerHTML = '📌 ' + d.rule;
+    box.appendChild(n1);
+    var st = T('div', 'story');
+    st.style.marginTop = '12px';
+    st.innerHTML = '📄 <b>예제</b> · ' + d.ex;
+    box.appendChild(st);
+    var w = T('div', 'worked');
+    d.work.forEach(function(l, i){
+      var ln = T('span', 'ln', (i + 1) + ') ' + l);
+      w.appendChild(ln);
+    });
+    box.appendChild(w);
+    var f = T('div', 'formula');
+    f.innerHTML = '답 : <span class="ans">' + d.ans + '</span>';
+    box.appendChild(f);
+  }
+  drawAdv();
+
+  /* 심화 연습 */
+  var AQ = [
+    {s:'76을 어떤 수로 나누면 4가 남고, 59를 나누면 3이 남습니다. 이런 수 중 가장 큰 수는?',
+     o:['8', '6', '12', '4'], a:0, w:'76−4=72, 59−3=56 → 최대공약수(72,56)=8'},
+    {s:'어떤 수로 34를 나누면 2가 부족하고 52를 나누면 2가 부족합니다. 가장 큰 수는?',
+     o:['18', '9', '12', '6'], a:0, w:'34+2=36, 52+2=54 → 최대공약수(36,54)=18'},
+    {s:'4로 나누어도 6으로 나누어도 1이 남는 가장 작은 두 자리 수는?',
+     o:['13', '12', '25', '11'], a:0, w:'최소공배수(4,6)=12 → 12□+1 = 1,13,25… 두 자리 중 최소는 13'},
+    {s:'가로 12cm, 세로 18cm, 높이 24cm 벽돌로 가장 작은 정육면체를 만들 때 한 모서리는?',
+     o:['72cm', '36cm', '6cm', '54cm'], a:0, w:'최소공배수(12,18,24)=72'},
+    {s:'위 문제에서 필요한 벽돌은 모두 몇 장인가요?',
+     o:['72장', '36장', '24장', '48장'], a:0, w:'(72÷12)×(72÷18)×(72÷24)=6×4×3=72'},
+    {s:'톱니 18개와 24개인 두 톱니바퀴가 처음 자리로 오려면 톱니 18개짜리는 몇 바퀴 도나요?',
+     o:['4바퀴', '3바퀴', '6바퀴', '72바퀴'], a:0, w:'최소공배수(18,24)=72 → 72÷18=4'},
+    {s:'두 자연수의 곱이 360이고 최대공약수가 6일 때 최소공배수는?',
+     o:['60', '36', '72', '30'], a:0, w:'G×L=a×b → 6×L=360 → L=60'},
+    {s:'두 수 15와 28의 최소공배수는? (두 수는 서로소)',
+     o:['420', '210', '105', '60'], a:0, w:'공통 소인수가 없으므로 최소공배수 = 15×28 = 420'},
+    {s:'사과 48개, 배 60개, 감 84개를 최대한 많은 접시에 남김없이 똑같이 나누면 접시는 몇 개?',
+     o:['12개', '6개', '24개', '4개'], a:0, w:'최대공약수(48,60,84)=12'},
+    {s:'3으로 나누면 2가 남고 5로 나누면 2가 남는 가장 작은 두 자리 수는?',
+     o:['17', '15', '32', '12'], a:0, w:'최소공배수(3,5)=15 → 15□+2 = 2,17,32… 두 자리 최소는 17'}
+  ];
+  var AQS = {list:[], idx:0, score:0};
+  function startA(){
+    AQS = {list: shuffle(AQ).slice(0, 8), idx:0, score:0};
+    document.getElementById('aResult').style.display = 'none';
+    document.getElementById('aArea').style.display = 'block';
+    showA();
+  }
+  function showA(){
+    var q = AQS.list[AQS.idx];
+    document.getElementById('aCount').textContent = (AQS.idx + 1) + ' / 8';
+    document.getElementById('aScore').textContent = '⭐ ' + AQS.score;
+    document.getElementById('aBar').style.width = (AQS.idx / 8 * 100) + '%';
+    document.getElementById('aFeed').textContent = '';
+    document.getElementById('aStory').textContent = '📄 ' + q.s;
+    var box = document.getElementById('aPick');
+    clear(box);
+    var order = q.o.map(function(o, i){ return {o:o, i:i}; });
+    order = shuffle(order);
+    order.forEach(function(e){
+      var b = T('button', null, e.o);
+      b.dataset.i = e.i;
+      b.addEventListener('click', function(){ ansA(b, e.i, q); });
+      box.appendChild(b);
+    });
+  }
+  function ansA(btn, i, q){
+    var all = document.querySelectorAll('#aPick button');
+    all.forEach(function(x){ x.disabled = true; });
+    if(i === q.a){ btn.classList.add('right'); AQS.score++; }
+    else{
+      btn.classList.add('wrong');
+      all.forEach(function(x){ if(+x.dataset.i === q.a) x.classList.add('right'); });
+    }
+    document.getElementById('aFeed').innerHTML = '💡 ' + q.w;
+    document.getElementById('aScore').textContent = '⭐ ' + AQS.score;
+    setTimeout(function(){
+      AQS.idx++;
+      if(AQS.idx >= AQS.list.length) finA(); else showA();
+    }, 2800);
+  }
+  function finA(){
+    document.getElementById('aArea').style.display = 'none';
+    var r = document.getElementById('aResult');
+    r.style.display = 'block'; clear(r);
+    r.appendChild(T('div', 'score', AQS.score + ' / 8'));
+    r.appendChild(T('div', null, AQS.score >= 7 ? '🏆 중등 준비 완료!' :
+      AQS.score >= 4 ? '👏 좋아요, 유형을 다시 훑어봐요!' : '💪 위 유형 설명을 먼저 읽어 봐요!'));
+    var tb = T('div', 'toolbar');
+    var again = T('button', 'btn primary', '🔁 다시 하기');
+    again.addEventListener('click', startA);
+    tb.appendChild(again); r.appendChild(tb);
+  }
+  document.getElementById('btnAStart').addEventListener('click', startA);
+
+  /* ========== ⑤ 인쇄 ========== */
+  var OPTS = [
+    {id:'judge', label:'판별 연습지', desc:'문장제를 읽고 GCD/LCM 고르기 12문제', on:true},
+    {id:'basic', label:'기본 문장제', desc:'초등 유형 풀이 8문제', on:true},
+    {id:'adv', label:'심화 문장제 (중등)', desc:'나머지·세 수·톱니바퀴 등 8문제', on:true},
+    {id:'answer', label:'정답지', desc:'위 학습지의 정답과 풀이', on:true}
+  ];
+  var optState = {}, PB = {judge:[], basic:[], adv:[]};
+  (function(){
+    var box = document.getElementById('optList');
+    OPTS.forEach(function(o){
+      optState[o.id] = o.on;
+      var lab = T('label', 'opt');
+      var inp = document.createElement('input');
+      inp.type = 'checkbox'; inp.checked = o.on;
+      inp.addEventListener('change', function(){ optState[o.id] = inp.checked; buildPrint(); });
+      lab.appendChild(inp);
+      var tx = T('div');
+      tx.appendChild(T('b', null, o.label));
+      tx.appendChild(T('span', null, o.desc));
+      lab.appendChild(tx);
+      box.appendChild(lab);
+    });
+  })();
+
+  function makeProbs(){
+    PB.judge = shuffle(JQ).slice(0, 12).map(function(q){
+      return {s:q.s, t:q.t, ans:ansOf(q), n:q.n};
+    });
+    PB.basic = shuffle(JQ).slice(0, 8).map(function(q){
+      return {s:q.s, t:q.t, ans:ansOf(q), n:q.n};
+    });
+    PB.adv = shuffle(AQ).slice(0, 8).map(function(q){
+      return {s:q.s, ans:q.o[q.a], w:q.w};
+    });
+  }
+
+  function pHead(title, withName){
+    var h = T('div', 'p-head');
+    h.appendChild(T('h2', null, title));
+    var m = T('div', 'meta');
+    if(withName !== false) m.appendChild(T('div', null, '이름 : ____________   날짜 : ____ / ____'));
+    m.appendChild(T('div', null, '세영코딩연구소  저자 : 컴퓨터공학박사 KIM'));
+    h.appendChild(m);
+    return h;
+  }
+  function pFoot(s){
+    var f = T('div', 'p-foot');
+    f.appendChild(T('span', null, s));
+    f.appendChild(T('span', null, '세영코딩연구소  저자 : 컴퓨터공학박사 KIM'));
+    return f;
+  }
+
+  function buildPrint(){
+    var area = document.getElementById('printArea');
+    clear(area);
+
+    if(optState.judge){
+      var pg = T('div', 'page');
+      pg.appendChild(pHead('무엇을 쓸까? — 판별 연습'));
+      var g = T('div', 'p-grid');
+      g.style.gridTemplateColumns = '1fr';
+      PB.judge.forEach(function(q, i){
+        var it = T('div', 'p-item');
+        var row = T('div', 'no');
+        row.appendChild(document.createTextNode((i + 1) + '. ' + q.s + ' '));
+        row.appendChild(T('span', 'pickbox', '최대공약수'));
+        row.appendChild(T('span', 'pickbox', '최소공배수'));
+        it.appendChild(row);
+        g.appendChild(it);
+      });
+      pg.appendChild(g);
+      pg.appendChild(pFoot('답이 작아지면 최대공약수, 커지면 최소공배수!'));
+      area.appendChild(pg);
+    }
+
+    if(optState.basic){
+      var pg2 = T('div', 'page');
+      pg2.appendChild(pHead('기본 문장제 — 풀고 답 쓰기'));
+      var g2 = T('div', 'p-grid');
+      g2.style.gridTemplateColumns = '1fr';
+      PB.basic.forEach(function(q, i){
+        var it = T('div', 'p-item');
+        it.appendChild(T('div', 'no', (i + 1) + '. ' + q.s));
+        var row = T('div', 'no');
+        row.style.marginTop = '10px';
+        row.appendChild(document.createTextNode('무엇을? '));
+        row.appendChild(T('span', 'pickbox', '최대공약수'));
+        row.appendChild(T('span', 'pickbox', '최소공배수'));
+        row.appendChild(document.createTextNode('   식 : '));
+        row.appendChild(T('span', 'blank', ' '));
+        row.appendChild(document.createTextNode('   답 : '));
+        row.appendChild(T('span', 'blank', ' '));
+        it.appendChild(row);
+        g2.appendChild(it);
+      });
+      pg2.appendChild(g2);
+      pg2.appendChild(pFoot('소인수분해로 최대공약수·최소공배수를 구해요'));
+      area.appendChild(pg2);
+    }
+
+    if(optState.adv){
+      var pg3 = T('div', 'page');
+      pg3.appendChild(pHead('심화 문장제 (중학교)'));
+      var g3 = T('div', 'p-grid');
+      g3.style.gridTemplateColumns = '1fr';
+      PB.adv.forEach(function(q, i){
+        var it = T('div', 'p-item');
+        it.appendChild(T('div', 'no', (i + 1) + '. ' + q.s));
+        var row = T('div', 'no');
+        row.style.marginTop = '14px';
+        row.appendChild(document.createTextNode('풀이 : '));
+        row.appendChild(T('span', 'blank', ' '));
+        row.appendChild(document.createTextNode('      답 : '));
+        row.appendChild(T('span', 'blank', ' '));
+        it.appendChild(row);
+        g3.appendChild(it);
+      });
+      pg3.appendChild(g3);
+      pg3.appendChild(pFoot('나머지가 있으면 빼거나 더해서 나누어떨어지게 만들어요'));
+      area.appendChild(pg3);
+    }
+
+    if(optState.answer){
+      var pg4 = T('div', 'page');
+      pg4.appendChild(pHead('정답지', false));
+      var l = T('div', 'p-list');
+      l.appendChild(T('div', null, '■ 판별 연습'));
+      l.appendChild(T('div', null, PB.judge.map(function(q, i){
+        return (i + 1) + ') ' + (q.t === 'g' ? '최대공약수' : '최소공배수') + ' = ' + q.ans;
+      }).join('   ')));
+      l.appendChild(T('div', null, '■ 기본 문장제'));
+      PB.basic.forEach(function(q, i){
+        l.appendChild(T('div', null, (i + 1) + ') ' +
+          (q.t === 'g' ? '최대공약수' : '최소공배수') + '(' + q.n.join(', ') + ') = ' + q.ans));
+      });
+      l.appendChild(T('div', null, '■ 심화 문장제'));
+      PB.adv.forEach(function(q, i){
+        l.appendChild(T('div', null, (i + 1) + ') ' + q.ans + ' — ' + q.w));
+      });
+      pg4.appendChild(l);
+      pg4.appendChild(pFoot('틀린 문제는 "작아지나 커지나"부터 다시 생각해요'));
+      area.appendChild(pg4);
+    }
+
+    if(!area.children.length){
+      var pg5 = T('div', 'page');
+      pg5.appendChild(pHead('공약수와 공배수 학습지'));
+      pg5.appendChild(T('p', null, '인쇄할 항목을 하나 이상 선택해 주세요.'));
+      area.appendChild(pg5);
+    }
+  }
+  document.getElementById('btnShuffle').addEventListener('click', function(){ makeProbs(); buildPrint(); });
+  document.getElementById('btnPrint').addEventListener('click', function(){ window.print(); });
+  makeProbs(); buildPrint();
+
+  /* 검증용 */
+  window.__gl = {
+    gcd:gcd, lcm:lcm, gcd3:gcd3, lcm3:lcm3, facStr:facStr, factorize:factorize,
+    JQ:JQ, AQ:AQ, SOLVE:SOLVE, PAT:PAT, ansOf:ansOf,
+    setPat: function(i, a, b, t){ PI = i; PV = {a:a, b:b}; if(t !== undefined) GEART = t;
+      buildPatSliders(); drawPat();
+      return {read: document.getElementById('patRead').textContent,
+              formula: document.getElementById('patFormula').textContent}; },
+    setVenn: function(a, b){ V.a = a; V.b = b; drawVenn();
+      return {read: document.getElementById('vennRead').textContent,
+              formula: document.getElementById('vennFormula').textContent}; },
+    probs: function(){ return PB; }
+  };
+})();
+</script>
+</body>
+</html>
