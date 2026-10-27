@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>규칙과 대응 — 함수 상자로 배우는 두 양의 관계</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --ivory:#FDF8EE; --ivory-2:#F7EFDD;
+  --ink:#4A3B2A; --ink-soft:#7A6A55; --line:#E6D9BE; --white:#fff;
+  --accent:#FF8A3D; --accent-soft:#FFE6D2;
+  --good:#3BB273; --good-soft:#DFF3E7;
+  --bad:#E4572E; --bad-soft:#FBE3DB;
+  --blue:#4D96FF; --blue-soft:#DFEBFF;
+  --violet:#9B72CF; --violet-soft:#EDE4F8;
+  --shadow:0 4px 0 rgba(0,0,0,.08), 0 10px 24px rgba(120,95,60,.12);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--ivory);
+  background-image:radial-gradient(circle at 12% 8%, #fff6e3 0 18%, transparent 19%),
+                   radial-gradient(circle at 88% 4%, #ffeede 0 14%, transparent 15%);
+  color:var(--ink);
+  font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-size:17px; line-height:1.65; -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:1020px;margin:0 auto;padding:0 16px 64px}
+.hero{text-align:center;padding:30px 16px 16px}
+.hero h1{font-size:clamp(23px,4.8vw,40px);margin:0 0 6px;letter-spacing:-1px;color:#3C2F20;text-shadow:2px 3px 0 #FFD9A8}
+.hero p{margin:0;color:var(--ink-soft);font-size:clamp(14px,2.6vw,18px)}
+.brand{display:inline-block;margin-top:12px;padding:6px 16px;border-radius:999px;background:var(--white);
+  border:2px dashed var(--line);font-size:13px;color:var(--ink-soft);font-family:'Gaegu',sans-serif;font-weight:700}
+
+.tabs{position:sticky;top:0;z-index:30;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;
+  padding:10px;margin:0 0 18px;background:rgba(253,248,238,.93);backdrop-filter:blur(6px);border-bottom:2px solid var(--line)}
+.tab{border:2px solid var(--line);background:var(--white);color:var(--ink);font-family:inherit;font-size:14.5px;
+  padding:8px 13px;border-radius:999px;cursor:pointer;transition:.15s}
+.tab:hover{transform:translateY(-2px)}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 3px 0 #d96c25}
+
+.panel{display:none;animation:fadein .25s ease}
+.panel.on{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.card{background:var(--white);border:2px solid var(--line);border-radius:var(--radius);padding:20px;
+  margin:0 0 20px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 4px;font-size:22px}
+.card h2 .emoji{margin-right:6px}
+.sub{color:var(--ink-soft);font-size:15px;margin:0 0 14px;font-family:'Gaegu',sans-serif;font-weight:700;line-height:1.55}
+
+.stage{background:linear-gradient(#F7FBFF,#FDF8EE);border:2px solid var(--line);border-radius:14px;
+  padding:6px;margin:12px 0}
+canvas.draw,svg.draw{display:block;width:100%;height:auto;touch-action:none}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0 2px;align-items:center}
+.btn{border:2px solid var(--line);background:var(--white);color:var(--ink);font-family:inherit;font-size:15px;
+  padding:9px 16px;border-radius:999px;cursor:pointer;transition:.15s}
+.btn:hover{transform:translateY(-2px);border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 3px 0 #d96c25}
+.btn.blue{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 3px 0 #2f72d8}
+.btn.green{background:var(--good);border-color:var(--good);color:#fff;box-shadow:0 3px 0 #2d8c59}
+.btn:disabled{opacity:.5;cursor:default;transform:none}
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:999px;overflow:hidden;background:#fff}
+.seg button{border:none;background:none;font-family:inherit;font-size:14.5px;padding:7px 13px;cursor:pointer;color:var(--ink)}
+.seg button.on{background:var(--violet);color:#fff}
+
+/* 규칙 만들기 */
+.rulebar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center;
+  background:var(--ivory);border:2px dashed var(--accent);border-radius:14px;padding:12px;margin:10px 0}
+.rulebar .lab{font-size:19px}
+.rulebar select,.rulebar input[type=number]{font-family:inherit;font-size:17px;padding:6px 8px;
+  border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.rulebar input[type=number]{width:66px;text-align:center}
+.rulebar .eq{font-size:clamp(18px,4vw,25px);margin-left:4px}
+
+.readout{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:10px}
+.pill{border:2px solid var(--line);background:var(--ivory);border-radius:999px;padding:6px 15px;font-size:16px}
+.pill b{font-size:20px;color:var(--accent)}
+.pill.b{background:var(--blue-soft);border-color:var(--blue)} .pill.b b{color:#2F72D8}
+.pill.g{background:var(--good-soft);border-color:var(--good)} .pill.g b{color:var(--good)}
+
+table.dt{border-collapse:collapse;margin:10px auto 0;font-size:16px;min-width:260px}
+table.dt th,table.dt td{border:2px solid var(--line);padding:6px 14px;text-align:center;min-width:56px}
+table.dt th{background:var(--ivory-2);font-weight:400;color:var(--ink-soft)}
+table.dt td.new{background:var(--good-soft);color:var(--good)}
+table.dt td.dif{color:var(--violet);font-size:14px}
+.tablewrap{max-height:230px;overflow:auto;border-radius:10px}
+
+.eqbox{background:var(--ivory);border:2px dashed var(--accent);border-radius:14px;padding:14px;margin-top:12px}
+.eqline{font-size:clamp(17px,3.8vw,25px);text-align:center;margin:5px 0;line-height:1.5}
+.eqstep{font-family:'Gaegu',sans-serif;font-weight:700;font-size:16px;color:var(--ink-soft);
+  text-align:center;margin-top:6px;line-height:1.7}
+.o-col{color:var(--accent)} .b-col{color:#2F72D8} .g-col{color:var(--good)} .v-col{color:var(--violet)}
+
+.note{border-radius:14px;padding:12px 16px;margin-top:12px;font-family:'Gaegu',sans-serif;font-weight:700;
+  font-size:16px;line-height:1.6}
+.note.tip{background:var(--blue-soft);border:2px solid var(--blue);color:#1F4F9B}
+.note.warn{background:var(--bad-soft);border:2px solid var(--bad);color:#8E2E13}
+.note.ok{background:var(--good-soft);border:2px solid var(--good);color:#1E6B45}
+.note.vio{background:var(--violet-soft);border:2px solid var(--violet);color:#5B3A8E}
+
+.defs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:14px}
+.def{border:2px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--ivory)}
+.def h3{margin:0 0 4px;font-size:17px}
+.def p{margin:0;font-family:'Gaegu',sans-serif;font-weight:700;font-size:15px;color:var(--ink-soft);line-height:1.5}
+
+.numpad{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.numpad button{width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:#fff;
+  font-family:inherit;font-size:17px;cursor:pointer}
+.numpad button:hover{border-color:var(--accent);transform:translateY(-2px)}
+.numpad button.used{background:var(--ivory-2);color:#B5A68E}
+
+.guesses{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;margin-top:10px}
+.guesses button{font-family:inherit;font-size:17px;padding:11px 6px;border-radius:12px;border:3px solid var(--line);
+  background:#fff;cursor:pointer}
+.guesses button:hover{transform:translateY(-2px);border-color:var(--accent)}
+.guesses button.right{background:var(--good);border-color:var(--good);color:#fff}
+.guesses button.wrong{background:var(--bad);border-color:var(--bad);color:#fff}
+
+.code{background:#2C2A28;color:#F4EDE2;border-radius:12px;padding:14px 16px;font-size:14.5px;
+  font-family:'D2Coding','Consolas','Menlo',monospace;line-height:1.75;overflow-x:auto;white-space:pre}
+.code .kw{color:#FF9F6B} .code .num{color:#9CD3FF} .code .cm{color:#8E9B8E} .code .fn{color:#F2C14E}
+
+.feedback{min-height:28px;font-size:16px;margin-top:12px;text-align:center;font-family:'Gaegu',sans-serif;font-weight:700}
+.quiz-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.bar{height:12px;background:var(--ivory-2);border-radius:999px;overflow:hidden;flex:1;min-width:140px;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--good);width:0;transition:.3s}
+.result{text-align:center;padding:12px}
+.result .score{font-size:50px;color:var(--accent)}
+.story{background:var(--ivory);border:2px solid var(--line);border-radius:14px;padding:15px;font-size:17px;line-height:1.75}
+
+.patpick{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:8px}
+.patpick button{border:2px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;
+  font-family:inherit;font-size:14.5px;cursor:pointer}
+.patpick button.on{background:var(--violet);border-color:var(--violet);color:#fff}
+
+.opt-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0}
+.opt{display:flex;gap:10px;align-items:flex-start;border:2px solid var(--line);border-radius:14px;padding:12px 14px;
+  background:var(--ivory);cursor:pointer}
+.opt input{width:20px;height:20px;margin-top:3px;accent-color:var(--accent)}
+.opt b{display:block;font-size:16px}
+.opt span{font-family:'Gaegu',sans-serif;font-weight:700;font-size:14px;color:var(--ink-soft)}
+
+.mob-tip{display:none;text-align:center;background:var(--accent-soft);border:2px dashed var(--accent);
+  border-radius:14px;padding:10px 14px;margin:0 0 16px;color:#8A5A2B}
+@media (pointer:coarse){.mob-tip{display:block}}
+footer.foot{text-align:center;color:var(--ink-soft);font-size:14px;padding:10px 0 30px;font-family:'Gaegu',sans-serif;font-weight:700}
+
+#printArea{display:none}
+.page{page-break-after:always;break-after:page}
+.page:last-child{page-break-after:auto;break-after:auto}
+.p-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #333;padding-bottom:6px;margin-bottom:12px}
+.p-head h2{margin:0;font-size:23px}
+.p-head .meta{font-size:12px;color:#555;font-family:'Gaegu',sans-serif;font-weight:700;text-align:right;line-height:1.4}
+.p-grid{display:grid;gap:10px}
+.p-item{border:2px solid #333;border-radius:10px;padding:8px 10px;break-inside:avoid}
+.p-item .no{font-size:13.5px;font-family:'Gaegu',sans-serif;font-weight:700;line-height:1.7}
+.p-item svg{width:100%;height:auto;display:block;margin-top:4px}
+.blank{display:inline-block;min-width:58px;border-bottom:2px solid #333;text-align:center}
+table.pt{border-collapse:collapse;margin:6px auto;font-size:13px}
+table.pt th,table.pt td{border:1.5px solid #333;padding:4px 9px;text-align:center;min-width:34px;height:26px}
+table.pt th{background:#eee;font-weight:400}
+.p-list{font-size:14px;line-height:2.0;font-family:'Gaegu',sans-serif;font-weight:700}
+.p-foot{margin-top:10px;border-top:1.5px solid #bbb;padding-top:5px;font-size:11px;color:#666;display:flex;
+  justify-content:space-between;font-family:'Gaegu',sans-serif;font-weight:700}
+@page{size:A4 portrait;margin:11mm}
+@media print{
+  body{background:#fff!important;background-image:none!important;font-size:12pt}
+  .no-print{display:none!important}
+  #printArea{display:block!important}
+  .wrap{max-width:none;padding:0}
+  .p-grid{min-height:216mm;align-content:space-between}
+}
+@media (max-width:640px){ .card{padding:14px} }
+</style>
+</head>
+<body>
+
+<div class="wrap no-print">
+  <header class="hero">
+    <h1>⚙️ 규칙과 대응</h1>
+    <p>함수 상자에 수를 넣어 보며 <b>두 양 사이의 규칙</b>을 찾아요</p>
+    <div class="brand">세영코딩연구소 &nbsp;저자 : 컴퓨터공학박사 KIM</div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-p="machine">① 함수 상자</button>
+    <button class="tab" data-p="black">② 규칙 알아맞히기</button>
+    <button class="tab" data-p="table">③ 표에서 식 찾기</button>
+    <button class="tab" data-p="pattern">④ 도형 패턴</button>
+    <button class="tab" data-p="code">⑤ 상자 잇기 · 코드</button>
+    <button class="tab" data-p="print">⑥ 인쇄하기</button>
+  </nav>
+
+  <p class="sub mob-tip">📱 규칙을 정하고 숫자 버튼을 눌러 구슬을 넣어 보세요.</p>
+
+  <!-- ① 함수 상자 -->
+  <section class="panel on" id="p-machine">
+    <div class="card">
+      <h2><span class="emoji">📦</span>규칙을 직접 만들고 구슬을 넣어 보기</h2>
+      <p class="sub">상자의 규칙을 정한 뒤 숫자 구슬을 넣으면, 규칙대로 바뀌어 나와요.
+        나온 값은 아래 표에 차곡차곡 쌓입니다.</p>
+      <div class="rulebar">
+        <span class="lab">□</span>
+        <select id="op1"><option value="*">×</option><option value="+">+</option>
+          <option value="-">−</option><option value="/">÷</option></select>
+        <input type="number" id="n1" value="2" min="-9" max="9">
+        <select id="op2"><option value="+">+</option><option value="-">−</option>
+          <option value="*">×</option><option value="none">(없음)</option></select>
+        <input type="number" id="n2" value="1" min="-9" max="9">
+        <span class="eq" id="ruleEq"></span>
+      </div>
+      <div class="stage"><canvas class="draw" id="cvMach"></canvas></div>
+      <p class="sub" style="text-align:center;margin:4px 0 0">넣을 수를 눌러 보세요</p>
+      <div class="numpad" id="padMain"></div>
+      <div class="toolbar">
+        <button class="btn blue" id="btnAuto">⏩ 1부터 차례로 넣기</button>
+        <button class="btn" id="btnClear">🗑️ 표 비우기</button>
+        <button class="btn" id="btnDiff">📐 차이 보기</button>
+      </div>
+      <div class="tablewrap"><table class="dt" id="tblMain"></table></div>
+      <div class="eqbox">
+        <div class="eqline" id="machEq"></div>
+        <div class="eqstep" id="machStep"></div>
+      </div>
+      <div class="defs">
+        <div class="def"><h3>대응</h3><p>하나의 □에 하나의 △가 <b>짝지어지는 것</b>이에요.
+          같은 수를 넣으면 언제나 같은 수가 나와요.</p></div>
+        <div class="def"><h3>규칙 찾는 열쇠</h3><p>□가 <b>1씩 커질 때</b> △가 얼마씩 커지는지 보세요.
+          그 값이 곱하는 수예요.</p></div>
+        <div class="def"><h3>왜 중요할까요?</h3><p>프로그래밍의 <b>변수와 함수</b>가 바로 이것이에요.
+          넣는 값이 변수, 상자가 함수랍니다.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ② 블랙박스 -->
+  <section class="panel" id="p-black">
+    <div class="card">
+      <h2><span class="emoji">🕵️</span>상자 속 규칙을 알아맞혀 보세요</h2>
+      <p class="sub">규칙이 <b>숨겨져</b> 있어요. 수를 넣어 보며 나온 값으로 규칙을 추리하세요.
+        적게 넣고 맞힐수록 좋아요!</p>
+      <div class="note tip" id="bbHint"></div>
+      <div class="stage"><canvas class="draw" id="cvBlack"></canvas></div>
+      <p class="sub" style="text-align:center;margin:4px 0 0">넣을 수를 눌러 보세요</p>
+      <div class="numpad" id="padBlack"></div>
+      <div class="tablewrap"><table class="dt" id="tblBlack"></table></div>
+      <div class="toolbar">
+        <button class="btn primary" id="btnGuess">🤔 규칙 맞히기</button>
+        <button class="btn" id="btnNewBox">🔄 새 상자</button>
+      </div>
+      <div class="guesses" id="guessBox" style="display:none"></div>
+      <div class="feedback" id="bbFeed"></div>
+      <div class="readout" id="bbScore"></div>
+    </div>
+  </section>
+
+  <!-- ③ 표에서 식 찾기 -->
+  <section class="panel" id="p-table">
+    <div class="card">
+      <h2><span class="emoji">🔎</span>표를 보고 식을 세우는 방법</h2>
+      <p class="sub">두 걸음이면 돼요. ① <b>1씩 커질 때 얼마씩 변하나</b> → 곱하는 수.
+        ② 그 다음 <b>얼마를 더해야 맞나</b> → 더하는 수.</p>
+      <div class="stage"><svg class="draw" id="svgStair" viewBox="0 0 660 260"></svg></div>
+      <div class="eqbox">
+        <div class="eqline" id="stairEq"></div>
+        <div class="eqstep" id="stairStep"></div>
+      </div>
+      <div class="toolbar">
+        <button class="btn primary" id="btnNewTable">🎲 새 표</button>
+        <button class="btn blue" id="btnReveal">💡 규칙 보기</button>
+      </div>
+      <div class="guesses" id="tableGuess"></div>
+      <div class="feedback" id="tblFeed"></div>
+      <div class="note vio">
+        💡 <b>왜 이렇게 되나요?</b> □가 1 커질 때 △가 3씩 커진다면, □ 한 칸마다 3이 붙는다는 뜻이니
+        <b>□ × 3</b> 이 들어 있어요. 거기에 모자라거나 남는 만큼을 더하거나 빼면 완성!
+      </div>
+    </div>
+  </section>
+
+  <!-- ④ 도형 패턴 -->
+  <section class="panel" id="p-pattern">
+    <div class="card">
+      <h2><span class="emoji">🔺</span>도형 패턴에서 n번째 찾기</h2>
+      <p class="sub">모양이 늘어날 때 <b>몇 개씩 늘어나는지</b> 세어 보면 n번째 개수를 알 수 있어요.
+        이것이 수열과 점화식의 첫걸음이에요.</p>
+      <div class="patpick" id="patPick"></div>
+      <div class="sl" style="max-width:360px;margin:0 auto;border:2px solid var(--line);
+        border-radius:14px;padding:9px 13px;background:var(--ivory)">
+        <label style="display:flex;justify-content:space-between;font-size:14.5px;margin-bottom:3px">
+          <span>몇 번째 모양?</span><b id="patNv" style="font-size:18px;color:var(--accent)">4</b></label>
+        <input type="range" id="patN" min="1" max="8" value="4" style="width:100%;accent-color:var(--accent)">
+      </div>
+      <div class="stage"><svg class="draw" id="svgPat" viewBox="0 0 660 230"></svg></div>
+      <div class="tablewrap"><table class="dt" id="tblPat"></table></div>
+      <div class="eqbox">
+        <div class="eqline" id="patEq"></div>
+        <div class="eqstep" id="patStep"></div>
+      </div>
+      <div class="note tip" id="patNote"></div>
+    </div>
+  </section>
+
+  <!-- ⑤ 상자 잇기 · 코드 -->
+  <section class="panel" id="p-code">
+    <div class="card">
+      <h2><span class="emoji">🔗</span>상자를 이어 붙이면?</h2>
+      <p class="sub">상자 두 개를 줄줄이 연결해 보세요. <b>순서를 바꾸면 결과가 달라져요!</b></p>
+      <div class="rulebar">
+        <span class="lab">□</span>
+        <select id="cOp1"><option value="*">×</option><option value="+">+</option><option value="-">−</option></select>
+        <input type="number" id="cN1" value="2" min="1" max="9">
+        <span class="lab">→</span>
+        <select id="cOp2"><option value="+">+</option><option value="*">×</option><option value="-">−</option></select>
+        <input type="number" id="cN2" value="3" min="1" max="9">
+      </div>
+      <div class="stage"><canvas class="draw" id="cvChain"></canvas></div>
+      <div class="toolbar">
+        <button class="btn primary" id="btnChain">▶️ 구슬 넣기</button>
+        <button class="btn blue" id="btnSwap">🔁 순서 바꾸기</button>
+      </div>
+      <div class="eqbox">
+        <div class="eqline" id="chainEq"></div>
+        <div class="eqstep" id="chainStep"></div>
+      </div>
+      <div class="note warn" id="chainNote"></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="emoji">💻</span>같은 규칙을 코드로 — 반복문과 함수</h2>
+      <p class="sub">표를 만드는 일은 컴퓨터가 제일 잘해요. 위에서 만든 규칙을 코드로 쓰면 이렇습니다.</p>
+      <div class="toolbar">
+        <span class="seg" id="langPick">
+          <button class="on" data-l="py">🐍 파이썬</button>
+          <button data-l="c">⌨️ C</button>
+        </span>
+      </div>
+      <div class="code" id="codeBox"></div>
+      <div class="eqbox">
+        <div class="eqstep" id="codeOut"></div>
+      </div>
+      <div class="defs">
+        <div class="def"><h3>변수</h3><p><b>x</b>는 넣는 수를 담는 그릇이에요.
+          수학의 □ 와 같은 역할이지요.</p></div>
+        <div class="def"><h3>함수</h3><p>규칙 상자가 곧 <b>함수</b>예요.
+          같은 것을 여러 번 쓸 수 있게 이름을 붙인 것이랍니다.</p></div>
+        <div class="def"><h3>반복문</h3><p>컨베이어 벨트가 구슬을 계속 보내는 것이
+          <b>for 반복문</b>이에요. 표의 줄을 하나씩 만들어 줍니다.</p></div>
+      </div>
+      <div class="note vio">
+        🏆 정보올림피아드에서는 "n번째 값"을 빠르게 구하는 문제가 자주 나와요.
+        규칙을 <b>식 하나로</b> 정리해 두면 1번째든 1000번째든 바로 구할 수 있답니다.
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑥ 인쇄 -->
+  <section class="panel" id="p-print">
+    <div class="card">
+      <h2><span class="emoji">🖨️</span>인쇄해서 연습하기</h2>
+      <p class="sub">필요한 학습지만 골라 인쇄하세요. A4 세로 한 장씩 나옵니다.</p>
+      <div class="opt-list" id="optList"></div>
+      <div class="toolbar">
+        <button class="btn" id="btnShuffle">🔀 문제 새로 뽑기</button>
+        <button class="btn primary" id="btnPrint">🖨️ 인쇄하기 (Ctrl+P)</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">세영코딩연구소 &nbsp;저자 : 컴퓨터공학박사 KIM</footer>
+</div>
+
+<div id="printArea"></div>
+
+<script>
+(function(){
+  "use strict";
+  var NS = 'http://www.w3.org/2000/svg';
+  function S(tag, a){
+    var e = document.createElementNS(NS, tag);
+    if(a) for(var k in a){ if(a[k] !== null && a[k] !== undefined) e.setAttribute(k, a[k]); }
+    return e;
+  }
+  function T(tag, cls, text){
+    var e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(text !== undefined && text !== null) e.textContent = text;
+    return e;
+  }
+  function txt(x, y, s, o){
+    o = o || {};
+    var t = S('text', {x:x, y:y, 'text-anchor':o.anchor || 'middle',
+      'dominant-baseline':o.base || 'middle', 'font-size':o.size || 14,
+      fill:o.fill || '#4A3B2A', 'font-family':"'Jua','Malgun Gothic',sans-serif"});
+    t.style.pointerEvents = 'none';
+    t.textContent = s;
+    return t;
+  }
+  function clear(el){ while(el.firstChild) el.removeChild(el.firstChild); }
+  function num(v){
+    if(!isFinite(v)) return '—';
+    var r = Math.round(v * 1000) / 1000;
+    return (Math.abs(r - Math.round(r)) < 1e-9) ? String(Math.round(r)) : String(r);
+  }
+  var OPS = {'+':'+', '-':'−', '*':'×', '/':'÷'};
+  function apply1(a, o, b){
+    if(o === '+') return a + b;
+    if(o === '-') return a - b;
+    if(o === '*') return a * b;
+    if(o === '/') return b === 0 ? NaN : a / b;
+    return a;
+  }
+  function applyRule(x, r){
+    var v = apply1(x, r.op1, r.n1);
+    if(r.op2 && r.op2 !== 'none') v = apply1(v, r.op2, r.n2);
+    return v;
+  }
+  function ruleText(r, sym){
+    sym = sym || '□';
+    var s = sym + ' ' + OPS[r.op1] + ' ' + r.n1;
+    if(r.op2 && r.op2 !== 'none') s += ' ' + OPS[r.op2] + ' ' + r.n2;
+    return s;
+  }
+
+  /* ===== 캔버스 ===== */
+  function setupCanvas(cv, W, H){
+    var sc = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(W * sc); cv.height = Math.round(H * sc);
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(sc, 0, 0, sc, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    return ctx;
+  }
+  function cText(ctx, s, x, y, size, col, align){
+    ctx.save();
+    ctx.font = (size || 14) + "px 'Jua','Malgun Gothic',sans-serif";
+    ctx.fillStyle = col || '#4A3B2A';
+    ctx.textAlign = align || 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(s, x, y);
+    ctx.restore();
+  }
+  function roundRect(ctx, x, y, w, h, r){
+    r = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function marble(ctx, x, y, r, label, col){
+    var g = ctx.createRadialGradient(x - r * .35, y - r * .35, r * .15, x, y, r);
+    g.addColorStop(0, '#fff'); g.addColorStop(.35, col); g.addColorStop(1, col);
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fillStyle = g; ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,.18)'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.restore();
+    cText(ctx, label, x, y, Math.min(19, r * 1.05), '#fff');
+  }
+  function belt(ctx, x1, x2, y, phase){
+    ctx.save();
+    ctx.fillStyle = '#6E6356';
+    roundRect(ctx, x1, y, x2 - x1, 16, 8); ctx.fill();
+    ctx.strokeStyle = '#4C443A'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 2;
+    for(var x = x1 + ((phase * 18) % 18); x < x2; x += 18){
+      ctx.beginPath(); ctx.moveTo(x, y + 2); ctx.lineTo(x - 6, y + 14); ctx.stroke();
+    }
+    [x1 + 10, x2 - 10].forEach(function(cx){
+      ctx.beginPath(); ctx.arc(cx, y + 8, 9, 0, 7);
+      ctx.fillStyle = '#8A7D6C'; ctx.fill();
+      ctx.strokeStyle = '#4C443A'; ctx.lineWidth = 2; ctx.stroke();
+    });
+    ctx.restore();
+  }
+  function machineBox(ctx, x, y, w, h, label, glow, col){
+    col = col || '#FF8A3D';
+    ctx.save();
+    if(glow > 0){
+      ctx.shadowColor = 'rgba(255,138,61,' + (0.8 * glow) + ')';
+      ctx.shadowBlur = 26 * glow;
+    }
+    roundRect(ctx, x, y, w, h, 14);
+    ctx.fillStyle = '#FFF3E6'; ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = col; ctx.lineWidth = 3.5; ctx.stroke();
+    ctx.restore();
+    // 투입구 · 배출구
+    ctx.save(); ctx.fillStyle = '#4C443A';
+    roundRect(ctx, x - 8, y + h * 0.42, 10, 24, 3); ctx.fill();
+    roundRect(ctx, x + w - 2, y + h * 0.42, 10, 24, 3); ctx.fill();
+    ctx.restore();
+    cText(ctx, '규칙 상자', x + w / 2, y + 22, 14, '#B08050');
+    cText(ctx, label, x + w / 2, y + h / 2 + 6, Math.min(24, w / (label.length * 0.62)), '#C2410C');
+  }
+  var anims = {};
+  function animate(key, dur, step, done){
+    if(anims[key]) cancelAnimationFrame(anims[key]);
+    var t0 = performance.now();
+    (function frame(now){
+      var p = Math.min(1, (now - t0) / dur);
+      step(p);
+      if(p < 1) anims[key] = requestAnimationFrame(frame);
+      else { anims[key] = null; if(done) done(); }
+    })(performance.now());
+  }
+  function stopAnim(k){ if(anims[k]){ cancelAnimationFrame(anims[k]); anims[k] = null; } }
+
+  /* 탭 */
+  var tabs = document.querySelectorAll('.tab');
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(x){ x.classList.remove('on'); });
+      t.classList.add('on');
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('on'); });
+      document.getElementById('p-' + t.dataset.p).classList.add('on');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+  function segPick(id, cb){
+    var box = document.getElementById(id);
+    box.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click', function(){
+        box.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+        b.classList.add('on'); cb(b.dataset);
+      });
+    });
+  }
+
+  /* ================= ① 함수 상자 ================= */
+  var M = {rule:{op1:'*', n1:2, op2:'+', n2:1}, rows:[], showDiff:false,
+           anim:null, phase:0, cur:null};
+  function drawMach(prog, inVal, outVal, hidden, cvId, ruleLabel){
+    var cv = document.getElementById(cvId || 'cvMach');
+    var W = 660, H = 230, ctx = setupCanvas(cv, W, H);
+    var beltY = 146, bx1 = 46, bx2 = 614;
+    var boxX = 262, boxW = 136, boxY = 58, boxH = 104;
+    M.phase += 0.35;
+    belt(ctx, bx1, boxX - 10, beltY, M.phase);
+    belt(ctx, boxX + boxW + 10, bx2, beltY, M.phase);
+    var glow = (prog > 0.42 && prog < 0.62) ? 1 : 0;
+    machineBox(ctx, boxX, boxY, boxW, boxH, ruleLabel !== undefined ? ruleLabel : ruleText(M.rule), glow);
+    cText(ctx, '넣는 수 □', bx1 + 50, beltY + 36, 14, '#8E7E66');
+    cText(ctx, '나오는 수 △', bx2 - 56, beltY + 36, 14, '#8E7E66');
+    if(prog !== null && inVal !== null){
+      var mr = 21, my = beltY - mr - 2;
+      if(prog < 0.45){
+        var x = bx1 + 26 + (boxX - 26 - (bx1 + 26)) * (prog / 0.45);
+        marble(ctx, x, my, mr, String(inVal), '#4D96FF');
+      }else if(prog < 0.62){
+        cText(ctx, '⚙️', boxX + boxW / 2, boxY + boxH / 2 + 34, 20, '#C2410C');
+      }else{
+        var q = (prog - 0.62) / 0.38;
+        var x2 = boxX + boxW + 26 + (bx2 - 30 - (boxX + boxW + 26)) * q;
+        marble(ctx, x2, my, mr, hidden ? '?' : num(outVal), '#3BB273');
+      }
+    }
+    // 받침 접시
+    ctx.save();
+    ctx.fillStyle = '#E8DCC4';
+    roundRect(ctx, bx2 - 54, beltY + 48, 60, 14, 6); ctx.fill();
+    ctx.restore();
+  }
+  function ruleEqHTML(r){
+    return '△ = ' + ruleText(r);
+  }
+  function readRule(){
+    M.rule = {
+      op1: document.getElementById('op1').value,
+      n1: +document.getElementById('n1').value,
+      op2: document.getElementById('op2').value,
+      n2: +document.getElementById('n2').value
+    };
+    document.getElementById('n2').disabled = (M.rule.op2 === 'none');
+    document.getElementById('ruleEq').textContent = ruleEqHTML(M.rule);
+    updMach();
+    drawMach(null, null, null, false);
+  }
+  function renderTable(el, rows, showDiff, hiddenOut){
+    var tb = document.getElementById(el);
+    clear(tb);
+    var h = T('tr');
+    ['□ (넣은 수)', '△ (나온 수)'].forEach(function(s){ h.appendChild(T('th', null, s)); });
+    if(showDiff) h.appendChild(T('th', null, '앞과의 차'));
+    tb.appendChild(h);
+    rows.forEach(function(r, i){
+      var tr = T('tr');
+      tr.appendChild(T('td', null, String(r.x)));
+      tr.appendChild(T('td', i === rows.length - 1 ? 'new' : null,
+        hiddenOut ? '?' : num(r.y)));
+      if(showDiff){
+        var d = (i > 0 && !hiddenOut) ? num(r.y - rows[i - 1].y) : '';
+        tr.appendChild(T('td', 'dif', d === '' ? '' : (r.y - rows[i - 1].y >= 0 ? '+' : '') + d));
+      }
+      tb.appendChild(tr);
+    });
+  }
+  function updMach(){
+    renderTable('tblMain', M.rows, M.showDiff, false);
+    document.getElementById('machEq').innerHTML =
+      '<span class="b-col">□</span> ' + OPS[M.rule.op1] + ' ' + M.rule.n1 +
+      (M.rule.op2 !== 'none' ? ' ' + OPS[M.rule.op2] + ' ' + M.rule.n2 : '') +
+      ' = <span class="g-col">△</span>';
+    var st = document.getElementById('machStep');
+    if(M.rows.length >= 2){
+      var sorted = M.rows.slice().sort(function(a, b){ return a.x - b.x; });
+      var consecutive = [], ok = true;
+      for(var i = 1; i < sorted.length; i++){
+        if(sorted[i].x - sorted[i - 1].x === 1) consecutive.push(sorted[i].y - sorted[i - 1].y);
+      }
+      if(consecutive.length){
+        var all = consecutive.every(function(d){ return Math.abs(d - consecutive[0]) < 1e-9; });
+        st.innerHTML = all
+          ? '□가 <b>1씩</b> 커질 때 △는 <b>' + num(consecutive[0]) + '씩</b> 커져요 → 곱하는 수 : <b>' +
+            num(consecutive[0]) + '</b>'
+          : '□가 1씩 커질 때 변화가 일정하지 않아요. 곱셈·나눗셈이 섞인 규칙일 수 있어요.';
+      }else{
+        st.innerHTML = '□를 <b>이어지는 수</b>(예: 1, 2, 3)로 넣어 보면 규칙이 더 잘 보여요.';
+      }
+    }else{
+      st.innerHTML = '수를 두 개 이상 넣어 보세요.';
+    }
+  }
+  function dropMarble(x, opts){
+    opts = opts || {};
+    var rule = opts.rule || M.rule;
+    var y = applyRule(x, rule);
+    var cvId = opts.cv || 'cvMach';
+    var label = opts.label;
+    stopAnim(opts.key || 'mach');
+    animate(opts.key || 'mach', 1500, function(p){
+      drawMach(p, x, y, false, cvId, label);
+    }, function(){
+      drawMach(1, x, y, false, cvId, label);
+      if(opts.after) opts.after(x, y);
+    });
+  }
+  (function(){
+    var pad = document.getElementById('padMain');
+    for(var i = 0; i <= 10; i++){
+      (function(v){
+        var b = T('button', null, String(v));
+        b.addEventListener('click', function(){
+          dropMarble(v, {after: function(xx, yy){
+            M.rows.push({x:xx, y:yy});
+            if(M.rows.length > 40) M.rows.shift();
+            updMach();
+          }});
+        });
+        pad.appendChild(b);
+      })(i);
+    }
+  })();
+  ['op1', 'n1', 'op2', 'n2'].forEach(function(id){
+    document.getElementById(id).addEventListener('change', readRule);
+    document.getElementById(id).addEventListener('input', readRule);
+  });
+  document.getElementById('btnClear').addEventListener('click', function(){
+    M.rows = []; updMach();
+  });
+  document.getElementById('btnDiff').addEventListener('click', function(){
+    M.showDiff = !M.showDiff; updMach();
+  });
+  document.getElementById('btnAuto').addEventListener('click', function(){
+    M.rows = []; updMach();
+    var i = 1;
+    (function next(){
+      if(i > 6) return;
+      dropMarble(i, {after: function(xx, yy){
+        M.rows.push({x:xx, y:yy}); updMach(); i++; setTimeout(next, 120);
+      }});
+    })();
+  });
+  readRule();
+
+  /* ================= ② 블랙박스 ================= */
+  var BB = {rule:null, rows:[], tries:0, solved:0, best:null};
+  function randRule(){
+    var ops = ['*', '+'];
+    var o1 = Math.random() < 0.65 ? '*' : '+';
+    var n1 = o1 === '*' ? (2 + Math.floor(Math.random() * 5)) : (1 + Math.floor(Math.random() * 9));
+    var hasSecond = Math.random() < 0.75;
+    var o2 = Math.random() < 0.6 ? '+' : '-';
+    var n2 = 1 + Math.floor(Math.random() * 9);
+    if(o1 === '+') { hasSecond = Math.random() < 0.3; }
+    return {op1:o1, n1:n1, op2: hasSecond ? o2 : 'none', n2:n2};
+  }
+  function newBox(){
+    BB.rule = randRule(); BB.rows = []; BB.tries = 0;
+    document.getElementById('guessBox').style.display = 'none';
+    document.getElementById('bbFeed').textContent = '';
+    document.querySelectorAll('#padBlack button').forEach(function(b){
+      b.classList.remove('used'); b.disabled = false;
+    });
+    drawMach(null, null, null, true, 'cvBlack', '? ? ?');
+    renderTable('tblBlack', BB.rows, true, false);
+    updBB();
+  }
+  function updBB(){
+    var hint = document.getElementById('bbHint');
+    if(BB.rows.length === 0)
+      hint.innerHTML = '🔍 <b>작전을 세워 보세요.</b> 0을 넣으면 "더하는 수"를 바로 알 수 있고, ' +
+        '1씩 늘려 가며 넣으면 "곱하는 수"를 알 수 있어요.';
+    else if(BB.rows.length === 1)
+      hint.innerHTML = '한 번 더 넣어 보세요. <b>바로 다음 수</b>를 넣으면 얼마씩 커지는지 보여요.';
+    else
+      hint.innerHTML = '표의 <b>앞과의 차</b>를 보세요. 일정하다면 그 값이 <b>곱하는 수</b>예요. ' +
+        '그 다음 더하거나 빼는 수를 찾으면 끝!';
+    var sc = document.getElementById('bbScore');
+    clear(sc);
+    var p1 = T('span', 'pill'); p1.innerHTML = '넣어 본 횟수 <b>' + BB.tries + '</b>';
+    var p2 = T('span', 'pill g'); p2.innerHTML = '맞힌 상자 <b>' + BB.solved + '</b>';
+    sc.appendChild(p1); sc.appendChild(p2);
+    if(BB.best !== null){
+      var p3 = T('span', 'pill b'); p3.innerHTML = '최소 횟수 기록 <b>' + BB.best + '</b>';
+      sc.appendChild(p3);
+    }
+  }
+  (function(){
+    var pad = document.getElementById('padBlack');
+    for(var i = 0; i <= 10; i++){
+      (function(v){
+        var b = T('button', null, String(v));
+        b.addEventListener('click', function(){
+          if(b.disabled) return;
+          b.classList.add('used'); b.disabled = true;
+          BB.tries++;
+          dropMarble(v, {rule:BB.rule, cv:'cvBlack', key:'bb', label:'? ? ?',
+            after: function(xx, yy){
+              BB.rows.push({x:xx, y:yy});
+              BB.rows.sort(function(a, b2){ return a.x - b2.x; });
+              renderTable('tblBlack', BB.rows, true, false);
+              updBB();
+            }});
+        });
+        pad.appendChild(b);
+      })(i);
+    }
+  })();
+  document.getElementById('btnNewBox').addEventListener('click', newBox);
+  document.getElementById('btnGuess').addEventListener('click', function(){
+    var box = document.getElementById('guessBox');
+    box.style.display = 'grid';
+    clear(box);
+    var right = ruleText(BB.rule);
+    var opts = [right];
+    var guard = 0;
+    while(opts.length < 4 && guard < 80){
+      guard++;
+      var r2 = randRule();
+      var s = ruleText(r2);
+      // 실제로 값이 다른 규칙만 오답으로
+      var differs = [0, 1, 2, 3].some(function(t){
+        return Math.abs(applyRule(t, r2) - applyRule(t, BB.rule)) > 1e-9;
+      });
+      if(differs && opts.indexOf(s) === -1) opts.push(s);
+    }
+    opts.sort(function(){ return Math.random() - 0.5; });
+    opts.forEach(function(s){
+      var b = T('button', null, '△ = ' + s);
+      b.addEventListener('click', function(){
+        var all = box.querySelectorAll('button');
+        all.forEach(function(x){ x.disabled = true; });
+        var ok = (s === right);
+        b.classList.add(ok ? 'right' : 'wrong');
+        if(!ok) all.forEach(function(x){ if(x.textContent === '△ = ' + right) x.classList.add('right'); });
+        if(ok){
+          BB.solved++;
+          if(BB.best === null || BB.tries < BB.best) BB.best = BB.tries;
+          document.getElementById('bbFeed').innerHTML =
+            '🎉 정답! <b>△ = ' + right + '</b> — ' + BB.tries + '번 만에 찾았어요!';
+        }else{
+          document.getElementById('bbFeed').innerHTML =
+            '💡 정답은 <b>△ = ' + right + '</b> 였어요. 표의 차를 다시 살펴볼까요?';
+        }
+        drawMach(null, null, null, false, 'cvBlack', right);
+        updBB();
+        setTimeout(newBox, 3200);
+      });
+      box.appendChild(b);
+    });
+  });
+  newBox();
+
+  /* ================= ③ 표에서 식 찾기 ================= */
+  var TB = {a:3, b:2, xs:[1,2,3,4,5], revealed:false};
+  function newTable(){
+    TB.a = 2 + Math.floor(Math.random() * 5);
+    TB.b = Math.floor(Math.random() * 11) - 3;
+    TB.xs = [1,2,3,4,5];
+    TB.revealed = false;
+    drawStair();
+    buildTableGuess();
+    document.getElementById('tblFeed').textContent = '';
+  }
+  function drawStair(){
+    var svg = document.getElementById('svgStair');
+    clear(svg);
+    var xs = TB.xs, ys = xs.map(function(x){ return TB.a * x + TB.b; });
+    var x0 = 70, cw = 104, y0 = 44, rh = 44;
+    // 표 그리기
+    svg.appendChild(txt(x0 - 14, y0 + rh / 2, '□', {anchor:'end', size:18, fill:'#2F72D8'}));
+    svg.appendChild(txt(x0 - 14, y0 + rh * 1.5, '△', {anchor:'end', size:18, fill:'#3BB273'}));
+    xs.forEach(function(x, i){
+      var cx = x0 + i * cw;
+      [0, 1].forEach(function(r){
+        svg.appendChild(S('rect', {x:cx, y:y0 + r * rh, width:cw, height:rh,
+          fill: r === 0 ? '#DFEBFF' : '#DFF3E7', stroke:'#C9B48C', 'stroke-width':1.8}));
+      });
+      svg.appendChild(txt(cx + cw / 2, y0 + rh / 2, String(x), {size:19, fill:'#2F72D8'}));
+      svg.appendChild(txt(cx + cw / 2, y0 + rh * 1.5, String(ys[i]), {size:19, fill:'#1E6B45'}));
+    });
+    // 차이 화살표 (계단)
+    for(var i = 0; i < xs.length - 1; i++){
+      var cxA = x0 + i * cw + cw / 2, cxB = x0 + (i + 1) * cw + cw / 2;
+      var yy = y0 + rh * 2 + 26;
+      svg.appendChild(S('path', {d:'M ' + cxA + ' ' + yy + ' Q ' + ((cxA + cxB) / 2) + ' ' +
+        (yy + 26) + ' ' + cxB + ' ' + yy, fill:'none', stroke:'#9B72CF', 'stroke-width':2}));
+      svg.appendChild(txt((cxA + cxB) / 2, yy + 32, '+' + TB.a, {size:15, fill:'#7B52AF'}));
+      // 위쪽 □ 차이
+      svg.appendChild(S('path', {d:'M ' + cxA + ' ' + (y0 - 10) + ' Q ' + ((cxA + cxB) / 2) + ' ' +
+        (y0 - 30) + ' ' + cxB + ' ' + (y0 - 10), fill:'none', stroke:'#8E7E66',
+        'stroke-width':1.6, 'stroke-dasharray':'4 3'}));
+      svg.appendChild(txt((cxA + cxB) / 2, y0 - 32, '+1', {size:13, fill:'#8E7E66'}));
+    }
+    svg.appendChild(txt(330, 214, '□가 1씩 커질 때 △는 ' + TB.a + '씩 커져요 → 곱하는 수 : ' +
+      TB.a, {size:15, fill:'#7B52AF'}));
+    if(TB.revealed){
+      svg.appendChild(txt(330, 238, '△ = □ × ' + TB.a + (TB.b === 0 ? '' :
+        (TB.b > 0 ? ' + ' + TB.b : ' − ' + (-TB.b))), {size:18, fill:'#1E6B45'}));
+    }
+    var eq = document.getElementById('stairEq');
+    eq.innerHTML = TB.revealed
+      ? '△ = <span class="b-col">□</span> × <span class="v-col">' + TB.a + '</span>' +
+        (TB.b === 0 ? '' : (TB.b > 0 ? ' + <span class="o-col">' + TB.b + '</span>'
+                                     : ' − <span class="o-col">' + (-TB.b) + '</span>'))
+      : '△ = <span class="b-col">□</span> × <span class="v-col">?</span> ...';
+    document.getElementById('stairStep').innerHTML = TB.revealed
+      ? '① 차가 ' + TB.a + ' → × ' + TB.a + ' &nbsp;·&nbsp; ② □=1일 때 △는 ' + (TB.a + TB.b) +
+        ', 1×' + TB.a + '=' + TB.a + ' 이니 ' + (TB.b >= 0 ? TB.b + '을 더해요' : (-TB.b) + '를 빼요')
+      : '① 차를 보고 곱하는 수를 찾고 ② 나머지를 맞춰요';
+  }
+  function buildTableGuess(){
+    var box = document.getElementById('tableGuess');
+    clear(box);
+    function fmt(a, b){
+      return '△ = □ × ' + a + (b === 0 ? '' : (b > 0 ? ' + ' + b : ' − ' + (-b)));
+    }
+    var right = fmt(TB.a, TB.b);
+    var opts = [right];
+    var cands = [[TB.a, TB.b + 1], [TB.a + 1, TB.b], [TB.a, -TB.b], [TB.a - 1, TB.b + 2],
+                 [TB.a + 1, TB.b - 1], [TB.a, TB.b - 2]];
+    for(var i = 0; i < cands.length && opts.length < 4; i++){
+      var s = fmt(cands[i][0], cands[i][1]);
+      if(cands[i][0] >= 1 && opts.indexOf(s) === -1) opts.push(s);
+    }
+    opts.sort(function(){ return Math.random() - 0.5; });
+    opts.forEach(function(s){
+      var b = T('button', null, s);
+      b.addEventListener('click', function(){
+        var all = box.querySelectorAll('button');
+        all.forEach(function(x){ x.disabled = true; });
+        var ok = (s === right);
+        b.classList.add(ok ? 'right' : 'wrong');
+        if(!ok) all.forEach(function(x){ if(x.textContent === right) x.classList.add('right'); });
+        TB.revealed = true; drawStair();
+        document.getElementById('tblFeed').innerHTML = (ok ? '🎉 정답! ' : '💡 ') +
+          '□가 1씩 커질 때 △가 ' + TB.a + '씩 커지므로 곱하는 수 ' + TB.a + ', ' +
+          '□=1에서 맞추면 ' + (TB.b >= 0 ? '+ ' + TB.b : '− ' + (-TB.b)) + ' 입니다.';
+        setTimeout(newTable, 3000);
+      });
+      box.appendChild(b);
+    });
+  }
+  document.getElementById('btnNewTable').addEventListener('click', newTable);
+  document.getElementById('btnReveal').addEventListener('click', function(){
+    TB.revealed = true; drawStair();
+  });
+  newTable();
+
+  /* ================= ④ 도형 패턴 ================= */
+  // 선분 중복을 없애며 그리는 도우미 (성냥개비 수를 정확히 세기 위함)
+  function segKey(p, q){
+    var a = p[0].toFixed(2) + ',' + p[1].toFixed(2), b = q[0].toFixed(2) + ',' + q[1].toFixed(2);
+    return a < b ? a + '|' + b : b + '|' + a;
+  }
+  function triStripSegs(n, s){
+    var h = s * Math.sqrt(3) / 2, map = {};
+    for(var k = 0; k < n; k++){
+      var base = Math.floor(k / 2) * s, pts;
+      if(k % 2 === 0) pts = [[base, 0], [base + s, 0], [base + s / 2, -h]];
+      else pts = [[base + s / 2, -h], [base + 3 * s / 2, -h], [base + s, 0]];
+      for(var i = 0; i < 3; i++){
+        var p = pts[i], q = pts[(i + 1) % 3];
+        map[segKey(p, q)] = [p, q];
+      }
+    }
+    return Object.keys(map).map(function(k2){ return map[k2]; });
+  }
+  function sqStripSegs(n, s){
+    var map = {};
+    for(var k = 0; k < n; k++){
+      var x = k * s;
+      var pts = [[x, 0], [x + s, 0], [x + s, -s], [x, -s]];
+      for(var i = 0; i < 4; i++){
+        var p = pts[i], q = pts[(i + 1) % 4];
+        map[segKey(p, q)] = [p, q];
+      }
+    }
+    return Object.keys(map).map(function(k2){ return map[k2]; });
+  }
+  var PATS = [
+    {id:'tri', name:'🔺 삼각형 띠', unit:'성냥개비', a:2, b:1,
+     count:function(n){ return 2 * n + 1; },
+     segs:function(n, s){ return triStripSegs(n, s); },
+     why:'삼각형 1개는 성냥 3개, 하나 늘 때마다 <b>2개씩</b> 늘어요.'},
+    {id:'sq', name:'⬛ 정사각형 띠', unit:'성냥개비', a:3, b:1,
+     count:function(n){ return 3 * n + 1; },
+     segs:function(n, s){ return sqStripSegs(n, s); },
+     why:'정사각형 1개는 성냥 4개, 하나 늘 때마다 <b>3개씩</b> 늘어요.'},
+    {id:'dot', name:'🔵 네모 테두리 점', unit:'점', a:4, b:-4,
+     count:function(n){ return n < 2 ? 1 : 4 * n - 4; },
+     dots:true,
+     why:'한 변에 점이 n개인 네모 테두리예요. 꼭짓점이 두 번 세어지니 <b>4n − 4</b>.'},
+    {id:'stair', name:'🪜 계단 쌓기 (심화)', unit:'블록', a:null, b:null,
+     count:function(n){ return n * (n + 1) / 2; },
+     stair:true,
+     why:'1+2+3+…+n 이에요. 두 개를 붙이면 n×(n+1) 직사각형이 되니 <b>n(n+1)÷2</b>.'}
+  ];
+  var PT = {i:0, n:4};
+  (function(){
+    var box = document.getElementById('patPick');
+    PATS.forEach(function(p, i){
+      var b = T('button', i === 0 ? 'on' : '', p.name);
+      b.addEventListener('click', function(){
+        PT.i = i;
+        document.querySelectorAll('#patPick button').forEach(function(x, j){
+          x.classList.toggle('on', j === i);
+        });
+        drawPat();
+      });
+      box.appendChild(b);
+    });
+  })();
+  function drawPat(){
+    var p = PATS[PT.i], n = PT.n;
+    var svg = document.getElementById('svgPat');
+    clear(svg);
+    document.getElementById('patNv').textContent = n;
+    if(p.segs){
+      var s = Math.min(58, 520 / (p.id === 'tri' ? (n / 2 + 1) : n));
+      var segs = p.segs(n, s);
+      var xs = [], ys = [];
+      segs.forEach(function(sg){ xs.push(sg[0][0], sg[1][0]); ys.push(sg[0][1], sg[1][1]); });
+      var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs);
+      var minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
+      var ox = 330 - (minX + maxX) / 2, oy = 118 - (minY + maxY) / 2;
+      segs.forEach(function(sg){
+        svg.appendChild(S('line', {x1:sg[0][0] + ox, y1:sg[0][1] + oy,
+          x2:sg[1][0] + ox, y2:sg[1][1] + oy, stroke:'#C2410C', 'stroke-width':5,
+          'stroke-linecap':'round'}));
+      });
+      segs.forEach(function(sg){
+        [sg[0], sg[1]].forEach(function(pt){
+          svg.appendChild(S('circle', {cx:pt[0] + ox, cy:pt[1] + oy, r:3, fill:'#7A3E12'}));
+        });
+      });
+      svg.appendChild(txt(330, 200, p.unit + ' ' + segs.length + '개', {size:17, fill:'#C2410C'}));
+    }else if(p.dots){
+      // 가로뿐 아니라 세로로도 들어가도록 간격을 정합니다 (설명 글 자리 150px 확보)
+      var n2 = Math.max(2, n), gap = Math.min(42, 150 / (n2 - 1), 300 / (n2 - 1));
+      var r = Math.min(9, gap * 0.26);
+      var w = (n2 - 1) * gap, ox2 = 330 - w / 2, oy2 = 118 - w / 2;
+      var cnt = 0;
+      for(var i = 0; i < n2; i++) for(var j = 0; j < n2; j++){
+        if(i === 0 || j === 0 || i === n2 - 1 || j === n2 - 1){
+          svg.appendChild(S('circle', {cx:ox2 + j * gap, cy:oy2 + i * gap, r:r, fill:'#2F72D8'}));
+          cnt++;
+        }
+      }
+      svg.appendChild(txt(330, 206, '한 변에 ' + n2 + '개 · 점 ' + cnt + '개', {size:17, fill:'#2F72D8'}));
+    }else{
+      var bw = Math.min(34, 260 / n), bh = Math.min(22, 150 / n);
+      var tot = 0;
+      for(var row = 0; row < n; row++){
+        var cntRow = row + 1;
+        var sx = 330 - cntRow * bw / 2;
+        for(var c = 0; c < cntRow; c++){
+          svg.appendChild(S('rect', {x:sx + c * bw, y:40 + row * bh, width:bw - 2, height:bh - 2,
+            rx:3, fill:'#DFF3E7', stroke:'#3BB273', 'stroke-width':1.6}));
+          tot++;
+        }
+      }
+      svg.appendChild(txt(330, 206, '블록 ' + tot + '개', {size:17, fill:'#1E6B45'}));
+    }
+    // 표
+    var tb = document.getElementById('tblPat');
+    clear(tb);
+    var h1 = T('tr'), h2 = T('tr'), h3 = T('tr');
+    h1.appendChild(T('th', null, '몇 번째 (n)'));
+    h2.appendChild(T('th', null, p.unit + ' 수'));
+    h3.appendChild(T('th', null, '앞과의 차'));
+    for(var k = 1; k <= Math.max(6, n); k++){
+      if(k > 8) break;
+      h1.appendChild(T('td', k === n ? 'new' : null, String(k)));
+      h2.appendChild(T('td', k === n ? 'new' : null, String(p.count(k))));
+      h3.appendChild(T('td', 'dif', k === 1 ? '' : '+' + (p.count(k) - p.count(k - 1))));
+    }
+    tb.appendChild(h1); tb.appendChild(h2); tb.appendChild(h3);
+    var eq = document.getElementById('patEq');
+    if(p.id === 'tri') eq.innerHTML = '개수 = <span class="b-col">n</span> × <span class="v-col">2</span> + <span class="o-col">1</span>';
+    else if(p.id === 'sq') eq.innerHTML = '개수 = <span class="b-col">n</span> × <span class="v-col">3</span> + <span class="o-col">1</span>';
+    else if(p.id === 'dot') eq.innerHTML = '개수 = <span class="b-col">n</span> × <span class="v-col">4</span> − <span class="o-col">4</span>';
+    else eq.innerHTML = '개수 = <span class="b-col">n</span> × (<span class="b-col">n</span> + 1) ÷ <span class="v-col">2</span>';
+    document.getElementById('patStep').innerHTML =
+      'n = ' + n + ' 일 때 ' + p.unit + ' <b>' + p.count(n) + '개</b>' +
+      (p.a !== null ? ' &nbsp;·&nbsp; 100번째라면 ' + p.count(100) + '개!' :
+       ' &nbsp;·&nbsp; 100번째라면 ' + p.count(100) + '개!');
+    document.getElementById('patNote').innerHTML = '💡 ' + p.why;
+  }
+  document.getElementById('patN').addEventListener('input', function(e){
+    PT.n = +e.target.value; drawPat();
+  });
+  drawPat();
+
+  /* ================= ⑤ 상자 잇기 · 코드 ================= */
+  var CH = {op1:'*', n1:2, op2:'+', n2:3, lang:'py', last:null};
+  function readChain(){
+    CH.op1 = document.getElementById('cOp1').value;
+    CH.n1 = +document.getElementById('cN1').value;
+    CH.op2 = document.getElementById('cOp2').value;
+    CH.n2 = +document.getElementById('cN2').value;
+    drawChain(null, null);
+    updChain(); updCode();
+  }
+  function drawChain(prog, inVal){
+    var cv = document.getElementById('cvChain');
+    var W = 660, H = 220, ctx = setupCanvas(cv, W, H);
+    var beltY = 138;
+    var b1x = 176, b2x = 400, bw = 110, by = 56, bh = 90;
+    M.phase += 0.3;
+    belt(ctx, 40, b1x - 10, beltY, M.phase);
+    belt(ctx, b1x + bw + 10, b2x - 10, beltY, M.phase);
+    belt(ctx, b2x + bw + 10, 620, beltY, M.phase);
+    var g1 = (prog !== null && prog > 0.26 && prog < 0.40) ? 1 : 0;
+    var g2 = (prog !== null && prog > 0.62 && prog < 0.76) ? 1 : 0;
+    machineBox(ctx, b1x, by, bw, bh, '□ ' + OPS[CH.op1] + ' ' + CH.n1, g1, '#FF8A3D');
+    machineBox(ctx, b2x, by, bw, bh, '□ ' + OPS[CH.op2] + ' ' + CH.n2, g2, '#4D96FF');
+    cText(ctx, '1번 상자', b1x + bw / 2, by + bh + 18, 13, '#B08050');
+    cText(ctx, '2번 상자', b2x + bw / 2, by + bh + 18, 13, '#6B8FC9');
+    if(prog !== null && inVal !== null){
+      var mid = apply1(inVal, CH.op1, CH.n1);
+      var out = apply1(mid, CH.op2, CH.n2);
+      var mr = 20, my = beltY - mr - 2;
+      if(prog < 0.26) marble(ctx, 66 + (b1x - 30 - 66) * (prog / 0.26), my, mr, String(inVal), '#4D96FF');
+      else if(prog < 0.40) cText(ctx, '⚙️', b1x + bw / 2, by + bh / 2 + 30, 18, '#C2410C');
+      else if(prog < 0.62){
+        var q = (prog - 0.40) / 0.22;
+        marble(ctx, b1x + bw + 26 + (b2x - 30 - (b1x + bw + 26)) * q, my, mr, num(mid), '#FF8A3D');
+      }
+      else if(prog < 0.76) cText(ctx, '⚙️', b2x + bw / 2, by + bh / 2 + 30, 18, '#2F72D8');
+      else{
+        var q2 = (prog - 0.76) / 0.24;
+        marble(ctx, b2x + bw + 26 + (600 - (b2x + bw + 26)) * q2, my, mr, num(out), '#3BB273');
+      }
+    }
+    cText(ctx, '넣는 수', 70, beltY + 32, 13, '#8E7E66');
+    cText(ctx, '나오는 수', 596, beltY + 32, 13, '#8E7E66');
+  }
+  function updChain(){
+    var x = 5;
+    var mid = apply1(x, CH.op1, CH.n1), out = apply1(mid, CH.op2, CH.n2);
+    var swapMid = apply1(x, CH.op2, CH.n2), swapOut = apply1(swapMid, CH.op1, CH.n1);
+    document.getElementById('chainEq').innerHTML =
+      '(□ ' + OPS[CH.op1] + ' ' + CH.n1 + ') ' + OPS[CH.op2] + ' ' + CH.n2 +
+      ' &nbsp;→&nbsp; □=' + x + ' 이면 ' + x + ' → <span class="o-col">' + num(mid) +
+      '</span> → <span class="g-col">' + num(out) + '</span>';
+    document.getElementById('chainStep').innerHTML =
+      '순서를 바꾸면 : (□ ' + OPS[CH.op2] + ' ' + CH.n2 + ') ' + OPS[CH.op1] + ' ' + CH.n1 +
+      ' → ' + x + ' → ' + num(swapMid) + ' → <span class="b-col">' + num(swapOut) + '</span>';
+    var same = Math.abs(out - swapOut) < 1e-9;
+    var nt = document.getElementById('chainNote');
+    nt.className = 'note ' + (same ? 'ok' : 'warn');
+    nt.innerHTML = same
+      ? '✅ 이 경우에는 순서를 바꿔도 결과가 같네요! (두 상자가 모두 더하기이거나 모두 곱하기일 때 그래요)'
+      : '⚠️ 순서를 바꾸니 <b>' + num(out) + '</b> 과 <b>' + num(swapOut) + '</b> 으로 달라졌어요! ' +
+        '그래서 식을 쓸 때 <b>괄호와 순서</b>가 중요합니다.';
+  }
+  function updCode(){
+    var box = document.getElementById('codeBox');
+    var expr = 'x ' + (CH.op1 === '*' ? '*' : CH.op1) + ' ' + CH.n1;
+    expr = '(' + expr + ') ' + (CH.op2 === '*' ? '*' : CH.op2) + ' ' + CH.n2;
+    var rows = [];
+    for(var x = 1; x <= 5; x++){
+      rows.push(x + ' → ' + num(apply1(apply1(x, CH.op1, CH.n1), CH.op2, CH.n2)));
+    }
+    if(CH.lang === 'py'){
+      box.innerHTML =
+        '<span class="cm"># 규칙 상자 = 함수</span>\n' +
+        '<span class="kw">def</span> <span class="fn">rule</span>(x):\n' +
+        '    <span class="kw">return</span> ' + expr + '\n\n' +
+        '<span class="cm"># 컨베이어 벨트 = 반복문</span>\n' +
+        '<span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>' +
+        '(<span class="num">1</span>, <span class="num">6</span>):\n' +
+        '    <span class="fn">print</span>(x, <span class="fn">rule</span>(x))';
+    }else{
+      box.innerHTML =
+        '<span class="cm">// 규칙 상자 = 함수</span>\n' +
+        '<span class="kw">int</span> <span class="fn">rule</span>(<span class="kw">int</span> x) {\n' +
+        '    <span class="kw">return</span> ' + expr + ';\n}\n\n' +
+        '<span class="cm">// 컨베이어 벨트 = 반복문</span>\n' +
+        '<span class="kw">for</span> (<span class="kw">int</span> x = <span class="num">1</span>; ' +
+        'x &lt;= <span class="num">5</span>; x++)\n' +
+        '    <span class="fn">printf</span>("%d %d\\n", x, <span class="fn">rule</span>(x));';
+    }
+    document.getElementById('codeOut').innerHTML =
+      '실행 결과 : ' + rows.join(' &nbsp;·&nbsp; ') + ' — 위 표와 똑같아요!';
+  }
+  ['cOp1', 'cN1', 'cOp2', 'cN2'].forEach(function(id){
+    document.getElementById(id).addEventListener('change', readChain);
+    document.getElementById(id).addEventListener('input', readChain);
+  });
+  document.getElementById('btnChain').addEventListener('click', function(){
+    stopAnim('chain');
+    var x = 1 + Math.floor(Math.random() * 9);
+    animate('chain', 2400, function(p){ drawChain(p, x); },
+      function(){ drawChain(1, x); });
+  });
+  document.getElementById('btnSwap').addEventListener('click', function(){
+    var o = CH.op1, n = CH.n1;
+    document.getElementById('cOp1').value = CH.op2 === 'none' ? '*' : CH.op2;
+    document.getElementById('cN1').value = CH.n2;
+    document.getElementById('cOp2').value = o;
+    document.getElementById('cN2').value = n;
+    readChain();
+  });
+  segPick('langPick', function(d){ CH.lang = d.l; updCode(); });
+  readChain();
+
+  /* ================= ⑥ 인쇄 ================= */
+  var OPTS = [
+    {id:'table', label:'표 완성하고 식 쓰기', desc:'대응표 빈칸 채우기 8문제', on:true},
+    {id:'pattern', label:'도형 패턴', desc:'그림을 보고 n번째 구하기 6문제', on:true},
+    {id:'word', label:'생활 속 규칙', desc:'문장을 읽고 식 세우기 8문제', on:true},
+    {id:'answer', label:'정답지', desc:'정답과 풀이', on:true}
+  ];
+  var optState = {}, PB = {table:[], pattern:[], word:[]};
+  (function(){
+    var box = document.getElementById('optList');
+    OPTS.forEach(function(o){
+      optState[o.id] = o.on;
+      var lab = T('label', 'opt');
+      var inp = document.createElement('input');
+      inp.type = 'checkbox'; inp.checked = o.on;
+      inp.addEventListener('change', function(){ optState[o.id] = inp.checked; buildPrint(); });
+      lab.appendChild(inp);
+      var tx = T('div');
+      tx.appendChild(T('b', null, o.label));
+      tx.appendChild(T('span', null, o.desc));
+      lab.appendChild(tx);
+      box.appendChild(lab);
+    });
+  })();
+  var WORDS = [
+    {t:'세발자전거 □대의 바퀴 수 △', a:3, b:0},
+    {t:'한 봉지에 사탕 5개씩 □봉지의 사탕 수 △', a:5, b:0},
+    {t:'한 변이 □cm인 정사각형의 둘레 △cm', a:4, b:0},
+    {t:'의자 □개를 한 줄로 놓을 때 필요한 다리 수 △ (의자 다리 4개)', a:4, b:0},
+    {t:'색종이를 한 명에게 2장씩 주고 3장이 남을 때, □명일 때 전체 △장', a:2, b:3},
+    {t:'기본요금 1000원에 1km마다 500원씩 더하는 요금 (□km일 때 △백 원 단위로 500·□+1000)', a:500, b:1000},
+    {t:'탁자 1개에 6명, 탁자를 □개 이어 붙이면 앉을 수 있는 사람 수 △ (옆면 4명씩 + 양끝 2명)', a:4, b:2},
+    {t:'성냥개비로 삼각형 □개를 이어 만들 때 성냥개비 수 △', a:2, b:1},
+    {t:'한 상자에 공책 8권, □상자에서 2권을 뺀 수 △', a:8, b:-2},
+    {t:'1층에 계단 12칸, □층까지 올라갈 때 오른 계단 수 △', a:12, b:0}
+  ];
+  function pick(a){ return a[Math.floor(Math.random() * a.length)]; }
+  function makeProbs(){
+    PB.table = [];
+    while(PB.table.length < 8){
+      var a = 2 + Math.floor(Math.random() * 6);
+      var b = Math.floor(Math.random() * 9) - 2;
+      PB.table.push({a:a, b:b, hide: 3 + Math.floor(Math.random() * 2)});
+    }
+    PB.pattern = [];
+    var used = {};
+    while(PB.pattern.length < 6){
+      var p = PATS[Math.floor(Math.random() * 3)];   // 심화(계단)는 제외
+      var n = 2 + Math.floor(Math.random() * 4);
+      var ask = 10 + Math.floor(Math.random() * 41);
+      var key = p.id + n + ask;
+      if(used[key]) continue;
+      used[key] = 1;
+      PB.pattern.push({id:p.id, n:n, ask:ask});
+    }
+    PB.word = WORDS.slice().sort(function(){ return Math.random() - 0.5; }).slice(0, 8)
+      .map(function(w){ return {t:w.t, a:w.a, b:w.b, ask: 3 + Math.floor(Math.random() * 8)}; });
+  }
+  function patOf(id){ return PATS.filter(function(p){ return p.id === id; })[0]; }
+  function patSVG(q, w, h){
+    var p = patOf(q.id);
+    var s2 = S('svg', {viewBox:'0 0 ' + w + ' ' + h});
+    if(p.segs){
+      var s = Math.min(30, (w - 30) / (q.id === 'tri' ? (q.n / 2 + 1) : q.n));
+      var segs = p.segs(q.n, s);
+      var xs = [], ys = [];
+      segs.forEach(function(sg){ xs.push(sg[0][0], sg[1][0]); ys.push(sg[0][1], sg[1][1]); });
+      var ox = w / 2 - (Math.min.apply(null, xs) + Math.max.apply(null, xs)) / 2;
+      var oy = h / 2 - (Math.min.apply(null, ys) + Math.max.apply(null, ys)) / 2;
+      segs.forEach(function(sg){
+        s2.appendChild(S('line', {x1:sg[0][0] + ox, y1:sg[0][1] + oy, x2:sg[1][0] + ox,
+          y2:sg[1][1] + oy, stroke:'#111', 'stroke-width':2.6, 'stroke-linecap':'round'}));
+      });
+    }else{
+      var n2 = Math.max(2, q.n), gap = Math.min(20, (h - 20) / (n2 - 1 || 1)), r = 3.4;
+      var ww = (n2 - 1) * gap, ox2 = w / 2 - ww / 2, oy2 = h / 2 - ww / 2;
+      for(var i = 0; i < n2; i++) for(var j = 0; j < n2; j++)
+        if(i === 0 || j === 0 || i === n2 - 1 || j === n2 - 1)
+          s2.appendChild(S('circle', {cx:ox2 + j * gap, cy:oy2 + i * gap, r:r, fill:'#111'}));
+    }
+    return s2;
+  }
+  function pHead(title, withName){
+    var h = T('div', 'p-head');
+    h.appendChild(T('h2', null, title));
+    var m = T('div', 'meta');
+    if(withName !== false) m.appendChild(T('div', null, '이름 : ____________   날짜 : ____ / ____'));
+    m.appendChild(T('div', null, '세영코딩연구소  저자 : 컴퓨터공학박사 KIM'));
+    h.appendChild(m);
+    return h;
+  }
+  function pFoot(s){
+    var f = T('div', 'p-foot');
+    f.appendChild(T('span', null, s));
+    f.appendChild(T('span', null, '세영코딩연구소  저자 : 컴퓨터공학박사 KIM'));
+    return f;
+  }
+  function buildPrint(){
+    var area = document.getElementById('printArea');
+    clear(area);
+    if(optState.table){
+      var pg = T('div', 'page');
+      pg.appendChild(pHead('표를 완성하고 식을 쓰세요'));
+      var g = T('div', 'p-grid');
+      g.style.gridTemplateColumns = 'repeat(2,1fr)';
+      PB.table.forEach(function(q, i){
+        var it = T('div', 'p-item');
+        it.appendChild(T('div', 'no', (i + 1) + '. 빈칸을 채우고 □와 △의 관계를 식으로 쓰세요.'));
+        var tbl = T('table', 'pt');
+        var r1 = T('tr'), r2 = T('tr');
+        r1.appendChild(T('th', null, '□'));
+        r2.appendChild(T('th', null, '△'));
+        [1,2,3,4,5,6].forEach(function(x, k){
+          r1.appendChild(T('td', null, String(x)));
+          r2.appendChild(T('td', null, k >= q.hide ? '' : String(q.a * x + q.b)));
+        });
+        tbl.appendChild(r1); tbl.appendChild(r2);
+        it.appendChild(tbl);
+        var row = T('div', 'no');
+        row.appendChild(document.createTextNode('식 : △ = '));
+        row.appendChild(T('span', 'blank', ' '));
+        it.appendChild(row);
+        g.appendChild(it);
+      });
+      pg.appendChild(g);
+      pg.appendChild(pFoot('□가 1씩 커질 때 △가 얼마씩 커지는지 먼저 보세요'));
+      area.appendChild(pg);
+    }
+    if(optState.pattern){
+      var pg2 = T('div', 'page');
+      pg2.appendChild(pHead('도형 패턴 — n번째 구하기'));
+      var g2 = T('div', 'p-grid');
+      g2.style.gridTemplateColumns = 'repeat(2,1fr)';
+      PB.pattern.forEach(function(q, i){
+        var p = patOf(q.id);
+        var it = T('div', 'p-item');
+        it.appendChild(T('div', 'no', (i + 1) + '. 아래는 ' + q.n + '번째 모양입니다. ' +
+          q.ask + '번째의 ' + p.unit + ' 수는?'));
+        it.appendChild(patSVG(q, 250, 76));
+        var row = T('div', 'no');
+        row.appendChild(document.createTextNode('식 : '));
+        row.appendChild(T('span', 'blank', ' '));
+        row.appendChild(document.createTextNode(' 답 : '));
+        row.appendChild(T('span', 'blank', ' '));
+        it.appendChild(row);
+        g2.appendChild(it);
+      });
+      pg2.appendChild(g2);
+      pg2.appendChild(pFoot('몇 개씩 늘어나는지 세어 n번째 식을 세워요'));
+      area.appendChild(pg2);
+    }
+    if(optState.word){
+      var pg3 = T('div', 'page');
+      pg3.appendChild(pHead('생활 속 규칙 — 식으로 나타내기'));
+      var g3 = T('div', 'p-grid');
+      g3.style.gridTemplateColumns = '1fr';
+      PB.word.forEach(function(q, i){
+        var it = T('div', 'p-item');
+        it.appendChild(T('div', 'no', (i + 1) + '. ' + q.t));
+        var row = T('div', 'no');
+        row.appendChild(document.createTextNode('식 : △ = '));
+        row.appendChild(T('span', 'blank', ' '));
+        row.appendChild(document.createTextNode('     □ = ' + q.ask + ' 일 때 △ = '));
+        row.appendChild(T('span', 'blank', ' '));
+        it.appendChild(row);
+        g3.appendChild(it);
+      });
+      pg3.appendChild(g3);
+      pg3.appendChild(pFoot('□ 하나에 얼마씩 늘어나는지 찾아 식을 세워요'));
+      area.appendChild(pg3);
+    }
+    if(optState.answer){
+      var pg4 = T('div', 'page');
+      pg4.appendChild(pHead('정답지', false));
+      var l = T('div', 'p-list');
+      l.appendChild(T('div', null, '■ 표 완성하고 식 쓰기'));
+      PB.table.forEach(function(q, i){
+        var vals = [1,2,3,4,5,6].map(function(x){ return q.a * x + q.b; });
+        l.appendChild(T('div', null, (i + 1) + ') △ = □ × ' + q.a +
+          (q.b === 0 ? '' : (q.b > 0 ? ' + ' + q.b : ' − ' + (-q.b))) +
+          '  (표: ' + vals.join(', ') + ')'));
+      });
+      l.appendChild(T('div', null, '■ 도형 패턴'));
+      PB.pattern.forEach(function(q, i){
+        var p = patOf(q.id);
+        var f = q.id === 'tri' ? 'n×2+1' : (q.id === 'sq' ? 'n×3+1' : 'n×4−4');
+        l.appendChild(T('div', null, (i + 1) + ') ' + f + ' → ' + q.ask + '번째 = ' +
+          p.count(q.ask) + p.unit.replace('성냥개비', '개').replace('점', '개')));
+      });
+      l.appendChild(T('div', null, '■ 생활 속 규칙'));
+      PB.word.forEach(function(q, i){
+        l.appendChild(T('div', null, (i + 1) + ') △ = □ × ' + q.a +
+          (q.b === 0 ? '' : (q.b > 0 ? ' + ' + q.b : ' − ' + (-q.b))) +
+          ' , □=' + q.ask + ' → ' + (q.a * q.ask + q.b)));
+      });
+      pg4.appendChild(l);
+      pg4.appendChild(pFoot('규칙을 식으로 쓰면 몇 번째든 바로 구할 수 있어요'));
+      area.appendChild(pg4);
+    }
+    if(!area.children.length){
+      var pg5 = T('div', 'page');
+      pg5.appendChild(pHead('규칙과 대응 학습지'));
+      pg5.appendChild(T('p', null, '인쇄할 항목을 하나 이상 선택해 주세요.'));
+      area.appendChild(pg5);
+    }
+  }
+  document.getElementById('btnShuffle').addEventListener('click', function(){ makeProbs(); buildPrint(); });
+  document.getElementById('btnPrint').addEventListener('click', function(){ window.print(); });
+  makeProbs(); buildPrint();
+
+  /* 검증용 */
+  window.__rm = {
+    applyRule:applyRule, ruleText:ruleText, PATS:PATS,
+    setRule: function(o1, a, o2, b){
+      document.getElementById('op1').value = o1;
+      document.getElementById('n1').value = a;
+      document.getElementById('op2').value = o2;
+      document.getElementById('n2').value = b;
+      readRule();
+      return {eq: document.getElementById('ruleEq').textContent, rule: M.rule};
+    },
+    feed: function(xs){
+      M.rows = xs.map(function(x){ return {x:x, y:applyRule(x, M.rule)}; });
+      updMach();
+      return Array.prototype.map.call(document.querySelectorAll('#tblMain tr'), function(tr){
+        return Array.prototype.map.call(tr.children, function(c){ return c.textContent; });
+      });
+    },
+    patCount: function(id, n){ return patOf(id).count(n); },
+    patSegs: function(id, n){
+      var p = patOf(id);
+      return p.segs ? p.segs(n, 30).length : null;
+    },
+    setPat: function(id, n){
+      var i = PATS.map(function(p){ return p.id; }).indexOf(id);
+      PT.i = i; PT.n = n; drawPat();
+      return {eq: document.getElementById('patEq').textContent,
+              step: document.getElementById('patStep').textContent,
+              table: Array.prototype.map.call(document.querySelectorAll('#tblPat tr'), function(tr){
+                return Array.prototype.map.call(tr.children, function(c){ return c.textContent; }); })};
+    },
+    setTable: function(a, b){ TB.a = a; TB.b = b; TB.revealed = true; drawStair(); buildTableGuess();
+      return {eq: document.getElementById('stairEq').textContent,
+              step: document.getElementById('stairStep').textContent}; },
+    bbRule: function(){ return BB.rule; },
+    newBox: newBox,
+    setChain: function(o1, a, o2, b){
+      document.getElementById('cOp1').value = o1; document.getElementById('cN1').value = a;
+      document.getElementById('cOp2').value = o2; document.getElementById('cN2').value = b;
+      readChain();
+      return {eq: document.getElementById('chainEq').textContent,
+              step: document.getElementById('chainStep').textContent,
+              note: document.getElementById('chainNote').textContent,
+              code: document.getElementById('codeBox').textContent,
+              out: document.getElementById('codeOut').textContent};
+    },
+    probs: function(){ return PB; },
+    ink: function(id){
+      var cv = document.getElementById(id), c2 = cv.getContext('2d');
+      var d = c2.getImageData(0, 0, cv.width, cv.height).data, n = 0;
+      for(var i = 3; i < d.length; i += 4) if(d[i] > 10) n++;
+      return n;
+    },
+    drawMach: drawMach
+  };
+})();
+</script>
+</body>
+</html>
