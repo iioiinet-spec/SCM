@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>초등 수학 개념 교재 — 8단원</title>
+<style>
+:root{--ink:#24262B;--soft:#6A6E76;--line:#D9DCE1;--bg:#F6F5F2;--acc:#C25A12;
+      --blue:#2F5FA8;--green:#2A7A4F;--red:#B23A2E;--warm:#FBF3E8}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:'Pretendard','Noto Sans KR','Malgun Gothic',system-ui,sans-serif;
+  font-size:15.5px;line-height:1.75;word-break:keep-all}
+
+/* ── 상단 바 ── */
+.bar{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line);
+  padding:9px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.brand{font-weight:800;font-size:15px;letter-spacing:-.2px}
+.brand small{display:block;font-weight:500;font-size:11px;color:var(--soft);letter-spacing:0}
+.spacer{flex:1}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:#fff;color:var(--ink);padding:7px 18px;font-size:14px;
+  font-weight:700;cursor:pointer;font-family:inherit}
+.seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+.btn{border:1.5px solid var(--line);background:#fff;border-radius:8px;padding:7px 14px;
+  font-size:13.5px;cursor:pointer;font-family:inherit;color:var(--ink);font-weight:600}
+.btn:hover{border-color:var(--ink)}
+select{font-family:inherit;font-size:13.5px;padding:7px 10px;border-radius:8px;
+  border:1.5px solid var(--line);background:#fff;color:var(--ink);font-weight:600}
+
+/* ── 지면 ── */
+.wrap{max-width:860px;margin:0 auto;padding:22px 16px 80px}
+.cover{background:#fff;border:1px solid var(--line);border-radius:14px;padding:44px 38px;
+  margin-bottom:26px;text-align:center}
+.cover h1{font-size:30px;margin:0 0 6px;letter-spacing:-.6px}
+.cover .sub{color:var(--soft);font-size:15px;margin-bottom:22px}
+.cover .modetag{display:inline-block;border:1.5px solid var(--ink);border-radius:999px;
+  padding:4px 16px;font-size:13px;font-weight:700;margin-bottom:22px}
+.toc{text-align:left;max-width:560px;margin:0 auto;border-top:1px solid var(--line)}
+.toc a{display:flex;gap:12px;padding:9px 4px;border-bottom:1px solid var(--line);
+  text-decoration:none;color:var(--ink);font-size:14.5px}
+.toc a:hover{background:var(--warm)}
+.toc .n{color:var(--acc);font-weight:800;min-width:24px}
+.toc .g{margin-left:auto;color:var(--soft);font-size:12.5px;white-space:nowrap}
+.byline{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);
+  color:var(--soft);font-size:12.5px}
+
+.unit{background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:34px 36px;margin-bottom:26px}
+.uhead{border-bottom:2.5px solid var(--ink);padding-bottom:14px;margin-bottom:22px}
+.uno{color:var(--acc);font-weight:800;font-size:13px;letter-spacing:1px}
+.uhead h2{font-size:24px;margin:3px 0 6px;letter-spacing:-.5px;line-height:1.35}
+.umeta{color:var(--soft);font-size:13px}
+
+h3{font-size:17.5px;margin:30px 0 10px;letter-spacing:-.3px;
+  padding-left:11px;border-left:4px solid var(--acc)}
+h4{font-size:15px;margin:20px 0 8px;color:var(--ink)}
+p{margin:9px 0}
+ul,ol{margin:9px 0;padding-left:22px}
+li{margin:5px 0}
+b{font-weight:700}
+
+.goals{background:var(--warm);border-radius:10px;padding:16px 20px 16px 8px}
+.goals h3{margin:0 0 6px;border-left-color:var(--acc);font-size:15px}
+.goals ul{margin:0;padding-left:30px}
+
+.eq{background:#F4F5F7;border-radius:8px;padding:13px 16px;margin:13px 0;
+  text-align:center;font-size:17px;font-weight:600;letter-spacing:.3px}
+
+.fig{margin:18px 0;text-align:center}
+.figbox{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px}
+.figbox svg{width:100%;height:auto;display:block}
+figcaption{color:var(--soft);font-size:12.5px;margin-top:7px}
+
+.box{border-radius:10px;padding:14px 18px;margin:16px 0;border-left:5px solid}
+.box h4{margin:0 0 5px;font-size:14px}
+.box ul{margin:0;padding-left:19px}
+.box li{margin:3px 0}
+.box.key{background:#EEF4FB;border-color:var(--blue)}
+.box.key h4{color:var(--blue)}
+.box.tip{background:#EDF7F1;border-color:var(--green)}
+.box.tip h4{color:var(--green)}
+.box.warn{background:#FDF0EE;border-color:var(--red)}
+.box.warn h4{color:var(--red)}
+
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+th,td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+th{background:#F1F2F4;font-weight:700}
+.flow td.tm{width:62px;font-weight:700;color:var(--acc);white-space:nowrap}
+.mis th:first-child,.mis td:first-child{width:42%}
+
+.keybox{background:#FFF8EC;border:1.5px solid #E8C99A;border-radius:10px;
+  padding:16px 20px 16px 8px;margin:22px 0}
+.keybox h3{margin:0 0 6px;border-left-color:var(--acc);font-size:16px}
+.keybox ul{margin:0;padding-left:30px}
+
+.ex{border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0}
+.exq{font-size:15px}
+.steps{margin:8px 0 8px;padding-left:22px;color:var(--soft);font-size:14px}
+.exa{background:#EDF7F1;border-radius:7px;padding:6px 12px;display:inline-block;
+  font-weight:700;color:var(--green);font-size:14.5px}
+
+.plist{counter-reset:none;padding-left:24px}
+.plist li{margin:0 0 4px;padding:6px 0}
+.pq{font-size:15px}
+.pwrite{height:30px;border-bottom:1px dashed #CBCFD5;margin:7px 0 2px}
+.pa{background:#EDF7F1;border-radius:6px;padding:4px 11px;display:inline-block;
+  font-size:13.5px;font-weight:700;color:var(--green);margin-top:3px}
+
+.tsec{margin-top:30px;border-top:3px double var(--ink);padding-top:8px}
+.thead{border-left-color:var(--blue);color:var(--blue)}
+.ask li{margin:5px 0}
+.link{background:#EEF4FB;border-radius:9px;padding:12px 16px;font-size:14px}
+.fname{color:var(--soft);font-size:12.5px}
+
+/* 학생용일 때 교사 전용 숨김 */
+body.student .tonly{display:none !important}
+
+/* ── 인쇄 ── */
+@media print{
+  @page{size:A4 portrait;margin:14mm 13mm}
+  html,body{background:#fff;font-size:10.6pt;line-height:1.62}
+  .bar,.noprint{display:none !important}
+  .wrap{max-width:none;padding:0;margin:0}
+  .cover{border:0;border-radius:0;padding:0 0 10mm;page-break-after:always}
+  .unit{border:0;border-radius:0;padding:0;margin:0;page-break-after:always}
+  .unit:last-child{page-break-after:auto}
+  body.oneunit .unit{display:none}
+  body.oneunit .unit.target{display:block}
+  body.oneunit .cover{display:none}
+  h3{margin:14pt 0 5pt;font-size:12.6pt}
+  h4{margin:10pt 0 4pt;font-size:11pt}
+  .uhead h2{font-size:16.5pt}
+  .eq{font-size:12pt;padding:7pt 10pt;margin:8pt 0}
+  .figbox{padding:4pt}
+  .fig{margin:10pt 0;page-break-inside:avoid}
+  .box,.ex,.keybox,.goals,table,figure{page-break-inside:avoid}
+  .plist li{page-break-inside:avoid}
+  .tsec{page-break-before:always;border-top:0;padding-top:0}
+  .pwrite{height:26pt}
+  tr,thead{page-break-inside:avoid}
+}
+@media (max-width:640px){
+  .wrap{padding:14px 10px 60px}
+  .unit{padding:22px 16px;border-radius:10px}
+  .cover{padding:30px 18px}
+  .cover h1{font-size:23px}
+  .uhead h2{font-size:20px}
+  body{font-size:15px}
+  table{font-size:13px}
+  th,td{padding:6px 8px}
+}
+</style>
+</head><body class="student">
+
+<div class="bar noprint">
+  <div class="brand">세영코딩연구소<small>저자 : 컴퓨터공학박사 KIM</small></div>
+  <div class="spacer"></div>
+  <div class="seg" role="group" aria-label="판 선택">
+    <button id="bS" aria-pressed="true">학생용</button>
+    <button id="bT" aria-pressed="false">교사용</button>
+  </div>
+  <select id="jump" aria-label="단원 이동">
+    <option value="top">단원 선택…</option>
+    <option value="u1">1. 곱셈구구 — 구구단을 이해하고 외우기</option><option value="u2">2. 각도와 수직·평행 — 각도기를 정확히 다루기</option><option value="u3">3. 비와 비율 — 농도·속력·일의 양</option><option value="u4">4. 공약수·공배수의 활용 — 문장제 판별하기</option><option value="u5">5. 분수의 통분과 나눗셈 — 왜 뒤집어 곱할까</option><option value="u6">6. 분수를 자연수로 나누기 — 3/4 L 를 4잔에</option><option value="u7">7. 선분 모델(Bar Model) — 그림으로 푸는 문장제</option><option value="u8">8. 규칙과 대응 — 두 양의 관계를 식으로</option>
+  </select>
+  <button class="btn" id="pOne">선택 단원 인쇄</button>
+  <button class="btn" id="pAll">전체 인쇄</button>
+</div>
+
+<div class="wrap">
+  <div class="cover" id="top">
+    <h1>초등 수학 개념 교재</h1>
+    <div class="sub">읽으면서 이해하는 8단원 — 인터랙티브 학습자료 동반 교재</div>
+    <div class="modetag" id="modetag">학생용</div>
+    <div class="toc"><a href="#u1"><span class="n">1</span><span>곱셈구구 — 구구단을 이해하고 외우기</span><span class="g">초등 2~3학년</span></a><a href="#u2"><span class="n">2</span><span>각도와 수직·평행 — 각도기를 정확히 다루기</span><span class="g">초등 4학년</span></a><a href="#u3"><span class="n">3</span><span>비와 비율 — 농도·속력·일의 양</span><span class="g">초등 5~6학년</span></a><a href="#u4"><span class="n">4</span><span>공약수·공배수의 활용 — 문장제 판별하기</span><span class="g">초등 5학년 ~ 중등 1학년</span></a><a href="#u5"><span class="n">5</span><span>분수의 통분과 나눗셈 — 왜 뒤집어 곱할까</span><span class="g">초등 5~6학년</span></a><a href="#u6"><span class="n">6</span><span>분수를 자연수로 나누기 — 3/4 L 를 4잔에</span><span class="g">초등 5~6학년</span></a><a href="#u7"><span class="n">7</span><span>선분 모델(Bar Model) — 그림으로 푸는 문장제</span><span class="g">초등 3~6학년</span></a><a href="#u8"><span class="n">8</span><span>규칙과 대응 — 두 양의 관계를 식으로</span><span class="g">초등 5~6학년</span></a></div>
+    <div class="byline">세영코딩연구소 &nbsp;저자 : 컴퓨터공학박사 KIM</div>
+  </div>
+  <section class="unit" id="u1">
+<header class="uhead"><div class="uno">1단원</div><h2>곱셈구구 — 구구단을 이해하고 외우기</h2><div class="umeta">초등 2~3학년 &nbsp;·&nbsp; 곱셈구구</div></header>
+<div class="goals"><h3>학습 목표</h3><ul><li>곱셈이 ‘같은 수를 여러 번 더하는 것’임을 묶음 그림으로 설명할 수 있다.</li><li>곱셈구구를 외우고, 잊었을 때 스스로 되살리는 방법을 쓸 수 있다.</li><li>× 와 × 의 자리를 바꿔도 답이 같다는 것을 그림으로 확인할 수 있다.</li></ul></div>
+<div class="sec"><h3>곱셈은 ‘묶음 세기’예요</h3><p>사탕이 3개씩 들어 있는 봉지가 4개 있습니다. 사탕은 모두 몇 개일까요? 하나씩 세어도 되지만, 봉지마다 3개로 똑같으니 더 빠른 방법이 있습니다.</p>
+<div class="eq">3 + 3 + 3 + 3 = 12</div>
+<p>똑같은 수를 네 번 더했습니다. 이것을 짧게 쓴 것이 곱셈입니다.</p>
+<div class="eq">3 × 4 = 12</div>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 170" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="170" fill="#FFFFFF"/><text x="300" y="20" font-size="15" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3 × 4 = 12  —  3씩 4묶음</text><rect x="52" y="40" width="100" height="70" fill="none" stroke="#9A9A9A" stroke-width="1.4" rx="8"/><circle cx="74" cy="75" r="11" fill="#D9640A" stroke="none" stroke-width="1"/><circle cx="104" cy="75" r="11" fill="#D9640A" stroke="none" stroke-width="1"/><circle cx="134" cy="75" r="11" fill="#D9640A" stroke="none" stroke-width="1"/><text x="102" y="124" font-size="12" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">1묶음</text><rect x="172" y="40" width="100" height="70" fill="none" stroke="#9A9A9A" stroke-width="1.4" rx="8"/><circle cx="194" cy="75" r="11" fill="#D9640A" stroke="none" stroke-width="1"/><circle cx="224" cy="75" r="11" fill="#D9640A" stroke="none" stroke-width="1"/><circle cx="254" cy="75" r="11" fill="#D9640A" stroke="none" stroke-width="1"/><text x="222" y="124" font-size="12" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">2묶음</text><rect x="292" y="40" width="100" height="70" fill="none" stroke="#9A9A9A" stroke-width="1.4" rx="8"/><circle cx="314" cy="75" r="11" fill="#D9640A" stroke="none" stroke-width="1"/><circle cx="344" cy="75" r="11" fill="#D9640A" stroke="none" stroke-width="1"/><circle cx="374" cy="75" r="11" fill="#D9640A" stroke="none" stroke-width="1"/><text x="342" y="124" font-size="12" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3묶음</text><rect x="412" y="40" width="100" height="70" fill="none" stroke="#9A9A9A" stroke-width="1.4" rx="8"/><circle cx="434" cy="75" r="11" fill="#D9640A" stroke="none" stroke-width="1"/><circle cx="464" cy="75" r="11" fill="#D9640A" stroke="none" stroke-width="1"/><circle cx="494" cy="75" r="11" fill="#D9640A" stroke="none" stroke-width="1"/><text x="462" y="124" font-size="12" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">4묶음</text><text x="300" y="152" font-size="14" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3 + 3 + 3 + 3 = 12  →  짧게 쓰면  3 × 4 = 12</text></svg></div><figcaption>3씩 4묶음 = 3 × 4 = 12</figcaption></figure>
+<aside class="box key"><h4>읽는 법</h4><ul><li>3 × 4 는 “삼 곱하기 사”라고 읽습니다.</li><li>뜻은 “3씩 4묶음”입니다. 묶음 속의 수가 앞, 묶음의 개수가 뒤입니다.</li></ul></aside></div>
+<div class="sec"><h3>자리를 바꿔도 답은 같아요</h3><p>3 × 4 와 4 × 3 은 뜻이 다릅니다. 3씩 4묶음과 4씩 3묶음이니까요. 그런데 답을 세어 보면 둘 다 12입니다. 네모 칸을 그려 보면 이유가 바로 보입니다.</p>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 178" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="178" fill="#FFFFFF"/><text x="300" y="18" font-size="15" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3 × 4 와 4 × 3 은 답이 같아요</text><rect x="60" y="40" width="24" height="24" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.2" rx="3"/><rect x="86" y="40" width="24" height="24" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.2" rx="3"/><rect x="112" y="40" width="24" height="24" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.2" rx="3"/><rect x="138" y="40" width="24" height="24" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.2" rx="3"/><rect x="60" y="66" width="24" height="24" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.2" rx="3"/><rect x="86" y="66" width="24" height="24" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.2" rx="3"/><rect x="112" y="66" width="24" height="24" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.2" rx="3"/><rect x="138" y="66" width="24" height="24" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.2" rx="3"/><rect x="60" y="92" width="24" height="24" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.2" rx="3"/><rect x="86" y="92" width="24" height="24" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.2" rx="3"/><rect x="112" y="92" width="24" height="24" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.2" rx="3"/><rect x="138" y="92" width="24" height="24" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.2" rx="3"/><text x="112" y="134" font-size="13" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3줄 × 4칸</text><text x="300" y="90" font-size="22" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">=</text><rect x="380" y="40" width="24" height="24" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.2" rx="3"/><rect x="406" y="40" width="24" height="24" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.2" rx="3"/><rect x="432" y="40" width="24" height="24" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.2" rx="3"/><rect x="380" y="66" width="24" height="24" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.2" rx="3"/><rect x="406" y="66" width="24" height="24" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.2" rx="3"/><rect x="432" y="66" width="24" height="24" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.2" rx="3"/><rect x="380" y="92" width="24" height="24" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.2" rx="3"/><rect x="406" y="92" width="24" height="24" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.2" rx="3"/><rect x="432" y="92" width="24" height="24" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.2" rx="3"/><rect x="380" y="118" width="24" height="24" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.2" rx="3"/><rect x="406" y="118" width="24" height="24" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.2" rx="3"/><rect x="432" y="118" width="24" height="24" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.2" rx="3"/><text x="419" y="160" font-size="13" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">4줄 × 3칸</text><text x="300" y="120" font-size="14" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">둘 다 12</text></svg></div><figcaption>같은 칸을 가로로 보느냐 세로로 보느냐의 차이일 뿐</figcaption></figure>
+<aside class="box tip"><h4>외울 때 절반만 외워도 됩니다</h4><ul><li>7 × 3 이 생각나지 않으면 3 × 7 을 떠올려도 답이 같습니다.</li><li>그래서 구구단 81칸 중 실제로 새로 외울 것은 45칸뿐입니다.</li></ul></aside></div>
+<div class="sec"><h3>잊었을 때 되살리는 세 가지 방법</h3><ol><li><b>한 칸 앞에서 더하기</b> — 7 × 6 을 잊었다면 7 × 5 = 35 를 떠올리고 7을 더해 42.</li><li><b>한 칸 뒤에서 빼기</b> — 9 × 7 은 10 × 7 = 70 에서 7을 빼서 63.</li><li><b>반으로 나누기</b> — 8 × 6 은 4 × 6 = 24 의 두 배인 48.</li></ol>
+<p>이렇게 되살릴 줄 알면, 급할 때 막히지 않습니다. 외우는 것과 되살리는 것을 둘 다 익혀 두세요.</p>
+<aside class="box warn"><h4>자주 틀리는 곳</h4><ul><li>6 × 7 = 42 와 6 × 8 = 48 을 서로 바꿔 말하는 일이 많습니다.</li><li>7 × 8 = 56 은 가장 많이 틀리는 칸입니다. “오륙은 오십육(5·6→56)”으로 묶어 기억해 보세요.</li></ul></aside></div>
+<div class="sec"><h3>단마다 숨은 규칙</h3><table><thead><tr><th>단</th><th>규칙</th><th>예</th></tr></thead><tbody><tr><td>2단</td><td>모두 짝수, 2씩 커짐</td><td>2, 4, 6, 8, 10 …</td></tr><tr><td>5단</td><td>일의 자리가 5, 0 반복</td><td>5, 10, 15, 20 …</td></tr><tr><td>9단</td><td>십의 자리는 1씩 커지고 일의 자리는 1씩 작아짐</td><td>09, 18, 27, 36 …</td></tr><tr><td>9단</td><td>두 자리 수를 더하면 언제나 9</td><td>27 → 2+7=9</td></tr><tr><td>4단</td><td>2단을 두 번 더한 것</td><td>4×7 = (2×7)+(2×7) = 28</td></tr></tbody></table></div>
+<div class="keybox"><h3>핵심 정리</h3><ul><li>곱셈 = 같은 수를 여러 번 더한 것을 짧게 쓴 식</li><li>3 × 4 는 ‘3씩 4묶음’, 답은 12</li><li>앞뒤를 바꿔도 답은 같다 (3 × 4 = 4 × 3)</li><li>잊으면 한 칸 앞에서 더하거나 한 칸 뒤에서 빼서 되살린다</li></ul></div>
+<div class="sec"><h3>예제</h3>
+<div class="ex"><div class="exq"><b>예제 1</b> 연필이 한 다스에 12자루입니다. 6 × 2 를 이용해 한 다스가 12자루인 까닭을 설명하세요.</div><ol class="steps"><li>6자루씩 2묶음 → 6 + 6 = 12</li><li>짧게 쓰면 6 × 2 = 12</li></ol><div class="exa">답 &nbsp;6자루씩 2묶음이므로 6 × 2 = 12자루</div></div>
+<div class="ex"><div class="exq"><b>예제 2</b> 8 × 7 을 잊었습니다. 8 × 6 = 48 을 이용해 구하세요.</div><ol class="steps"><li>8 × 7 은 8 × 6 보다 8이 한 번 더 많다</li><li>48 + 8 = 56</li></ol><div class="exa">답 &nbsp;56</div></div>
+<div class="ex"><div class="exq"><b>예제 3</b> 바퀴가 4개인 자동차 9대의 바퀴는 모두 몇 개입니까?</div><ol class="steps"><li>4개씩 9묶음 → 4 × 9</li><li>4 × 9 = 36</li></ol><div class="exa">답 &nbsp;36개</div></div>
+</div>
+<div class="sec probs"><h3>연습 문제</h3><ol class="plist">
+<li><div class="pq">6 × 4 를 덧셈식으로 바꿔 쓰고 답을 구하세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;6+6+6+6 = 24</div></li>
+<li><div class="pq">7 × 5 = 35 입니다. 7 × 6 은 얼마입니까? 까닭도 쓰세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;42 (7이 한 번 더 많으므로 35+7)</div></li>
+<li><div class="pq">9 × 8 의 답에서 십의 자리 수와 일의 자리 수를 더하면 얼마입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;9 (72 → 7+2=9)</div></li>
+<li><div class="pq">□ × 6 = 48 입니다. □ 에 알맞은 수는?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;8</div></li>
+<li><div class="pq">사탕 5개씩 들어 있는 상자 7개와, 낱개 사탕 3개가 있습니다. 사탕은 모두 몇 개입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;38개 (5×7=35, 35+3=38)</div></li>
+<li><div class="pq">3 × 8 과 답이 같은 곱셈식을 하나 더 쓰세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;8 × 3 (또는 4×6, 6×4, 2×12 등 24가 되는 식)</div></li>
+</ol></div>
+<div class="tsec tonly">
+<h3 class="thead">교사용 지도 자료</h3>
+<h4>수업 흐름 (40분 기준)</h4><table class="flow"><tbody><tr><td class='tm'>5분</td><td>도입 — 사탕 봉지 그림으로 ‘하나씩 세기 vs 묶음 세기’ 비교. 묶음이 빠르다는 체감이 먼저.</td></tr><tr><td class='tm'>10분</td><td>전개 1 — 묶음 그림 → 덧셈식 → 곱셈식 순서로 세 번 연결. 식을 먼저 주지 않는다.</td></tr><tr><td class='tm'>10분</td><td>전개 2 — 네모 칸 배열로 교환법칙 확인. 종이를 돌려 보게 하면 효과가 크다.</td></tr><tr><td class='tm'>10분</td><td>전개 3 — 되살리기 세 가지 방법 연습. ‘모르면 앞 칸에서 더한다’를 구호처럼.</td></tr><tr><td class='tm'>5분</td><td>정리 — 오늘 가장 어려웠던 칸 한 개를 각자 쓰고 짝에게 설명하기.</td></tr></tbody></table>
+<h4>자주 나오는 오개념과 처방</h4><table class="mis"><thead><tr><th>학생이 보이는 생각</th><th>어떻게 다룰까</th></tr></thead><tbody><tr><td>3 × 4 를 ‘3과 4를 더한다’로 받아들임</td><td>묶음 그림으로 돌아가 “봉지가 몇 개? 한 봉지에 몇 개?”를 다시 묻는다. 식보다 상황이 먼저.</td></tr><tr><td>교환법칙을 ‘뜻도 같다’로 오해</td><td>답은 같지만 상황은 다르다는 점을 분명히 한다. 3명에게 4개씩과 4명에게 3개씩은 다른 장면이다.</td></tr><tr><td>구구단을 소리로만 외워 거꾸로 묻면 막힘</td><td>“48은 몇 곱하기 몇?”처럼 답에서 식을 찾는 질문을 섞는다.</td></tr><tr><td>0단·1단을 건너뜀</td><td>0 × 5 = 0 은 ‘0개씩 5묶음’이라는 상황으로 짚어 준다. 나중 분수·대수에서 발목을 잡는 자리.</td></tr></tbody></table>
+<h4>수업 중 던질 발문</h4><ul class="ask"><li>이 그림에서 묶음은 몇 개이고, 한 묶음에는 몇 개가 있나요?</li><li>덧셈식으로 쓰면 어떻게 되나요? 그걸 곱셈식으로 바꿔 볼까요?</li><li>3 × 4 와 4 × 3 은 왜 답이 같을까요? 칸 그림으로 설명해 보세요.</li><li>7 × 8 이 생각나지 않을 때, 어떤 식에서 출발하면 좋을까요?</li><li>답이 36이 되는 곱셈식을 모두 찾아볼까요?</li></ul>
+<h4>평가 관점</h4><ul><li>묶음 그림 → 덧셈식 → 곱셈식으로 스스로 옮길 수 있는가</li><li>교환법칙을 그림으로 설명할 수 있는가 (외운 말이 아니라)</li><li>막힌 칸을 되살리는 방법을 하나 이상 쓰는가</li></ul>
+<h4>인터랙티브 자료 연계</h4><p class="link">인터랙티브 자료에서는 구구단 표의 칸을 누르면 묶음 그림이 함께 나타나고 소리로 읽어 줍니다. 되살리기 연습은 ‘한 칸 앞/뒤’ 버튼으로 바로 확인시켜 주세요.<br><span class="fname">파일 : 구구단_인터랙티브_학습자료.html</span></p>
+</div>
+</section>
+<section class="unit" id="u2">
+<header class="uhead"><div class="uno">2단원</div><h2>각도와 수직·평행 — 각도기를 정확히 다루기</h2><div class="umeta">초등 4학년 &nbsp;·&nbsp; 각도 / 평면도형의 성질</div></header>
+<div class="goals"><h3>학습 목표</h3><ul><li>각도기의 중심과 밑금을 바르게 맞추어 각의 크기를 ±1°로 잴 수 있다.</li><li>안쪽 눈금과 바깥쪽 눈금 중 어느 쪽을 읽어야 하는지 스스로 판단할 수 있다.</li><li>수직과 평행의 뜻을 말로 설명하고, 평행선 사이의 거리를 수직으로 잰다.</li></ul></div>
+<div class="sec"><h3>각의 크기는 ‘벌어진 정도’</h3><p>각의 크기는 두 변이 얼마나 벌어졌는지를 나타냅니다. 변의 길이와는 상관이 없습니다. 변을 길게 늘여 그려도 각의 크기는 그대로입니다.</p>
+<p>직각을 똑같이 90으로 나눈 것 중 하나가 1도(1°)입니다. 그래서 직각은 90°, 두 직각을 붙인 평평한 각(직선)은 180°입니다.</p>
+<aside class="box key"><h4>꼭 기억할 기준각</h4><ul><li>직각 = 90°   ·   직선(평각) = 180°   ·   한 바퀴 = 360°</li><li>90°보다 작으면 예각, 90°와 180° 사이면 둔각</li></ul></aside></div>
+<div class="sec"><h3>각도기 바르게 놓는 세 단계</h3><ol><li>각도기의 <b>중심</b>을 각의 <b>꼭짓점</b>에 정확히 맞춘다.</li><li>각도기의 <b>밑금</b>을 각의 <b>한 변</b>에 딱 겹친다.</li><li>그 변이 <b>0</b>을 가리키는 쪽 눈금을 따라, 다른 변이 닿은 수를 읽는다.</li></ol>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 280" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="280" fill="#FFFFFF"/><text x="300" y="20" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">각도기 읽기 — 한 변이 0에 놓인 쪽 눈금을 따라간다</text><path d="M 142 212 A 158 158 0 0 1 458 212 Z" fill="none" stroke="#2B2B2B" stroke-width="1.6"/><line x1="142" y1="212" x2="458" y2="212" stroke="#2B2B2B" stroke-width="1.6"/><line x1="442" y1="212" x2="456" y2="212" stroke="#2B2B2B" stroke-width="1.3"/><line x1="448.433" y1="199.014" x2="455.406" y2="198.404" stroke="#9A9A9A" stroke-width="0.7"/><line x1="439.843" y1="187.342" x2="453.63" y2="184.911" stroke="#2B2B2B" stroke-width="1.3"/><line x1="443.923" y1="173.436" x2="450.684" y2="171.624" stroke="#9A9A9A" stroke-width="0.7"/><line x1="433.436" y1="163.433" x2="446.592" y2="158.645" stroke="#2B2B2B" stroke-width="1.3"/><line x1="435.04" y1="149.03" x2="441.384" y2="146.072" stroke="#9A9A9A" stroke-width="0.7"/><line x1="422.976" y1="141" x2="435.1" y2="134" stroke="#2B2B2B" stroke-width="1.3"/><text x="412.583" y="147" font-size="10" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">150</text><text x="395.263" y="157" font-size="10" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">30</text><line x1="422.054" y1="126.537" x2="427.788" y2="122.522" stroke="#9A9A9A" stroke-width="0.7"/><line x1="408.778" y1="120.724" x2="419.503" y2="111.725" stroke="#2B2B2B" stroke-width="1.3"/><line x1="405.359" y1="106.641" x2="410.309" y2="101.691" stroke="#9A9A9A" stroke-width="0.7"/><line x1="391.276" y1="103.222" x2="400.275" y2="92.4971" stroke="#2B2B2B" stroke-width="1.3"/><line x1="385.463" y1="89.9463" x2="389.478" y2="84.2123" stroke="#9A9A9A" stroke-width="0.7"/><line x1="371" y1="89.0244" x2="378" y2="76.9" stroke="#2B2B2B" stroke-width="1.3"/><text x="365" y="99.4167" font-size="10" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">120</text><text x="355" y="116.737" font-size="10" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">60</text><line x1="362.97" y1="76.9601" x2="365.928" y2="70.616" stroke="#9A9A9A" stroke-width="0.7"/><line x1="348.567" y1="78.5636" x2="353.355" y2="65.408" stroke="#2B2B2B" stroke-width="1.3"/><line x1="338.564" y1="68.0771" x2="340.376" y2="61.3156" stroke="#9A9A9A" stroke-width="0.7"/><line x1="324.658" y1="72.1573" x2="327.089" y2="58.37" stroke="#2B2B2B" stroke-width="1.3"/><line x1="312.986" y1="63.567" x2="313.596" y2="56.5936" stroke="#9A9A9A" stroke-width="0.7"/><line x1="300" y1="70" x2="300" y2="56" stroke="#2B2B2B" stroke-width="1.3"/><text x="300" y="82" font-size="10" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">90</text><text x="300" y="102" font-size="10" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">90</text><line x1="287.014" y1="63.567" x2="286.404" y2="56.5936" stroke="#9A9A9A" stroke-width="0.7"/><line x1="275.342" y1="72.1573" x2="272.911" y2="58.37" stroke="#2B2B2B" stroke-width="1.3"/><line x1="261.436" y1="68.0771" x2="259.624" y2="61.3156" stroke="#9A9A9A" stroke-width="0.7"/><line x1="251.433" y1="78.5636" x2="246.645" y2="65.408" stroke="#2B2B2B" stroke-width="1.3"/><line x1="237.03" y1="76.9601" x2="234.072" y2="70.616" stroke="#9A9A9A" stroke-width="0.7"/><line x1="229" y1="89.0244" x2="222" y2="76.9" stroke="#2B2B2B" stroke-width="1.3"/><text x="235" y="99.4167" font-size="10" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">60</text><text x="245" y="116.737" font-size="10" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">120</text><line x1="214.537" y1="89.9463" x2="210.522" y2="84.2123" stroke="#9A9A9A" stroke-width="0.7"/><line x1="208.724" y1="103.222" x2="199.725" y2="92.4971" stroke="#2B2B2B" stroke-width="1.3"/><line x1="194.641" y1="106.641" x2="189.691" y2="101.691" stroke="#9A9A9A" stroke-width="0.7"/><line x1="191.222" y1="120.724" x2="180.497" y2="111.725" stroke="#2B2B2B" stroke-width="1.3"/><line x1="177.946" y1="126.537" x2="172.212" y2="122.522" stroke="#9A9A9A" stroke-width="0.7"/><line x1="177.024" y1="141" x2="164.9" y2="134" stroke="#2B2B2B" stroke-width="1.3"/><text x="187.417" y="147" font-size="10" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">30</text><text x="204.737" y="157" font-size="10" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">150</text><line x1="164.96" y1="149.03" x2="158.616" y2="146.072" stroke="#9A9A9A" stroke-width="0.7"/><line x1="166.564" y1="163.433" x2="153.408" y2="158.645" stroke="#2B2B2B" stroke-width="1.3"/><line x1="156.077" y1="173.436" x2="149.316" y2="171.624" stroke="#9A9A9A" stroke-width="0.7"/><line x1="160.157" y1="187.342" x2="146.37" y2="184.911" stroke="#2B2B2B" stroke-width="1.3"/><line x1="151.567" y1="199.014" x2="144.594" y2="198.404" stroke="#9A9A9A" stroke-width="0.7"/><line x1="158" y1="212" x2="144" y2="212" stroke="#2B2B2B" stroke-width="1.3"/><text x="438" y="200" font-size="10" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">0</text><text x="418" y="200" font-size="10" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">180</text><text x="162" y="200" font-size="10" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">0</text><text x="182" y="200" font-size="10" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">180</text><line x1="291" y1="212" x2="309" y2="212" stroke="#C0392B" stroke-width="1.8"/><line x1="300" y1="203" x2="300" y2="218" stroke="#C0392B" stroke-width="1.8"/><line x1="300" y1="212" x2="480" y2="212" stroke="#2B2B2B" stroke-width="2.6"/><line x1="300" y1="212" x2="415.702" y2="74.112" stroke="#2F72D8" stroke-width="2.6"/><circle cx="415.702" cy="74.112" r="4.5" fill="#2F72D8" stroke="none" stroke-width="1"/><text x="439.702" y="70.112" font-size="15" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">50°</text><text x="488" y="214" font-size="13" fill="#2B2B2B" text-anchor="start" font-weight="normal" dominant-baseline="middle">0</text><text x="300" y="234" font-size="11" fill="#C0392B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">중심</text><text x="300" y="262" font-size="12" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">① 중심을 꼭짓점에  ② 밑금을 한 변에  ③ 그 변이 0인 쪽 눈금을 따라 읽기</text><text x="130" y="40" font-size="11" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">바깥쪽(주황) — 왼쪽 변이 0일 때</text><text x="470" y="40" font-size="11" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">안쪽(초록) — 오른쪽 변이 0일 때</text></svg></div><figcaption>밑금에 놓인 변이 0인 쪽 눈금을 따라 읽는다</figcaption></figure>
+<aside class="box warn"><h4>안쪽 눈금? 바깥쪽 눈금?</h4><ul><li>각도기에는 숫자가 두 줄 있습니다. 어느 줄을 읽을지 헷갈리는 것이 가장 흔한 실수입니다.</li><li>규칙은 하나뿐입니다 — <b>밑금에 놓인 변이 0을 가리키는 줄</b>을 읽습니다.</li><li>다 읽은 뒤에는 눈으로 확인하세요. 직각보다 좁아 보이는데 120°가 나왔다면 반대쪽 줄을 읽은 것입니다.</li></ul></aside></div>
+<div class="sec"><h3>수직과 평행</h3><p>두 직선이 만나서 이루는 각이 직각일 때, 두 직선은 <b>서로 수직</b>이라고 합니다. 한 직선에 수직인 다른 직선을 그 직선의 <b>수선</b>이라고 합니다.</p>
+<p>한 직선에 수직인 두 직선은 서로 만나지 않습니다. 이 두 직선을 <b>평행</b>하다고 하고, 평행한 두 직선을 <b>평행선</b>이라고 합니다.</p>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 206" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="206" fill="#FFFFFF"/><text x="150" y="18" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">수직 — ㄱ자로 만남</text><text x="450" y="18" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">평행 — 거리가 늘 같음</text><line x1="40" y1="110" x2="260" y2="110" stroke="#2B2B2B" stroke-width="2.4"/><line x1="150" y1="40" x2="150" y2="180" stroke="#2F72D8" stroke-width="2.4"/><polyline points="150,88 172,88 172,110" fill="none" stroke="#2E8B57" stroke-width="2"/><text x="268" y="110" font-size="13" fill="#2B2B2B" text-anchor="start" font-weight="normal" dominant-baseline="middle">가</text><text x="150" y="192" font-size="13" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">나</text><line x1="330" y1="76" x2="556" y2="52" stroke="#2B2B2B" stroke-width="2.4"/><line x1="337.181" y1="143.62" x2="563.181" y2="119.62" stroke="#2F72D8" stroke-width="2.4"/><line x1="370.68" y1="71.68" x2="377.861" y2="139.3" stroke="#2E8B57" stroke-width="1.5" stroke-dasharray="4 3"/><polyline points="371.63,80.6297 380.58,79.6793 379.63,70.7296" fill="none" stroke="#2E8B57" stroke-width="1.3"/><text x="396.861" y="107.3" font-size="10" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">같음</text><line x1="443" y1="64" x2="450.181" y2="131.62" stroke="#2E8B57" stroke-width="1.5" stroke-dasharray="4 3"/><polyline points="443.95,72.9497 452.9,71.9993 451.95,63.0496" fill="none" stroke="#2E8B57" stroke-width="1.3"/><text x="469.181" y="99.6198" font-size="10" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">같음</text><line x1="515.32" y1="56.32" x2="522.501" y2="123.94" stroke="#2E8B57" stroke-width="1.5" stroke-dasharray="4 3"/><polyline points="516.27,65.2697 525.22,64.3193 524.27,55.3696" fill="none" stroke="#2E8B57" stroke-width="1.3"/><text x="541.501" y="91.9398" font-size="10" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">같음</text><text x="566" y="52" font-size="13" fill="#2B2B2B" text-anchor="start" font-weight="normal" dominant-baseline="middle">가</text><text x="573.181" y="119.62" font-size="13" fill="#2F72D8" text-anchor="start" font-weight="normal" dominant-baseline="middle">나</text></svg></div><figcaption>수직은 직각으로 만나고, 평행선 사이의 거리는 어디서 재도 같다</figcaption></figure>
+<aside class="box key"><h4>평행선 사이의 거리</h4><ul><li>평행선 사이의 거리는 <b>수직으로</b> 잰 길이입니다. 비스듬히 재면 더 길게 나옵니다.</li><li>어디에서 재도 그 길이가 같다는 것이 평행선의 가장 중요한 성질입니다.</li></ul></aside></div>
+<div class="sec"><h3>각도를 더하고 빼기</h3><p>각도도 길이처럼 더하고 뺄 수 있습니다. 한 점에서 여러 각이 모일 때 특히 자주 씁니다.</p>
+<div class="eq">40° + 35° = 75°            180° − 55° = 125°</div>
+<p>삼각형 세 각의 크기를 모두 더하면 언제나 180°입니다. 세 각 중 두 각을 알면 나머지 한 각은 빼서 구할 수 있습니다.</p>
+<div class="eq">180° − (65° + 40°) = 75°</div></div>
+<div class="keybox"><h3>핵심 정리</h3><ul><li>각의 크기는 벌어진 정도이고, 변의 길이와 무관하다</li><li>각도기: ① 중심은 꼭짓점에 ② 밑금은 한 변에 ③ 그 변이 0인 쪽 눈금을 읽는다</li><li>수직 = 직각으로 만남 / 평행 = 만나지 않음</li><li>평행선 사이의 거리는 수직으로 재고, 어디서 재도 같다</li><li>삼각형 세 각의 합 = 180°</li></ul></div>
+<div class="sec"><h3>예제</h3>
+<div class="ex"><div class="exq"><b>예제 1</b> 각도기로 재었더니 한 변이 왼쪽 0에 놓였고 다른 변이 ‘60과 120’ 사이 눈금에 닿았습니다. 이 각은 몇 도입니까?</div><ol class="steps"><li>밑금에 놓인 변이 왼쪽 0 → 바깥쪽 눈금을 읽는다</li><li>눈으로 보니 직각보다 좁다 → 60°가 맞다</li></ol><div class="exa">답 &nbsp;60°</div></div>
+<div class="ex"><div class="exq"><b>예제 2</b> 삼각형의 두 각이 55°, 80° 입니다. 나머지 한 각은?</div><ol class="steps"><li>세 각의 합은 180°</li><li>180 − (55 + 80) = 180 − 135</li></ol><div class="exa">답 &nbsp;45°</div></div>
+<div class="ex"><div class="exq"><b>예제 3</b> 평행한 두 직선 사이의 거리를 한 곳에서 재니 6cm 였습니다. 3cm 떨어진 다른 곳에서 수직으로 재면 몇 cm 입니까?</div><ol class="steps"><li>평행선 사이의 거리는 어디서 재도 같다</li></ol><div class="exa">답 &nbsp;6cm</div></div>
+</div>
+<div class="sec probs"><h3>연습 문제</h3><ol class="plist">
+<li><div class="pq">직각을 똑같이 3으로 나눈 각 하나는 몇 도입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;30° (90÷3)</div></li>
+<li><div class="pq">125°는 예각입니까, 둔각입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;둔각 (90°보다 크고 180°보다 작음)</div></li>
+<li><div class="pq">한 직선 위의 두 각이 있습니다. 한 각이 115°이면 다른 각은?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;65° (180−115)</div></li>
+<li><div class="pq">삼각형의 세 각이 모두 같습니다. 한 각의 크기는?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;60° (180÷3)</div></li>
+<li><div class="pq">각도기로 70°를 재려고 합니다. 밑금에 놓인 변이 오른쪽 0을 가리킬 때, 안쪽과 바깥쪽 중 어느 눈금을 읽어야 합니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;오른쪽이 0인 쪽 눈금(그림에서 안쪽 눈금)</div></li>
+<li><div class="pq">직사각형에서 서로 수직인 변은 모두 몇 쌍입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;4쌍 (네 꼭짓점마다 한 쌍)</div></li>
+<li><div class="pq">평행선 사이의 거리를 비스듬히 재면 실제보다 길게 나옵니다. 그 까닭을 한 문장으로 쓰세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;거리는 수직으로 잰 길이인데, 비스듬한 선은 수직인 선보다 길기 때문</div></li>
+</ol></div>
+<div class="tsec tonly">
+<h3 class="thead">교사용 지도 자료</h3>
+<h4>수업 흐름 (40분 기준)</h4><table class="flow"><tbody><tr><td class='tm'>5분</td><td>도입 — 부채를 펴고 접으며 ‘벌어진 정도’를 눈으로 본다. 변의 길이는 그대로임을 강조.</td></tr><tr><td class='tm'>12분</td><td>전개 1 — 각도기 세 단계를 교사가 시범 → 학생이 그대로 따라 하기. 한 명씩 확인.</td></tr><tr><td class='tm'>8분</td><td>전개 2 — 안쪽/바깥쪽 판별. 일부러 반대로 읽은 답을 주고 틀린 곳을 찾게 한다.</td></tr><tr><td class='tm'>10분</td><td>전개 3 — 삼각자로 수선 긋기, 평행선 사이 거리 재기 활동.</td></tr><tr><td class='tm'>5분</td><td>정리 — ‘각도기를 바르게 놓는 세 단계’를 공책에 그림과 함께 정리.</td></tr></tbody></table>
+<h4>자주 나오는 오개념과 처방</h4><table class="mis"><thead><tr><th>학생이 보이는 생각</th><th>어떻게 다룰까</th></tr></thead><tbody><tr><td>변이 길면 각이 크다고 생각</td><td>같은 각을 변 길이만 다르게 두 개 그려 겹쳐 보인다. 종이를 포개면 바로 납득한다.</td></tr><tr><td>안쪽/바깥쪽 눈금을 아무거나 읽음</td><td>읽기 전에 “직각보다 큰가, 작은가?”를 먼저 말하게 한다. 어림이 검산이 된다.</td></tr><tr><td>각도기 중심을 변 위에 놓음</td><td>중심이 꼭짓점에서 벗어나면 몇 도가 달라지는지 직접 재서 비교시킨다.</td></tr><tr><td>평행선 사이의 거리를 비스듬히 잼</td><td>삼각자를 대고 직각 표시를 그린 뒤 재게 한다. 비스듬히 잰 값과 비교하면 차이가 보인다.</td></tr><tr><td>‘수직’과 ‘수선’을 혼동</td><td>수직은 관계(서로), 수선은 그 관계에 있는 직선 자체라고 구분해 준다.</td></tr></tbody></table>
+<h4>수업 중 던질 발문</h4><ul class="ask"><li>이 각은 직각보다 클까요, 작을까요? 재기 전에 먼저 말해 봅시다.</li><li>각도기의 중심은 어디에 놓아야 하나요? 왜 그럴까요?</li><li>밑금에 놓인 변이 몇을 가리키고 있나요? 그럼 어느 줄을 읽어야 하죠?</li><li>평행선 사이의 거리는 왜 수직으로 재야 할까요?</li><li>교실에서 서로 수직인 곳과 평행한 곳을 찾아볼까요?</li></ul>
+<h4>평가 관점</h4><ul><li>각도기를 바르게 놓고 ±1° 안으로 재는가</li><li>읽기 전에 예각/둔각을 어림하여 검산하는가</li><li>평행선 사이의 거리를 수직으로 재는가</li></ul>
+<h4>인터랙티브 자료 연계</h4><p class="link">인터랙티브 자료에서는 각도기를 끌어 돌려 보면서 중심이 어긋났을 때 값이 어떻게 달라지는지 바로 볼 수 있습니다. 안쪽/바깥쪽 눈금은 색으로 구분되어 있으니 ‘0인 쪽을 따라가기’를 손으로 짚으며 확인시켜 주세요.<br><span class="fname">파일 : 도형의측정_각도기_수직_평행.html</span></p>
+</div>
+</section>
+<section class="unit" id="u3">
+<header class="uhead"><div class="uno">3단원</div><h2>비와 비율 — 농도·속력·일의 양</h2><div class="umeta">초등 5~6학년 &nbsp;·&nbsp; 비와 비율 / 비례식</div></header>
+<div class="goals"><h3>학습 목표</h3><ul><li>비, 비율, 비의 값의 뜻을 구별하고 상황을 비례식으로 세울 수 있다.</li><li>이중수직선으로 두 양이 같은 배율로 변한다는 것을 설명할 수 있다.</li><li>농도·속력·일의 양 문제를 ‘1일 때의 값’을 기준으로 해결할 수 있다.</li></ul></div>
+<div class="sec"><h3>비 · 비율 · 비의 값</h3><p>두 수를 견주어 나타낸 것이 <b>비</b>입니다. 3 : 4 는 “3 대 4”라고 읽습니다. 앞의 수를 뒤의 수로 나눈 값이 <b>비의 값</b>(비율)입니다.</p>
+<div class="eq">3 : 4  →  비의 값 = 3 ÷ 4 = 3/4 = 0.75</div>
+<aside class="box warn"><h4>순서가 중요합니다</h4><ul><li>3 : 4 와 4 : 3 은 다릅니다. 비는 순서가 바뀌면 다른 비가 됩니다.</li><li>“가에 대한 나의 비”는 나 : 가 입니다. ‘~에 대한’ 뒤의 것이 기준(뒤의 수)입니다.</li></ul></aside></div>
+<div class="sec"><h3>이중수직선 — 두 줄이 같은 배율로 움직인다</h3><p>비례 문제의 핵심은 하나입니다. <b>한쪽을 2배 하면 다른 쪽도 2배</b>가 된다는 것. 이것을 눈으로 보려면 수직선 두 줄을 나란히 그립니다.</p>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 230" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="230" fill="#FFFFFF"/><text x="300" y="16" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">이중수직선 — 두 줄이 같은 배율로 늘어난다</text><line x1="70" y1="70" x2="554" y2="70" stroke="#D9640A" stroke-width="2.2"/><line x1="70" y1="160" x2="554" y2="160" stroke="#2F72D8" stroke-width="2.2"/><line x1="70" y1="63" x2="70" y2="77" stroke="#D9640A" stroke-width="1.4"/><line x1="70" y1="153" x2="70" y2="167" stroke="#2F72D8" stroke-width="1.4"/><line x1="109.167" y1="66" x2="109.167" y2="74" stroke="#E0BFA0" stroke-width="0.9"/><line x1="109.167" y1="156" x2="109.167" y2="164" stroke="#B9CFF0" stroke-width="0.9"/><line x1="148.333" y1="66" x2="148.333" y2="74" stroke="#E0BFA0" stroke-width="0.9"/><line x1="148.333" y1="156" x2="148.333" y2="164" stroke="#B9CFF0" stroke-width="0.9"/><line x1="187.5" y1="63" x2="187.5" y2="77" stroke="#D9640A" stroke-width="1.4"/><line x1="187.5" y1="153" x2="187.5" y2="167" stroke="#2F72D8" stroke-width="1.4"/><line x1="226.667" y1="66" x2="226.667" y2="74" stroke="#E0BFA0" stroke-width="0.9"/><line x1="226.667" y1="156" x2="226.667" y2="164" stroke="#B9CFF0" stroke-width="0.9"/><line x1="265.833" y1="66" x2="265.833" y2="74" stroke="#E0BFA0" stroke-width="0.9"/><line x1="265.833" y1="156" x2="265.833" y2="164" stroke="#B9CFF0" stroke-width="0.9"/><line x1="305" y1="63" x2="305" y2="77" stroke="#D9640A" stroke-width="1.4"/><line x1="305" y1="153" x2="305" y2="167" stroke="#2F72D8" stroke-width="1.4"/><line x1="344.167" y1="66" x2="344.167" y2="74" stroke="#E0BFA0" stroke-width="0.9"/><line x1="344.167" y1="156" x2="344.167" y2="164" stroke="#B9CFF0" stroke-width="0.9"/><line x1="383.333" y1="66" x2="383.333" y2="74" stroke="#E0BFA0" stroke-width="0.9"/><line x1="383.333" y1="156" x2="383.333" y2="164" stroke="#B9CFF0" stroke-width="0.9"/><line x1="422.5" y1="63" x2="422.5" y2="77" stroke="#D9640A" stroke-width="1.4"/><line x1="422.5" y1="153" x2="422.5" y2="167" stroke="#2F72D8" stroke-width="1.4"/><line x1="461.667" y1="66" x2="461.667" y2="74" stroke="#E0BFA0" stroke-width="0.9"/><line x1="461.667" y1="156" x2="461.667" y2="164" stroke="#B9CFF0" stroke-width="0.9"/><line x1="500.833" y1="66" x2="500.833" y2="74" stroke="#E0BFA0" stroke-width="0.9"/><line x1="500.833" y1="156" x2="500.833" y2="164" stroke="#B9CFF0" stroke-width="0.9"/><line x1="540" y1="63" x2="540" y2="77" stroke="#D9640A" stroke-width="1.4"/><line x1="540" y1="153" x2="540" y2="167" stroke="#2F72D8" stroke-width="1.4"/><line x1="187.5" y1="60" x2="187.5" y2="170" stroke="#D9640A" stroke-width="1.4" stroke-dasharray="6 4"/><line x1="305" y1="60" x2="305" y2="170" stroke="#2E8B57" stroke-width="2"/><circle cx="187.5" cy="70" r="5" fill="#D9640A" stroke="none" stroke-width="1"/><circle cx="187.5" cy="160" r="5" fill="#D9640A" stroke="none" stroke-width="1"/><text x="187.5" y="48" font-size="15" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3</text><text x="187.5" y="182" font-size="15" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">1200</text><circle cx="305" cy="70" r="5" fill="#2E8B57" stroke="none" stroke-width="1"/><circle cx="305" cy="160" r="5" fill="#2E8B57" stroke="none" stroke-width="1"/><text x="305" y="48" font-size="15" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">6</text><text x="305" y="182" font-size="15" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">2400</text><path d="M 187.5 84 Q 246.25 110 305 84" fill="none" stroke="#7B52AF" stroke-width="1.6"/><text x="246.25" y="118" font-size="13" fill="#7B52AF" text-anchor="middle" font-weight="normal" dominant-baseline="middle">×2</text><text x="62" y="48" font-size="11" fill="#D9640A" text-anchor="start" font-weight="normal" dominant-baseline="middle">사과(개)</text><text x="62" y="196" font-size="11" fill="#2F72D8" text-anchor="start" font-weight="normal" dominant-baseline="middle">가격(원)</text><text x="300" y="212" font-size="14" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3 : 1200 = 6 : ☐   →   ☐ = 1200 × 6 ÷ 3 = 2400</text></svg></div><figcaption>위를 ×2 하면 아래도 ×2 — 이것이 비례</figcaption></figure>
+<p>사과 3개가 1200원이면 6개는 얼마일까요? 3 → 6 은 2배이므로 1200 → 2400 입니다. 식으로 쓰면 다음과 같습니다.</p>
+<div class="eq">3 : 1200 = 6 : ☐      ☐ = 1200 × 6 ÷ 3 = 2400</div>
+<aside class="box tip"><h4>가장 안전한 방법 — ‘1일 때’를 먼저 구하기</h4><ul><li>사과 1개 = 1200 ÷ 3 = 400원</li><li>사과 6개 = 400 × 6 = 2400원</li><li>배율이 딱 떨어지지 않을 때(3개 → 7개 같은 경우)에도 언제나 통합니다.</li></ul></aside></div>
+<div class="sec"><h3>농도 — 소금물 전체에서 소금이 차지하는 비율</h3><div class="eq">농도(%) = 소금의 양 ÷ 소금물 전체의 양 × 100</div>
+<p>주의할 점은 분모가 <b>물</b>이 아니라 <b>소금물 전체</b>라는 것입니다. 소금 20g을 물 80g에 녹이면 소금물은 100g이고 농도는 20%입니다.</p>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 164" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="164" fill="#FFFFFF"/><text x="300" y="16" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">농도 = 소금 ÷ 소금물 × 100</text><rect x="40" y="50" width="44" height="44" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.6" rx="0"/><rect x="84" y="50" width="176" height="44" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.6" rx="0"/><text x="150" y="36" font-size="12" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">소금 20g + 물 80g</text><text x="62" y="72" font-size="11" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">소금</text><text x="172" y="72" font-size="11" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">물</text><text x="150" y="112" font-size="13" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">소금물 100g · 농도 20%</text><rect x="340" y="50" width="22" height="44" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.6" rx="0"/><rect x="362" y="50" width="198" height="44" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.6" rx="0"/><text x="450" y="36" font-size="12" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">물 100g 더 넣으면</text><text x="461" y="72" font-size="11" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">물</text><text x="450" y="112" font-size="13" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">소금물 200g · 농도 10%</text><text x="300" y="146" font-size="13" fill="#C0392B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">물만 넣으면 소금은 그대로인데 전체가 늘어 → 농도가 내려간다</text></svg></div><figcaption>물만 더 넣으면 소금은 그대로, 전체는 늘어 → 농도가 내려간다</figcaption></figure>
+<aside class="box key"><h4>물을 넣거나 증발시킬 때</h4><ul><li>물을 더 넣어도 <b>소금의 양은 변하지 않습니다</b>. 전체만 늘어납니다.</li><li>물을 증발시켜도 소금의 양은 그대로이고, 전체만 줄어듭니다.</li><li>그래서 ‘소금의 양’을 먼저 구해 붙들고 있는 것이 풀이의 첫걸음입니다.</li></ul></aside></div>
+<div class="sec"><h3>속력 — 1시간(또는 1초)에 가는 거리</h3><div class="eq">속력 = 거리 ÷ 시간      거리 = 속력 × 시간      시간 = 거리 ÷ 속력</div>
+<p>세 식을 따로 외우지 마세요. <b>속력 = 거리 ÷ 시간</b> 하나만 알면 나머지는 그 식을 옮긴 것입니다.</p>
+<table><thead><tr><th>상황</th><th>식</th><th>답</th></tr></thead><tbody><tr><td>240km를 3시간에</td><td>240 ÷ 3</td><td>시속 80km</td></tr><tr><td>시속 60km로 2시간 반</td><td>60 × 2.5</td><td>150km</td></tr><tr><td>180km를 시속 45km로</td><td>180 ÷ 45</td><td>4시간</td></tr></tbody></table>
+<aside class="box warn"><h4>단위를 먼저 맞추세요</h4><ul><li>시속과 ‘분’이 섞여 있으면 반드시 한쪽으로 통일합니다. 30분 = 0.5시간입니다.</li><li>분속 ↔ 시속은 60배입니다. 분속 50m = 시속 3000m = 시속 3km.</li></ul></aside></div>
+<div class="sec"><h3>일의 양 — 1시간에 하는 일을 분수로</h3><p>어떤 일을 혼자 6시간에 끝내는 사람은 1시간에 전체의 1/6 을 합니다. 전체 일을 1로 두는 것이 열쇠입니다.</p>
+<p>A는 6시간, B는 3시간에 끝내는 일을 둘이 함께 하면 몇 시간 걸릴까요?</p>
+<ol><li>1시간에 A는 1/6, B는 1/3 을 한다.</li><li>둘이 함께 1시간에 하는 양 = 1/6 + 1/3 = 1/6 + 2/6 = 3/6 = 1/2</li><li>1시간에 절반을 하므로 전체는 2시간.</li></ol>
+<aside class="box tip"><h4>일의 양 문제의 세 걸음</h4><ul><li>① 전체 일을 1로 둔다  ② 각자 1시간에 하는 양을 분수로 쓴다  ③ 더해서 1이 될 때까지</li></ul></aside></div>
+<div class="keybox"><h3>핵심 정리</h3><ul><li>비 3 : 4 의 비의 값은 3 ÷ 4</li><li>비례식: 3 : 1200 = 6 : ☐ → 안쪽끼리, 바깥쪽끼리 곱한 값이 같다</li><li>막히면 ‘1일 때의 값’을 먼저 구한다</li><li>농도 = 소금 ÷ 소금물 전체 × 100, 물을 넣어도 소금의 양은 그대로</li><li>속력 = 거리 ÷ 시간, 단위를 먼저 통일</li><li>일의 양 = 전체를 1로 두고 1시간에 하는 양을 분수로</li></ul></div>
+<div class="sec"><h3>예제</h3>
+<div class="ex"><div class="exq"><b>예제 1</b> 연필 4자루가 2800원입니다. 7자루는 얼마입니까?</div><ol class="steps"><li>1자루 = 2800 ÷ 4 = 700원</li><li>7자루 = 700 × 7 = 4900원</li></ol><div class="exa">답 &nbsp;4900원</div></div>
+<div class="ex"><div class="exq"><b>예제 2</b> 농도 8%인 소금물 200g에 들어 있는 소금은 몇 g 입니까?</div><ol class="steps"><li>소금 = 소금물 × 농도 ÷ 100</li><li>200 × 8 ÷ 100 = 16</li></ol><div class="exa">답 &nbsp;16g</div></div>
+<div class="ex"><div class="exq"><b>예제 3</b> 농도 10%인 소금물 300g에 물 100g을 더 넣으면 농도는 몇 %가 됩니까?</div><ol class="steps"><li>소금 = 300 × 10 ÷ 100 = 30g (물을 넣어도 그대로)</li><li>소금물 전체 = 300 + 100 = 400g</li><li>농도 = 30 ÷ 400 × 100 = 7.5</li></ol><div class="exa">답 &nbsp;7.5%</div></div>
+<div class="ex"><div class="exq"><b>예제 4</b> 어떤 일을 A는 12시간, B는 4시간에 끝냅니다. 둘이 함께 하면 몇 시간 걸립니까?</div><ol class="steps"><li>1시간에 A는 1/12, B는 1/4 = 3/12</li><li>함께 1시간에 1/12 + 3/12 = 4/12 = 1/3</li><li>1시간에 1/3씩 → 3시간</li></ol><div class="exa">답 &nbsp;3시간</div></div>
+</div>
+<div class="sec probs"><h3>연습 문제</h3><ol class="plist">
+<li><div class="pq">12 : 20 을 가장 간단한 자연수의 비로 나타내세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;3 : 5 (각각 4로 나눔)</div></li>
+<li><div class="pq">전체 30명 중 남학생이 18명입니다. 전체에 대한 남학생의 비율을 기약분수로 쓰세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;3/5 (18/30)</div></li>
+<li><div class="pq">사과 5개가 4000원입니다. 8개는 얼마입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;6400원 (1개 800원)</div></li>
+<li><div class="pq">농도 15%인 소금물 400g 속의 소금은 몇 g 입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;60g</div></li>
+<li><div class="pq">소금 40g을 녹여 농도 20%인 소금물을 만들려면 소금물 전체를 몇 g 으로 해야 합니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;200g (40 ÷ 0.2)</div></li>
+<li><div class="pq">농도 12%인 소금물 250g 에서 물 50g 을 증발시키면 농도는?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;15% (소금 30g, 전체 200g → 30÷200×100)</div></li>
+<li><div class="pq">자동차가 150km를 2시간 30분에 달렸습니다. 시속 몇 km 입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;시속 60km (2시간 30분 = 2.5시간)</div></li>
+<li><div class="pq">분속 80m로 걷는 사람이 2km를 가는 데 걸리는 시간은?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;25분 (2000 ÷ 80)</div></li>
+<li><div class="pq">어떤 일을 A는 10시간, B는 15시간에 끝냅니다. 함께 하면 몇 시간 걸립니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;6시간 (1/10 + 1/15 = 3/30+2/30 = 5/30 = 1/6)</div></li>
+<li><div class="pq">수도꼭지 A로는 20분, B로는 30분에 물통을 채웁니다. 두 꼭지를 함께 틀면 몇 분 걸립니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;12분 (1/20 + 1/30 = 3/60+2/60 = 5/60 = 1/12)</div></li>
+</ol></div>
+<div class="tsec tonly">
+<h3 class="thead">교사용 지도 자료</h3>
+<h4>수업 흐름 (40분 기준)</h4><table class="flow"><tbody><tr><td class='tm'>5분</td><td>도입 — 같은 주스를 컵 2개/4개에 나눌 때 진하기가 같은지 묻는다. 비의 필요를 체감.</td></tr><tr><td class='tm'>10분</td><td>전개 1 — 이중수직선으로 ×2, ×3 을 손으로 그어 보게 한다.</td></tr><tr><td class='tm'>12분</td><td>전개 2 — 농도. 소금의 양을 먼저 구해 적어 두는 습관을 만든다.</td></tr><tr><td class='tm'>8분</td><td>전개 3 — 속력. 단위 통일 실수를 일부러 만들어 보이고 고치게 한다.</td></tr><tr><td class='tm'>10분</td><td>전개 4 — 일의 양. 전체를 1로 두는 이유를 묻고 분수로 쓰게 한다.</td></tr><tr><td class='tm'>5분</td><td>정리 — ‘막히면 1일 때를 구한다’를 한 문장으로 공책에.</td></tr></tbody></table>
+<h4>자주 나오는 오개념과 처방</h4><table class="mis"><thead><tr><th>학생이 보이는 생각</th><th>어떻게 다룰까</th></tr></thead><tbody><tr><td>농도의 분모를 ‘물의 양’으로 씀</td><td>소금 20g + 물 80g 그림을 그려 분모가 100g임을 짚는다. 가장 빈번한 오류.</td></tr><tr><td>물을 넣으면 소금도 늘어난다고 생각</td><td>소금 덩어리를 그려 두고 물만 추가하는 그림을 비교한다.</td></tr><tr><td>비례식에서 안쪽·바깥쪽 곱을 반대로 씀</td><td>외우지 말고 이중수직선의 배율로 되돌아가게 한다.</td></tr><tr><td>시속과 분이 섞인 채 계산</td><td>식을 쓰기 전에 단위를 동그라미 치고 통일하는 절차를 고정한다.</td></tr><tr><td>일의 양에서 시간을 그냥 더함 (6시간+3시간=9시간)</td><td>“함께 하면 더 오래 걸리나요?”라고 되물으면 스스로 모순을 발견한다.</td></tr><tr><td>비와 비의 값을 혼동</td><td>비는 3 : 4 처럼 쌍, 비의 값은 3/4 처럼 하나의 수라고 구분해 준다.</td></tr></tbody></table>
+<h4>수업 중 던질 발문</h4><ul class="ask"><li>이 두 양 중 어느 것이 기준인가요?</li><li>한쪽을 2배 하면 다른 쪽은 어떻게 되나요? 왜 그런가요?</li><li>소금물 100g 에서 분모에 들어갈 수는 무엇인가요?</li><li>물을 더 넣었을 때 변하지 않는 것은 무엇인가요?</li><li>1시간에 할 수 있는 양을 분수로 쓰면?</li><li>답이 나왔습니다. 혼자 할 때보다 빨라졌나요? 말이 되나요?</li></ul>
+<h4>평가 관점</h4><ul><li>상황을 비례식으로 옮길 수 있는가</li><li>농도 문제에서 ‘소금의 양’을 먼저 분리해 적는가</li><li>단위를 통일한 뒤 계산하는가</li><li>답의 타당성을 스스로 점검하는가</li></ul>
+<h4>인터랙티브 자료 연계</h4><p class="link">인터랙티브 자료의 이중수직선은 끌어서 배율을 바꿀 수 있고, 농도 탭에서는 물을 붓거나 증발시키며 막대가 변하는 것을 볼 수 있습니다. ‘소금 막대의 길이가 변하지 않는다’를 직접 보게 하는 것이 핵심입니다.<br><span class="fname">파일 : 비와비율_농도_속력_일의양.html</span></p>
+</div>
+</section>
+<section class="unit" id="u4">
+<header class="uhead"><div class="uno">4단원</div><h2>공약수·공배수의 활용 — 문장제 판별하기</h2><div class="umeta">초등 5학년 ~ 중등 1학년 &nbsp;·&nbsp; 약수와 배수</div></header>
+<div class="goals"><h3>학습 목표</h3><ul><li>문장제에서 최대공약수를 쓸 상황과 최소공배수를 쓸 상황을 구별할 수 있다.</li><li>판별의 근거를 ‘나누는가 / 모으는가’, ‘답이 작아지는가 / 커지는가’로 설명할 수 있다.</li><li>소인수분해를 이용해 두 수의 최대공약수와 최소공배수를 구할 수 있다.</li></ul></div>
+<div class="sec"><h3>구하는 방법은 알겠는데, 언제 쓰는지가 어렵다</h3><p>최대공약수와 최소공배수를 구하는 계산은 대부분 잘합니다. 진짜 어려운 것은 <b>문제를 읽고 둘 중 무엇을 쓸지 고르는 일</b>입니다. 두 가지만 따져 보면 거의 가려집니다.</p>
+<table><thead><tr><th>따져볼 것</th><th>최대공약수</th><th>최소공배수</th></tr></thead><tbody><tr><td>무엇을 하나?</td><td>가지고 있는 것을 <b>똑같이 나눈다</b></td><td>일이 <b>다시 겹칠 때까지 모은다</b></td></tr><tr><td>답의 크기는?</td><td>주어진 수보다 <b>작아진다</b></td><td>주어진 수보다 <b>커진다</b></td></tr><tr><td>자주 나오는 말</td><td>똑같이 나누어, 남김없이, 가장 큰, 될 수 있는 대로 많은 사람에게</td><td>동시에, 다시 만나는, 가장 작은 정사각형, 처음으로 같아지는</td></tr></tbody></table>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 172" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="172" fill="#FFFFFF"/><text x="300" y="18" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">12와 18 — 답이 작아지면 최대공약수, 커지면 최소공배수</text><line x1="70" y1="86" x2="546" y2="86" stroke="#9A9A9A" stroke-width="2"/><text x="54" y="86" font-size="11" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">0</text><circle cx="139" cy="86" r="8" fill="#C0392B" stroke="none" stroke-width="1"/><text x="139" y="62" font-size="12" fill="#C0392B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">최대공약수 6</text><circle cx="484" cy="86" r="8" fill="#2F72D8" stroke="none" stroke-width="1"/><text x="484" y="62" font-size="12" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">최소공배수 36</text><circle cx="208" cy="86" r="6" fill="#6B6B6B" stroke="none" stroke-width="1"/><text x="208" y="108" font-size="12" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">12</text><circle cx="277" cy="86" r="6" fill="#6B6B6B" stroke="none" stroke-width="1"/><text x="277" y="108" font-size="12" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">18</text><text x="242.5" y="130" font-size="11" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">주어진 두 수</text><text x="145" y="154" font-size="12" fill="#C0392B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">← 쪼개서 나눠 줄 때</text><text x="455" y="154" font-size="12" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">모아서 반복할 때 →</text></svg></div><figcaption>답이 주어진 수보다 작으면 최대공약수, 크면 최소공배수</figcaption></figure>
+<aside class="box warn"><h4>‘가장 큰’과 ‘가장 작은’이라는 말에 속지 마세요</h4><ul><li>“가장 작은 정사각형을 만드시오”는 <b>최소공배수</b> 문제입니다. 말은 ‘작은’이지만 답은 주어진 수보다 큽니다.</li><li>“될 수 있는 대로 많은 사람에게 나눠 주시오”는 <b>최대공약수</b> 문제입니다. 말은 ‘많은’이지만 한 사람이 받는 양은 줄어듭니다.</li><li>말이 아니라 <b>상황</b>을 보세요. 나누는가, 모으는가.</li></ul></aside></div>
+<div class="sec"><h3>최대공약수를 쓰는 상황</h3><p>가지고 있는 것을 <b>남김없이 똑같이</b> 나눌 때 씁니다.</p>
+<ul><li>사탕 48개와 초콜릿 36개를 남김없이 똑같이 나누어 줄 수 있는 최대 인원 → 12명</li><li>가로 48cm, 세로 36cm 종이를 남는 부분 없이 가장 큰 정사각형으로 자르기 → 한 변 12cm</li><li>길이 60cm, 84cm 끈을 똑같은 길이로 남김없이 자르기 → 12cm</li></ul>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 318" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="318" fill="#FFFFFF"/><text x="300" y="18" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">48 × 36 종이를 가장 큰 정사각형으로 — 한 변 12</text><rect x="155" y="44" width="288" height="216" fill="#FBE3CC" stroke="#D9640A" stroke-width="2" rx="0"/><line x1="227" y1="44" x2="227" y2="260" stroke="#D9640A" stroke-width="1"/><line x1="299" y1="44" x2="299" y2="260" stroke="#D9640A" stroke-width="1"/><line x1="371" y1="44" x2="371" y2="260" stroke="#D9640A" stroke-width="1"/><line x1="155" y1="116" x2="443" y2="116" stroke="#D9640A" stroke-width="1"/><line x1="155" y1="188" x2="443" y2="188" stroke="#D9640A" stroke-width="1"/><text x="299" y="280" font-size="12" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">가로 48cm</text><text x="141" y="152" font-size="12" fill="#6B6B6B" text-anchor="end" font-weight="normal" dominant-baseline="middle">세로 36cm</text><text x="300" y="302" font-size="13" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">12cm 정사각형이 가로 4개 × 세로 3개 = 12개</text></svg></div><figcaption>48과 36의 최대공약수 12 — 한 변 12cm 정사각형 12개</figcaption></figure></div>
+<div class="sec"><h3>최소공배수를 쓰는 상황</h3><p>주기가 다른 두 일이 <b>다시 함께 일어날 때</b>를 구하거나, 조각을 <b>모아</b> 더 큰 것을 만들 때 씁니다.</p>
+<ul><li>6분마다 오는 버스와 8분마다 오는 버스가 동시에 출발하는 시각 → 24분마다</li><li>가로 12cm, 세로 8cm 타일로 빈틈없이 가장 작은 정사각형 만들기 → 한 변 24cm</li><li>4일마다, 6일마다 가는 학원을 같은 날 가는 주기 → 12일마다</li></ul>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 268" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="268" fill="#FFFFFF"/><text x="300" y="16" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">12 × 8 타일로 가장 작은 정사각형 — 한 변 24</text><rect x="204" y="36" width="192" height="192" fill="#D6E6FB" stroke="#2F72D8" stroke-width="2.2" rx="0"/><rect x="204" y="36" width="96" height="64" fill="none" stroke="#2F72D8" stroke-width="1" rx="0"/><rect x="300" y="36" width="96" height="64" fill="none" stroke="#2F72D8" stroke-width="1" rx="0"/><rect x="204" y="100" width="96" height="64" fill="none" stroke="#2F72D8" stroke-width="1" rx="0"/><rect x="300" y="100" width="96" height="64" fill="none" stroke="#2F72D8" stroke-width="1" rx="0"/><rect x="204" y="164" width="96" height="64" fill="none" stroke="#2F72D8" stroke-width="1" rx="0"/><rect x="300" y="164" width="96" height="64" fill="none" stroke="#2F72D8" stroke-width="1" rx="0"/><text x="300" y="248" font-size="13" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">타일 2 × 3 = 6장  ·  “가장 작은”이지만 최소공배수!</text></svg></div><figcaption>12와 8의 최소공배수 24 — 타일 6장으로 정사각형</figcaption></figure></div>
+<div class="sec"><h3>구하는 방법 — 소인수분해</h3><p>두 수를 소수의 곱으로 쪼갠 다음, 공통인 것만 모으면 최대공약수, 모든 것을 가장 많이 나온 만큼 모으면 최소공배수입니다.</p>
+<div class="eq">48 = 2 × 2 × 2 × 2 × 3        36 = 2 × 2 × 3 × 3</div>
+<div class="eq">최대공약수 = 2 × 2 × 3 = 12        최소공배수 = 2 × 2 × 2 × 2 × 3 × 3 = 144</div>
+<aside class="box key"><h4>검산에 쓰는 성질</h4><ul><li>두 수의 곱 = 최대공약수 × 최소공배수</li><li>48 × 36 = 1728,  12 × 144 = 1728  ✓</li></ul></aside></div>
+<div class="sec"><h3>심화 — 중학교에서 만나는 문장제</h3><p>중학교에서는 나머지가 있는 문제, 세 수를 다루는 문제로 넓어집니다.</p>
+<ol><li><b>나머지가 같은 경우</b> — “어떤 수로 50과 74를 나누면 나머지가 2로 같다.” → (50−2)와 (74−2), 즉 48과 72의 공약수. 최대 24.</li><li><b>나머지가 모두 같은 수인 경우</b> — “4, 6, 9로 나누면 나머지가 모두 1인 가장 작은 수.” → 최소공배수 36에 1을 더해 37.</li><li><b>세 수의 최대공약수·최소공배수</b> — 소인수분해로 똑같이 처리. 12, 18, 30 → 최대공약수 6, 최소공배수 180.</li></ol>
+<aside class="box tip"><h4>나머지가 있으면 먼저 떼어낸다</h4><ul><li>“나누면 나머지가 2”라는 말은 “나머지 2를 빼면 딱 나누어떨어진다”는 뜻입니다.</li><li>빼고 나면 평범한 공약수 문제가 됩니다.</li></ul></aside></div>
+<div class="keybox"><h3>핵심 정리</h3><ul><li>나누면 최대공약수, 모으면 최소공배수</li><li>답이 주어진 수보다 작아지면 최대공약수, 커지면 최소공배수</li><li>‘가장 작은 정사각형’은 최소공배수, ‘가장 많은 사람’은 최대공약수</li><li>두 수의 곱 = 최대공약수 × 최소공배수 (검산)</li><li>나머지가 있으면 먼저 빼고 시작한다</li></ul></div>
+<div class="sec"><h3>예제</h3>
+<div class="ex"><div class="exq"><b>예제 1</b> 사탕 60개와 젤리 84개를 남김없이 똑같이 나누어 줄 때, 최대 몇 명에게 줄 수 있습니까? 그때 한 사람이 받는 사탕은?</div><ol class="steps"><li>남김없이 똑같이 나눈다 → 최대공약수</li><li>60 = 2×2×3×5, 84 = 2×2×3×7 → 최대공약수 2×2×3 = 12</li><li>한 사람이 받는 사탕 = 60 ÷ 12 = 5</li></ol><div class="exa">답 &nbsp;12명, 사탕 5개씩</div></div>
+<div class="ex"><div class="exq"><b>예제 2</b> 9분마다 오는 버스와 12분마다 오는 버스가 오전 8시에 동시에 출발했습니다. 다음으로 동시에 출발하는 시각은?</div><ol class="steps"><li>다시 함께 일어난다 → 최소공배수</li><li>9 = 3×3, 12 = 2×2×3 → 최소공배수 2×2×3×3 = 36</li></ol><div class="exa">답 &nbsp;오전 8시 36분</div></div>
+<div class="ex"><div class="exq"><b>예제 3</b> 어떤 수로 38과 62를 나누면 나머지가 모두 2입니다. 이런 수 중 가장 큰 수는?</div><ol class="steps"><li>나머지 2를 먼저 뺀다 → 36과 60이 딱 나누어떨어짐</li><li>36 = 2×2×3×3, 60 = 2×2×3×5 → 최대공약수 12</li></ol><div class="exa">답 &nbsp;12</div></div>
+<div class="ex"><div class="exq"><b>예제 4</b> 5, 6, 8 중 어느 수로 나누어도 나머지가 3인 가장 작은 자연수는?</div><ol class="steps"><li>나머지 3을 빼면 5, 6, 8의 공배수</li><li>최소공배수 = 2×2×2×3×5 = 120</li><li>120 + 3 = 123</li></ol><div class="exa">답 &nbsp;123</div></div>
+</div>
+<div class="sec probs"><h3>연습 문제</h3><ol class="plist">
+<li><div class="pq">가로 72cm, 세로 48cm인 종이를 남는 부분 없이 가장 큰 정사각형으로 자르려고 합니다. 정사각형의 한 변은 몇 cm 입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;24cm (최대공약수)</div></li>
+<li><div class="pq">위 문제에서 정사각형은 모두 몇 개가 나옵니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;6개 (3 × 2)</div></li>
+<li><div class="pq">가로 9cm, 세로 6cm 타일로 빈틈없이 가장 작은 정사각형을 만들면 한 변은 몇 cm 입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;18cm (최소공배수)</div></li>
+<li><div class="pq">위 문제에서 타일은 몇 장 필요합니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;6장 (2 × 3)</div></li>
+<li><div class="pq">연필 45자루와 지우개 30개를 남김없이 똑같이 나누어 줄 수 있는 최대 인원은?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;15명 (최대공약수)</div></li>
+<li><div class="pq">A는 4일마다, B는 10일마다 도서관에 갑니다. 오늘 함께 갔다면 다음에 함께 가는 날은 며칠 뒤입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;20일 뒤 (최소공배수)</div></li>
+<li><div class="pq">두 수의 최대공약수가 8, 최소공배수가 96이고 한 수가 24일 때 다른 수는?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;32 (8 × 96 ÷ 24)</div></li>
+<li><div class="pq">[심화] 어떤 수로 77과 110을 나누면 나머지가 모두 5입니다. 이런 수 중 가장 큰 수는?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;3 (72와 105의 최대공약수는 3)</div></li>
+<li><div class="pq">[심화] 3, 4, 5 어느 수로 나누어도 나머지가 1인 두 자리 자연수를 모두 구하세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;61 (최소공배수 60, 60+1=61; 두 자리 수는 61 하나)</div></li>
+<li><div class="pq">[심화] 12, 18, 30 의 최대공약수와 최소공배수를 구하세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;최대공약수 6, 최소공배수 180</div></li>
+</ol></div>
+<div class="tsec tonly">
+<h3 class="thead">교사용 지도 자료</h3>
+<h4>수업 흐름 (40분 기준)</h4><table class="flow"><tbody><tr><td class='tm'>5분</td><td>도입 — 사탕 나누기 상황과 버스 시간표 상황을 나란히 제시. 무엇이 다른지만 묻는다.</td></tr><tr><td class='tm'>12분</td><td>전개 1 — 판별표 두 줄(나누나/모으나, 작아지나/커지나)을 채우며 분류 연습.</td></tr><tr><td class='tm'>10분</td><td>전개 2 — ‘가장 작은 정사각형’ 함정 문제. 반드시 그림을 그려 확인.</td></tr><tr><td class='tm'>8분</td><td>전개 3 — 소인수분해로 구하기 + 곱 성질로 검산.</td></tr><tr><td class='tm'>10분</td><td>심화 — 나머지가 있는 문장제. 먼저 빼는 이유를 설명하게 한다.</td></tr><tr><td class='tm'>5분</td><td>정리 — 오늘 배운 판별 기준을 자기 말로 한 줄.</td></tr></tbody></table>
+<h4>자주 나오는 오개념과 처방</h4><table class="mis"><thead><tr><th>학생이 보이는 생각</th><th>어떻게 다룰까</th></tr></thead><tbody><tr><td>‘가장 작은’이라는 말만 보고 최대공약수를 고름</td><td>답을 구한 뒤 주어진 수와 비교시킨다. 작아졌는지 커졌는지가 즉시 검산이 된다.</td></tr><tr><td>최소공배수를 구한 뒤 ‘몇 개 필요한가’를 못 구함</td><td>정사각형 한 변 ÷ 타일 가로, ÷ 타일 세로 를 그림 위에서 세게 한다.</td></tr><tr><td>나머지가 있는 문제에서 나머지를 그냥 둠</td><td>“나머지 2가 남았다면, 2를 빼면 어떻게 되나요?”라고 되묻는다.</td></tr><tr><td>공약수와 최대공약수를 혼동</td><td>공약수는 여럿, 최대공약수는 그중 가장 큰 하나. 모두 나열해 보게 한다.</td></tr><tr><td>최대공약수 × 최소공배수 = 두 수의 곱 을 세 수에도 적용</td><td>이 성질은 두 수일 때만 성립한다고 못박는다.</td></tr></tbody></table>
+<h4>수업 중 던질 발문</h4><ul class="ask"><li>이 문제는 가지고 있는 것을 나누는 상황인가요, 일이 다시 겹치는 상황인가요?</li><li>구한 답이 주어진 수보다 커졌나요, 작아졌나요? 말이 되나요?</li><li>‘가장 작은 정사각형’인데 왜 답이 더 큰 수일까요?</li><li>나머지가 2라는 말은 무슨 뜻일까요? 2를 빼면 어떻게 되죠?</li><li>두 수의 곱과 (최대공약수 × 최소공배수)를 비교해 볼까요?</li></ul>
+<h4>평가 관점</h4><ul><li>문장만 읽고 두 상황을 분류할 수 있는가</li><li>답의 크기로 스스로 검산하는가</li><li>나머지가 있는 문제를 변형해 풀 수 있는가 (심화)</li></ul>
+<h4>인터랙티브 자료 연계</h4><p class="link">인터랙티브 자료에는 문장제를 읽고 ‘최대공약수/최소공배수’ 버튼을 고르는 판별 연습이 있습니다. 틀리면 상황 그림이 나타나므로, 고른 뒤 바로 그림으로 확인시켜 주세요. 심화 탭에 중학교 나머지 문제가 들어 있습니다.<br><span class="fname">파일 : 공약수_공배수_문장제.html</span></p>
+</div>
+</section>
+<section class="unit" id="u5">
+<header class="uhead"><div class="uno">5단원</div><h2>분수의 통분과 나눗셈 — 왜 뒤집어 곱할까</h2><div class="umeta">초등 5~6학년 &nbsp;·&nbsp; 약분과 통분 / 분수의 나눗셈</div></header>
+<div class="goals"><h3>학습 목표</h3><ul><li>통분이 ‘조각의 크기를 같게 맞추는 일’임을 그림으로 설명할 수 있다.</li><li>분수의 나눗셈을 ‘안에 몇 번 들어가는가’로 해석할 수 있다.</li><li>역수를 곱하는 까닭을 통분으로부터 이끌어 낼 수 있다.</li></ul></div>
+<div class="sec"><h3>통분 — 조각의 크기를 같게</h3><p>1/2 + 1/3 을 그냥 더해 2/5 라고 쓰면 틀립니다. 조각의 크기가 서로 다르기 때문입니다. 사과 반 개와 사과 1/3 개는 크기가 다른데, 개수만 세면 안 되겠지요.</p>
+<p>그래서 먼저 <b>조각의 크기를 같게</b> 만듭니다. 이것이 통분입니다. 막대를 더 잘게 자르되, 색칠한 넓이는 그대로 둡니다.</p>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 212" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="212" fill="#FFFFFF"/><text x="300" y="16" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">통분 — 조각 크기를 같게 (색칠한 넓이는 그대로)</text><rect x="110" y="40" width="380" height="56" fill="none" stroke="#2B2B2B" stroke-width="1.8" rx="0"/><rect x="110" y="40" width="190" height="56" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.4" rx="0"/><line x1="300" y1="40" x2="300" y2="96" stroke="#2B2B2B" stroke-width="1.4"/><line x1="110" y1="58.6667" x2="490" y2="58.6667" stroke="#C9A27A" stroke-width="0.9"/><line x1="110" y1="77.3333" x2="490" y2="77.3333" stroke="#C9A27A" stroke-width="0.9"/><text x="96" y="68" font-size="14" fill="#D9640A" text-anchor="end" font-weight="normal" dominant-baseline="middle">1/2</text><text x="504" y="68" font-size="13" fill="#D9640A" text-anchor="start" font-weight="normal" dominant-baseline="middle">= 3/6</text><rect x="110" y="120" width="380" height="56" fill="none" stroke="#2B2B2B" stroke-width="1.8" rx="0"/><rect x="110" y="120" width="126.667" height="56" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.4" rx="0"/><line x1="236.667" y1="120" x2="236.667" y2="176" stroke="#2B2B2B" stroke-width="1.4"/><line x1="363.333" y1="120" x2="363.333" y2="176" stroke="#2B2B2B" stroke-width="1.4"/><line x1="110" y1="148" x2="490" y2="148" stroke="#9FB9DC" stroke-width="0.9"/><text x="96" y="148" font-size="14" fill="#2F72D8" text-anchor="end" font-weight="normal" dominant-baseline="middle">1/3</text><text x="504" y="148" font-size="13" fill="#2F72D8" text-anchor="start" font-weight="normal" dominant-baseline="middle">= 2/6</text><text x="300" y="196" font-size="14" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">둘 다 6칸 → 3칸 + 2칸 = 5칸 = 5/6</text></svg></div><figcaption>1/2 → 3/6, 1/3 → 2/6 — 넓이는 그대로, 조각만 잘게</figcaption></figure>
+<div class="eq">1/2 + 1/3 = 3/6 + 2/6 = 5/6</div>
+<aside class="box key"><h4>분모를 무엇으로 맞출까</h4><ul><li>두 분모의 <b>곱</b>으로 맞춰도 됩니다 (2 × 3 = 6). 언제나 통합니다.</li><li>두 분모의 <b>최소공배수</b>로 맞추면 수가 가장 작아 계산이 편합니다.</li><li>4와 6이면 곱은 24, 최소공배수는 12입니다. 12로 맞추는 쪽이 낫습니다.</li></ul></aside>
+<aside class="box warn"><h4>가장 흔한 실수</h4><ul><li>분모만 맞추고 분자를 그대로 두는 경우 — 1/2 를 1/6 으로 쓰면 크기가 달라집니다.</li><li>분모에 곱한 수를 <b>분자에도 똑같이</b> 곱해야 크기가 변하지 않습니다.</li></ul></aside></div>
+<div class="sec"><h3>분수의 나눗셈은 ‘몇 번 들어가는가’</h3><p>6 ÷ 2 는 “6 안에 2가 몇 번 들어가는가”입니다. 분수도 똑같습니다.</p>
+<p>3/4 ÷ 1/8 은 “3/4 안에 1/8 이 몇 번 들어가는가”입니다. 그림으로 세어 봅시다.</p>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 182" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="182" fill="#FFFFFF"/><text x="300" y="16" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3/4 ÷ 1/8 — “3/4 안에 1/8이 몇 번?”</text><rect x="70" y="40" width="460" height="48" fill="none" stroke="#9A9A9A" stroke-width="1.4" rx="0"/><rect x="70" y="40" width="345" height="48" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.8" rx="0"/><text x="242.5" y="64" font-size="15" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3/4</text><text x="538" y="64" font-size="11" fill="#6B6B6B" text-anchor="start" font-weight="normal" dominant-baseline="middle">1</text><rect x="70" y="104" width="57.5" height="36" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.4" rx="0"/><text x="98.75" y="122" font-size="12" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">1</text><rect x="127.5" y="104" width="57.5" height="36" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.4" rx="0"/><text x="156.25" y="122" font-size="12" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">2</text><rect x="185" y="104" width="57.5" height="36" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.4" rx="0"/><text x="213.75" y="122" font-size="12" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3</text><rect x="242.5" y="104" width="57.5" height="36" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.4" rx="0"/><text x="271.25" y="122" font-size="12" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">4</text><rect x="300" y="104" width="57.5" height="36" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.4" rx="0"/><text x="328.75" y="122" font-size="12" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">5</text><rect x="357.5" y="104" width="57.5" height="36" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.4" rx="0"/><text x="386.25" y="122" font-size="12" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">6</text><text x="300" y="164" font-size="14" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">1/8짜리가 딱 6번 → 3/4 ÷ 1/8 = 6</text></svg></div><figcaption>3/4 안에 1/8 짜리가 딱 6번</figcaption></figure>
+<div class="eq">3/4 ÷ 1/8 = 6</div>
+<aside class="box tip"><h4>답이 커져도 놀라지 마세요</h4><ul><li>1보다 작은 수로 나누면 답이 원래 수보다 <b>커집니다</b>.</li><li>1/8 은 아주 작은 조각이니, 3/4 안에 여러 번 들어가는 것이 당연합니다.</li></ul></aside></div>
+<div class="sec"><h3>왜 뒤집어 곱할까</h3><p>‘역수를 곱한다’는 규칙은 하늘에서 떨어진 것이 아닙니다. 통분에서 자연스럽게 나옵니다. 세 줄만 따라가 보세요.</p>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 206" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="206" fill="#FFFFFF"/><text x="300" y="18" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">왜 뒤집어 곱할까</text><rect x="50" y="31" width="500" height="34" fill="#F7F4EE" stroke="#9A9A9A" stroke-width="1.2" rx="6"/><text x="62" y="48" font-size="12" fill="#6B6B6B" text-anchor="start" font-weight="normal" dominant-baseline="middle">① 통분하면</text><text x="380" y="48" font-size="15" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3/4 ÷ 1/8 = 6/8 ÷ 1/8</text><rect x="50" y="75" width="500" height="34" fill="#F7F4EE" stroke="#9A9A9A" stroke-width="1.2" rx="6"/><text x="62" y="92" font-size="12" fill="#6B6B6B" text-anchor="start" font-weight="normal" dominant-baseline="middle">② 분모가 같으면 분자끼리</text><text x="380" y="92" font-size="15" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">6 ÷ 1 = 6</text><rect x="50" y="119" width="500" height="34" fill="#F7F4EE" stroke="#9A9A9A" stroke-width="1.2" rx="6"/><text x="62" y="136" font-size="12" fill="#6B6B6B" text-anchor="start" font-weight="normal" dominant-baseline="middle">③ 정리하면</text><text x="380" y="136" font-size="15" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3/4 × 8/1 = 6</text><text x="300" y="190" font-size="12" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">분모가 같아지면 분자끼리 나누면 되고, 그것이 곧 역수 곱셈</text></svg></div><figcaption>통분 → 분자끼리 나눗셈 → 역수 곱셈</figcaption></figure>
+<ol><li>분모를 같게 통분한다 — 3/4 ÷ 1/8 = 6/8 ÷ 1/8</li><li>분모가 같으면 <b>분자끼리</b> 나누면 된다 — 6 ÷ 1 = 6</li><li>이 과정을 한 줄로 줄이면 — 3/4 × 8/1 = 6</li></ol>
+<p>즉 ‘뒤집어 곱하기’는 통분한 뒤 분자끼리 나눈 결과를 짧게 쓴 것입니다.</p>
+<div class="eq">a/b ÷ c/d = a/b × d/c</div></div>
+<div class="sec"><h3>분수끼리의 곱셈과 나눗셈 정리</h3><table><thead><tr><th>계산</th><th>방법</th><th>예</th></tr></thead><tbody><tr><td>분수 + 분수</td><td>통분한 뒤 분자끼리 더함</td><td>1/2 + 1/3 = 3/6 + 2/6 = 5/6</td></tr><tr><td>분수 − 분수</td><td>통분한 뒤 분자끼리 뺌</td><td>3/4 − 1/6 = 9/12 − 2/12 = 7/12</td></tr><tr><td>분수 × 분수</td><td>분자는 분자끼리, 분모는 분모끼리</td><td>2/3 × 3/5 = 6/15 = 2/5</td></tr><tr><td>분수 ÷ 분수</td><td>뒤의 분수를 뒤집어 곱함</td><td>2/3 ÷ 4/9 = 2/3 × 9/4 = 18/12 = 3/2</td></tr></tbody></table>
+<aside class="box warn"><h4>곱셈에는 통분이 필요 없습니다</h4><ul><li>덧셈·뺄셈만 통분합니다. 곱셈·나눗셈에서 통분하면 계산이 괜히 복잡해집니다.</li><li>다만 통분해도 답은 맞습니다 — 위의 ‘왜 뒤집어 곱할까’가 바로 그 경우입니다.</li></ul></aside></div>
+<div class="keybox"><h3>핵심 정리</h3><ul><li>통분 = 조각의 크기를 같게 맞추는 일 (넓이는 그대로)</li><li>분모에 곱한 수를 분자에도 똑같이 곱한다</li><li>분수의 나눗셈 = ‘안에 몇 번 들어가는가’</li><li>1보다 작은 수로 나누면 답이 커진다</li><li>a/b ÷ c/d = a/b × d/c — 통분하고 분자끼리 나눈 것을 줄여 쓴 식</li></ul></div>
+<div class="sec"><h3>예제</h3>
+<div class="ex"><div class="exq"><b>예제 1</b> 2/3 + 1/4 을 구하세요.</div><ol class="steps"><li>3과 4의 최소공배수는 12</li><li>2/3 = 8/12, 1/4 = 3/12</li><li>8/12 + 3/12 = 11/12</li></ol><div class="exa">답 &nbsp;11/12</div></div>
+<div class="ex"><div class="exq"><b>예제 2</b> 5/6 − 1/4 을 구하세요.</div><ol class="steps"><li>6과 4의 최소공배수는 12</li><li>5/6 = 10/12, 1/4 = 3/12</li><li>10/12 − 3/12 = 7/12</li></ol><div class="exa">답 &nbsp;7/12</div></div>
+<div class="ex"><div class="exq"><b>예제 3</b> 2/5 ÷ 1/10 을 그림의 뜻으로 설명하고 답을 구하세요.</div><ol class="steps"><li>“2/5 안에 1/10 이 몇 번?”</li><li>2/5 = 4/10 이므로 1/10 짜리가 4번</li><li>식으로는 2/5 × 10/1 = 20/5 = 4</li></ol><div class="exa">답 &nbsp;4</div></div>
+<div class="ex"><div class="exq"><b>예제 4</b> 3/4 ÷ 2/3 을 구하세요.</div><ol class="steps"><li>뒤의 분수를 뒤집어 곱한다</li><li>3/4 × 3/2 = 9/8</li></ol><div class="exa">답 &nbsp;9/8 (= 1과 1/8)</div></div>
+</div>
+<div class="sec probs"><h3>연습 문제</h3><ol class="plist">
+<li><div class="pq">1/3 + 2/5</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;11/15</div></li>
+<li><div class="pq">7/8 − 1/2</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;3/8</div></li>
+<li><div class="pq">3/4 + 5/6</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;19/12 (= 1과 7/12)</div></li>
+<li><div class="pq">2/3 × 6/7</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;4/7 (12/21 약분)</div></li>
+<li><div class="pq">1/2 ÷ 1/6 — ‘1/2 안에 1/6 이 몇 번?’으로 설명하고 답을 쓰세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;3</div></li>
+<li><div class="pq">4/5 ÷ 2/15</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;6 (4/5 × 15/2 = 60/10)</div></li>
+<li><div class="pq">5/9 ÷ 5/6</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;2/3 (5/9 × 6/5 = 30/45)</div></li>
+<li><div class="pq">□/12 = 3/4 입니다. □ 에 알맞은 수는?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;9</div></li>
+<li><div class="pq">2/3 ÷ 4 의 답은 2/3 보다 큽니까, 작습니까? 까닭도 쓰세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;작다 (1보다 큰 수로 나누면 작아짐; 답은 1/6)</div></li>
+<li><div class="pq">주스 6/7 L 를 한 컵에 2/7 L 씩 담으면 몇 컵이 됩니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;3컵 (6/7 ÷ 2/7)</div></li>
+</ol></div>
+<div class="tsec tonly">
+<h3 class="thead">교사용 지도 자료</h3>
+<h4>수업 흐름 (40분 기준)</h4><table class="flow"><tbody><tr><td class='tm'>5분</td><td>도입 — 1/2 + 1/3 = 2/5 라고 쓴 답을 보여 주고 틀린 곳을 찾게 한다.</td></tr><tr><td class='tm'>12분</td><td>전개 1 — 막대를 잘게 쪼개는 그림으로 통분. 넓이가 변하지 않음을 강조.</td></tr><tr><td class='tm'>10분</td><td>전개 2 — 나눗셈을 ‘몇 번 들어가는가’로 다시 정의. 반드시 그림으로 세게 한다.</td></tr><tr><td class='tm'>12분</td><td>전개 3 — 세 줄 유도로 역수 곱셈을 이끌어 낸다. 교사가 먼저 쓰지 않는다.</td></tr><tr><td class='tm'>6분</td><td>정리 — ‘뒤집어 곱하는 까닭’을 짝에게 설명하기.</td></tr></tbody></table>
+<h4>자주 나오는 오개념과 처방</h4><table class="mis"><thead><tr><th>학생이 보이는 생각</th><th>어떻게 다룰까</th></tr></thead><tbody><tr><td>분모끼리, 분자끼리 그냥 더함 (1/2 + 1/3 = 2/5)</td><td>조각 크기가 다른 그림을 겹쳐 보인다. 2/5 는 1/2 보다도 작다는 점을 수직선에서 확인.</td></tr><tr><td>통분할 때 분자를 그대로 둠</td><td>1/2 와 1/6 의 색칠 넓이를 비교시킨다. 크기가 달라졌음이 바로 보인다.</td></tr><tr><td>곱셈에서도 통분함</td><td>틀린 답은 아니지만 불필요함을 보인다. 두 방법으로 풀어 같은 답이 나오는 것을 확인.</td></tr><tr><td>나눗셈의 답이 커지면 틀렸다고 생각</td><td>“1/8 짜리 조각이 3/4 안에 여러 번 들어가는 게 이상한가요?”라고 되묻는다.</td></tr><tr><td>역수를 앞 분수에 적용 (3/4 ÷ 1/8 = 4/3 × 1/8)</td><td>뒤집는 것은 <b>나누는 수</b>뿐임을 세 줄 유도에서 다시 짚는다.</td></tr><tr><td>약분을 끝까지 하지 않음</td><td>답을 쓴 뒤 ‘더 나눌 수 있나?’를 묻는 절차를 습관으로.</td></tr></tbody></table>
+<h4>수업 중 던질 발문</h4><ul class="ask"><li>이 두 조각은 크기가 같나요? 그냥 더해도 될까요?</li><li>막대를 더 잘게 잘랐는데 색칠한 넓이는 변했나요?</li><li>3/4 안에 1/8 짜리가 몇 번 들어가는지 세어 볼까요?</li><li>통분해서 분모가 같아지면, 그다음은 무엇만 하면 되죠?</li><li>왜 뒤의 분수만 뒤집나요?</li><li>답이 원래 수보다 커졌는데, 이상한가요?</li></ul>
+<h4>평가 관점</h4><ul><li>통분의 뜻을 그림으로 설명하는가</li><li>나눗셈을 ‘몇 번 들어가는가’로 해석하는가</li><li>역수 곱셈의 까닭을 통분으로부터 설명하는가</li></ul>
+<h4>인터랙티브 자료 연계</h4><p class="link">인터랙티브 자료는 슬라이더를 움직일 때마다 격자가 실시간으로 쪼개집니다. ‘색칠한 넓이는 그대로인데 칸 수만 늘어난다’를 눈으로 확인시킨 뒤 식으로 옮기게 하세요.<br><span class="fname">파일 : 분수_통분과_나눗셈_시각화.html</span></p>
+</div>
+</section>
+<section class="unit" id="u6">
+<header class="uhead"><div class="uno">6단원</div><h2>분수를 자연수로 나누기 — 3/4 L 를 4잔에</h2><div class="umeta">초등 5~6학년 &nbsp;·&nbsp; 분수의 나눗셈</div></header>
+<div class="goals"><h3>학습 목표</h3><ul><li>분수를 자연수로 나누는 상황을 물 따르기로 설명할 수 있다.</li><li>분모에 자연수를 곱하는 방법과 역수를 곱하는 방법이 같음을 안다.</li><li>나눈 몫을 다시 모으면 원래 양이 된다는 것으로 검산할 수 있다.</li></ul></div>
+<div class="sec"><h3>3/4 L 를 네 잔에 똑같이</h3><p>물병에 물이 3/4 L 들어 있습니다. 네 개의 잔에 똑같이 나누어 담으면 한 잔에 몇 L 씩 담길까요?</p>
+<p>1 L 를 네 칸으로 나눈 것 중 세 칸이 3/4 입니다. 이 세 칸을 다시 각각 네 조각으로 쪼개면, 전체는 16조각이 되고 물은 12조각입니다. 12조각을 네 잔에 나누면 한 잔에 3조각.</p>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 198" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="198" fill="#FFFFFF"/><text x="300" y="18" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3/4 L 를 4잔에 — 조각을 4배 잘게 쪼갠다</text><line x1="90" y1="48" x2="405" y2="48" stroke="#D9640A" stroke-width="1.5"/><line x1="90" y1="43" x2="90" y2="53" stroke="#D9640A" stroke-width="1.5"/><line x1="405" y1="43" x2="405" y2="53" stroke="#D9640A" stroke-width="1.5"/><text x="247.5" y="34" font-size="12" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">물 3/4 L</text><text x="457.5" y="36" font-size="11" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">빈 칸</text><rect x="90" y="62" width="420" height="72" fill="none" stroke="#2B2B2B" stroke-width="1.8" rx="0"/><rect x="90" y="62" width="105" height="18" fill="#F4A259" stroke="#FFFFFF" stroke-width="0.8" rx="0"/><rect x="90" y="80" width="105" height="18" fill="#5B8FD9" stroke="#FFFFFF" stroke-width="0.8" rx="0"/><rect x="90" y="98" width="105" height="18" fill="#5FA777" stroke="#FFFFFF" stroke-width="0.8" rx="0"/><rect x="90" y="116" width="105" height="18" fill="#9B72CF" stroke="#FFFFFF" stroke-width="0.8" rx="0"/><rect x="195" y="62" width="105" height="18" fill="#F4A259" stroke="#FFFFFF" stroke-width="0.8" rx="0"/><rect x="195" y="80" width="105" height="18" fill="#5B8FD9" stroke="#FFFFFF" stroke-width="0.8" rx="0"/><rect x="195" y="98" width="105" height="18" fill="#5FA777" stroke="#FFFFFF" stroke-width="0.8" rx="0"/><rect x="195" y="116" width="105" height="18" fill="#9B72CF" stroke="#FFFFFF" stroke-width="0.8" rx="0"/><rect x="300" y="62" width="105" height="18" fill="#F4A259" stroke="#FFFFFF" stroke-width="0.8" rx="0"/><rect x="300" y="80" width="105" height="18" fill="#5B8FD9" stroke="#FFFFFF" stroke-width="0.8" rx="0"/><rect x="300" y="98" width="105" height="18" fill="#5FA777" stroke="#FFFFFF" stroke-width="0.8" rx="0"/><rect x="300" y="116" width="105" height="18" fill="#9B72CF" stroke="#FFFFFF" stroke-width="0.8" rx="0"/><line x1="195" y1="62" x2="195" y2="134" stroke="#2B2B2B" stroke-width="1.4"/><line x1="300" y1="62" x2="300" y2="134" stroke="#2B2B2B" stroke-width="1.4"/><line x1="405" y1="62" x2="405" y2="134" stroke="#2B2B2B" stroke-width="1.4"/><text x="78" y="71" font-size="11" fill="#F4A259" text-anchor="end" font-weight="normal" dominant-baseline="middle">1잔</text><text x="78" y="89" font-size="11" fill="#5B8FD9" text-anchor="end" font-weight="normal" dominant-baseline="middle">2잔</text><text x="78" y="107" font-size="11" fill="#5FA777" text-anchor="end" font-weight="normal" dominant-baseline="middle">3잔</text><text x="78" y="125" font-size="11" fill="#9B72CF" text-anchor="end" font-weight="normal" dominant-baseline="middle">4잔</text><text x="300" y="160" font-size="13" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">한 칸 = 1/16 L · 잔마다 3칸씩 → 3/16 L</text><text x="300" y="182" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3/4 ÷ 4 = 3/(4 × 4) = 3/16</text></svg></div><figcaption>조각을 4배 잘게 쪼개면 한 잔에 3조각 = 3/16 L</figcaption></figure>
+<div class="eq">3/4 ÷ 4 = 3/(4 × 4) = 3/16</div>
+<aside class="box key"><h4>두 가지 방법, 같은 답</h4><ul><li><b>방법 1</b> — 분자가 나누어떨어지면 분자를 나눈다. 8/9 ÷ 4 = 2/9</li><li><b>방법 2</b> — 언제나 통하는 방법: 분모에 그 수를 곱한다. 3/4 ÷ 4 = 3/16</li><li><b>방법 3</b> — 역수를 곱한다. 3/4 ÷ 4 = 3/4 × 1/4 = 3/16  (방법 2와 같은 말)</li></ul></aside></div>
+<div class="sec"><h3>왜 분모에 곱할까</h3><p>4로 나눈다는 것은 조각을 <b>4배 잘게</b> 쪼갠다는 뜻입니다. 조각이 잘아지면 분모가 커집니다. 조각의 <b>개수</b>는 그대로이므로 분자는 변하지 않습니다.</p>
+<div class="eq">3/4 ÷ 4 = 3/4 × 1/4 = (3 × 1)/(4 × 4) = 3/16</div>
+<aside class="box tip"><h4>검산 — 다시 모아 보기</h4><ul><li>한 잔 3/16 L × 4잔 = 12/16 = 3/4 L  ✓  원래 양으로 돌아왔습니다.</li><li>나눗셈의 답은 언제나 이렇게 곱해서 확인할 수 있습니다.</li></ul></aside></div>
+<div class="sec"><h3>답이 작아지는 것이 당연합니다</h3><p>1보다 큰 수로 나누면 답은 원래보다 작아집니다. 물을 여러 잔에 나누면 한 잔의 양은 줄어드는 것이 당연하지요.</p>
+<table><thead><tr><th>나누기</th><th>결과</th><th>원래와 비교</th></tr></thead><tbody><tr><td>3/4 ÷ 2</td><td>3/8</td><td>절반으로 줄어듦</td></tr><tr><td>3/4 ÷ 3</td><td>1/4</td><td>셋으로 줄어듦 (3/12 약분)</td></tr><tr><td>3/4 ÷ 4</td><td>3/16</td><td>넷으로 줄어듦</td></tr><tr><td>3/4 ÷ 6</td><td>1/8</td><td>여섯으로 줄어듦 (3/24 약분)</td></tr></tbody></table>
+<aside class="box warn"><h4>약분을 잊지 마세요</h4><ul><li>3/4 ÷ 3 = 3/12 로 끝내면 아쉽습니다. 3/12 = 1/4 까지 줄여 씁니다.</li><li>분자와 분모를 같은 수로 나눌 수 있는지 마지막에 꼭 확인하세요.</li></ul></aside></div>
+<div class="sec"><h3>여러 가지 상황</h3><ul><li>리본 5/6 m 를 똑같이 3도막으로 → 5/6 ÷ 3 = 5/18 m</li><li>밀가루 4/5 kg 를 봉지 2개에 → 4/5 ÷ 2 = 2/5 kg</li><li>주스 7/8 L 를 7명이 나눠 → 7/8 ÷ 7 = 1/8 L</li><li>페인트 2/3 통으로 벽 5면을 칠함, 한 면에 → 2/3 ÷ 5 = 2/15 통</li></ul></div>
+<div class="keybox"><h3>핵심 정리</h3><ul><li>분수 ÷ 자연수 = 조각을 그 수만큼 더 잘게 쪼개는 일</li><li>분모에 그 수를 곱한다 — 3/4 ÷ 4 = 3/16</li><li>역수를 곱해도 같다 — 3/4 × 1/4</li><li>분자가 나누어떨어지면 분자를 나눠도 된다 — 8/9 ÷ 4 = 2/9</li><li>검산: 답 × 나눈 수 = 원래 수</li></ul></div>
+<div class="sec"><h3>예제</h3>
+<div class="ex"><div class="exq"><b>예제 1</b> 2/5 L 의 우유를 2개의 컵에 똑같이 나누면 한 컵에 몇 L 입니까?</div><ol class="steps"><li>분자 2가 2로 나누어떨어진다</li><li>2/5 ÷ 2 = 1/5</li></ol><div class="exa">답 &nbsp;1/5 L</div></div>
+<div class="ex"><div class="exq"><b>예제 2</b> 3/7 m 의 끈을 똑같이 5도막으로 자르면 한 도막은 몇 m 입니까?</div><ol class="steps"><li>분자 3은 5로 나누어떨어지지 않는다 → 분모에 곱한다</li><li>3/7 ÷ 5 = 3/35</li></ol><div class="exa">답 &nbsp;3/35 m</div></div>
+<div class="ex"><div class="exq"><b>예제 3</b> 5/6 kg 의 밀가루를 4개의 그릇에 나누어 담으면 한 그릇에 몇 kg 입니까? 검산도 하세요.</div><ol class="steps"><li>5/6 ÷ 4 = 5/24</li><li>검산: 5/24 × 4 = 20/24 = 5/6  ✓</li></ol><div class="exa">답 &nbsp;5/24 kg</div></div>
+<div class="ex"><div class="exq"><b>예제 4</b> 6/7 L 를 3잔에 나눈 뒤, 한 잔을 다시 2명이 반씩 마셨습니다. 한 명이 마신 양은?</div><ol class="steps"><li>6/7 ÷ 3 = 2/7 (한 잔)</li><li>2/7 ÷ 2 = 1/7 (한 명)</li></ol><div class="exa">답 &nbsp;1/7 L</div></div>
+</div>
+<div class="sec probs"><h3>연습 문제</h3><ol class="plist">
+<li><div class="pq">4/9 ÷ 2</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;2/9</div></li>
+<li><div class="pq">3/5 ÷ 4</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;3/20</div></li>
+<li><div class="pq">6/7 ÷ 3</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;2/7</div></li>
+<li><div class="pq">5/8 ÷ 5</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;1/8</div></li>
+<li><div class="pq">9/10 ÷ 6</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;3/20 (9/60 약분)</div></li>
+<li><div class="pq">리본 7/9 m 를 똑같이 4도막으로 자르면 한 도막은 몇 m 입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;7/36 m</div></li>
+<li><div class="pq">물 8/9 L 를 6개의 컵에 똑같이 나누면 한 컵에 몇 L 입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;4/27 L (8/54 약분)</div></li>
+<li><div class="pq">2/3 ÷ 5 의 답이 맞는지 검산하는 식을 쓰세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;2/15 × 5 = 10/15 = 2/3</div></li>
+<li><div class="pq">3/4 ÷ 2 와 3/4 × 1/2 의 답을 각각 구하고 비교하세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;둘 다 3/8 — 같다</div></li>
+<li><div class="pq">주스 5/6 L 를 몇 개의 컵에 똑같이 나누었더니 한 컵이 5/24 L 였습니다. 컵은 몇 개입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;4개 (5/6 ÷ 5/24 = 4)</div></li>
+</ol></div>
+<div class="tsec tonly">
+<h3 class="thead">교사용 지도 자료</h3>
+<h4>수업 흐름 (40분 기준)</h4><table class="flow"><tbody><tr><td class='tm'>5분</td><td>도입 — 실제 물병과 컵으로 따라 보인다. 눈으로 먼저, 식은 나중.</td></tr><tr><td class='tm'>12분</td><td>전개 1 — 1 L 막대를 4칸으로, 다시 각 칸을 4조각으로 쪼개는 그림을 함께 그린다.</td></tr><tr><td class='tm'>10분</td><td>전개 2 — ‘왜 분모에 곱하나’. 조각이 잘아지면 분모가 커진다는 것을 말로 정리.</td></tr><tr><td class='tm'>8분</td><td>전개 3 — 검산 습관 만들기. 모든 문제를 곱해서 되돌려 본다.</td></tr><tr><td class='tm'>5분</td><td>정리 — 답이 작아지는 까닭을 한 문장으로.</td></tr></tbody></table>
+<h4>자주 나오는 오개념과 처방</h4><table class="mis"><thead><tr><th>학생이 보이는 생각</th><th>어떻게 다룰까</th></tr></thead><tbody><tr><td>분자와 분모를 모두 나눔 (3/4 ÷ 4 = 3/1 ?)</td><td>그림으로 돌아간다. 조각이 잘아졌으니 분모가 커져야 한다.</td></tr><tr><td>분자를 억지로 나눠 소수로 만듦 (3/4 ÷ 4 = 0.75/4)</td><td>분모에 곱하는 방법이 언제나 통함을 보인다.</td></tr><tr><td>답이 작아지는 것을 이상하게 여김</td><td>물을 여러 잔에 나누는 장면으로 되돌린다.</td></tr><tr><td>약분을 빠뜨림</td><td>답을 쓴 뒤 ‘더 줄일 수 있나?’를 반드시 묻는다.</td></tr><tr><td>÷ 자연수와 ÷ 분수를 뒤섞음</td><td>자연수 4는 4/1 이므로 역수가 1/4 이라는 점을 짚으면 하나의 규칙으로 통합된다.</td></tr></tbody></table>
+<h4>수업 중 던질 발문</h4><ul class="ask"><li>물병의 물을 네 잔에 나누면 한 잔은 많아질까요, 적어질까요?</li><li>조각을 더 잘게 쪼개면 분모는 어떻게 되나요?</li><li>조각의 개수(분자)는 변했나요?</li><li>구한 답에 4를 곱하면 무엇이 나와야 하나요?</li><li>자연수 4를 분수로 쓰면 어떻게 되죠? 그럼 역수는?</li></ul>
+<h4>평가 관점</h4><ul><li>상황을 그림으로 옮길 수 있는가</li><li>분모에 곱하는 까닭을 설명하는가</li><li>검산으로 스스로 확인하는가</li><li>약분까지 마무리하는가</li></ul>
+<h4>인터랙티브 자료 연계</h4><p class="link">인터랙티브 자료에서는 물병을 기울여 직접 따라 볼 수 있고, 네 잔에 담긴 양이 실시간으로 분수로 표시됩니다. 다 따른 뒤 ‘모두 더하기’로 원래 양이 되는지 확인시키면 검산 습관이 자연스럽게 붙습니다.<br><span class="fname">파일 : water_pour_fraction.html</span></p>
+</div>
+</section>
+<section class="unit" id="u7">
+<header class="uhead"><div class="uno">7단원</div><h2>선분 모델(Bar Model) — 그림으로 푸는 문장제</h2><div class="umeta">초등 3~6학년 &nbsp;·&nbsp; 문제 해결 전략</div></header>
+<div class="goals"><h3>학습 목표</h3><ul><li>문장제의 수량 관계를 막대 그림으로 옮길 수 있다.</li><li>합과 차, 배수 관계, 비 문제를 ‘한 칸의 크기’를 구해 해결할 수 있다.</li><li>식을 세우기 전에 그림으로 구조를 파악하는 습관을 기른다.</li></ul></div>
+<div class="sec"><h3>막대 하나로 수량을 나타내기</h3><p>싱가포르 수학에서 널리 쓰는 방법입니다. 수를 막대의 <b>길이</b>로 나타내면 ‘누가 더 많은지’, ‘얼마나 차이 나는지’가 눈에 보입니다.</p>
+<ul><li>막대 하나 = 수량 하나</li><li>막대의 길이 = 수의 크기 (큰 수는 길게)</li><li>같은 칸은 같은 크기로 그린다 — 이것이 가장 중요합니다</li></ul>
+<aside class="box key"><h4>그리는 순서</h4><ul><li>① 누구의 양인지 막대마다 이름을 쓴다</li><li>② 아는 수를 막대 위에 적는다</li><li>③ 구하는 것에 ? 표시를 한다</li><li>④ 한 칸의 크기를 구한다</li></ul></aside></div>
+<div class="sec"><h3>합과 차 문제</h3><p>민서와 준호가 가진 구슬이 모두 20개이고, 민서가 준호보다 4개 많습니다. 각각 몇 개씩 가지고 있을까요?</p>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 208" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="208" fill="#FFFFFF"/><text x="300" y="18" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">합 20, 차 4 — 차를 떼어내면 똑같은 둘</text><line x1="323.333" y1="52" x2="430" y2="52" stroke="#C0392B" stroke-width="1.5"/><line x1="323.333" y1="47" x2="323.333" y2="57" stroke="#C0392B" stroke-width="1.5"/><line x1="430" y1="47" x2="430" y2="57" stroke="#C0392B" stroke-width="1.5"/><text x="376.667" y="38" font-size="12" fill="#C0392B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">차 4</text><rect x="110" y="66" width="213.333" height="38" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.8" rx="0"/><rect x="323.333" y="66" width="106.667" height="38" fill="#F7C9B6" stroke="#C0392B" stroke-width="1.6" rx="0"/><text x="216.667" y="85" font-size="14" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">8</text><text x="376.667" y="85" font-size="12" fill="#C0392B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">+4</text><text x="96" y="85" font-size="12" fill="#D9640A" text-anchor="end" font-weight="normal" dominant-baseline="middle">민서</text><text x="444" y="85" font-size="12" fill="#D9640A" text-anchor="start" font-weight="normal" dominant-baseline="middle">모두 12</text><rect x="110" y="122" width="213.333" height="38" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.8" rx="0"/><text x="216.667" y="141" font-size="14" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">8</text><text x="96" y="141" font-size="12" fill="#2F72D8" text-anchor="end" font-weight="normal" dominant-baseline="middle">준호</text><text x="337.333" y="141" font-size="12" fill="#2F72D8" text-anchor="start" font-weight="normal" dominant-baseline="middle">모두 8</text><text x="300" y="190" font-size="14" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">(20 − 4) ÷ 2 = 8 → 민서 8 + 4 = 12</text></svg></div><figcaption>차 4를 떼어내면 똑같은 막대 둘이 남는다</figcaption></figure>
+<ol><li>민서 막대에서 ‘더 많은 4’를 떼어낸다 → 두 막대가 똑같아진다</li><li>남은 합 = 20 − 4 = 16</li><li>똑같은 막대 둘이므로 하나는 16 ÷ 2 = 8 → 준호 8개</li><li>민서는 8 + 4 = 12개</li></ol>
+<aside class="box tip"><h4>합차 문제의 공식</h4><ul><li>작은 쪽 = (합 − 차) ÷ 2        큰 쪽 = (합 + 차) ÷ 2</li><li>공식을 외우기보다, 그림에서 ‘차를 떼어낸다’를 기억하세요.</li></ul></aside></div>
+<div class="sec"><h3>배수 관계 문제</h3><p>형의 돈은 동생의 3배이고, 둘이 합쳐 2400원입니다. 각각 얼마일까요?</p>
+<ol><li>동생을 한 칸으로 두면 형은 세 칸 → 모두 네 칸</li><li>한 칸 = 2400 ÷ 4 = 600원 → 동생 600원</li><li>형 = 600 × 3 = 1800원</li></ol>
+<p>‘누구를 한 칸으로 둘까’가 열쇠입니다. <b>작은 쪽을 한 칸</b>으로 두면 나머지가 깔끔한 정수 칸이 됩니다.</p></div>
+<div class="sec"><h3>비 문제 — 칸으로 바꿔 생각하기</h3><p>사탕 25개를 가와 나에게 3 : 2 로 나누어 줍니다. 각각 몇 개씩일까요?</p>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 188" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="188" fill="#FFFFFF"/><text x="300" y="18" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">25를 3 : 2로 — 칸 5개, 한 칸 5</text><line x1="110" y1="48" x2="490" y2="48" stroke="#2E8B57" stroke-width="1.5"/><line x1="110" y1="43" x2="110" y2="53" stroke="#2E8B57" stroke-width="1.5"/><line x1="490" y1="43" x2="490" y2="53" stroke="#2E8B57" stroke-width="1.5"/><text x="300" y="34" font-size="13" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">전체 25</text><rect x="110" y="62" width="228" height="50" fill="#FBE3CC" stroke="#D9640A" stroke-width="1.8" rx="0"/><rect x="338" y="62" width="152" height="50" fill="#D6E6FB" stroke="#2F72D8" stroke-width="1.8" rx="0"/><line x1="186" y1="62" x2="186" y2="112" stroke="#2B2B2B" stroke-width="1.1"/><line x1="262" y1="62" x2="262" y2="112" stroke="#2B2B2B" stroke-width="1.1"/><line x1="338" y1="62" x2="338" y2="112" stroke="#2B2B2B" stroke-width="1.1"/><line x1="414" y1="62" x2="414" y2="112" stroke="#2B2B2B" stroke-width="1.1"/><text x="148" y="87" font-size="14" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">5</text><text x="224" y="87" font-size="14" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">5</text><text x="300" y="87" font-size="14" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">5</text><text x="376" y="87" font-size="14" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">5</text><text x="452" y="87" font-size="14" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">5</text><line x1="110" y1="126" x2="338" y2="126" stroke="#D9640A" stroke-width="1.5"/><line x1="110" y1="121" x2="110" y2="131" stroke="#D9640A" stroke-width="1.5"/><line x1="338" y1="121" x2="338" y2="131" stroke="#D9640A" stroke-width="1.5"/><text x="224" y="140" font-size="13" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">가 15</text><line x1="338" y1="126" x2="490" y2="126" stroke="#2F72D8" stroke-width="1.5"/><line x1="338" y1="121" x2="338" y2="131" stroke="#2F72D8" stroke-width="1.5"/><line x1="490" y1="121" x2="490" y2="131" stroke="#2F72D8" stroke-width="1.5"/><text x="414" y="140" font-size="13" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">나 10</text><text x="300" y="172" font-size="14" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">한 칸 = 25 ÷ (3 + 2) = 5</text></svg></div><figcaption>3 : 2 는 칸 3개와 칸 2개 — 모두 5칸</figcaption></figure>
+<ol><li>3 : 2 → 칸이 모두 3 + 2 = 5개</li><li>한 칸 = 25 ÷ 5 = 5개</li><li>가 = 5 × 3 = 15개, 나 = 5 × 2 = 10개</li></ol>
+<aside class="box key"><h4>비 문제의 한 줄 요약</h4><ul><li>한 칸 = 전체 ÷ (비의 수들의 합)</li><li>구한 뒤 반드시 더해서 전체가 되는지 확인합니다. 15 + 10 = 25  ✓</li></ul></aside></div>
+<div class="sec"><h3>‘남은 것’이 나오는 문제</h3><p>선분 모델이 특히 빛나는 자리입니다. 지호가 가진 돈의 1/3 을 쓰고 800원이 남았습니다. 처음에 가진 돈은 얼마일까요?</p>
+<ol><li>전체를 세 칸으로 그린다</li><li>한 칸을 썼으므로 남은 것은 두 칸 → 두 칸 = 800원</li><li>한 칸 = 400원 → 전체 = 400 × 3 = 1200원</li></ol>
+<aside class="box warn"><h4>자주 하는 실수</h4><ul><li>800원을 전체로 착각하는 경우가 많습니다. 800원은 <b>남은 두 칸</b>입니다.</li><li>‘남은 것’이 몇 칸인지 그림에서 세는 것이 먼저입니다.</li></ul></aside></div>
+<div class="keybox"><h3>핵심 정리</h3><ul><li>수를 막대의 길이로 나타낸다 — 같은 칸은 같은 크기로</li><li>합차 문제: 차를 떼어내면 똑같은 둘이 남는다</li><li>배수 문제: 작은 쪽을 한 칸으로 둔다</li><li>비 문제: 한 칸 = 전체 ÷ (비의 합)</li><li>남은 것 문제: 남은 것이 몇 칸인지 먼저 센다</li></ul></div>
+<div class="sec"><h3>예제</h3>
+<div class="ex"><div class="exq"><b>예제 1</b> 두 수의 합이 48이고 차가 6입니다. 두 수를 구하세요.</div><ol class="steps"><li>작은 쪽 = (48 − 6) ÷ 2 = 21</li><li>큰 쪽 = 21 + 6 = 27</li></ol><div class="exa">답 &nbsp;21과 27</div></div>
+<div class="ex"><div class="exq"><b>예제 2</b> 언니의 나이는 동생의 2배이고, 두 사람의 나이의 합은 27살입니다. 각각 몇 살입니까?</div><ol class="steps"><li>동생 1칸, 언니 2칸 → 모두 3칸</li><li>한 칸 = 27 ÷ 3 = 9</li><li>언니 = 9 × 2 = 18</li></ol><div class="exa">답 &nbsp;동생 9살, 언니 18살</div></div>
+<div class="ex"><div class="exq"><b>예제 3</b> 구슬 56개를 민수와 영희에게 5 : 3 으로 나누어 줍니다. 민수는 몇 개 받습니까?</div><ol class="steps"><li>칸은 모두 5 + 3 = 8개</li><li>한 칸 = 56 ÷ 8 = 7</li><li>민수 = 7 × 5 = 35</li></ol><div class="exa">답 &nbsp;35개</div></div>
+<div class="ex"><div class="exq"><b>예제 4</b> 가진 돈의 2/5 를 쓰고 1800원이 남았습니다. 처음에 가진 돈은?</div><ol class="steps"><li>전체 5칸 중 2칸을 씀 → 남은 것은 3칸</li><li>3칸 = 1800 → 한 칸 = 600</li><li>전체 = 600 × 5 = 3000</li></ol><div class="exa">답 &nbsp;3000원</div></div>
+</div>
+<div class="sec probs"><h3>연습 문제</h3><ol class="plist">
+<li><div class="pq">두 수의 합이 70이고 차가 10입니다. 작은 수는?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;30</div></li>
+<li><div class="pq">형의 구슬은 동생의 4배이고 둘이 합쳐 45개입니다. 동생은 몇 개입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;9개 (45÷5)</div></li>
+<li><div class="pq">사탕 42개를 4 : 3 으로 나누면 각각 몇 개입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;24개와 18개 (한 칸 6)</div></li>
+<li><div class="pq">길이 60cm 끈을 2 : 3 으로 자르면 짧은 쪽은 몇 cm 입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;24cm (한 칸 12)</div></li>
+<li><div class="pq">가진 돈의 1/4 을 쓰고 2700원이 남았습니다. 처음에 가진 돈은?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;3600원 (남은 3칸 = 2700, 한 칸 900)</div></li>
+<li><div class="pq">A와 B의 합은 100이고 A는 B보다 20 큽니다. A는?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;60</div></li>
+<li><div class="pq">빨간 공과 파란 공이 3 : 5 이고 파란 공이 빨간 공보다 10개 많습니다. 공은 모두 몇 개입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;40개 (차 2칸 = 10 → 한 칸 5, 전체 8칸)</div></li>
+<li><div class="pq">동생이 가진 돈은 형의 2/3 입니다. 둘이 합쳐 4000원일 때 형은 얼마입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;2400원 (형 3칸, 동생 2칸, 한 칸 800)</div></li>
+<li><div class="pq">책의 1/3 을 읽고 다음 날 나머지의 절반을 읽었더니 40쪽이 남았습니다. 전체는 몇 쪽입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;120쪽 (첫날 후 남은 2/3, 그 절반을 읽어 1/3 남음 → 1/3 = 40)</div></li>
+</ol></div>
+<div class="tsec tonly">
+<h3 class="thead">교사용 지도 자료</h3>
+<h4>수업 흐름 (40분 기준)</h4><table class="flow"><tbody><tr><td class='tm'>5분</td><td>도입 — 같은 문제를 식으로만 vs 그림으로 푼 것을 나란히 보여 준다.</td></tr><tr><td class='tm'>12분</td><td>전개 1 — 합차 문제. 종이띠를 실제로 잘라 ‘차를 떼어내는’ 동작을 해 본다.</td></tr><tr><td class='tm'>10분</td><td>전개 2 — 배수 문제. 누구를 한 칸으로 둘지 먼저 상의하게 한다.</td></tr><tr><td class='tm'>10분</td><td>전개 3 — 비 문제. 칸의 개수를 세는 것이 전부임을 확인.</td></tr><tr><td class='tm'>8분</td><td>전개 4 — ‘남은 것’ 문제. 그림 없이 풀면 왜 틀리는지 경험시킨다.</td></tr><tr><td class='tm'>5분</td><td>정리 — 오늘 그린 막대 중 하나를 골라 친구에게 설명.</td></tr></tbody></table>
+<h4>자주 나오는 오개념과 처방</h4><table class="mis"><thead><tr><th>학생이 보이는 생각</th><th>어떻게 다룰까</th></tr></thead><tbody><tr><td>칸의 크기를 제멋대로 그림</td><td>자를 대고 같은 칸은 반드시 같은 길이로 그리게 한다. 그림이 틀리면 답도 틀린다.</td></tr><tr><td>‘남은 것’을 전체로 착각</td><td>남은 것에 색을 칠하고 몇 칸인지 세어 쓰게 한다.</td></tr><tr><td>비 문제에서 전체를 비의 수로 그냥 나눔 (25 ÷ 3)</td><td>칸을 모두 세는 단계를 소리 내어 말하게 한다. 3 + 2 = 5.</td></tr><tr><td>차 문제에서 차를 두 막대 모두에서 뺌</td><td>긴 쪽에서만 떼어낸다는 것을 종이띠로 보인다.</td></tr><tr><td>그림을 그리지 않고 바로 식을 씀</td><td>처음 몇 주는 그림 없는 풀이를 받지 않는다. 속도보다 구조가 먼저.</td></tr></tbody></table>
+<h4>수업 중 던질 발문</h4><ul class="ask"><li>누구의 막대가 더 길어야 할까요? 왜죠?</li><li>두 막대를 똑같이 만들려면 무엇을 떼어내야 하나요?</li><li>칸은 모두 몇 개인가요?</li><li>한 칸은 얼마인가요? 그걸 먼저 구할 수 있나요?</li><li>남은 것은 몇 칸인가요? 전체가 아니라요?</li><li>구한 답을 더하면 처음 수가 되나요?</li></ul>
+<h4>평가 관점</h4><ul><li>문장을 막대 그림으로 옮기는가</li><li>같은 칸을 같은 크기로 그리는가</li><li>‘한 칸’을 먼저 구하는 전략을 쓰는가</li><li>답을 되짚어 검산하는가</li></ul>
+<h4>인터랙티브 자료 연계</h4><p class="link">인터랙티브 자료에서는 막대를 끌어 길이를 바꾸며 관계를 맞춰 볼 수 있습니다. 칸 수를 바꿀 때 한 칸의 크기가 자동으로 다시 계산되므로, ‘한 칸을 먼저 구한다’를 반복해서 보여 주세요.<br><span class="fname">파일 : bar_model.html</span></p>
+</div>
+</section>
+<section class="unit" id="u8">
+<header class="uhead"><div class="uno">8단원</div><h2>규칙과 대응 — 두 양의 관계를 식으로</h2><div class="umeta">초등 5~6학년 &nbsp;·&nbsp; 규칙과 대응 (함수의 기초)</div></header>
+<div class="goals"><h3>학습 목표</h3><ul><li>두 양 사이의 대응 관계를 표로 정리하고 식으로 나타낼 수 있다.</li><li>표에서 ‘한 칸 갈 때마다 얼마씩 변하는가’를 찾아 곱하는 수를 구할 수 있다.</li><li>도형이 늘어나는 규칙을 식으로 일반화하고 먼 번째 값을 예측할 수 있다.</li></ul></div>
+<div class="sec"><h3>규칙 상자 — 넣으면 바뀌어 나온다</h3><p>상자에 수를 넣으면 정해진 규칙대로 바뀌어 나옵니다. 넣는 수를 □, 나오는 수를 △ 라고 합시다.</p>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 238" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="238" fill="#FFFFFF"/><text x="300" y="16" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">규칙 상자 — 넣는 수 □, 나오는 수 △</text><rect x="60" y="86" width="150" height="14" fill="#DADADA" stroke="#2B2B2B" stroke-width="1.2" rx="7"/><rect x="390" y="86" width="150" height="14" fill="#DADADA" stroke="#2B2B2B" stroke-width="1.2" rx="7"/><rect x="230" y="44" width="140" height="86" fill="#FFF3E6" stroke="#D9640A" stroke-width="2.2" rx="12"/><text x="300" y="70" font-size="11" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">규칙 상자</text><text x="300" y="96" font-size="20" fill="#D9640A" text-anchor="middle" font-weight="normal" dominant-baseline="middle">□ × 2 + 1</text><circle cx="100" cy="76" r="18" fill="#2F72D8" stroke="none" stroke-width="1"/><text x="100" y="76" font-size="15" fill="#FFFFFF" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3</text><circle cx="500" cy="76" r="18" fill="#2E8B57" stroke="none" stroke-width="1"/><text x="500" y="76" font-size="15" fill="#FFFFFF" text-anchor="middle" font-weight="normal" dominant-baseline="middle">7</text><text x="100" y="116" font-size="11" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">넣는 수</text><text x="500" y="116" font-size="11" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">나오는 수</text><rect x="125" y="150" width="70" height="26" fill="#D6E6FB" stroke="#2B2B2B" stroke-width="1.1" rx="0"/><rect x="125" y="176" width="70" height="26" fill="#D6EFE0" stroke="#2B2B2B" stroke-width="1.1" rx="0"/><text x="160" y="163" font-size="13" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">1</text><text x="160" y="189" font-size="13" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3</text><rect x="195" y="150" width="70" height="26" fill="#D6E6FB" stroke="#2B2B2B" stroke-width="1.1" rx="0"/><rect x="195" y="176" width="70" height="26" fill="#D6EFE0" stroke="#2B2B2B" stroke-width="1.1" rx="0"/><text x="230" y="163" font-size="13" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">2</text><text x="230" y="189" font-size="13" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">5</text><rect x="265" y="150" width="70" height="26" fill="#D6E6FB" stroke="#2B2B2B" stroke-width="1.1" rx="0"/><rect x="265" y="176" width="70" height="26" fill="#D6EFE0" stroke="#2B2B2B" stroke-width="1.1" rx="0"/><text x="300" y="163" font-size="13" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3</text><text x="300" y="189" font-size="13" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">7</text><rect x="335" y="150" width="70" height="26" fill="#D6E6FB" stroke="#2B2B2B" stroke-width="1.1" rx="0"/><rect x="335" y="176" width="70" height="26" fill="#D6EFE0" stroke="#2B2B2B" stroke-width="1.1" rx="0"/><text x="370" y="163" font-size="13" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">4</text><text x="370" y="189" font-size="13" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">9</text><rect x="405" y="150" width="70" height="26" fill="#D6E6FB" stroke="#2B2B2B" stroke-width="1.1" rx="0"/><rect x="405" y="176" width="70" height="26" fill="#D6EFE0" stroke="#2B2B2B" stroke-width="1.1" rx="0"/><text x="440" y="163" font-size="13" fill="#2F72D8" text-anchor="middle" font-weight="normal" dominant-baseline="middle">5</text><text x="440" y="189" font-size="13" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">11</text><text x="113" y="163" font-size="13" fill="#2F72D8" text-anchor="end" font-weight="normal" dominant-baseline="middle">□</text><text x="113" y="189" font-size="13" fill="#2E8B57" text-anchor="end" font-weight="normal" dominant-baseline="middle">△</text><text x="300" y="222" font-size="13" fill="#7B52AF" text-anchor="middle" font-weight="normal" dominant-baseline="middle">□가 1씩 커질 때 △는 2씩 커진다 → 곱하는 수 2</text></svg></div><figcaption>□ × 2 + 1 상자에 3을 넣으면 7이 나온다</figcaption></figure>
+<p>이 상자의 규칙은 △ = □ × 2 + 1 입니다. 넣는 수마다 나오는 수가 하나씩 정해지는 이런 관계를 <b>대응</b>이라고 합니다.</p>
+<aside class="box key"><h4>표를 먼저 만드세요</h4><ul><li>규칙을 바로 맞히려 하지 말고, 넣는 수를 1, 2, 3, 4 … 로 바꿔 가며 표를 채웁니다.</li><li>표가 있으면 규칙이 보입니다.</li></ul></aside></div>
+<div class="sec"><h3>규칙을 찾는 두 걸음</h3><table><thead><tr><th>□</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead><tbody><tr><td>△</td><td>3</td><td>5</td><td>7</td><td>9</td><td>11</td></tr></tbody></table>
+<ol><li><b>얼마씩 변하나?</b> — △가 2씩 커진다. 그러면 <b>곱하는 수는 2</b>다.</li><li><b>얼마를 더하나?</b> — □가 1일 때 □ × 2 = 2 인데 △는 3이다. 1을 더한다.</li></ol>
+<div class="eq">△ = □ × 2 + 1</div>
+<aside class="box tip"><h4>확인은 반드시 두 군데 이상</h4><ul><li>찾은 식에 □ = 1 과 □ = 5 를 각각 넣어 봅니다.</li><li>1 × 2 + 1 = 3 ✓     5 × 2 + 1 = 11 ✓     두 곳이 맞으면 거의 확실합니다.</li></ul></aside></div>
+<div class="sec"><h3>도형이 늘어나는 규칙</h3><p>성냥개비로 삼각형을 이어 붙입니다. 1번째는 3개, 2번째는 5개, 3번째는 7개가 필요합니다. 10번째는 몇 개일까요?</p>
+<figure class="fig"><div class="figbox"><svg preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 190" font-family="'Noto Sans CJK KR','Malgun Gothic',sans-serif"><rect width="600" height="190" fill="#FFFFFF"/><text x="300" y="16" font-size="14" fill="#2B2B2B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">삼각형 띠 — 하나 늘 때 성냥 2개씩</text><line x1="70" y1="112" x2="124" y2="112" stroke="#D9640A" stroke-width="4"/><line x1="124" y1="112" x2="97" y2="65.2346" stroke="#D9640A" stroke-width="4"/><line x1="97" y1="65.2346" x2="70" y2="112" stroke="#D9640A" stroke-width="4"/><text x="97" y="136" font-size="12" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">1번째 · 3개</text><line x1="210" y1="112" x2="264" y2="112" stroke="#D9640A" stroke-width="4"/><line x1="264" y1="112" x2="237" y2="65.2346" stroke="#D9640A" stroke-width="4"/><line x1="237" y1="65.2346" x2="210" y2="112" stroke="#D9640A" stroke-width="4"/><line x1="237" y1="65.2346" x2="291" y2="65.2346" stroke="#D9640A" stroke-width="4"/><line x1="291" y1="65.2346" x2="264" y2="112" stroke="#D9640A" stroke-width="4"/><text x="264" y="136" font-size="12" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">2번째 · 5개</text><line x1="390" y1="112" x2="444" y2="112" stroke="#D9640A" stroke-width="4"/><line x1="444" y1="112" x2="417" y2="65.2346" stroke="#D9640A" stroke-width="4"/><line x1="417" y1="65.2346" x2="390" y2="112" stroke="#D9640A" stroke-width="4"/><line x1="417" y1="65.2346" x2="471" y2="65.2346" stroke="#D9640A" stroke-width="4"/><line x1="471" y1="65.2346" x2="444" y2="112" stroke="#D9640A" stroke-width="4"/><line x1="444" y1="112" x2="498" y2="112" stroke="#D9640A" stroke-width="4"/><line x1="498" y1="112" x2="471" y2="65.2346" stroke="#D9640A" stroke-width="4"/><text x="444" y="136" font-size="12" fill="#6B6B6B" text-anchor="middle" font-weight="normal" dominant-baseline="middle">3번째 · 7개</text><text x="300" y="172" font-size="14" fill="#2E8B57" text-anchor="middle" font-weight="normal" dominant-baseline="middle">n번째 = n × 2 + 1  →  100번째는 201개</text></svg></div><figcaption>하나 늘 때마다 2개씩 — n번째는 n × 2 + 1</figcaption></figure>
+<ol><li>2씩 커지므로 곱하는 수는 2 → n × 2</li><li>n = 1 일 때 1 × 2 = 2 인데 실제는 3 → 1을 더한다</li><li>식: (성냥개비 수) = n × 2 + 1</li><li>10번째 = 10 × 2 + 1 = 21개, 100번째 = 201개</li></ol>
+<aside class="box key"><h4>왜 +1 일까 — 그림으로 설명하기</h4><ul><li>맨 왼쪽에 성냥개비 1개를 먼저 세워 둡니다. 그다음부터는 삼각형 하나마다 2개씩 붙입니다.</li><li>그래서 ‘처음 1개 + 삼각형마다 2개씩’ = n × 2 + 1 입니다.</li><li>식의 각 부분이 그림의 어디인지 말할 수 있으면 제대로 이해한 것입니다.</li></ul></aside></div>
+<div class="sec"><h3>생활 속의 대응 관계</h3><table><thead><tr><th>상황</th><th>□</th><th>△</th><th>식</th></tr></thead><tbody><tr><td>한 봉지에 사탕 6개</td><td>봉지 수</td><td>사탕 수</td><td>△ = □ × 6</td></tr><tr><td>기본요금 1000원 + 1km마다 500원</td><td>거리(km)</td><td>요금</td><td>△ = □ × 500 + 1000</td></tr><tr><td>의자 한 개에 다리 4개</td><td>의자 수</td><td>다리 수</td><td>△ = □ × 4</td></tr><tr><td>사각형 한 개마다 성냥 3개 (처음 1개)</td><td>사각형 수</td><td>성냥 수</td><td>△ = □ × 3 + 1</td></tr><tr><td>색종이를 반으로 접기</td><td>접은 횟수</td><td>조각 수</td><td>△ = 2를 □번 곱한 수</td></tr></tbody></table>
+<aside class="box warn"><h4>마지막 줄은 다릅니다</h4><ul><li>앞의 네 줄은 ‘일정하게 커지는’ 규칙이어서 □ × ? + ? 꼴로 쓸 수 있습니다.</li><li>색종이 접기는 2배씩 커집니다. 1, 2, 4, 8, 16 … 이런 규칙은 중학교에서 더 배웁니다.</li><li>표를 만들어 ‘일정하게 커지는가, 몇 배씩 커지는가’를 먼저 구별하세요.</li></ul></aside></div>
+<div class="sec"><h3>코딩으로 이어지는 생각</h3><p>규칙 상자는 프로그래밍의 <b>함수</b>와 똑같은 생각입니다. 넣는 값이 있고, 정해진 처리를 거쳐, 나오는 값이 있습니다.</p>
+<p>표를 1번째부터 차례로 채우는 일은 <b>반복문</b>과 같습니다. 정보올림피아드 문제의 상당수가 ‘규칙을 찾아 식으로 쓰고, 반복으로 계산하기’입니다.</p>
+<aside class="box tip"><h4>먼 번째를 묻는 까닭</h4><ul><li>“100번째는?”이라고 묻는 이유는 하나씩 세는 방법을 막기 위해서입니다.</li><li>식을 찾으면 몇 번째든 한 번에 구할 수 있습니다. 이것이 일반화의 힘입니다.</li></ul></aside></div>
+<div class="keybox"><h3>핵심 정리</h3><ul><li>두 양의 대응은 먼저 표로 정리한다</li><li>얼마씩 변하는지 = 곱하는 수</li><li>□ = 1 을 넣어 차이를 보면 더하는 수를 알 수 있다</li><li>찾은 식은 두 군데 이상에서 확인한다</li><li>식의 각 부분이 그림의 어디인지 말할 수 있어야 한다</li></ul></div>
+<div class="sec"><h3>예제</h3>
+<div class="ex"><div class="exq"><b>예제 1</b> 표를 보고 △를 □로 나타내는 식을 쓰세요.  □: 1,2,3,4 / △: 4,7,10,13</div><ol class="steps"><li>3씩 커진다 → 곱하는 수 3</li><li>□=1 일 때 3인데 △는 4 → 1을 더한다</li><li>확인: 4 × 3 + 1 = 13 ✓</li></ol><div class="exa">답 &nbsp;△ = □ × 3 + 1</div></div>
+<div class="ex"><div class="exq"><b>예제 2</b> 탁자 1개에 6명, 탁자를 이어 붙이면 2개에 10명, 3개에 14명 앉습니다. 탁자 8개에는 몇 명이 앉습니까?</div><ol class="steps"><li>4씩 커진다 → □ × 4</li><li>□=1 일 때 4인데 6 → 2를 더한다</li><li>식: △ = □ × 4 + 2</li><li>8 × 4 + 2 = 34</li></ol><div class="exa">답 &nbsp;34명</div></div>
+<div class="ex"><div class="exq"><b>예제 3</b> 택시 요금이 기본 3000원에 1km마다 800원씩 오릅니다. 7km 를 가면 요금은?</div><ol class="steps"><li>△ = □ × 800 + 3000</li><li>7 × 800 + 3000 = 5600 + 3000</li></ol><div class="exa">답 &nbsp;8600원</div></div>
+<div class="ex"><div class="exq"><b>예제 4</b> 정사각형을 이어 붙여 성냥개비로 만듭니다. 1개는 4개, 2개는 7개, 3개는 10개입니다. 20번째는 몇 개입니까?</div><ol class="steps"><li>3씩 커진다 → □ × 3</li><li>□=1 일 때 3인데 4 → 1을 더한다</li><li>식: △ = □ × 3 + 1</li><li>20 × 3 + 1 = 61</li></ol><div class="exa">답 &nbsp;61개</div></div>
+</div>
+<div class="sec probs"><h3>연습 문제</h3><ol class="plist">
+<li><div class="pq">□: 1,2,3,4 / △: 5,10,15,20 — 식을 쓰세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;△ = □ × 5</div></li>
+<li><div class="pq">□: 1,2,3,4 / △: 2,5,8,11 — 식을 쓰세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;△ = □ × 3 − 1</div></li>
+<li><div class="pq">□: 1,2,3,4 / △: 7,9,11,13 — 식을 쓰고 □ = 10 일 때 △를 구하세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;△ = □ × 2 + 5, △ = 25</div></li>
+<li><div class="pq">자전거 한 대에 바퀴 2개입니다. 자전거 수를 □, 바퀴 수를 △라 할 때 식을 쓰세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;△ = □ × 2</div></li>
+<li><div class="pq">주차요금이 기본 2000원에 10분마다 500원씩 오릅니다. 50분 주차하면 얼마입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;4500원 (2000 + 5 × 500)</div></li>
+<li><div class="pq">성냥개비로 삼각형을 이어 붙입니다. n번째에 필요한 성냥개비 수를 식으로 쓰고, 50번째를 구하세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;n × 2 + 1, 101개</div></li>
+<li><div class="pq">△ = □ × 4 + 3 입니다. △가 31일 때 □는 얼마입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;7 ((31−3)÷4)</div></li>
+<li><div class="pq">1번째 2개, 2번째 4개, 3번째 8개로 늘어납니다. 이 규칙은 ‘일정하게 커지는’ 규칙입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;아니다 — 2배씩 커지는 규칙 (5번째는 32개)</div></li>
+<li><div class="pq">의자 수 □와 다리 수 △의 관계가 △ = □ × 4 입니다. 다리가 48개면 의자는 몇 개입니까?</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;12개</div></li>
+<li><div class="pq">표에서 △가 6씩 커지고 □ = 1 일 때 △ = 10 입니다. 식을 쓰세요.</div><div class="pwrite"></div><div class="pa tonly">정답 &nbsp;△ = □ × 6 + 4</div></li>
+</ol></div>
+<div class="tsec tonly">
+<h3 class="thead">교사용 지도 자료</h3>
+<h4>수업 흐름 (40분 기준)</h4><table class="flow"><tbody><tr><td class='tm'>5분</td><td>도입 — 교사가 ‘비밀 규칙 상자’ 역할. 학생이 수를 말하면 교사가 답만 말해 준다.</td></tr><tr><td class='tm'>10분</td><td>전개 1 — 표를 채우며 규칙 찾기. 표가 없으면 못 찾는다는 것을 체감시킨다.</td></tr><tr><td class='tm'>10분</td><td>전개 2 — 두 걸음(얼마씩 변하나 / 얼마를 더하나)을 형식화.</td></tr><tr><td class='tm'>12분</td><td>전개 3 — 성냥개비 도형. 식의 +1 이 그림의 어디인지 반드시 짚게 한다.</td></tr><tr><td class='tm'>8분</td><td>전개 4 — ‘100번째’ 질문으로 일반화의 필요를 느끼게 한다.</td></tr><tr><td class='tm'>5분</td><td>정리 — 자기만의 규칙 상자를 하나 만들어 짝에게 맞히게 하기.</td></tr></tbody></table>
+<h4>자주 나오는 오개념과 처방</h4><table class="mis"><thead><tr><th>학생이 보이는 생각</th><th>어떻게 다룰까</th></tr></thead><tbody><tr><td>차이만 보고 식을 씀 (2씩 커지니 △ = □ × 2)</td><td>□ = 1 을 대입해 확인시킨다. 안 맞으면 더하거나 빼야 할 수가 있다.</td></tr><tr><td>한 군데만 맞춰 보고 끝냄</td><td>두 군데 이상 확인하는 절차를 고정한다. 특히 첫 항과 마지막 항.</td></tr><tr><td>식의 +1 이 어디서 왔는지 설명 못 함</td><td>그림에서 ‘맨 처음 1개’를 손가락으로 짚게 한다. 식과 그림을 연결하지 못하면 암기로 끝난다.</td></tr><tr><td>2배씩 커지는 규칙에 □ × ? + ? 를 억지로 적용</td><td>표를 그려 차이를 보게 한다. 차이가 일정하지 않으면 다른 종류의 규칙이다.</td></tr><tr><td>□와 △를 거꾸로 씀</td><td>‘넣는 수’와 ‘나오는 수’를 표의 머리칸에 항상 적게 한다.</td></tr><tr><td>거꾸로 묻는 문제(△를 주고 □ 찾기)에서 막힘</td><td>상자를 거꾸로 통과한다고 생각하게 한다. 더한 것은 빼고, 곱한 것은 나눈다.</td></tr></tbody></table>
+<h4>수업 중 던질 발문</h4><ul class="ask"><li>□가 1씩 커질 때 △는 얼마씩 커지나요?</li><li>그럼 곱하는 수는 무엇일까요?</li><li>□ = 1 을 넣으면 식의 답은? 표의 값과 같나요? 다르면 얼마나 다르죠?</li><li>식의 +1 은 그림의 어디에 있나요?</li><li>100번째를 하나씩 세어서 구할 수 있을까요? 왜 식이 필요하죠?</li><li>이번엔 거꾸로 — △가 31이면 □는 무엇일까요?</li></ul>
+<h4>평가 관점</h4><ul><li>표를 스스로 만들어 규칙을 찾는가</li><li>찾은 식을 두 군데 이상에서 확인하는가</li><li>식의 각 부분을 그림·상황과 연결해 설명하는가</li><li>역방향 문제(△ → □)를 해결하는가</li></ul>
+<h4>인터랙티브 자료 연계</h4><p class="link">인터랙티브 자료의 규칙 상자는 학생이 직접 규칙을 설정하고 구슬을 넣어 볼 수 있으며, 결과가 표에 쌓입니다. 친구가 만든 규칙을 맞히는 활동으로 쓰면 참여도가 높습니다. 도형 패턴 탭에서는 n을 바꾸며 성냥개비 수를 직접 세어 식과 비교할 수 있습니다.<br><span class="fname">파일 : rule_machine.html</span></p>
+</div>
+</section>
+</div>
+
+<script>
+(function(){
+  var body=document.body;
+  function setMode(m){
+    body.classList.toggle('student', m==='student');
+    body.classList.toggle('teacher', m==='teacher');
+    document.getElementById('bS').setAttribute('aria-pressed', m==='student');
+    document.getElementById('bT').setAttribute('aria-pressed', m==='teacher');
+    document.getElementById('modetag').textContent = (m==='student'?'학생용':'교사용');
+    try{localStorage.setItem('mathbook-mode', m);}catch(e){}
+  }
+  var saved='student';
+  try{ saved = localStorage.getItem('mathbook-mode') || 'student'; }catch(e){}
+  setMode(saved);
+  document.getElementById('bS').onclick=function(){setMode('student');};
+  document.getElementById('bT').onclick=function(){setMode('teacher');};
+
+  var sel=document.getElementById('jump');
+  sel.onchange=function(){
+    var el=document.getElementById(sel.value);
+    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  };
+  document.getElementById('pAll').onclick=function(){
+    body.classList.remove('oneunit');
+    var t=document.querySelector('.unit.target'); if(t) t.classList.remove('target');
+    window.print();
+  };
+  document.getElementById('pOne').onclick=function(){
+    var id=sel.value;
+    if(!id||id==='top'){ alert('먼저 단원을 고르세요.'); return; }
+    var prev=document.querySelector('.unit.target'); if(prev) prev.classList.remove('target');
+    var el=document.getElementById(id); if(!el) return;
+    el.classList.add('target'); body.classList.add('oneunit');
+    window.print();
+  };
+  window.addEventListener('afterprint', function(){
+    body.classList.remove('oneunit');
+    var t=document.querySelector('.unit.target'); if(t) t.classList.remove('target');
+  });
+})();
+</script>
+</body></html>
